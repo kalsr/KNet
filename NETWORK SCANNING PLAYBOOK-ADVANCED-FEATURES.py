@@ -2,8 +2,7 @@
 # NETWORK SCANNING PLAYBOOK-ADVANCED-FEATURES
 
 # A LIST OF DFFERENT TYPES OF NETWORK SCANS PERFORMED IN THIS PART OF PLAY-BOOK
-
-############### THIS SECTION OF PLAY-BOOK IS DESIGNED & ASSEMBLED BY RSANDY SINGH FROM DISA/EIIC/EM2 #######################
+Developed by Kalsnet Technologies #######################
 
 #python
 import json
