@@ -1,7 +1,7 @@
-//The CyberSecurity Framework program was developed to help Security Analysts,Security Planners System, Network System's Administrators to understand & 
+veloped by Kalsnet Technologies (KNet)//The CyberSecurity Framework program was developed to help Security Analysts,Security Planners System, Network System's Administrators to understand & 
 //Address IOT Security Vulnerabilitiesin within Critical Infrastructure of DISA, DoD & USA. Critical Infrastructure is Interconnected.
 //This program addresses the critical infrastructure Security Framework. This Application will help to Identify,Protect, Detect & Respond 
-//the Security framework taxonomies and Provide Mitigation Strategies. The Application was written by Mr. Randy Singh (DISA/BDE5)in September, 2017.                  
+//the Security framework taxonomies and Provide Mitigation Strategies. The Application was written by Kalsnet Technologies (KNet).                  
 
 
 import java.util.Scanner; 
@@ -358,9 +358,9 @@ case 2:
   System.out.println();
   System.out.println("BELOW IS THE LIST OF BUSINESS ENVIRONMENT SUBCATEGORIES: ");
   System.out.println();
-  System.out.println("1. The Organization’s Role In The Supply Chain Is Identified & Communicated ");
+  System.out.println("1. The OrganizationÂ’s Role In The Supply Chain Is Identified & Communicated ");
   System.out.println();
-  System.out.println("2. The Organization’s Place In Critical Infrastructure & Its Industry Sector Is Identified & Communicated");
+  System.out.println("2. The OrganizationÂ’s Place In Critical Infrastructure & Its Industry Sector Is Identified & Communicated");
   System.out.println();
   System.out.println("3. Priorities For Organizational Mission, Objectives & Activities Are Established & Communicated");
   System.out.println();
@@ -515,7 +515,7 @@ case 3:
   System.out.print("GOVERNANCE POLICIES & PROCEDURES:");
   System.out.println();
   System.out.println();
-  System.out.println("The Policies, Procedures, & Processes To Manage & Monitor The Organization’s Regulatory, Legal, Risk, Environmental & Operational Requirements "); 
+  System.out.println("The Policies, Procedures, & Processes To Manage & Monitor The OrganizationÂ’s Regulatory, Legal, Risk, Environmental & Operational Requirements "); 
   System.out.println();
   System.out.println("Are Understood & Inform The Management Of Cybersecurity Risk.");
   System.out.println();
@@ -839,7 +839,7 @@ case 5:
   System.out.print("RISK MANAGEMENT STRATEGY:");
   System.out.println();
   System.out.println();
-  System.out.println("The Organization’s Priorities, Constraints, Risk Tolerances, & Assumptions Are Established & Used To Support Operational Risk Decisions"); 
+  System.out.println("The OrganizationÂ’s Priorities, Constraints, Risk Tolerances, & Assumptions Are Established & Used To Support Operational Risk Decisions"); 
   System.out.println();
   System.out.println("*************************************************************************************************");
   System.out.println();
@@ -849,7 +849,7 @@ case 5:
   System.out.println();
   System.out.println(" 2. Organizational Risk Tolerance Is Determined & Clearly Expressed");
   System.out.println();
-  System.out.println(" 3. The Organization’s Determination Of Risk Tolerance Is Informed By Its Role In Critical Infrastructure & Sector Specific Risk Analysis");
+  System.out.println(" 3. The OrganizationÂ’s Determination Of Risk Tolerance Is Informed By Its Role In Critical Infrastructure & Sector Specific Risk Analysis");
   System.out.println();
   System.out.println(" 4. Resilience Requirements To Support Delivery Of Critical Services Are Established ");
   System.out.println();
@@ -1157,7 +1157,7 @@ System.out.println();
   System.out.print("AWARENESS AND TRAINING:");
   System.out.println();
   System.out.println();
-  System.out.println("The Organization’s Personnel & Partners Are Provided Cybersecurity Awareness Education & Are Adequately Trained"); 
+  System.out.println("The OrganizationÂ’s Personnel & Partners Are Provided Cybersecurity Awareness Education & Are Adequately Trained"); 
   System.out.println();
   System.out.println("To Perform Their Information Security-Related Duties & Responsibilities Consistent With Related Policies, Procedures, & Agreements..");
   System.out.println();
@@ -1320,7 +1320,7 @@ case 8:
   System.out.print("DATA SECURITY:");
   System.out.println();
   System.out.println();
-  System.out.println("Information & Records (Data) Are Managed Consistent With The Organization’s Risk Strategy"); 
+  System.out.println("Information & Records (Data) Are Managed Consistent With The OrganizationÂ’s Risk Strategy"); 
   System.out.println();
   System.out.println("To Protect The Confidentiality, Integrity, & Availability Of Information.");
   System.out.println();
