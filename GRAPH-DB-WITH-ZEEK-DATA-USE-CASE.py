@@ -5,7 +5,7 @@
 #3. Save the generated records into a JSON file.
 #4. Provide functionalities to display, query, and modify the data records in the JSON file.
 
-#THIS APPLICATION WAS ASSEMBLED BY RANDY SINGH DISA/EIIC/EM2 TO TRACK MALICIOUS NODES IN CYBER DATA.
+#THIS APPLICATION WAS ASSEMBLED BY Kalsnet Technologies TO TRACK MALICIOUS NODES IN CYBER DATA.
 
 import json
 import random
