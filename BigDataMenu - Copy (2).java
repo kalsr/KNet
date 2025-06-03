@@ -3,7 +3,7 @@
 // Currently the test data values are USED FOR Each Taxonomy Field. 
 // However when the actual values are obtained the Taxonomy fiields will be updated accordingly. 
 // This code was written using Object-Oriented programming in Java JGRASP (OCTOBER-16, 2018)
-// The Cpde was written by Mr Randy Singh,Computer Scientist,Technology Innovation Team (DISA/BDE5)
+// The Cpde was written by Kalsnet Technologies (KNet).
 // Contact Phone# (301)225-9535  
 
 import java.util.Scanner; 
