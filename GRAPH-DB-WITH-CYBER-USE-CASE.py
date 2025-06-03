@@ -13,7 +13,7 @@
    #- The user is prompted for the number of records to generate and filenames to save the graph database, malicious records, and non-malicious records.
    #- Options to display the graph, query specific nodes, query malicious records, query non-malicious
 
-# THIS APPLICATION WAS ASSEMBLED BY RANDY SINGH DISA/EIIC/EM2 TO TRACK MALICIOUS NODES IN CYBER DATA.
+# THIS APPLICATION WAS ASSEMBLED BY KalsnetTechnologies TO TRACK MALICIOUS NODES IN CYBER DATA.
 
 #python
 import json
