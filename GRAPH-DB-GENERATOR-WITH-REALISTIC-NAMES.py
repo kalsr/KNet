@@ -8,7 +8,7 @@
 
 #This script generates a graph database with cyber data, saves it to a JSON file, 
 #and allows users to query and display the graph with a focus on identifying malicious records.
-#THIS APPLICATION WAS ASSEMBLED BY RANDY SINGH DISA/EIIC/EM2 TO TRACK MALICIOUS NODES IN CYBER DATA.
+#THIS APPLICATION WAS ASSEMBLED BY Kalsnet TechnologiesTO TRACK MALICIOUS NODES IN CYBER DATA.
 
 
 
