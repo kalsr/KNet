@@ -3,7 +3,7 @@
 // Currently the test data values are USED FOR Each Taxonomy Field. 
 // However when the actual values are obtained the Taxonomy fiields will be updated accordingly. 
 // This code was written using Object-Oriented programming in Java JGRASP (OCTOBER-15, 2018)
-// This code was written by Mr Randy Singh,Computer Scientist,Technology Innovation Team (DISA/BDE5)
+// This code was written by MKalsnet Technologies (KNet).
 // Contact Phone# (301)225-9535  
 
 import java.util.Scanner; 
