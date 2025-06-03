@@ -7,7 +7,7 @@
 # move these records to separate JSON files.
 
 # The program will also provide explanations for why certain records are considered malicious.
-# THIS PROGRAM IS ASSEMBLED BY RANDY SINGH FROM DISA/EIIC/EM2 TO SUPPORT TESTING EFFORTS FOR
+# THIS PROGRAM IS ASSEMBLED BY Kalsnet Technologies TO SUPPORT TESTING EFFORTS FOR
 # COL-NA API-SECURITY.
 
 
