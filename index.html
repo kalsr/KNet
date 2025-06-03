@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>Kalsnet Consulting Services</title>
+
+    <style>
+
+        body {
+
+            margin: 0;
+
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+            background-color: #0e1a2b;
+
+            color: #e0e0e0;
+
+        }
+
+        header {
+
+            background-color: #08111f;
+
+            text-align: center;
+
+            padding: 40px 20px;
+
+        }
+
+        header img {
+
+            width: 100px;
+
+            height: auto;
+
+        }
+
+        header h1 {
+
+            font-size: 2.5rem;
+
+            margin: 10px 0 5px;
+
+        }
+
+        header h2 {
+
+            font-size: 1.2rem;
+
+            margin: 5px 0 10px;
+
+            color: #ffffffcc;
+
+        }
+
+        header p {
+
+            font-size: 1.1rem;
+
+        }
+
+        .cta-button {
+
+            display: inline-block;
+
+            margin-top: 20px;
+
+            padding: 10px 20px;
+
+            background-color: #007BFF;
+
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 5px;
+
+        }
+
+        .section {
+
+            padding: 40px 20px;
+
+            max-width: 1100px;
+
+            margin: auto;
+
+        }
+
+        .section h2 {
+
+            border-bottom: 2px solid #007BFF;
+
+            padding-bottom: 10px;
+
+            margin-bottom: 20px;
+
+        }
+
+        .columns {
+
+            display: flex;
+
+            justify-content: space-around;
+
+            flex-wrap: wrap;
+
+        }
+
+        .column {
+
+            flex: 1;
+
+            margin: 10px;
+
+            padding: 20px;
+
+            background-color: #1c2e4a;
+
+            border-radius: 8px;
+
+            min-width: 250px;
+
+        }
+
+        .footer {
+
+            text-align: center;
+
+            padding: 20px;
+
+            background-color: #08111f;
+
+            color: #ccc;
+
+        }
+
+        .about-image {
+
+            float: left;
+
+            margin-right: 20px;
+
+            width: 150px;
+
+            height: 150px;
+
+            background: url('Kalsnet_logo.png') center/cover no-repeat;
+
+            border-radius: 75px;
+
+        }
+
+        form {
+
+            background-color: #1c2e4a;
+
+            padding: 20px;
+
+            border-radius: 8px;
+
+        }
+
+        form label, form input, form textarea {
+
+            display: block;
+
+            width: 100%;
+
+            margin-bottom: 15px;
+
+        }
+
+        form input, form textarea {
+
+            padding: 10px;
+
+            background-color: #2d3e50;
+
+            border: 1px solid #444;
+
+            color: #fff;
+
+        }
+
+        form button {
+
+            padding: 10px 20px;
+
+            background-color: #007BFF;
+
+            border: none;
+
+            color: white;
+
+            cursor: pointer;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <header>
+
+        <img src="Kalsnet_logo.png" alt="Kalsnet Logo">
+
+        <h1>Kalsnet Consulting Services</h1>
+
+        <h2>Securing the Future Through AI and Cyber Resilience</h2>
+
+        <p>35+ Years of Expertise in Cybersecurity, AI, and Emerging Technologies</p>
+
+        <a href="#contact" class="cta-button">Schedule a Consultation</a>
+
+    </header>
+
+
+
+    <section class="section">
+
+        <h2>Our Services</h2>
+
+        <div class="columns">
+
+            <div class="column">
+
+                <h3>Cybersecurity Advisory</h3>
+
+                <p>Zero Trust, FedRAMP, C2 Protection, and Governance Policies tailored to your enterprise security needs.</p>
+
+            </div>
+
+            <div class="column">
+
+                <h3>API Security Solutions</h3>
+
+                <p>API discovery, posture assessment, and runtime protection including F5 and NetScout integrations.</p>
+
+            </div>
+
+            <div class="column">
+
+                <h3>Emerging Tech Consulting</h3>
+
+                <p>AI/ML security, Command and Control simulations, and technology roadmap development.</p>
+
+            </div>
+
+            <div class="column">
+
+                <h3>Application Development</h3>
+
+                <p>Enterprise-grade software engineering using Object-Oriented Java, Python, COBOL, SQL, and C++. Specializing in mission-critical systems and modernization efforts.</p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <section class="section" id="about">
+
+        <h2>About Us</h2>
+
+        <div class="about-image"></div>
+
+        <p>Kalsnet Consulting Services is led by a veteran computer scientist with over 35 years of federal experience in cybersecurity, software engineering, and strategic IT management. Formerly at DISA, our founder has led national-scale API security initiatives, developed C2 protection playbooks, and advised on AI governance policy.</p>
+
+        <p>We bring deep technical experience in full-stack application development, legacy system modernization, and secure system design using industry-standard programming languages and development methodologies.</p>
+
+    </section>
+
+
+
+    <section class="section" id="contact">
+
+        <h2>Contact Us</h2>
+
+        <form>
+
+            <label for="name">Name</label>
+
+            <input type="text" id="name" name="name" required />
+
+
+
+            <label for="email">Email</label>
+
+            <input type="email" id="email" name="email" required />
+
+
+
+            <label for="message">Message</label>
+
+            <textarea id="message" name="message" rows="5" required></textarea>
+
+
+
+            <button type="submit">Send Message</button>
+
+        </form>
+
+    </section>
+
+
+
+    <footer class="footer">
+
+        &copy; 2025 Kalsnet Consulting Services. All rights reserved.
+
+    </footer>
+
+</body>
+
+</html>
