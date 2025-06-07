@@ -1,0 +1,58 @@
+ The schema for a DITPR (Department of Defense Information Technology Portfolio Repository) 
+ record can be expanded to include details about APIs (Application Programming Interfaces).
+ Here is an SAMPLE SSCHEMA that incorporates fields related to APIs:
+
+1. System Information
+   - System Name: The official name of the IT system or application.
+   - System Acronym: Shortened name or abbreviation for the system.
+   - System Description: A brief description of the system’s purpose and functionality.
+   - System Type: Classification of the system (e.g., application, service, infrastructure).
+   - System Owner: The organizational entity or individual responsible for the system.
+   - System Status: Current operational status (e.g., active, inactive, decommissioned).
+
+2. Administrative Information
+   - Record ID: Unique identifier for the record within the DiTPR.
+   - Date of Entry: The date when the record was created.
+   - Last Updated: The date when the record was last modified.
+   - Record Owner: The individual or entity responsible for maintaining the record.
+
+3. Investment Information
+   - Budget Information: Details about the budget allocated to the system, including current and projected costs.
+   - Funding Source: The source(s) of funding for the system.
+   - Lifecycle Phase: The current phase of the system in its lifecycle (e.g., development, deployment, maintenance).
+
+4. Technical Information
+   - Technology Stack: Information about the technologies used by the system (e.g., programming languages, frameworks, databases).
+   - Hosting Environment: Details about where the system is hosted (e.g., cloud, on-premises).
+   - Interoperability: Information about how the system interacts with other systems.
+
+5. API Information
+   - API Name: The name of the API.
+   - API Description: A brief description of what the API does.
+   - API Version: The current version of the API.
+   - API Endpoints: The list of endpoints provided by the API.
+   - API Documentation: Links or references to the API documentation.
+   - API Protocols: The protocols used by the API (e.g., REST, SOAP, GraphQL).
+   - Authentication Methods: The methods used to authenticate API requests (e.g., API key, OAuth).
+   - Rate Limits: Information about any rate limits applied to the API.
+   - Usage Metrics: Data on how often the API is called and by whom.
+   - API POC (Point of Contact): Name and contact information for the primary contact person for the API.
+
+6. Compliance and Security
+   - Compliance Status: Information about the system’s compliance with relevant laws, regulations, and standards.
+   - Security Classification: The security classification level of the system (e.g., unclassified, confidential, secret).
+   - Risk Assessment: Details about identified risks and mitigation strategies.
+
+7. Performance Metrics
+   - KPIs (Key Performance Indicators): Metrics used to measure the performance and effectiveness of the system.
+   - Usage Statistics: Data on how the system is used, including user counts and transaction volumes.
+   - Performance Reviews: Records of any performance assessments or reviews conducted.
+
+8. Contact Information
+   - System POC (Point of Contact): Name and contact information for the primary contact person for the system.
+   - Technical Support Contact: Information for technical support related to the system.
+
+By including API-related fields, this schema can provide a comprehensive overview of the 
+APIs associated with each IT system, facilitating better management, integration, and utilization of these 
+APIs within the DoD.
+

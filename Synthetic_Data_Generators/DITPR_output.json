@@ -1,0 +1,3002 @@
+[
+    {
+        "System Information": {
+            "System Name": "System_1",
+            "System Acronym": "S1",
+            "System Description": "Description for System_1",
+            "System Type": "Infrastructure",
+            "System Owner": "Owner_13",
+            "System Status": "Decommissioned"
+        },
+        "Administrative Information": {
+            "Record ID": 1,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_6"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_67964",
+            "Funding Source": "Source_7",
+            "Lifecycle Phase": "Deployment"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_9",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_9"
+        },
+        "API Information": {
+            "API Name": "API_1",
+            "API Description": "Description for API_1",
+            "API Version": "v3.0",
+            "API Endpoints": [
+                "/endpoint1",
+                "/endpoint8",
+                "/endpoint8"
+            ],
+            "API Documentation": "http://api_docs_1.example.com",
+            "API Protocols": "GraphQL",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "243 requests per hour",
+            "Usage Metrics": "9046 calls per month",
+            "API POC (Point of Contact)": "APIPOC_15"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Unclassified",
+            "Risk Assessment": "Risk_8"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_2",
+                "KPI_7",
+                "KPI_8"
+            ],
+            "Usage Statistics": "4338 users per month",
+            "Performance Reviews": "Review_3"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_55",
+            "Technical Support Contact": "SupportContact_100"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_2",
+            "System Acronym": "S2",
+            "System Description": "Description for System_2",
+            "System Type": "Service",
+            "System Owner": "Owner_58",
+            "System Status": "Decommissioned"
+        },
+        "Administrative Information": {
+            "Record ID": 2,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_24"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_88946",
+            "Funding Source": "Source_2",
+            "Lifecycle Phase": "Deployment"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_4",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_9"
+        },
+        "API Information": {
+            "API Name": "API_2",
+            "API Description": "Description for API_2",
+            "API Version": "v1.0",
+            "API Endpoints": [
+                "/endpoint8",
+                "/endpoint3",
+                "/endpoint8"
+            ],
+            "API Documentation": "http://api_docs_2.example.com",
+            "API Protocols": "REST",
+            "Authentication Methods": "API key",
+            "Rate Limits": "953 requests per hour",
+            "Usage Metrics": "7767 calls per month",
+            "API POC (Point of Contact)": "APIPOC_8"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Unclassified",
+            "Risk Assessment": "Risk_10"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_6",
+                "KPI_6",
+                "KPI_3"
+            ],
+            "Usage Statistics": "3829 users per month",
+            "Performance Reviews": "Review_3"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_2",
+            "Technical Support Contact": "SupportContact_100"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_3",
+            "System Acronym": "S3",
+            "System Description": "Description for System_3",
+            "System Type": "Service",
+            "System Owner": "Owner_34",
+            "System Status": "Active"
+        },
+        "Administrative Information": {
+            "Record ID": 3,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_75"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_47734",
+            "Funding Source": "Source_1",
+            "Lifecycle Phase": "Deployment"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_9",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_9"
+        },
+        "API Information": {
+            "API Name": "API_3",
+            "API Description": "Description for API_3",
+            "API Version": "v1.0",
+            "API Endpoints": [
+                "/endpoint2",
+                "/endpoint1",
+                "/endpoint2"
+            ],
+            "API Documentation": "http://api_docs_3.example.com",
+            "API Protocols": "GraphQL",
+            "Authentication Methods": "API key",
+            "Rate Limits": "400 requests per hour",
+            "Usage Metrics": "7760 calls per month",
+            "API POC (Point of Contact)": "APIPOC_73"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Confidential",
+            "Risk Assessment": "Risk_2"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_8",
+                "KPI_7",
+                "KPI_9"
+            ],
+            "Usage Statistics": "5196 users per month",
+            "Performance Reviews": "Review_2"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_96",
+            "Technical Support Contact": "SupportContact_78"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_4",
+            "System Acronym": "S4",
+            "System Description": "Description for System_4",
+            "System Type": "Application",
+            "System Owner": "Owner_44",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 4,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_4"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_90343",
+            "Funding Source": "Source_4",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_7",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_7"
+        },
+        "API Information": {
+            "API Name": "API_4",
+            "API Description": "Description for API_4",
+            "API Version": "v1.0",
+            "API Endpoints": [
+                "/endpoint10",
+                "/endpoint7",
+                "/endpoint2"
+            ],
+            "API Documentation": "http://api_docs_4.example.com",
+            "API Protocols": "GraphQL",
+            "Authentication Methods": "API key",
+            "Rate Limits": "877 requests per hour",
+            "Usage Metrics": "4273 calls per month",
+            "API POC (Point of Contact)": "APIPOC_31"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Confidential",
+            "Risk Assessment": "Risk_10"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_8",
+                "KPI_8",
+                "KPI_2"
+            ],
+            "Usage Statistics": "7388 users per month",
+            "Performance Reviews": "Review_7"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_36",
+            "Technical Support Contact": "SupportContact_6"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_5",
+            "System Acronym": "S5",
+            "System Description": "Description for System_5",
+            "System Type": "Infrastructure",
+            "System Owner": "Owner_94",
+            "System Status": "Active"
+        },
+        "Administrative Information": {
+            "Record ID": 5,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_99"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_34545",
+            "Funding Source": "Source_9",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_5",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_9"
+        },
+        "API Information": {
+            "API Name": "API_5",
+            "API Description": "Description for API_5",
+            "API Version": "v5.0",
+            "API Endpoints": [
+                "/endpoint4",
+                "/endpoint2",
+                "/endpoint8"
+            ],
+            "API Documentation": "http://api_docs_5.example.com",
+            "API Protocols": "GraphQL",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "357 requests per hour",
+            "Usage Metrics": "6731 calls per month",
+            "API POC (Point of Contact)": "APIPOC_79"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Unclassified",
+            "Risk Assessment": "Risk_5"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_10",
+                "KPI_9",
+                "KPI_6"
+            ],
+            "Usage Statistics": "9935 users per month",
+            "Performance Reviews": "Review_8"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_87",
+            "Technical Support Contact": "SupportContact_48"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_6",
+            "System Acronym": "S6",
+            "System Description": "Description for System_6",
+            "System Type": "Application",
+            "System Owner": "Owner_71",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 6,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_59"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_47204",
+            "Funding Source": "Source_6",
+            "Lifecycle Phase": "Deployment"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_8",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_1"
+        },
+        "API Information": {
+            "API Name": "API_6",
+            "API Description": "Description for API_6",
+            "API Version": "v4.0",
+            "API Endpoints": [
+                "/endpoint4",
+                "/endpoint3",
+                "/endpoint7"
+            ],
+            "API Documentation": "http://api_docs_6.example.com",
+            "API Protocols": "SOAP",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "768 requests per hour",
+            "Usage Metrics": "2547 calls per month",
+            "API POC (Point of Contact)": "APIPOC_54"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Unclassified",
+            "Risk Assessment": "Risk_4"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_1",
+                "KPI_6",
+                "KPI_2"
+            ],
+            "Usage Statistics": "6281 users per month",
+            "Performance Reviews": "Review_2"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_84",
+            "Technical Support Contact": "SupportContact_61"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_7",
+            "System Acronym": "S7",
+            "System Description": "Description for System_7",
+            "System Type": "Service",
+            "System Owner": "Owner_73",
+            "System Status": "Active"
+        },
+        "Administrative Information": {
+            "Record ID": 7,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_79"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_47663",
+            "Funding Source": "Source_10",
+            "Lifecycle Phase": "Deployment"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_6",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_1"
+        },
+        "API Information": {
+            "API Name": "API_7",
+            "API Description": "Description for API_7",
+            "API Version": "v2.0",
+            "API Endpoints": [
+                "/endpoint1",
+                "/endpoint4",
+                "/endpoint6"
+            ],
+            "API Documentation": "http://api_docs_7.example.com",
+            "API Protocols": "GraphQL",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "711 requests per hour",
+            "Usage Metrics": "2113 calls per month",
+            "API POC (Point of Contact)": "APIPOC_47"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Secret",
+            "Risk Assessment": "Risk_3"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_1",
+                "KPI_3",
+                "KPI_9"
+            ],
+            "Usage Statistics": "5800 users per month",
+            "Performance Reviews": "Review_6"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_43",
+            "Technical Support Contact": "SupportContact_83"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_8",
+            "System Acronym": "S8",
+            "System Description": "Description for System_8",
+            "System Type": "Application",
+            "System Owner": "Owner_34",
+            "System Status": "Active"
+        },
+        "Administrative Information": {
+            "Record ID": 8,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_6"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_92792",
+            "Funding Source": "Source_3",
+            "Lifecycle Phase": "Maintenance"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_8",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_8"
+        },
+        "API Information": {
+            "API Name": "API_8",
+            "API Description": "Description for API_8",
+            "API Version": "v1.0",
+            "API Endpoints": [
+                "/endpoint7",
+                "/endpoint8",
+                "/endpoint1"
+            ],
+            "API Documentation": "http://api_docs_8.example.com",
+            "API Protocols": "GraphQL",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "206 requests per hour",
+            "Usage Metrics": "3839 calls per month",
+            "API POC (Point of Contact)": "APIPOC_97"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Confidential",
+            "Risk Assessment": "Risk_3"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_2",
+                "KPI_3",
+                "KPI_2"
+            ],
+            "Usage Statistics": "3061 users per month",
+            "Performance Reviews": "Review_10"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_81",
+            "Technical Support Contact": "SupportContact_80"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_9",
+            "System Acronym": "S9",
+            "System Description": "Description for System_9",
+            "System Type": "Application",
+            "System Owner": "Owner_12",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 9,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_5"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_23216",
+            "Funding Source": "Source_7",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_5",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_3"
+        },
+        "API Information": {
+            "API Name": "API_9",
+            "API Description": "Description for API_9",
+            "API Version": "v5.0",
+            "API Endpoints": [
+                "/endpoint10",
+                "/endpoint7",
+                "/endpoint10"
+            ],
+            "API Documentation": "http://api_docs_9.example.com",
+            "API Protocols": "GraphQL",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "942 requests per hour",
+            "Usage Metrics": "7105 calls per month",
+            "API POC (Point of Contact)": "APIPOC_80"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Secret",
+            "Risk Assessment": "Risk_10"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_6",
+                "KPI_9",
+                "KPI_8"
+            ],
+            "Usage Statistics": "8416 users per month",
+            "Performance Reviews": "Review_10"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_71",
+            "Technical Support Contact": "SupportContact_45"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_10",
+            "System Acronym": "S10",
+            "System Description": "Description for System_10",
+            "System Type": "Application",
+            "System Owner": "Owner_79",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 10,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_27"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_72604",
+            "Funding Source": "Source_3",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_9",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_4"
+        },
+        "API Information": {
+            "API Name": "API_10",
+            "API Description": "Description for API_10",
+            "API Version": "v2.0",
+            "API Endpoints": [
+                "/endpoint10",
+                "/endpoint1",
+                "/endpoint10"
+            ],
+            "API Documentation": "http://api_docs_10.example.com",
+            "API Protocols": "REST",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "527 requests per hour",
+            "Usage Metrics": "9745 calls per month",
+            "API POC (Point of Contact)": "APIPOC_52"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Confidential",
+            "Risk Assessment": "Risk_7"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_4",
+                "KPI_8",
+                "KPI_2"
+            ],
+            "Usage Statistics": "7251 users per month",
+            "Performance Reviews": "Review_8"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_66",
+            "Technical Support Contact": "SupportContact_55"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_11",
+            "System Acronym": "S11",
+            "System Description": "Description for System_11",
+            "System Type": "Service",
+            "System Owner": "Owner_78",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 11,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_68"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_63280",
+            "Funding Source": "Source_6",
+            "Lifecycle Phase": "Deployment"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_7",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_3"
+        },
+        "API Information": {
+            "API Name": "API_11",
+            "API Description": "Description for API_11",
+            "API Version": "v3.0",
+            "API Endpoints": [
+                "/endpoint6",
+                "/endpoint7",
+                "/endpoint1"
+            ],
+            "API Documentation": "http://api_docs_11.example.com",
+            "API Protocols": "SOAP",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "404 requests per hour",
+            "Usage Metrics": "2211 calls per month",
+            "API POC (Point of Contact)": "APIPOC_21"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Unclassified",
+            "Risk Assessment": "Risk_2"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_6",
+                "KPI_7",
+                "KPI_5"
+            ],
+            "Usage Statistics": "8897 users per month",
+            "Performance Reviews": "Review_3"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_48",
+            "Technical Support Contact": "SupportContact_23"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_12",
+            "System Acronym": "S12",
+            "System Description": "Description for System_12",
+            "System Type": "Infrastructure",
+            "System Owner": "Owner_87",
+            "System Status": "Active"
+        },
+        "Administrative Information": {
+            "Record ID": 12,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_19"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_44156",
+            "Funding Source": "Source_10",
+            "Lifecycle Phase": "Deployment"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_2",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_1"
+        },
+        "API Information": {
+            "API Name": "API_12",
+            "API Description": "Description for API_12",
+            "API Version": "v5.0",
+            "API Endpoints": [
+                "/endpoint7",
+                "/endpoint7",
+                "/endpoint2"
+            ],
+            "API Documentation": "http://api_docs_12.example.com",
+            "API Protocols": "SOAP",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "447 requests per hour",
+            "Usage Metrics": "7523 calls per month",
+            "API POC (Point of Contact)": "APIPOC_73"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Unclassified",
+            "Risk Assessment": "Risk_8"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_5",
+                "KPI_3",
+                "KPI_2"
+            ],
+            "Usage Statistics": "6335 users per month",
+            "Performance Reviews": "Review_8"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_99",
+            "Technical Support Contact": "SupportContact_53"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_13",
+            "System Acronym": "S13",
+            "System Description": "Description for System_13",
+            "System Type": "Service",
+            "System Owner": "Owner_71",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 13,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_54"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_51373",
+            "Funding Source": "Source_7",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_7",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_7"
+        },
+        "API Information": {
+            "API Name": "API_13",
+            "API Description": "Description for API_13",
+            "API Version": "v4.0",
+            "API Endpoints": [
+                "/endpoint7",
+                "/endpoint3",
+                "/endpoint5"
+            ],
+            "API Documentation": "http://api_docs_13.example.com",
+            "API Protocols": "SOAP",
+            "Authentication Methods": "API key",
+            "Rate Limits": "667 requests per hour",
+            "Usage Metrics": "5132 calls per month",
+            "API POC (Point of Contact)": "APIPOC_39"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Secret",
+            "Risk Assessment": "Risk_4"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_2",
+                "KPI_5",
+                "KPI_2"
+            ],
+            "Usage Statistics": "3434 users per month",
+            "Performance Reviews": "Review_3"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_95",
+            "Technical Support Contact": "SupportContact_42"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_14",
+            "System Acronym": "S14",
+            "System Description": "Description for System_14",
+            "System Type": "Application",
+            "System Owner": "Owner_5",
+            "System Status": "Decommissioned"
+        },
+        "Administrative Information": {
+            "Record ID": 14,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_45"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_40420",
+            "Funding Source": "Source_5",
+            "Lifecycle Phase": "Maintenance"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_5",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_1"
+        },
+        "API Information": {
+            "API Name": "API_14",
+            "API Description": "Description for API_14",
+            "API Version": "v4.0",
+            "API Endpoints": [
+                "/endpoint4",
+                "/endpoint4",
+                "/endpoint5"
+            ],
+            "API Documentation": "http://api_docs_14.example.com",
+            "API Protocols": "REST",
+            "Authentication Methods": "API key",
+            "Rate Limits": "606 requests per hour",
+            "Usage Metrics": "9088 calls per month",
+            "API POC (Point of Contact)": "APIPOC_80"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Unclassified",
+            "Risk Assessment": "Risk_8"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_6",
+                "KPI_6",
+                "KPI_5"
+            ],
+            "Usage Statistics": "8118 users per month",
+            "Performance Reviews": "Review_6"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_97",
+            "Technical Support Contact": "SupportContact_59"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_15",
+            "System Acronym": "S15",
+            "System Description": "Description for System_15",
+            "System Type": "Application",
+            "System Owner": "Owner_10",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 15,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_43"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_95643",
+            "Funding Source": "Source_4",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_6",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_8"
+        },
+        "API Information": {
+            "API Name": "API_15",
+            "API Description": "Description for API_15",
+            "API Version": "v2.0",
+            "API Endpoints": [
+                "/endpoint5",
+                "/endpoint1",
+                "/endpoint9"
+            ],
+            "API Documentation": "http://api_docs_15.example.com",
+            "API Protocols": "REST",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "178 requests per hour",
+            "Usage Metrics": "1192 calls per month",
+            "API POC (Point of Contact)": "APIPOC_52"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Confidential",
+            "Risk Assessment": "Risk_7"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_9",
+                "KPI_6",
+                "KPI_7"
+            ],
+            "Usage Statistics": "8506 users per month",
+            "Performance Reviews": "Review_10"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_82",
+            "Technical Support Contact": "SupportContact_97"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_16",
+            "System Acronym": "S16",
+            "System Description": "Description for System_16",
+            "System Type": "Service",
+            "System Owner": "Owner_52",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 16,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_36"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_82624",
+            "Funding Source": "Source_1",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_10",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_3"
+        },
+        "API Information": {
+            "API Name": "API_16",
+            "API Description": "Description for API_16",
+            "API Version": "v1.0",
+            "API Endpoints": [
+                "/endpoint6",
+                "/endpoint2",
+                "/endpoint4"
+            ],
+            "API Documentation": "http://api_docs_16.example.com",
+            "API Protocols": "SOAP",
+            "Authentication Methods": "API key",
+            "Rate Limits": "327 requests per hour",
+            "Usage Metrics": "3979 calls per month",
+            "API POC (Point of Contact)": "APIPOC_52"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Unclassified",
+            "Risk Assessment": "Risk_2"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_6",
+                "KPI_10",
+                "KPI_1"
+            ],
+            "Usage Statistics": "5847 users per month",
+            "Performance Reviews": "Review_5"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_19",
+            "Technical Support Contact": "SupportContact_19"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_17",
+            "System Acronym": "S17",
+            "System Description": "Description for System_17",
+            "System Type": "Application",
+            "System Owner": "Owner_71",
+            "System Status": "Decommissioned"
+        },
+        "Administrative Information": {
+            "Record ID": 17,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_47"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_29730",
+            "Funding Source": "Source_4",
+            "Lifecycle Phase": "Deployment"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_2",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_9"
+        },
+        "API Information": {
+            "API Name": "API_17",
+            "API Description": "Description for API_17",
+            "API Version": "v3.0",
+            "API Endpoints": [
+                "/endpoint4",
+                "/endpoint8",
+                "/endpoint10"
+            ],
+            "API Documentation": "http://api_docs_17.example.com",
+            "API Protocols": "SOAP",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "206 requests per hour",
+            "Usage Metrics": "5075 calls per month",
+            "API POC (Point of Contact)": "APIPOC_14"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Unclassified",
+            "Risk Assessment": "Risk_2"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_1",
+                "KPI_6",
+                "KPI_2"
+            ],
+            "Usage Statistics": "1427 users per month",
+            "Performance Reviews": "Review_7"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_80",
+            "Technical Support Contact": "SupportContact_14"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_18",
+            "System Acronym": "S18",
+            "System Description": "Description for System_18",
+            "System Type": "Service",
+            "System Owner": "Owner_96",
+            "System Status": "Decommissioned"
+        },
+        "Administrative Information": {
+            "Record ID": 18,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_92"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_68126",
+            "Funding Source": "Source_2",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_3",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_1"
+        },
+        "API Information": {
+            "API Name": "API_18",
+            "API Description": "Description for API_18",
+            "API Version": "v4.0",
+            "API Endpoints": [
+                "/endpoint8",
+                "/endpoint4",
+                "/endpoint5"
+            ],
+            "API Documentation": "http://api_docs_18.example.com",
+            "API Protocols": "GraphQL",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "456 requests per hour",
+            "Usage Metrics": "8719 calls per month",
+            "API POC (Point of Contact)": "APIPOC_53"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Unclassified",
+            "Risk Assessment": "Risk_6"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_6",
+                "KPI_9",
+                "KPI_9"
+            ],
+            "Usage Statistics": "1624 users per month",
+            "Performance Reviews": "Review_10"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_49",
+            "Technical Support Contact": "SupportContact_55"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_19",
+            "System Acronym": "S19",
+            "System Description": "Description for System_19",
+            "System Type": "Infrastructure",
+            "System Owner": "Owner_41",
+            "System Status": "Active"
+        },
+        "Administrative Information": {
+            "Record ID": 19,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_53"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_95056",
+            "Funding Source": "Source_5",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_10",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_2"
+        },
+        "API Information": {
+            "API Name": "API_19",
+            "API Description": "Description for API_19",
+            "API Version": "v4.0",
+            "API Endpoints": [
+                "/endpoint1",
+                "/endpoint4",
+                "/endpoint2"
+            ],
+            "API Documentation": "http://api_docs_19.example.com",
+            "API Protocols": "GraphQL",
+            "Authentication Methods": "API key",
+            "Rate Limits": "997 requests per hour",
+            "Usage Metrics": "8088 calls per month",
+            "API POC (Point of Contact)": "APIPOC_43"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Confidential",
+            "Risk Assessment": "Risk_4"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_6",
+                "KPI_6",
+                "KPI_6"
+            ],
+            "Usage Statistics": "1783 users per month",
+            "Performance Reviews": "Review_5"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_60",
+            "Technical Support Contact": "SupportContact_76"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_20",
+            "System Acronym": "S20",
+            "System Description": "Description for System_20",
+            "System Type": "Application",
+            "System Owner": "Owner_18",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 20,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_73"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_40828",
+            "Funding Source": "Source_6",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_3",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_9"
+        },
+        "API Information": {
+            "API Name": "API_20",
+            "API Description": "Description for API_20",
+            "API Version": "v3.0",
+            "API Endpoints": [
+                "/endpoint4",
+                "/endpoint9",
+                "/endpoint9"
+            ],
+            "API Documentation": "http://api_docs_20.example.com",
+            "API Protocols": "REST",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "587 requests per hour",
+            "Usage Metrics": "9292 calls per month",
+            "API POC (Point of Contact)": "APIPOC_37"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Unclassified",
+            "Risk Assessment": "Risk_2"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_6",
+                "KPI_3",
+                "KPI_8"
+            ],
+            "Usage Statistics": "9562 users per month",
+            "Performance Reviews": "Review_8"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_14",
+            "Technical Support Contact": "SupportContact_51"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_21",
+            "System Acronym": "S21",
+            "System Description": "Description for System_21",
+            "System Type": "Infrastructure",
+            "System Owner": "Owner_49",
+            "System Status": "Active"
+        },
+        "Administrative Information": {
+            "Record ID": 21,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_44"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_69878",
+            "Funding Source": "Source_2",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_7",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_6"
+        },
+        "API Information": {
+            "API Name": "API_21",
+            "API Description": "Description for API_21",
+            "API Version": "v3.0",
+            "API Endpoints": [
+                "/endpoint3",
+                "/endpoint10",
+                "/endpoint2"
+            ],
+            "API Documentation": "http://api_docs_21.example.com",
+            "API Protocols": "REST",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "751 requests per hour",
+            "Usage Metrics": "4457 calls per month",
+            "API POC (Point of Contact)": "APIPOC_74"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Confidential",
+            "Risk Assessment": "Risk_6"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_3",
+                "KPI_9",
+                "KPI_9"
+            ],
+            "Usage Statistics": "1775 users per month",
+            "Performance Reviews": "Review_2"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_80",
+            "Technical Support Contact": "SupportContact_77"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_22",
+            "System Acronym": "S22",
+            "System Description": "Description for System_22",
+            "System Type": "Service",
+            "System Owner": "Owner_81",
+            "System Status": "Active"
+        },
+        "Administrative Information": {
+            "Record ID": 22,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_61"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_74483",
+            "Funding Source": "Source_7",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_10",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_10"
+        },
+        "API Information": {
+            "API Name": "API_22",
+            "API Description": "Description for API_22",
+            "API Version": "v4.0",
+            "API Endpoints": [
+                "/endpoint8",
+                "/endpoint10",
+                "/endpoint1"
+            ],
+            "API Documentation": "http://api_docs_22.example.com",
+            "API Protocols": "SOAP",
+            "Authentication Methods": "API key",
+            "Rate Limits": "783 requests per hour",
+            "Usage Metrics": "3997 calls per month",
+            "API POC (Point of Contact)": "APIPOC_22"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Unclassified",
+            "Risk Assessment": "Risk_3"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_2",
+                "KPI_7",
+                "KPI_2"
+            ],
+            "Usage Statistics": "8964 users per month",
+            "Performance Reviews": "Review_3"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_66",
+            "Technical Support Contact": "SupportContact_29"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_23",
+            "System Acronym": "S23",
+            "System Description": "Description for System_23",
+            "System Type": "Application",
+            "System Owner": "Owner_77",
+            "System Status": "Decommissioned"
+        },
+        "Administrative Information": {
+            "Record ID": 23,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_48"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_72386",
+            "Funding Source": "Source_9",
+            "Lifecycle Phase": "Maintenance"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_5",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_10"
+        },
+        "API Information": {
+            "API Name": "API_23",
+            "API Description": "Description for API_23",
+            "API Version": "v3.0",
+            "API Endpoints": [
+                "/endpoint5",
+                "/endpoint1",
+                "/endpoint4"
+            ],
+            "API Documentation": "http://api_docs_23.example.com",
+            "API Protocols": "REST",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "977 requests per hour",
+            "Usage Metrics": "3117 calls per month",
+            "API POC (Point of Contact)": "APIPOC_23"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Secret",
+            "Risk Assessment": "Risk_10"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_7",
+                "KPI_4",
+                "KPI_9"
+            ],
+            "Usage Statistics": "4011 users per month",
+            "Performance Reviews": "Review_3"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_89",
+            "Technical Support Contact": "SupportContact_89"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_24",
+            "System Acronym": "S24",
+            "System Description": "Description for System_24",
+            "System Type": "Application",
+            "System Owner": "Owner_40",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 24,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_64"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_44153",
+            "Funding Source": "Source_1",
+            "Lifecycle Phase": "Deployment"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_3",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_7"
+        },
+        "API Information": {
+            "API Name": "API_24",
+            "API Description": "Description for API_24",
+            "API Version": "v3.0",
+            "API Endpoints": [
+                "/endpoint3",
+                "/endpoint7",
+                "/endpoint1"
+            ],
+            "API Documentation": "http://api_docs_24.example.com",
+            "API Protocols": "SOAP",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "888 requests per hour",
+            "Usage Metrics": "1934 calls per month",
+            "API POC (Point of Contact)": "APIPOC_3"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Unclassified",
+            "Risk Assessment": "Risk_5"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_4",
+                "KPI_2",
+                "KPI_1"
+            ],
+            "Usage Statistics": "9897 users per month",
+            "Performance Reviews": "Review_1"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_39",
+            "Technical Support Contact": "SupportContact_81"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_25",
+            "System Acronym": "S25",
+            "System Description": "Description for System_25",
+            "System Type": "Application",
+            "System Owner": "Owner_30",
+            "System Status": "Active"
+        },
+        "Administrative Information": {
+            "Record ID": 25,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_88"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_49516",
+            "Funding Source": "Source_6",
+            "Lifecycle Phase": "Maintenance"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_9",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_3"
+        },
+        "API Information": {
+            "API Name": "API_25",
+            "API Description": "Description for API_25",
+            "API Version": "v1.0",
+            "API Endpoints": [
+                "/endpoint4",
+                "/endpoint5",
+                "/endpoint10"
+            ],
+            "API Documentation": "http://api_docs_25.example.com",
+            "API Protocols": "REST",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "699 requests per hour",
+            "Usage Metrics": "2250 calls per month",
+            "API POC (Point of Contact)": "APIPOC_46"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Unclassified",
+            "Risk Assessment": "Risk_6"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_3",
+                "KPI_9",
+                "KPI_9"
+            ],
+            "Usage Statistics": "1546 users per month",
+            "Performance Reviews": "Review_7"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_41",
+            "Technical Support Contact": "SupportContact_4"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_26",
+            "System Acronym": "S26",
+            "System Description": "Description for System_26",
+            "System Type": "Service",
+            "System Owner": "Owner_22",
+            "System Status": "Active"
+        },
+        "Administrative Information": {
+            "Record ID": 26,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_21"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_58107",
+            "Funding Source": "Source_5",
+            "Lifecycle Phase": "Maintenance"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_6",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_9"
+        },
+        "API Information": {
+            "API Name": "API_26",
+            "API Description": "Description for API_26",
+            "API Version": "v5.0",
+            "API Endpoints": [
+                "/endpoint9",
+                "/endpoint10",
+                "/endpoint10"
+            ],
+            "API Documentation": "http://api_docs_26.example.com",
+            "API Protocols": "GraphQL",
+            "Authentication Methods": "API key",
+            "Rate Limits": "812 requests per hour",
+            "Usage Metrics": "2063 calls per month",
+            "API POC (Point of Contact)": "APIPOC_7"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Unclassified",
+            "Risk Assessment": "Risk_6"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_3",
+                "KPI_5",
+                "KPI_9"
+            ],
+            "Usage Statistics": "8599 users per month",
+            "Performance Reviews": "Review_9"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_90",
+            "Technical Support Contact": "SupportContact_27"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_27",
+            "System Acronym": "S27",
+            "System Description": "Description for System_27",
+            "System Type": "Service",
+            "System Owner": "Owner_57",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 27,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_76"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_51140",
+            "Funding Source": "Source_3",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_5",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_6"
+        },
+        "API Information": {
+            "API Name": "API_27",
+            "API Description": "Description for API_27",
+            "API Version": "v2.0",
+            "API Endpoints": [
+                "/endpoint5",
+                "/endpoint1",
+                "/endpoint9"
+            ],
+            "API Documentation": "http://api_docs_27.example.com",
+            "API Protocols": "REST",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "119 requests per hour",
+            "Usage Metrics": "7037 calls per month",
+            "API POC (Point of Contact)": "APIPOC_14"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Secret",
+            "Risk Assessment": "Risk_5"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_7",
+                "KPI_8",
+                "KPI_3"
+            ],
+            "Usage Statistics": "3741 users per month",
+            "Performance Reviews": "Review_7"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_69",
+            "Technical Support Contact": "SupportContact_61"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_28",
+            "System Acronym": "S28",
+            "System Description": "Description for System_28",
+            "System Type": "Application",
+            "System Owner": "Owner_85",
+            "System Status": "Decommissioned"
+        },
+        "Administrative Information": {
+            "Record ID": 28,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_66"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_88730",
+            "Funding Source": "Source_4",
+            "Lifecycle Phase": "Maintenance"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_7",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_8"
+        },
+        "API Information": {
+            "API Name": "API_28",
+            "API Description": "Description for API_28",
+            "API Version": "v2.0",
+            "API Endpoints": [
+                "/endpoint4",
+                "/endpoint2",
+                "/endpoint9"
+            ],
+            "API Documentation": "http://api_docs_28.example.com",
+            "API Protocols": "GraphQL",
+            "Authentication Methods": "API key",
+            "Rate Limits": "154 requests per hour",
+            "Usage Metrics": "6084 calls per month",
+            "API POC (Point of Contact)": "APIPOC_2"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Secret",
+            "Risk Assessment": "Risk_6"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_2",
+                "KPI_8",
+                "KPI_3"
+            ],
+            "Usage Statistics": "7494 users per month",
+            "Performance Reviews": "Review_5"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_39",
+            "Technical Support Contact": "SupportContact_22"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_29",
+            "System Acronym": "S29",
+            "System Description": "Description for System_29",
+            "System Type": "Infrastructure",
+            "System Owner": "Owner_1",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 29,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_16"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_79605",
+            "Funding Source": "Source_2",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_7",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_3"
+        },
+        "API Information": {
+            "API Name": "API_29",
+            "API Description": "Description for API_29",
+            "API Version": "v5.0",
+            "API Endpoints": [
+                "/endpoint3",
+                "/endpoint9",
+                "/endpoint5"
+            ],
+            "API Documentation": "http://api_docs_29.example.com",
+            "API Protocols": "REST",
+            "Authentication Methods": "API key",
+            "Rate Limits": "793 requests per hour",
+            "Usage Metrics": "8258 calls per month",
+            "API POC (Point of Contact)": "APIPOC_18"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Secret",
+            "Risk Assessment": "Risk_8"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_1",
+                "KPI_4",
+                "KPI_6"
+            ],
+            "Usage Statistics": "2943 users per month",
+            "Performance Reviews": "Review_9"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_4",
+            "Technical Support Contact": "SupportContact_92"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_30",
+            "System Acronym": "S30",
+            "System Description": "Description for System_30",
+            "System Type": "Application",
+            "System Owner": "Owner_43",
+            "System Status": "Decommissioned"
+        },
+        "Administrative Information": {
+            "Record ID": 30,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_91"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_90374",
+            "Funding Source": "Source_8",
+            "Lifecycle Phase": "Maintenance"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_1",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_3"
+        },
+        "API Information": {
+            "API Name": "API_30",
+            "API Description": "Description for API_30",
+            "API Version": "v2.0",
+            "API Endpoints": [
+                "/endpoint1",
+                "/endpoint6",
+                "/endpoint7"
+            ],
+            "API Documentation": "http://api_docs_30.example.com",
+            "API Protocols": "SOAP",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "965 requests per hour",
+            "Usage Metrics": "1071 calls per month",
+            "API POC (Point of Contact)": "APIPOC_63"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Confidential",
+            "Risk Assessment": "Risk_8"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_7",
+                "KPI_4",
+                "KPI_10"
+            ],
+            "Usage Statistics": "8423 users per month",
+            "Performance Reviews": "Review_4"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_93",
+            "Technical Support Contact": "SupportContact_85"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_31",
+            "System Acronym": "S31",
+            "System Description": "Description for System_31",
+            "System Type": "Infrastructure",
+            "System Owner": "Owner_81",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 31,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_45"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_37419",
+            "Funding Source": "Source_5",
+            "Lifecycle Phase": "Maintenance"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_1",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_2"
+        },
+        "API Information": {
+            "API Name": "API_31",
+            "API Description": "Description for API_31",
+            "API Version": "v1.0",
+            "API Endpoints": [
+                "/endpoint1",
+                "/endpoint9",
+                "/endpoint6"
+            ],
+            "API Documentation": "http://api_docs_31.example.com",
+            "API Protocols": "REST",
+            "Authentication Methods": "API key",
+            "Rate Limits": "568 requests per hour",
+            "Usage Metrics": "2101 calls per month",
+            "API POC (Point of Contact)": "APIPOC_76"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Confidential",
+            "Risk Assessment": "Risk_2"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_5",
+                "KPI_6",
+                "KPI_10"
+            ],
+            "Usage Statistics": "4901 users per month",
+            "Performance Reviews": "Review_1"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_24",
+            "Technical Support Contact": "SupportContact_71"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_32",
+            "System Acronym": "S32",
+            "System Description": "Description for System_32",
+            "System Type": "Infrastructure",
+            "System Owner": "Owner_45",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 32,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_29"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_83508",
+            "Funding Source": "Source_10",
+            "Lifecycle Phase": "Maintenance"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_5",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_3"
+        },
+        "API Information": {
+            "API Name": "API_32",
+            "API Description": "Description for API_32",
+            "API Version": "v2.0",
+            "API Endpoints": [
+                "/endpoint9",
+                "/endpoint9",
+                "/endpoint5"
+            ],
+            "API Documentation": "http://api_docs_32.example.com",
+            "API Protocols": "REST",
+            "Authentication Methods": "API key",
+            "Rate Limits": "685 requests per hour",
+            "Usage Metrics": "7583 calls per month",
+            "API POC (Point of Contact)": "APIPOC_72"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Confidential",
+            "Risk Assessment": "Risk_2"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_3",
+                "KPI_3",
+                "KPI_3"
+            ],
+            "Usage Statistics": "3374 users per month",
+            "Performance Reviews": "Review_4"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_37",
+            "Technical Support Contact": "SupportContact_91"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_33",
+            "System Acronym": "S33",
+            "System Description": "Description for System_33",
+            "System Type": "Infrastructure",
+            "System Owner": "Owner_92",
+            "System Status": "Active"
+        },
+        "Administrative Information": {
+            "Record ID": 33,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_81"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_96522",
+            "Funding Source": "Source_4",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_5",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_7"
+        },
+        "API Information": {
+            "API Name": "API_33",
+            "API Description": "Description for API_33",
+            "API Version": "v3.0",
+            "API Endpoints": [
+                "/endpoint5",
+                "/endpoint2",
+                "/endpoint9"
+            ],
+            "API Documentation": "http://api_docs_33.example.com",
+            "API Protocols": "SOAP",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "133 requests per hour",
+            "Usage Metrics": "5661 calls per month",
+            "API POC (Point of Contact)": "APIPOC_85"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Unclassified",
+            "Risk Assessment": "Risk_2"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_4",
+                "KPI_5",
+                "KPI_3"
+            ],
+            "Usage Statistics": "5454 users per month",
+            "Performance Reviews": "Review_3"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_34",
+            "Technical Support Contact": "SupportContact_57"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_34",
+            "System Acronym": "S34",
+            "System Description": "Description for System_34",
+            "System Type": "Infrastructure",
+            "System Owner": "Owner_87",
+            "System Status": "Active"
+        },
+        "Administrative Information": {
+            "Record ID": 34,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_69"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_41569",
+            "Funding Source": "Source_10",
+            "Lifecycle Phase": "Maintenance"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_3",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_4"
+        },
+        "API Information": {
+            "API Name": "API_34",
+            "API Description": "Description for API_34",
+            "API Version": "v1.0",
+            "API Endpoints": [
+                "/endpoint8",
+                "/endpoint3",
+                "/endpoint10"
+            ],
+            "API Documentation": "http://api_docs_34.example.com",
+            "API Protocols": "REST",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "909 requests per hour",
+            "Usage Metrics": "8748 calls per month",
+            "API POC (Point of Contact)": "APIPOC_94"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Secret",
+            "Risk Assessment": "Risk_2"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_1",
+                "KPI_7",
+                "KPI_10"
+            ],
+            "Usage Statistics": "2825 users per month",
+            "Performance Reviews": "Review_5"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_48",
+            "Technical Support Contact": "SupportContact_94"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_35",
+            "System Acronym": "S35",
+            "System Description": "Description for System_35",
+            "System Type": "Application",
+            "System Owner": "Owner_72",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 35,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_61"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_64760",
+            "Funding Source": "Source_1",
+            "Lifecycle Phase": "Deployment"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_2",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_6"
+        },
+        "API Information": {
+            "API Name": "API_35",
+            "API Description": "Description for API_35",
+            "API Version": "v1.0",
+            "API Endpoints": [
+                "/endpoint6",
+                "/endpoint10",
+                "/endpoint5"
+            ],
+            "API Documentation": "http://api_docs_35.example.com",
+            "API Protocols": "GraphQL",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "965 requests per hour",
+            "Usage Metrics": "1510 calls per month",
+            "API POC (Point of Contact)": "APIPOC_86"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Confidential",
+            "Risk Assessment": "Risk_2"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_6",
+                "KPI_2",
+                "KPI_2"
+            ],
+            "Usage Statistics": "7301 users per month",
+            "Performance Reviews": "Review_6"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_90",
+            "Technical Support Contact": "SupportContact_91"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_36",
+            "System Acronym": "S36",
+            "System Description": "Description for System_36",
+            "System Type": "Infrastructure",
+            "System Owner": "Owner_35",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 36,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_1"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_32854",
+            "Funding Source": "Source_3",
+            "Lifecycle Phase": "Maintenance"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_7",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_10"
+        },
+        "API Information": {
+            "API Name": "API_36",
+            "API Description": "Description for API_36",
+            "API Version": "v2.0",
+            "API Endpoints": [
+                "/endpoint6",
+                "/endpoint7",
+                "/endpoint8"
+            ],
+            "API Documentation": "http://api_docs_36.example.com",
+            "API Protocols": "REST",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "591 requests per hour",
+            "Usage Metrics": "9248 calls per month",
+            "API POC (Point of Contact)": "APIPOC_59"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Confidential",
+            "Risk Assessment": "Risk_8"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_5",
+                "KPI_7",
+                "KPI_1"
+            ],
+            "Usage Statistics": "7468 users per month",
+            "Performance Reviews": "Review_4"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_41",
+            "Technical Support Contact": "SupportContact_87"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_37",
+            "System Acronym": "S37",
+            "System Description": "Description for System_37",
+            "System Type": "Application",
+            "System Owner": "Owner_68",
+            "System Status": "Active"
+        },
+        "Administrative Information": {
+            "Record ID": 37,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_48"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_29997",
+            "Funding Source": "Source_5",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_6",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_2"
+        },
+        "API Information": {
+            "API Name": "API_37",
+            "API Description": "Description for API_37",
+            "API Version": "v1.0",
+            "API Endpoints": [
+                "/endpoint1",
+                "/endpoint2",
+                "/endpoint9"
+            ],
+            "API Documentation": "http://api_docs_37.example.com",
+            "API Protocols": "SOAP",
+            "Authentication Methods": "API key",
+            "Rate Limits": "477 requests per hour",
+            "Usage Metrics": "1821 calls per month",
+            "API POC (Point of Contact)": "APIPOC_94"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Unclassified",
+            "Risk Assessment": "Risk_4"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_6",
+                "KPI_10",
+                "KPI_9"
+            ],
+            "Usage Statistics": "9877 users per month",
+            "Performance Reviews": "Review_2"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_23",
+            "Technical Support Contact": "SupportContact_46"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_38",
+            "System Acronym": "S38",
+            "System Description": "Description for System_38",
+            "System Type": "Application",
+            "System Owner": "Owner_61",
+            "System Status": "Active"
+        },
+        "Administrative Information": {
+            "Record ID": 38,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_21"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_97022",
+            "Funding Source": "Source_6",
+            "Lifecycle Phase": "Maintenance"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_3",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_6"
+        },
+        "API Information": {
+            "API Name": "API_38",
+            "API Description": "Description for API_38",
+            "API Version": "v2.0",
+            "API Endpoints": [
+                "/endpoint9",
+                "/endpoint3",
+                "/endpoint9"
+            ],
+            "API Documentation": "http://api_docs_38.example.com",
+            "API Protocols": "GraphQL",
+            "Authentication Methods": "API key",
+            "Rate Limits": "649 requests per hour",
+            "Usage Metrics": "8660 calls per month",
+            "API POC (Point of Contact)": "APIPOC_14"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Confidential",
+            "Risk Assessment": "Risk_1"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_1",
+                "KPI_2",
+                "KPI_10"
+            ],
+            "Usage Statistics": "6649 users per month",
+            "Performance Reviews": "Review_5"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_53",
+            "Technical Support Contact": "SupportContact_13"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_39",
+            "System Acronym": "S39",
+            "System Description": "Description for System_39",
+            "System Type": "Application",
+            "System Owner": "Owner_2",
+            "System Status": "Decommissioned"
+        },
+        "Administrative Information": {
+            "Record ID": 39,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_71"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_24956",
+            "Funding Source": "Source_6",
+            "Lifecycle Phase": "Deployment"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_8",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_9"
+        },
+        "API Information": {
+            "API Name": "API_39",
+            "API Description": "Description for API_39",
+            "API Version": "v4.0",
+            "API Endpoints": [
+                "/endpoint8",
+                "/endpoint6",
+                "/endpoint3"
+            ],
+            "API Documentation": "http://api_docs_39.example.com",
+            "API Protocols": "SOAP",
+            "Authentication Methods": "API key",
+            "Rate Limits": "557 requests per hour",
+            "Usage Metrics": "6438 calls per month",
+            "API POC (Point of Contact)": "APIPOC_38"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Confidential",
+            "Risk Assessment": "Risk_4"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_5",
+                "KPI_5",
+                "KPI_7"
+            ],
+            "Usage Statistics": "7693 users per month",
+            "Performance Reviews": "Review_1"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_62",
+            "Technical Support Contact": "SupportContact_46"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_40",
+            "System Acronym": "S40",
+            "System Description": "Description for System_40",
+            "System Type": "Infrastructure",
+            "System Owner": "Owner_77",
+            "System Status": "Active"
+        },
+        "Administrative Information": {
+            "Record ID": 40,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_87"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_79708",
+            "Funding Source": "Source_3",
+            "Lifecycle Phase": "Maintenance"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_8",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_3"
+        },
+        "API Information": {
+            "API Name": "API_40",
+            "API Description": "Description for API_40",
+            "API Version": "v5.0",
+            "API Endpoints": [
+                "/endpoint5",
+                "/endpoint7",
+                "/endpoint7"
+            ],
+            "API Documentation": "http://api_docs_40.example.com",
+            "API Protocols": "SOAP",
+            "Authentication Methods": "API key",
+            "Rate Limits": "654 requests per hour",
+            "Usage Metrics": "4690 calls per month",
+            "API POC (Point of Contact)": "APIPOC_69"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Confidential",
+            "Risk Assessment": "Risk_2"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_5",
+                "KPI_4",
+                "KPI_3"
+            ],
+            "Usage Statistics": "4667 users per month",
+            "Performance Reviews": "Review_5"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_3",
+            "Technical Support Contact": "SupportContact_64"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_41",
+            "System Acronym": "S41",
+            "System Description": "Description for System_41",
+            "System Type": "Service",
+            "System Owner": "Owner_95",
+            "System Status": "Decommissioned"
+        },
+        "Administrative Information": {
+            "Record ID": 41,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_47"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_56437",
+            "Funding Source": "Source_3",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_5",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_9"
+        },
+        "API Information": {
+            "API Name": "API_41",
+            "API Description": "Description for API_41",
+            "API Version": "v3.0",
+            "API Endpoints": [
+                "/endpoint9",
+                "/endpoint9",
+                "/endpoint9"
+            ],
+            "API Documentation": "http://api_docs_41.example.com",
+            "API Protocols": "REST",
+            "Authentication Methods": "API key",
+            "Rate Limits": "791 requests per hour",
+            "Usage Metrics": "3708 calls per month",
+            "API POC (Point of Contact)": "APIPOC_20"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Secret",
+            "Risk Assessment": "Risk_8"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_10",
+                "KPI_7",
+                "KPI_5"
+            ],
+            "Usage Statistics": "9765 users per month",
+            "Performance Reviews": "Review_6"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_7",
+            "Technical Support Contact": "SupportContact_86"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_42",
+            "System Acronym": "S42",
+            "System Description": "Description for System_42",
+            "System Type": "Infrastructure",
+            "System Owner": "Owner_25",
+            "System Status": "Active"
+        },
+        "Administrative Information": {
+            "Record ID": 42,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_56"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_85631",
+            "Funding Source": "Source_8",
+            "Lifecycle Phase": "Deployment"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_9",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_2"
+        },
+        "API Information": {
+            "API Name": "API_42",
+            "API Description": "Description for API_42",
+            "API Version": "v1.0",
+            "API Endpoints": [
+                "/endpoint4",
+                "/endpoint7",
+                "/endpoint10"
+            ],
+            "API Documentation": "http://api_docs_42.example.com",
+            "API Protocols": "GraphQL",
+            "Authentication Methods": "API key",
+            "Rate Limits": "411 requests per hour",
+            "Usage Metrics": "6154 calls per month",
+            "API POC (Point of Contact)": "APIPOC_66"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Confidential",
+            "Risk Assessment": "Risk_10"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_7",
+                "KPI_2",
+                "KPI_3"
+            ],
+            "Usage Statistics": "6739 users per month",
+            "Performance Reviews": "Review_7"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_11",
+            "Technical Support Contact": "SupportContact_88"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_43",
+            "System Acronym": "S43",
+            "System Description": "Description for System_43",
+            "System Type": "Application",
+            "System Owner": "Owner_5",
+            "System Status": "Decommissioned"
+        },
+        "Administrative Information": {
+            "Record ID": 43,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_36"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_59555",
+            "Funding Source": "Source_2",
+            "Lifecycle Phase": "Deployment"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_10",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_5"
+        },
+        "API Information": {
+            "API Name": "API_43",
+            "API Description": "Description for API_43",
+            "API Version": "v2.0",
+            "API Endpoints": [
+                "/endpoint8",
+                "/endpoint1",
+                "/endpoint9"
+            ],
+            "API Documentation": "http://api_docs_43.example.com",
+            "API Protocols": "SOAP",
+            "Authentication Methods": "API key",
+            "Rate Limits": "802 requests per hour",
+            "Usage Metrics": "1945 calls per month",
+            "API POC (Point of Contact)": "APIPOC_94"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Secret",
+            "Risk Assessment": "Risk_5"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_10",
+                "KPI_4",
+                "KPI_6"
+            ],
+            "Usage Statistics": "7855 users per month",
+            "Performance Reviews": "Review_7"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_69",
+            "Technical Support Contact": "SupportContact_9"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_44",
+            "System Acronym": "S44",
+            "System Description": "Description for System_44",
+            "System Type": "Infrastructure",
+            "System Owner": "Owner_30",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 44,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_96"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_82357",
+            "Funding Source": "Source_7",
+            "Lifecycle Phase": "Deployment"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_9",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_3"
+        },
+        "API Information": {
+            "API Name": "API_44",
+            "API Description": "Description for API_44",
+            "API Version": "v4.0",
+            "API Endpoints": [
+                "/endpoint1",
+                "/endpoint1",
+                "/endpoint2"
+            ],
+            "API Documentation": "http://api_docs_44.example.com",
+            "API Protocols": "GraphQL",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "454 requests per hour",
+            "Usage Metrics": "3545 calls per month",
+            "API POC (Point of Contact)": "APIPOC_99"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Secret",
+            "Risk Assessment": "Risk_3"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_2",
+                "KPI_9",
+                "KPI_8"
+            ],
+            "Usage Statistics": "4968 users per month",
+            "Performance Reviews": "Review_9"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_40",
+            "Technical Support Contact": "SupportContact_95"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_45",
+            "System Acronym": "S45",
+            "System Description": "Description for System_45",
+            "System Type": "Application",
+            "System Owner": "Owner_81",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 45,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_48"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_56829",
+            "Funding Source": "Source_4",
+            "Lifecycle Phase": "Deployment"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_8",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_8"
+        },
+        "API Information": {
+            "API Name": "API_45",
+            "API Description": "Description for API_45",
+            "API Version": "v2.0",
+            "API Endpoints": [
+                "/endpoint6",
+                "/endpoint6",
+                "/endpoint10"
+            ],
+            "API Documentation": "http://api_docs_45.example.com",
+            "API Protocols": "REST",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "409 requests per hour",
+            "Usage Metrics": "6282 calls per month",
+            "API POC (Point of Contact)": "APIPOC_8"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Secret",
+            "Risk Assessment": "Risk_5"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_9",
+                "KPI_8",
+                "KPI_9"
+            ],
+            "Usage Statistics": "5304 users per month",
+            "Performance Reviews": "Review_2"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_40",
+            "Technical Support Contact": "SupportContact_10"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_46",
+            "System Acronym": "S46",
+            "System Description": "Description for System_46",
+            "System Type": "Service",
+            "System Owner": "Owner_66",
+            "System Status": "Decommissioned"
+        },
+        "Administrative Information": {
+            "Record ID": 46,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_4"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_65282",
+            "Funding Source": "Source_7",
+            "Lifecycle Phase": "Maintenance"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_3",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_5"
+        },
+        "API Information": {
+            "API Name": "API_46",
+            "API Description": "Description for API_46",
+            "API Version": "v4.0",
+            "API Endpoints": [
+                "/endpoint7",
+                "/endpoint5",
+                "/endpoint1"
+            ],
+            "API Documentation": "http://api_docs_46.example.com",
+            "API Protocols": "GraphQL",
+            "Authentication Methods": "API key",
+            "Rate Limits": "209 requests per hour",
+            "Usage Metrics": "8008 calls per month",
+            "API POC (Point of Contact)": "APIPOC_17"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Compliant",
+            "Security Classification": "Confidential",
+            "Risk Assessment": "Risk_1"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_6",
+                "KPI_3",
+                "KPI_10"
+            ],
+            "Usage Statistics": "8603 users per month",
+            "Performance Reviews": "Review_4"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_53",
+            "Technical Support Contact": "SupportContact_52"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_47",
+            "System Acronym": "S47",
+            "System Description": "Description for System_47",
+            "System Type": "Infrastructure",
+            "System Owner": "Owner_45",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 47,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_62"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_62857",
+            "Funding Source": "Source_3",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_8",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_5"
+        },
+        "API Information": {
+            "API Name": "API_47",
+            "API Description": "Description for API_47",
+            "API Version": "v4.0",
+            "API Endpoints": [
+                "/endpoint10",
+                "/endpoint10",
+                "/endpoint1"
+            ],
+            "API Documentation": "http://api_docs_47.example.com",
+            "API Protocols": "SOAP",
+            "Authentication Methods": "API key",
+            "Rate Limits": "405 requests per hour",
+            "Usage Metrics": "9059 calls per month",
+            "API POC (Point of Contact)": "APIPOC_94"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Secret",
+            "Risk Assessment": "Risk_8"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_4",
+                "KPI_8",
+                "KPI_2"
+            ],
+            "Usage Statistics": "9811 users per month",
+            "Performance Reviews": "Review_8"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_81",
+            "Technical Support Contact": "SupportContact_84"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_48",
+            "System Acronym": "S48",
+            "System Description": "Description for System_48",
+            "System Type": "Application",
+            "System Owner": "Owner_97",
+            "System Status": "Inactive"
+        },
+        "Administrative Information": {
+            "Record ID": 48,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_89"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_50150",
+            "Funding Source": "Source_10",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_1",
+            "Hosting Environment": "Cloud",
+            "Interoperability": "Interoperability_6"
+        },
+        "API Information": {
+            "API Name": "API_48",
+            "API Description": "Description for API_48",
+            "API Version": "v1.0",
+            "API Endpoints": [
+                "/endpoint5",
+                "/endpoint2",
+                "/endpoint8"
+            ],
+            "API Documentation": "http://api_docs_48.example.com",
+            "API Protocols": "GraphQL",
+            "Authentication Methods": "API key",
+            "Rate Limits": "851 requests per hour",
+            "Usage Metrics": "2850 calls per month",
+            "API POC (Point of Contact)": "APIPOC_45"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Confidential",
+            "Risk Assessment": "Risk_4"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_4",
+                "KPI_10",
+                "KPI_1"
+            ],
+            "Usage Statistics": "1563 users per month",
+            "Performance Reviews": "Review_1"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_78",
+            "Technical Support Contact": "SupportContact_85"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_49",
+            "System Acronym": "S49",
+            "System Description": "Description for System_49",
+            "System Type": "Application",
+            "System Owner": "Owner_6",
+            "System Status": "Decommissioned"
+        },
+        "Administrative Information": {
+            "Record ID": 49,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_64"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_78784",
+            "Funding Source": "Source_5",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_8",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_7"
+        },
+        "API Information": {
+            "API Name": "API_49",
+            "API Description": "Description for API_49",
+            "API Version": "v1.0",
+            "API Endpoints": [
+                "/endpoint9",
+                "/endpoint9",
+                "/endpoint5"
+            ],
+            "API Documentation": "http://api_docs_49.example.com",
+            "API Protocols": "REST",
+            "Authentication Methods": "API key",
+            "Rate Limits": "986 requests per hour",
+            "Usage Metrics": "1571 calls per month",
+            "API POC (Point of Contact)": "APIPOC_29"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Unclassified",
+            "Risk Assessment": "Risk_3"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_10",
+                "KPI_10",
+                "KPI_1"
+            ],
+            "Usage Statistics": "7318 users per month",
+            "Performance Reviews": "Review_5"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_95",
+            "Technical Support Contact": "SupportContact_2"
+        }
+    },
+    {
+        "System Information": {
+            "System Name": "System_50",
+            "System Acronym": "S50",
+            "System Description": "Description for System_50",
+            "System Type": "Service",
+            "System Owner": "Owner_30",
+            "System Status": "Active"
+        },
+        "Administrative Information": {
+            "Record ID": 50,
+            "Date of Entry": "2025-06-07",
+            "Last Updated": "2025-06-07",
+            "Record Owner": "RecordOwner_75"
+        },
+        "Investment Information": {
+            "Budget Information": "Budget_38218",
+            "Funding Source": "Source_8",
+            "Lifecycle Phase": "Development"
+        },
+        "Technical Information": {
+            "Technology Stack": "TechStack_7",
+            "Hosting Environment": "On-premises",
+            "Interoperability": "Interoperability_9"
+        },
+        "API Information": {
+            "API Name": "API_50",
+            "API Description": "Description for API_50",
+            "API Version": "v2.0",
+            "API Endpoints": [
+                "/endpoint7",
+                "/endpoint4",
+                "/endpoint8"
+            ],
+            "API Documentation": "http://api_docs_50.example.com",
+            "API Protocols": "REST",
+            "Authentication Methods": "OAuth",
+            "Rate Limits": "661 requests per hour",
+            "Usage Metrics": "3237 calls per month",
+            "API POC (Point of Contact)": "APIPOC_58"
+        },
+        "Compliance and Security": {
+            "Compliance Status": "Non-compliant",
+            "Security Classification": "Confidential",
+            "Risk Assessment": "Risk_6"
+        },
+        "Performance Metrics": {
+            "KPIs (Key Performance Indicators)": [
+                "KPI_10",
+                "KPI_4",
+                "KPI_2"
+            ],
+            "Usage Statistics": "1615 users per month",
+            "Performance Reviews": "Review_9"
+        },
+        "Contact Information": {
+            "System POC (Point of Contact)": "SystemPOC_98",
+            "Technical Support Contact": "SupportContact_49"
+        }
+    }
+]

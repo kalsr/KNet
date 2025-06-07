@@ -1,0 +1,153 @@
+
+SOAR SAMPLE SCHEMAS:
+
+Creating a schema for a SOAR (Security Orchestration, Automation, and Response) platform involves
+defining the structure of data that the platform will manage and operate on. This typically includes
+entities such as incidents, alerts, actions, playbooks, and users. Here is a sample schema for a SOAR platform:
+
+# Incident Schema
+json
+{
+  "incident_id": "string",
+  "title": "string",
+  "description": "string",
+  "severity": "integer",  // e.g., 1 (low), 2 (medium), 3 (high), 4 (critical)
+  "status": "string",  // e.g., "open", "in progress", "resolved"
+  "created_at": "datetime",
+  "updated_at": "datetime",
+  "resolved_at": "datetime",
+  "assigned_to": "user_id",
+  "related_alerts": ["alert_id"],
+  "actions_taken": ["action_id"]
+}
+```
+
+# Alert Schema
+json
+{
+  "alert_id": "string",
+  "source": "string",  // e.g., "IDS", "SIEM", "Firewall"
+  "type": "string",  // e.g., "Malware", "Phishing", "DDoS"
+  "description": "string",
+  "severity": "integer",  // e.g., 1 (low), 2 (medium), 3 (high), 4 (critical)
+  "timestamp": "datetime",
+  "status": "string",  // e.g., "new", "in progress", "closed"
+  "related_incident": "incident_id",
+  "enrichment_data": {
+    // Additional data from threat intelligence, etc.
+  }
+}
+
+
+#Action Schema
+json
+{
+  "action_id": "string",
+  "name": "string",
+  "description": "string",
+  "type": "string",  // e.g., "automated", "manual"
+  "status": "string",  // e.g., "pending", "in progress", "completed"
+  "timestamp": "datetime",
+  "related_incident": "incident_id",
+  "related_alert": "alert_id",
+  "performed_by": "user_id"
+}
+```
+
+#Playbook Schema
+json
+{
+  "playbook_id": "string",
+  "name": "string",
+  "description": "string",
+  "steps": [
+    {
+      "step_id": "string",
+      "name": "string",
+      "description": "string",
+      "action": "string",  // Action to perform, could be an "action_id"
+      "order": "integer"
+    }
+  ],
+  "created_at": "datetime",
+  "updated_at": "datetime",
+  "created_by": "user_id",
+  "updated_by": "user_id"
+}
+
+
+#User Schema
+json
+{
+  "user_id": "string",
+  "username": "string",
+  "full_name": "string",
+  "email": "string",
+  "role": "string",  // e.g., "analyst", "admin", "incident_responder"
+  "created_at": "datetime",
+  "updated_at": "datetime"
+}
+
+
+#Example Relationships
+- **Incidents** can have multiple **Alerts** related to them.
+- **Incidents** can have multiple **Actions** taken on them.
+- **Playbooks** define a series of **Actions** that can be performed automatically or manually during an incident response.
+
+#Example of a Sample Incident Document
+json
+{
+  "incident_id": "inc12345",
+  "title": "Phishing Attack Detected",
+  "description": "Multiple phishing emails have been detected.",
+  "severity": 3,
+  "status": "open",
+  "created_at": "2024-06-18T10:30:00Z",
+  "updated_at": "2024-06-18T11:00:00Z",
+  "resolved_at": null,
+  "assigned_to": "user123",
+  "related_alerts": ["alert6789", "alert6790"],
+  "actions_taken": ["action3456", "action3457"]
+}
+```
+
+#Example of a Sample Playbook Document
+json
+{
+  "playbook_id": "playbook123",
+  "name": "Phishing Response Playbook",
+  "description": "A playbook to handle phishing attacks.",
+  "steps": [
+    {
+      "step_id": "step1",
+      "name": "Extract Indicators",
+      "description": "Extract indicators of compromise from the phishing email.",
+      "action": "action_extract_iocs",
+      "order": 1
+    },
+    {
+      "step_id": "step2",
+      "name": "Block Senders",
+      "description": "Block email addresses of the phishing emails.",
+      "action": "action_block_senders",
+      "order": 2
+    },
+    {
+      "step_id": "step3",
+      "name": "Notify Users",
+      "description": "Notify users about the phishing attempt.",
+      "action": "action_notify_users",
+      "order": 3
+    }
+  ],
+  "created_at": "2024-06-17T09:00:00Z",
+  "updated_at": "2024-06-17T09:30:00Z",
+  "created_by": "admin001",
+  "updated_by": "admin001"
+}
+
+
+This schema provides a structured way to represent data within a SOAR platform, 
+facilitating integration, automation, and response workflows. 
+You can expand or modify the schema based on the specific requirements 
+and capabilities of your SOAR solution.

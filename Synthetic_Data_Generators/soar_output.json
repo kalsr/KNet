@@ -1,0 +1,569 @@
+{
+    "incidents": [
+        {
+            "incident_id": "269019c4-1b48-4d3a-96bc-f27679c426c1",
+            "title": "vxecxfkkhrrcumfhydqz",
+            "description": "qpbgqwfzrpymavdbeogjwljxxskvyaelwkkoecniwxgbsferkxkebchoeqwkpkwsiuxvefwotuyqscajgapralixtsmebrymmrre",
+            "severity": 1,
+            "status": "open",
+            "created_at": "2024-11-24T13:47:51.559119",
+            "updated_at": "2025-03-28T13:47:51.559209",
+            "resolved_at": "2025-03-26T13:47:51.559231",
+            "assigned_to": "0516ff16-01c0-48da-993a-9e9928a43e78",
+            "related_alerts": [
+                "257a85ae-bcc6-4357-8620-b2cbcb61ab60",
+                "f4a1bfa5-b7db-4703-9541-53100cb1bcd8",
+                "7bb7612a-5be0-4ee9-a5c9-493f59ecb7ac",
+                "cdcd35a1-d4d5-4e69-819b-2722c3ad15b6",
+                "748a78fd-5a97-494a-b36d-42733867bf2b"
+            ],
+            "actions_taken": [
+                "3f548b4e-9aa8-4a3d-87dc-5d4bfdc72f81",
+                "9504d5c2-93cf-408d-bd0e-630b9b0a5b88",
+                "c165babc-5435-48e4-884e-a52c7f9ac1e9"
+            ]
+        },
+        {
+            "incident_id": "e4b0ec9a-449f-4f83-90e0-414f3df2d2b8",
+            "title": "hexxwbhlmwylirxoocut",
+            "description": "gdznrqsrzbcwlygskjofqreevksegjcdvuosouothjxkhrqcwnckqoknqicrkcfhyharneeahointovtdufjcgwolsppgyrlcxkb",
+            "severity": 2,
+            "status": "in progress",
+            "created_at": "2024-07-14T13:47:51.559629",
+            "updated_at": "2024-10-02T13:47:51.559647",
+            "resolved_at": "2024-06-25T13:47:51.559682",
+            "assigned_to": "ee425344-41d6-42fc-8d22-c5dea71dbefe",
+            "related_alerts": [
+                "8901b3c8-76be-44d5-918a-2286647a472e",
+                "38690c15-ca4b-4db0-8134-893a13ae94eb",
+                "d1b9d7fb-c559-466f-8489-ccd49147bcab",
+                "95291f0e-6cf2-463d-a398-7e6542e1b9f9"
+            ],
+            "actions_taken": [
+                "a2fb7f30-1063-415e-b74f-6d5cdb6e9326",
+                "fd75c91b-dda0-40a9-bb2e-fb82d78c4f3e"
+            ]
+        },
+        {
+            "incident_id": "d754caac-c8a2-4fbf-b09c-2fefc2c8ddd2",
+            "title": "jdxnjviesfpwtgzmaswg",
+            "description": "vpcaqabxgecwhdqmrlqltbhkmyvfodyggkjfifdrqxirongbbpjzvmadalxeepifequoluxkoveanbrwhyhuzqcmkzadyzmcekdr",
+            "severity": 3,
+            "status": "open",
+            "created_at": "2024-06-03T13:47:51.560025",
+            "updated_at": "2024-10-14T13:47:51.560041",
+            "resolved_at": null,
+            "assigned_to": "7559746b-8182-4fbc-8083-d55699bb953e",
+            "related_alerts": [
+                "8820e1b3-0085-4761-8571-f0b5c71ea557",
+                "fa7faad8-7520-4a30-9aee-a569ddb4e798"
+            ],
+            "actions_taken": [
+                "cbc0e635-8e7d-4085-b312-033655e3b882",
+                "be93910d-5d38-46b9-8612-a1629089f1ab",
+                "4d5f1ae3-a13f-4104-bfac-baf43a9db7da"
+            ]
+        },
+        {
+            "incident_id": "b372e949-86f6-4f6a-aef5-24face9f2beb",
+            "title": "rmkwkpueppwfqifzqfxw",
+            "description": "wyfsyhqtveblchvqdexlcturxfpxcrcdlvmiaonoidudzwvepfiejrhfgeocklzhqyojevropktmhzrsksceszlqybfrqumfmobz",
+            "severity": 3,
+            "status": "resolved",
+            "created_at": "2025-04-20T13:47:51.560378",
+            "updated_at": "2024-06-04T13:47:51.560393",
+            "resolved_at": "2025-02-03T13:47:51.560409",
+            "assigned_to": "1a0f63fb-5339-4e7d-a847-bd3b54a32272",
+            "related_alerts": [
+                "42254eb3-c2df-4c75-9f74-ebed83b70bb6",
+                "402d4b04-eefa-4c11-87ea-0b04bc76ad95",
+                "889a257c-e485-4fa2-be41-a02e2eb3738d",
+                "986bc2f1-5e13-43f7-8386-a7f50281df0e",
+                "8a6597a0-48f9-46f9-a64e-0ca6a6243865"
+            ],
+            "actions_taken": [
+                "224f513f-c161-4b68-9c93-1a78dedec508",
+                "034f1eba-1f02-4ba7-850c-0456b0888b24",
+                "4f42ac74-2368-4257-a4a5-5fbbd2bb6da4"
+            ]
+        },
+        {
+            "incident_id": "8da5801c-9924-42cc-b332-14bfddf283dc",
+            "title": "nuioycswqwmtjgskjidy",
+            "description": "zrppbjdfpqtbkmfoyvbqyoxyywcdbpsntvylqqnrqodxejxncvdmahdjmnbxtsvyxxlrvxvhqhbaboqppytzzqfkkmtmhgkncozt",
+            "severity": 3,
+            "status": "resolved",
+            "created_at": "2024-11-10T13:47:51.560824",
+            "updated_at": "2025-02-04T13:47:51.560840",
+            "resolved_at": null,
+            "assigned_to": "e1232068-7063-4780-82db-6c547c58d7b4",
+            "related_alerts": [
+                "389dd529-8aa7-4920-99ac-14e4c8db9677",
+                "42ae7d2f-cdbe-4935-b203-7c49905458b1"
+            ],
+            "actions_taken": [
+                "83ee6c69-d8e8-4123-a5e2-3d9553ee0232"
+            ]
+        },
+        {
+            "incident_id": "99e9a16d-c75e-439a-bcf6-d3d33154251f",
+            "title": "ielzdqqpdnwyxewqvopt",
+            "description": "lqjjbtlmvuhprzmyqewcheiaqnvcbglfwmbhfkdwxlneghopguudfmdhkxdgdxymmplkguuaefilikacfsdmxlhlxfcucasoaocq",
+            "severity": 2,
+            "status": "open",
+            "created_at": "2025-03-07T13:47:51.561135",
+            "updated_at": "2024-08-19T13:47:51.561149",
+            "resolved_at": "2025-03-18T13:47:51.561164",
+            "assigned_to": "c249f92c-6b7a-4ae4-a3b9-c65eb6506154",
+            "related_alerts": [
+                "94f2bcf3-2859-4d82-85ae-57a68f3723af",
+                "8c48f980-1ecc-4087-8ff5-2c25d733bd95"
+            ],
+            "actions_taken": [
+                "af83318a-7554-49a3-8646-f4f67b5ef274"
+            ]
+        },
+        {
+            "incident_id": "825ed81a-ba7c-4779-94b7-9ef4f25c62c6",
+            "title": "frwuaqkhwuxegikcnoop",
+            "description": "iizwggprdkobbebamfozhjayhsdlemnuwktpwpyrhpvzclhkbuocklpyzcpgvnhyhuhrwsgvfqqdrglsakrzpuxkiaqnbvkjyecp",
+            "severity": 2,
+            "status": "in progress",
+            "created_at": "2024-12-24T13:47:51.561468",
+            "updated_at": "2025-02-23T13:47:51.561483",
+            "resolved_at": "2025-02-25T13:47:51.561498",
+            "assigned_to": "c6591436-b6e4-4655-8ddf-b33fb638f9c2",
+            "related_alerts": [
+                "aa3a6e94-9519-4767-b192-17cdc7c4c46f",
+                "69982364-069d-4f54-bc03-df5b0b4580de",
+                "ded76412-305b-4d30-aa3c-1cfe01921351"
+            ],
+            "actions_taken": [
+                "aeeff105-dd28-4b53-a129-8ec3a33166db"
+            ]
+        },
+        {
+            "incident_id": "67eb521c-6754-42b5-a92d-29fe5fb7d6e7",
+            "title": "sjlgoavjknlxqwuqaonp",
+            "description": "ppdmtadsdcbgnunwrjptakcuyuwuvyfkvswxmelsbwydmsvdyckokcypipykujvlutxkelcrorixkfsodpvtbtbexhhkqicyrkwl",
+            "severity": 2,
+            "status": "open",
+            "created_at": "2025-01-27T13:47:51.561818",
+            "updated_at": "2025-02-16T13:47:51.561832",
+            "resolved_at": "2024-12-05T13:47:51.561847",
+            "assigned_to": "551392f1-046c-47b1-9f0d-c02f3e4fa61a",
+            "related_alerts": [
+                "fb17488c-d18f-4851-af22-a66bed7d8833",
+                "eb796588-d101-4bda-8f92-1f3c18c8e1f7",
+                "d62a04f3-87ef-4229-a70d-c8310d448e66",
+                "a0f62f78-41a8-4b17-87c1-74e5511bd27c"
+            ],
+            "actions_taken": [
+                "956b3bc1-9f3c-4577-bdc7-7f967430ad43",
+                "355c903e-fe82-4647-9cbc-4cba25f42bae",
+                "27637464-ad7a-4386-ac90-2ad51cff1354"
+            ]
+        },
+        {
+            "incident_id": "15bf80bd-5bcc-4f95-b48d-ea5dd9fd964f",
+            "title": "qjawzwywjikxwyliceug",
+            "description": "smzttqyadcezwnuesuvqpgzffbxjeuijocpxddqvuolukoccfgvbfuqsgezsvzzrkdwyxsjyibwwffzqoaelspqslktjdaebynoe",
+            "severity": 1,
+            "status": "in progress",
+            "created_at": "2024-09-14T13:47:51.562279",
+            "updated_at": "2024-10-04T13:47:51.562309",
+            "resolved_at": null,
+            "assigned_to": "f857eea7-e4d1-4695-af40-ab0cc98ff918",
+            "related_alerts": [
+                "340a9857-2645-49a9-bae7-d0dc4d53eb76",
+                "3c46d76f-7060-4694-aca3-ad416100c14c",
+                "733f28fc-5d56-44a1-9543-decc185c1b02",
+                "08ed5c0a-0cc7-4c07-a6b1-b8fc4c19c2f5"
+            ],
+            "actions_taken": [
+                "828b6c62-fb5f-486e-bf03-f6f0a6f8f97c"
+            ]
+        },
+        {
+            "incident_id": "d1b9857e-a955-4668-bfe7-be62a4d41fa3",
+            "title": "ejuavumxpdlhenshdroj",
+            "description": "mfcnjejtcjrtyljvqeoujeolesyjnonnsqebxxopwuthjpxqyfifzxevgvlpbnedlajuujdaisrmjymfpkmskiuynfnssegxqguy",
+            "severity": 4,
+            "status": "resolved",
+            "created_at": "2024-10-01T13:47:51.562666",
+            "updated_at": "2025-02-11T13:47:51.562684",
+            "resolved_at": null,
+            "assigned_to": "318f22bd-b0ac-40e1-b618-3c931f3967c4",
+            "related_alerts": [
+                "90883397-67d6-481e-940e-68dcba7a2dde",
+                "79b998bc-7e3a-4b51-878e-9ca7b1baf2fa",
+                "f261968d-cade-4b28-b3c5-f2324de4f9fd"
+            ],
+            "actions_taken": [
+                "7f093c77-f126-4302-8d80-ed16e00dac69"
+            ]
+        }
+    ],
+    "alerts": [
+        {
+            "alert_id": "48c82ee4-8a8d-49bf-9a06-785754e08a3f",
+            "source": "IDS",
+            "type": "Phishing",
+            "description": "wufcrvguktiuwjzcqyioeobblbioacelvavangdvcixgylfgxiykhgkarayclanentyiehxrdwjigrykmlctpcvmzyzsmfvatprx",
+            "severity": 1,
+            "timestamp": "2025-03-01T13:47:51.562984",
+            "status": "in progress",
+            "related_incident": "9d022fc6-ad76-4d8a-b140-137c486c561b",
+            "enrichment_data": {
+                "ip": "137.183.145.1",
+                "domain": "jqylqmmp.com",
+                "email": "gfwgl@bje.com"
+            }
+        },
+        {
+            "alert_id": "35566ba2-976c-4d64-b88d-e9b82cce9670",
+            "source": "Firewall",
+            "type": "Malware",
+            "description": "utzqmfitjvdezujtzwdrtiyfbyqtgagwujngzegmgalsghjscqpqlleirahmtxswudfibalbzztyykgzuerqmtpqysmjwltiuhdc",
+            "severity": 2,
+            "timestamp": "2025-02-22T13:47:51.563269",
+            "status": "closed",
+            "related_incident": "8219f06e-3617-4bc1-8b2c-fcc803652ce8",
+            "enrichment_data": {
+                "ip": "213.86.25.151",
+                "domain": "nqolcbyw.com",
+                "email": "gtzpt@nwd.com"
+            }
+        },
+        {
+            "alert_id": "afd9593c-da17-4839-a836-d4ca14613892",
+            "source": "Firewall",
+            "type": "Malware",
+            "description": "xmusmboppubmiynkkhwpqpwjrrpiloizagpfcbwibxyzuzkyypygsocidmvuyazvaphbxganeyfoiksxirpgrqncfvizgcoiwkoh",
+            "severity": 2,
+            "timestamp": "2025-02-19T13:47:51.563541",
+            "status": "new",
+            "related_incident": "27f0f8bb-0f28-4342-ba2c-4e1030b3deb7",
+            "enrichment_data": {
+                "ip": "179.62.81.163",
+                "domain": "beysxrpt.com",
+                "email": "oypof@bad.com"
+            }
+        },
+        {
+            "alert_id": "55d627c2-de3a-4c14-a074-ee73dd59029b",
+            "source": "SIEM",
+            "type": "DDoS",
+            "description": "igwdpfzwgtivyvmszeatrkajadkjpglcvioeyoemkuvauamaybliplhbfyfbtyaqjwnquooqhgwvtursmgelhlnrbbosseqofcir",
+            "severity": 3,
+            "timestamp": "2024-07-06T13:47:51.563846",
+            "status": "new",
+            "related_incident": "8942ef44-e2b9-4707-a0b7-9ca151b19c90",
+            "enrichment_data": {
+                "ip": "202.130.4.136",
+                "domain": "tygklbvd.com",
+                "email": "oadon@rqc.com"
+            }
+        },
+        {
+            "alert_id": "72b86076-761e-4aa8-911b-10ce5894aa6d",
+            "source": "IDS",
+            "type": "Malware",
+            "description": "vnepykutvhydozvgfotyswqdmfihuwlryxvpzdlglwsgvheycfuozithauoiayrgqlswtjiwxlbvfipfgsvjnsaywnwqxvisgqcy",
+            "severity": 1,
+            "timestamp": "2024-06-22T13:47:51.564123",
+            "status": "in progress",
+            "related_incident": "a191204e-1d07-4157-8a1a-7520cb8841f9",
+            "enrichment_data": {
+                "ip": "140.64.66.183",
+                "domain": "bjynpiif.com",
+                "email": "gavfr@eah.com"
+            }
+        }
+    ],
+    "actions": [
+        {
+            "action_id": "15981f62-8bce-48aa-83a5-eccf2f2e8d8b",
+            "name": "pnpwpkktbzkxjuqmrhzi",
+            "description": "qlczyekdgcuizgpaudbvejuvvhihrnmijixwfqgywkrubpmzjqolyutywqyyigwfaoyqyrxipwmnjhdvipqngqnmeauhoqwkswlh",
+            "type": "manual",
+            "status": "pending",
+            "timestamp": "2024-11-17T13:47:51.564444",
+            "related_incident": "796f3432-d41f-455c-b6a1-517c85f71475",
+            "related_alert": "18c3581b-63cd-41f7-8ee3-af9ea1feb004",
+            "performed_by": "8fdad1d0-9d66-4329-be3b-c4e3f697ca83"
+        },
+        {
+            "action_id": "74eb3bb3-8ee6-4763-a024-d5b698b01cc4",
+            "name": "phsvdszumhkrsmfxhcuv",
+            "description": "bpjrgjhmesohqrqylnbuhcupssuktkqagidajgedusanzivqtesjlxwedlqpvbqbhczefqcatsctzkzpztqxdgjmknubklmkavae",
+            "type": "automated",
+            "status": "in progress",
+            "timestamp": "2024-12-17T13:47:51.564721",
+            "related_incident": "e9ffbbea-3d79-44de-95d8-8d57332ccde0",
+            "related_alert": "83d13ca3-5a96-4789-bf71-161ede811749",
+            "performed_by": "1f638eda-a015-4355-99ad-4e21d7a29fbd"
+        },
+        {
+            "action_id": "74b024e1-e46c-43af-b037-09dbc7bd2c5e",
+            "name": "plnfrxahsvzeifyyepgv",
+            "description": "laiqzbzhwsmpyetevpdjfzhnhmqdowivilkduotdjwqyenplpfodbpxcbczljciieddxuzeilzspotwiobuxbgjijwsvharztwrl",
+            "type": "automated",
+            "status": "pending",
+            "timestamp": "2024-07-01T13:47:51.564992",
+            "related_incident": "188fd080-4c74-4518-9aca-58fdfa9d8345",
+            "related_alert": "5018bfc7-a6c6-4bd2-8c1d-9a233647a6c1",
+            "performed_by": "ac70ce70-e3e2-455b-bd7a-a7c803f5e983"
+        },
+        {
+            "action_id": "811569c1-a49f-4260-b2c9-fc9732994be8",
+            "name": "nvaboxlnekjlenowbyqn",
+            "description": "dzkyaapqqlzyhpvcdqqprwukassdrfwnivwwrjxlomjdvyezjrrvejyiwzmgsbraahjlacmewmnfixshjnqwakapdxmateaugrtc",
+            "type": "manual",
+            "status": "pending",
+            "timestamp": "2024-11-05T13:47:51.565262",
+            "related_incident": "9b3df1ef-024f-40ea-a5d7-723b02e7a405",
+            "related_alert": "6a06862a-812d-4bc4-a813-c9b9b2f0b1bd",
+            "performed_by": "f5c0c7ab-5ab0-4c98-87ec-c3ce08bb6fd9"
+        },
+        {
+            "action_id": "a817cc5a-6752-4b3a-a080-5aed5859b544",
+            "name": "clevdfwnoshfekynsgqe",
+            "description": "gkkclpetcgnttezvoyewxbkbflzuncknaecahsghukygccideooxahvkkzxlvgscajaevxzmwsjuyxtvefkqigztdhocemsjhymo",
+            "type": "manual",
+            "status": "in progress",
+            "timestamp": "2025-02-09T13:47:51.565537",
+            "related_incident": "db81be63-6ac9-4b27-b228-4cfd7ece0c27",
+            "related_alert": "603c04f7-2145-4888-a4bc-14459a27641d",
+            "performed_by": "665b7358-0fcb-4807-9c11-b150366d56de"
+        }
+    ],
+    "playbooks": [
+        {
+            "playbook_id": "902ac4cb-5757-4c48-9416-7e4b53801f62",
+            "name": "wshypqfedmtdrdygoxsz",
+            "description": "wafrlfeyqcueeobviigcmwkerchwsyxqrledxkarhasoaknfoelzalnoleaduvacrpxwpoicfjnhhqqkvuqghhqksvfbfgnzxhpo",
+            "steps": [
+                {
+                    "step_id": "33a65c64-86d9-4e0b-a16a-a89a4f562e92",
+                    "name": "uaqwynirxqeqtzbwtyxb",
+                    "description": "nietdvukngniewefmvoxyjfxxreaekwsxgwxckaosrpqfevjnaklcfupqwrhmifqcobhhljmfmxuxuvqcpiniczxkbshtilhhzrh",
+                    "action": "0d7d4176-dc27-4156-b144-1e6a28eb18f4",
+                    "order": 1
+                },
+                {
+                    "step_id": "0209cd26-a8d7-498e-83d5-4da1e3092053",
+                    "name": "orvflsmqnopkpgehuabp",
+                    "description": "lskbaeyioptzbgrwwjtzpfczyqbgliqesriduwwxjdaipdwxuaafbovppjxaspkgmuaxjldsdhjxexpdtwwxiqbcwwizydcdzlky",
+                    "action": "9cfdecd4-3551-4d7b-b9ec-eb7cd7640b43",
+                    "order": 2
+                },
+                {
+                    "step_id": "65bbbc66-6890-4535-bb2f-3479de25437f",
+                    "name": "hexlnrqsotycfidifyyo",
+                    "description": "powppnmpyklcyxkuolliepzjcnuiujkldqeqyubeaegtqkvkzzxpwblozhuzwlknizjswjugznqdivvlboylkyecjktfgdvjlodh",
+                    "action": "1a6eedbf-4145-4f58-95eb-5b5ae9b9a5b2",
+                    "order": 3
+                },
+                {
+                    "step_id": "6a5973e4-ca68-45cb-af1a-b8b15a2b84da",
+                    "name": "ipkvpysjwygperbqfzyr",
+                    "description": "gbnsoixnvculhyplbnomxmfcblsnzfvzvliohiumtfmxyopdodyimayfkbfxvbxcwovqpocepskaxvfnatjnxefchzgpuklhksrb",
+                    "action": "d582bb9b-68f1-4223-a6cc-6bccc27a30dc",
+                    "order": 4
+                },
+                {
+                    "step_id": "5d53d89a-d3cf-4ad5-a36b-c85be6c594b8",
+                    "name": "bpifkpqvhlpjwqhlksjy",
+                    "description": "gtzmfmoonwpebmnvxuibgajzqqfdoxjawvhhddiqnswvwigddgfzslcnwdjuzhjrtflssgageujsqkqfeqahxjigkhfptkjolrty",
+                    "action": "f008f9d7-3727-4a5c-bfa3-5bf5f65ef46e",
+                    "order": 5
+                }
+            ],
+            "created_at": "2025-03-09T13:47:51.566954",
+            "updated_at": "2024-06-18T13:47:51.566971",
+            "created_by": "a69b109f-c6c0-436d-a208-b562d676e400",
+            "updated_by": "aca6c065-17f4-4ca0-9640-2df160c65a08"
+        },
+        {
+            "playbook_id": "599d9269-0c1c-4ae4-821e-e2c5857a3a79",
+            "name": "lcmartxfsjlcnqpzzirz",
+            "description": "uwndgfnozrpxrwsgaxwisdbdwlwlltdyiaxnfehtbixkhadpdsqqwgynotcljtyxrocowuzkxjhsgrzkdubzeqzzqhcjtddkqegd",
+            "steps": [
+                {
+                    "step_id": "86fa8f4c-8687-4826-90d7-f97770b047a5",
+                    "name": "bgwtjpkpytmleqmlfxaj",
+                    "description": "ndylldyckmjockzyvaliyxgxxrfodokwugxsjoljamsvblrcogwebtxtqiwjwvopacediqumjclafxrwlfmnfimwtdofvizibets",
+                    "action": "994e75f4-5285-4054-8308-ddf86fa68063",
+                    "order": 1
+                },
+                {
+                    "step_id": "2b6de378-b5f5-4512-a605-bd1c863144f6",
+                    "name": "cnqjxkwdgmorwcdegmpb",
+                    "description": "mclvjiabnnwdcghlvglfhdofksyyicwogdwfcrixwkfvknhgbzwkrummepdembqtwojloptwhrspkcglkppxtlxvbpblmzssssjh",
+                    "action": "dab56a5d-fec8-44e1-9710-07f16b453bf6",
+                    "order": 2
+                },
+                {
+                    "step_id": "9b06331c-22e3-4cee-be00-2846b525dfee",
+                    "name": "evcghqpmitdbmellegey",
+                    "description": "ocpojbqbekyyplhdtjmvhkccenrdbdbarsseltspoyouroivkpjmqiwnrvirhyvnbwnsrahaoiiwmodglqydutjtvwcnmfvlllrd",
+                    "action": "060ed1bf-e416-46b7-97c6-1116fbbef13e",
+                    "order": 3
+                },
+                {
+                    "step_id": "a3f6ee0a-5677-4654-bf9b-786aed03a1df",
+                    "name": "lsgwoksgmljoifqvmgmj",
+                    "description": "uwlnrttqxwacrmwzpqwsntrjzcevmyofrrgtwxbftqeaizpjfpiqbnewfnhypddsfocjtlfoeajkllghsydkdtlcxtmcmtuxcspz",
+                    "action": "8a95f21e-8df4-41d1-8c3f-3076d72974fd",
+                    "order": 4
+                }
+            ],
+            "created_at": "2024-11-03T13:47:51.568133",
+            "updated_at": "2025-01-21T13:47:51.568149",
+            "created_by": "9fe2b123-fda8-4cf0-bf9a-2251701150ab",
+            "updated_by": "7fece212-f60b-491b-8154-153eb3963b29"
+        },
+        {
+            "playbook_id": "af585c43-7ff2-470c-a6b5-053b011896e8",
+            "name": "vxoipoclvlckjwuieuzj",
+            "description": "ggdfabyxhxbgrdjytsvecmoijhaeobtrdsgofdipxcenrfnzddatyevwhebvsdmzhxxdeujdokmwdhxmekjycwkmfifwjytrzroo",
+            "steps": [
+                {
+                    "step_id": "251d59c5-8c47-447e-a59a-e8542a60482e",
+                    "name": "qfsspbkqubdkkzjuayzf",
+                    "description": "qbbbdoojkkcxbasxvznlgbsffpjguiykewwwbinfutzjvmhqdbmgcqrqfisvtxnboygwvrawkwymyjyqzdzyrowcofyxfymyjlps",
+                    "action": "3a5e454d-2366-482d-bd4c-916f79f1ef03",
+                    "order": 1
+                },
+                {
+                    "step_id": "283efa65-2458-40ab-966e-ec23edc52c52",
+                    "name": "rdmqagudqoseybxnzjzj",
+                    "description": "plezehegkaoudmbawnfhkmbksasmqotgbviruwobwwnfmxjytnulrjrzqffqxwrpwzdrbkcmzougwlcqdhlvgijjiriyrbkwzbzj",
+                    "action": "de9c975e-a907-4abb-a3fb-8f540f4e5de5",
+                    "order": 2
+                },
+                {
+                    "step_id": "382e69f0-94c8-4983-8290-43a740155e0c",
+                    "name": "beqdcwrbytwakpttmhpa",
+                    "description": "vanrtpiimvciwetppvnsriferqblrdsgelqqdscbqxeyezvbgemwuarcrdpsynraxyuzbbkrikiiphxmusgwogfsbfocxiezunnl",
+                    "action": "786f48a9-881e-4596-b55a-37e9dad33885",
+                    "order": 3
+                },
+                {
+                    "step_id": "9412198a-fc8d-4920-9c1d-0089530ca0c8",
+                    "name": "uaubacxnlrfkbjqemyys",
+                    "description": "txfwphyfmspnpezduzyhixcwncfedbkfavohncpdvnsrjofymzewcnggnlzxdqypkwvhpuxngppuiinekxtqyetqpznxochyjjnn",
+                    "action": "5bcc1ed5-934b-45f1-ae26-675e0380c72d",
+                    "order": 4
+                },
+                {
+                    "step_id": "ff5129e7-a7a7-48df-8c28-30485ecddac1",
+                    "name": "bqrgccctoimtisvrbtes",
+                    "description": "wkettdeoxbinyzcqzrrdnpkhnmuowuzmjshbkxeqjkxmmkaaaxcfpqxvqkzldeogketqsjebffbpppgjemaakgxvqltsaggvzkre",
+                    "action": "8b2b05e0-1a13-4d17-8690-ef65c384bda8",
+                    "order": 5
+                }
+            ],
+            "created_at": "2024-09-03T13:47:51.569511",
+            "updated_at": "2024-08-03T13:47:51.569526",
+            "created_by": "fc8c3e8d-6164-45b9-984f-854ed0ff182c",
+            "updated_by": "3af4641f-179f-453d-b987-b9521b6f421f"
+        },
+        {
+            "playbook_id": "8fa4a420-2d31-4663-9b40-368da865604d",
+            "name": "jfiwlmvseolquzdgdmim",
+            "description": "mbxrsbeinrlqpmzqdznmgmpydingjxfajiwygfomlrqabatwwoarisbxmcsrqzwxbcrxqzwzcjadnmcfqpmrsnezyqsssaseqeem",
+            "steps": [
+                {
+                    "step_id": "4449141c-ea7b-4910-b722-48ba50b78575",
+                    "name": "nsofcbsibwgzlnhhscvi",
+                    "description": "mowenhmpsakkykrxpftiepyeelcpeimhiqqafjdqawbrvjbcuxniqtpkjgevwfkesxoucxektavtbvzhyklhekijnpvgyyhfxowe",
+                    "action": "324c6f85-7eeb-49d6-bf5c-7ef6dcf42f96",
+                    "order": 1
+                },
+                {
+                    "step_id": "fd6652fb-9913-4bd7-b37e-54a7c80fe5f9",
+                    "name": "iyodisfjcdeblcpcvpwc",
+                    "description": "wugpgxefeqtygkjxybcxkuiajggqshkzpyieztjspauwjcezblkujfteivahqlazlenepxuptkpunqpotghkvmkfwhfuiphxuoif",
+                    "action": "702fba23-5e13-4dac-95fc-b3b71cb3722f",
+                    "order": 2
+                }
+            ],
+            "created_at": "2024-06-05T13:47:51.570241",
+            "updated_at": "2025-03-31T13:47:51.570258",
+            "created_by": "7245147c-94bf-4ca4-8808-95b46067b2b0",
+            "updated_by": "e107d1cc-fddd-4646-9b61-036edc233602"
+        },
+        {
+            "playbook_id": "ab91a85e-be02-45ee-a4b3-3a525215017f",
+            "name": "ymnhmzzduumjsbsjokva",
+            "description": "vhcvlsmwcptskkzujhmyufqeugusvnjberqzusqoaosctllvzklqclzakaarvxbynkeqgzuabdafpkwponchkhuaswhetgxtxuvz",
+            "steps": [
+                {
+                    "step_id": "3f36cba4-c11b-4ed9-96c8-289e41e92a67",
+                    "name": "rlenccncluwivexinaqb",
+                    "description": "cmffwuaxpenztesiiuppekqtolcutibwsaygshtqmvjhfrsmcohurvgqqpnoviimqpzgazelpavjbfqqrzicwedwdlxmhzojvvpm",
+                    "action": "fa18f688-357e-461d-b116-e3ed069a9015",
+                    "order": 1
+                },
+                {
+                    "step_id": "b9d4c481-3b85-40ab-8645-aa91ef4fa801",
+                    "name": "ebtafpwfozabhpbdkwtt",
+                    "description": "rjwqqgodiwbnirzjefuanvvqykichrxtguebccefqrvfnrjdtxdfhnaqbjmovnkaaxodisyqucvezsojziqyfwrxwaaieeeyxqoc",
+                    "action": "c70a87e2-5fc9-4c61-95f7-baf8802c5144",
+                    "order": 2
+                },
+                {
+                    "step_id": "26de952c-12b8-4156-9649-59fc68730f38",
+                    "name": "iewspxnzfwrrskpyakkp",
+                    "description": "jatcjkinhdhjtdzoawmpwhkokoxtppkufymxtsimntgkmevympbedbbnuikwtvzbsisrbcczvtsertipuafxztqtnwojvqpkmufs",
+                    "action": "326f3393-8e84-49a7-874c-b108b94ea258",
+                    "order": 3
+                }
+            ],
+            "created_at": "2025-04-26T13:47:51.571183",
+            "updated_at": "2024-08-16T13:47:51.571198",
+            "created_by": "c3f7e443-4f21-47e5-b85a-74c99885cb5a",
+            "updated_by": "18b6aeb1-cb76-49ec-b161-5c1bee319bd2"
+        }
+    ],
+    "users": [
+        {
+            "user_id": "5f6d5313-3621-4e8a-8643-d84fbe957866",
+            "username": "tywohkyrzs",
+            "full_name": "mrdiyffvynpdsbs",
+            "email": "mbmuv@bnh.com",
+            "role": "analyst",
+            "created_at": "2025-01-30T13:47:51.571328",
+            "updated_at": "2024-12-03T13:47:51.571342"
+        },
+        {
+            "user_id": "2f38f32f-77f2-488f-96a2-bbfb73a53d60",
+            "username": "llunvhwlla",
+            "full_name": "iwfgahqapyvvkva",
+            "email": "fskkd@fkz.com",
+            "role": "incident_responder",
+            "created_at": "2025-02-04T13:47:51.571439",
+            "updated_at": "2025-02-24T13:47:51.571453"
+        },
+        {
+            "user_id": "67eaf0e0-9dd5-4cea-93c1-89dd3e246651",
+            "username": "qijjkthzxc",
+            "full_name": "vgtwpcqswihzyeo",
+            "email": "tkgbp@dmc.com",
+            "role": "analyst",
+            "created_at": "2024-06-21T13:47:51.571550",
+            "updated_at": "2024-10-26T13:47:51.571565"
+        },
+        {
+            "user_id": "258a7c9c-36a9-4064-8fdf-5ea695d42c34",
+            "username": "whxkribxgr",
+            "full_name": "khrwmytqzuwqmby",
+            "email": "jjsss@kwu.com",
+            "role": "analyst",
+            "created_at": "2024-07-11T13:47:51.571661",
+            "updated_at": "2024-05-30T13:47:51.571675"
+        }
+    ]
+}
