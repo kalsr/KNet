@@ -1,5 +1,5 @@
 # Python Program to Extract and Save MAPS-API Data into a file.
-# THIS PROGRAM IS ASSEMBLED BY RANDY SINGHN KNet Consulting.
+# THIS PROGRAM IS ASSEMBLED BY RANDY SINGH KNet Consulting.
 
 #python
 import json
