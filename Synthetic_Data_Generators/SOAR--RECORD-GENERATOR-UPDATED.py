@@ -10,7 +10,7 @@
 
 # This script will generate the specified number of SOAR records and save them to `soar_output.json`.
 
-# THIS SOAR RECORDS GENERATOR IS ASSEMBLED BY RANDY SINGH DISA/EIIC/EM2 TO SUPPORT API-SECURITY PROJECT AT COIL-NA.
+# THIS SOAR RECORDS GENERATOR IS ASSEMBLED BY RANDY SINGH KNet Consulting TO SUPPORT API-SECURITY PROJECT.
 
 #python
 import json
