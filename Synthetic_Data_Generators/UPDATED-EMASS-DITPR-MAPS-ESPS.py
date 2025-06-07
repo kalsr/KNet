@@ -2,7 +2,7 @@
 # Program will emulate Emass, DITPR, MAPS & ESPS records based on their Schemas
 # This program will have explanations for why a record is considered malicious or non-malicious. 
 # Each record now includes a detailed reason explaining its status.
-# THIS PROGRAM IS DESIGNED AND ASSEMBLED BY RANDY SINGH DISA/EIIC/EM2 TO 
+# THIS PROGRAM IS DESIGNED AND ASSEMBLED BY RANDY SINGH KNet Consulting TO 
 # SUPPORT DISA MISSIONS ON DISCOVERING & SECURING API'S
 
 #python
