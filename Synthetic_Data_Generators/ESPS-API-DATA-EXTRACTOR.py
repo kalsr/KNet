@@ -1,6 +1,6 @@
 
 # Python Program to Extract and Save ESPS-API Data into a file.
-# THIS PROGRAM IS ASSEMBLED BY RANDY SINGHNDISA/EIIC/EM2.
+# THIS PROGRAM IS ASSEMBLED BY RANDY SINGHN KNet Consulting.
 
 #python
 import json
