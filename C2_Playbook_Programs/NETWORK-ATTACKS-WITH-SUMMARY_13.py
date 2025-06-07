@@ -5,7 +5,7 @@
 # PROGRAM DISPLAYS & SAVE NETWORK LOG FILE AFTER ATTACK
 # PROVIDES Summary of attacks
 
-############################################ THIS SECTION IS DESIGNED BY RANDY SINGH FROM DISA/EIIC/EM2 #####################################
+############################################ THIS SECTION IS DESIGNED BY RANDY SINGH FROM KNet Consulting #####################################
 
 import random
 import time
