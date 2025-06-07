@@ -3,7 +3,7 @@
 # ANAMOLY TYPES DETECTOR - Port Scan", "DDoS Attack", "Suspicious ICMP Traffic", "Data Exfiltration", "Malware Communication", "Unauthorized Access
 
 
-#**********THIS ZEEK DATA ANAMOLY DETECTOR IS DESIGNED & ASSEMBLED BY RANDY SINGH, SENIOR COMPUTER SCIENTIST DISA/EIIC/EM2*****************
+#**********THIS ZEEK DATA ANAMOLY DETECTOR IS DESIGNED & ASSEMBLED BY RANDY SINGH, KNet Consulting*****************
 
 
 #python
