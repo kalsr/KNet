@@ -1,7 +1,7 @@
  The schema for a DITPR (Department of Defense Information Technology Portfolio Repository) 
  record can be expanded to include details about APIs (Application Programming Interfaces).
  Here is an SAMPLE SSCHEMA that incorporates fields related to APIs:
-
+############### THIS SECTION OF Synthetic-Data-Generator IS DESIGNED & ASSEMBLED BY RSANDY SINGH FROM KNET Consulting #######################
 1. System Information
    - System Name: The official name of the IT system or application.
    - System Acronym: Shortened name or abbreviation for the system.
@@ -55,4 +55,5 @@
 By including API-related fields, this schema can provide a comprehensive overview of the 
 APIs associated with each IT system, facilitating better management, integration, and utilization of these 
 APIs within the DoD.
+
 
