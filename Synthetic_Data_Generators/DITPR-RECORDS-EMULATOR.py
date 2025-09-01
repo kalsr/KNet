@@ -1,7 +1,7 @@
 
 
 # Python application that generates DiTPR records, including API details, and saves them to an output file. This script uses only built-in libraries and prompts the user for the number of records to generate.
-
+############### THIS SECTION OF Synthetic-Data-Generator IS DESIGNED & ASSEMBLED BY RSANDY SINGH FROM KNET Consulting #######################
 #python
 import json
 import random
@@ -83,4 +83,5 @@ if __name__ == "__main__":
 
 #This script generates random data for each record to simulate a variety of DiTPR entries. 
 #You can customize the fields and data generation logic as needed.
+
 
