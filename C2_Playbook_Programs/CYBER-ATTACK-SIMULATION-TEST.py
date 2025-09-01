@@ -3,7 +3,7 @@
 # Continuing Until Quit: The program loops until the user decides to quit.
 # Final Report: Upon quitting, the program prints the final report of all generated incidents.
 # Saving to JSON: The results are saved to a JSON file named `attack_results.json`.
-
+############### THIS SECTION OF PLAY-BOOK IS DESIGNED & ASSEMBLED BY RSANDY SINGH FROM KNET Consulting #######################
 
 #python
 import json
@@ -71,3 +71,4 @@ with open('attack_results.json', 'w') as file:
     json.dump(attack_results, file, indent=4)
 
 print("\nResults saved to attack_results.json")
+
