@@ -19,10 +19,12 @@
 # For DNS and network traffic analysis, you could integrate external tools like `scapy` or other packet sniffing libraries.
 # For actual egress filtering, you would need to interface with firewall systems such as `IPTables
 
-# THIS APPLICATION WAS DESIGNED & ASSEMBLED BY RANDY SINGH DISA/.EIIC/EM2
+# THIS APPLICATION WAS DESIGNED & ASSEMBLED BY RANDY SINGH From KNet Consulting
 
 
 #python
+import streamlit as st
+import pandas as pd
 import os
 import time
 import random
@@ -153,3 +155,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
