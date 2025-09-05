@@ -14,7 +14,7 @@ import plotly.express as px
 import json
 
 st.set_page_config(page_title="Network Attacks Simulator", layout="wide")
-st.title("🛡️ Network Attacks Simulator")
+st.title("Network Attacks - Threat Analyser")
 st.caption("Designed by Randy Singh – KNet Consulting Group")
 
 # -------------------------------
@@ -223,3 +223,4 @@ if st.session_state.df is not None:
         st.download_button("Download Attack Summary (TXT)", dataframe_to_txt(summary_df), "attack_summary.txt", "text/plain")
 else:
     st.info("👈 Use the sidebar to run simulation or upload a log file.")
+
