@@ -149,9 +149,9 @@ st.sidebar.header("⚙️ Controls")
 normal_count = st.sidebar.slider("Normal Requests", 20, 100, 50, 5)
 attack_count = st.sidebar.slider("Attack Events", 5, 30, 10, 1)
 
-uploaded_file = st.sidebar.file_uploader("📂 Upload Real Log File (CSV, JSON, TXT)", type=["csv", "json", "txt"])
+uploaded_file = st.sidebar.file_uploader("Upload Real Log File (CSV, JSON, TXT)", type=["csv", "json", "txt"])
 
-if st.sidebar.button("🚀 Run Simulation"):
+if st.sidebar.button("Run Analyser"):
     logs, attack_summary = generate_logs(normal_count, attack_count)
     st.session_state.df = pd.DataFrame(logs)
     st.session_state.summary_df = pd.DataFrame([
@@ -160,18 +160,18 @@ if st.sidebar.button("🚀 Run Simulation"):
     ])
 
 if uploaded_file:
-    df, summary_df = load_uploaded_file(uploaded_file)
+    df, summary_df = load_uploaded_file(uploaded_log_file)
     if df is not None:
         st.session_state.df = df
         st.session_state.summary_df = summary_df
 
 # Clear simulation
-if st.sidebar.button("🧹 Clear Simulation"):
+if st.sidebar.button("Clear Analyser"):
     st.session_state.df = None
     st.session_state.summary_df = None
 
 # Refresh page
-if st.sidebar.button("🔄 Refresh App"):
+if st.sidebar.button("Refresh Analyser"):
     st.session_state.clear()
     st.experimental_rerun()
 
@@ -179,11 +179,11 @@ if st.sidebar.button("🔄 Refresh App"):
 # Main UI
 # -------------------------------
 if st.session_state.df is not None:
-    st.subheader("📄 Logs")
+    st.subheader("Logs")
     st.dataframe(st.session_state.df, use_container_width=True, height=400)
 
     if st.session_state.summary_df is not None and not st.session_state.summary_df.empty:
-        st.subheader("📊 Attack Summary")
+        st.subheader("Attack Summary")
         st.dataframe(st.session_state.summary_df, use_container_width=True)
 
         # Charts
@@ -202,15 +202,15 @@ if st.session_state.df is not None:
             st.plotly_chart(pie_fig, use_container_width=True)
 
         # Key Insights
-        st.subheader("📝 Key Insights")
+        st.subheader("Key Insights")
         top_attack = st.session_state.summary_df.sort_values("Occurrences", ascending=False).iloc[0]
-        st.success(f"🔎 **Most Frequent Attack:** {top_attack['Attack']} "
+        st.success(f" Most Frequent Attack: {top_attack['Attack']} "
                    f"({top_attack['Occurrences']} times)\n\n"
                    f"Reason: {top_attack.get('Reason','-')}\n\n"
                    f"Explanation: {top_attack.get('Explanation','-')}")
 
         # Downloads
-        st.subheader("💾 Downloads")
+        st.subheader("Downloads")
         df = st.session_state.df
         summary_df = st.session_state.summary_df
 
@@ -222,5 +222,6 @@ if st.session_state.df is not None:
         st.download_button("Download Attack Summary (JSON)", summary_df.to_json(orient="records", indent=2), "attack_summary.json", "application/json")
         st.download_button("Download Attack Summary (TXT)", dataframe_to_txt(summary_df), "attack_summary.txt", "text/plain")
 else:
-    st.info("👈 Use the sidebar to run simulation or upload a log file.")
+    st.info("👈 PLEASE USE THE SIDE BAR TO RUN SIMULATION OR UPLOAD LOG FILE.")
+
 
