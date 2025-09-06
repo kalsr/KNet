@@ -19,7 +19,7 @@ import plotly.express as px
 
 st.set_page_config(page_title="DISA Data Emulators", layout="wide")
 st.title("📡 EMASS · DITPR · MAPS · ESPS – Data Emulator & API Repository")
-st.caption("Developed by Randy Singh – DISA/EIIC/EM2 (KNet Consulting Group)")
+st.caption("Developed by Randy Singh – KNet Consulting Group")
 
 # -------------------------------
 # Random Generators
@@ -275,4 +275,5 @@ elif choice == "Clear Repository":
         repo=[]
         save_api_repository(repo)
         st.success("✅ Repository cleared.")
+
 
