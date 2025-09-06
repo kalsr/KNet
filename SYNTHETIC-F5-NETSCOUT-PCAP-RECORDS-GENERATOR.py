@@ -180,24 +180,9 @@ if not st.session_state.records.empty:
 
 else:
     st.info("No records generated yet. Use the sidebar to generate or upload records.")
-```
 
----
 
-### ✅ Full SOC Dashboard Features
 
-* **Generate / Clear / Upload Records** (JSON, CSV, Excel)
-* **Interactive Table** with search and filter
-* **Summary Cards**: total records, malicious, non-malicious
-* **Bar chart**: Malicious vs Non-Malicious counts
-* **Pie chart**: Malicious vs Non-Malicious distribution
-* **Line chart**: Time-based malicious activity trend
-* **Pie chart**: Malicious reason breakdown
-* **Download records** in JSON, CSV, or Excel
 
----
 
-This now looks and behaves like a **professional SOC dashboard**, ready to deploy via GitHub + Streamlit.
-
-Do you want me to **add color-coded highlights in the table for malicious vs non-malicious records** for better visibility?
 
