@@ -8,3 +8,4 @@ plotly
 numpy
 openpyxl
 scikit-learn
+streamlit-autorefresh
