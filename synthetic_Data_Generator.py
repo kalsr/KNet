@@ -6,7 +6,7 @@
 
 # python
 # EMASS-DITPR-MAPS-ESPS STREAMLIT APP with Search & Excel Export
-# Developed by Randy Singh – DISA/EIIC/EM2 (KNet Consulting Group)
+# Developed by Randy Singh – KNet Consulting Group.
 
 import json
 import os
@@ -275,3 +275,4 @@ elif choice == "Clear Repository":
         repo=[]
         save_api_repository(repo)
         st.success("✅ Repository cleared.")
+
