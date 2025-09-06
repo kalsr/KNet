@@ -13,7 +13,7 @@ import json
 # -----------------------------
 # Page config
 # -----------------------------
-st.set_page_config(page_title="KalsNet Cyber Monitor", layout="wide", page_icon="🛡️")
+st.set_page_config(page_title="KNet Cyber Monitor - Using Model Context Protocol (MCP)", layout="wide", page_icon="🛡️")
 
 # -----------------------------
 # Sidebar: Refresh & Upload
@@ -181,3 +181,4 @@ with tabs[2]:
 # -----------------------------
 st.markdown("---")
 st.caption("© 2025 KalsNet Consulting — Prototype Cybersecurity Monitor")
+
