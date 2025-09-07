@@ -1,0 +1,15 @@
+streamlit
+pandas
+requests
+feedparser
+beautifulsoup4
+matplotlib
+plotly
+numpy
+openpyxl
+scikit-learn
+streamlit-autorefresh
+python-dateutil
+fastapi
+uvicorn[standard]
+pydantic
