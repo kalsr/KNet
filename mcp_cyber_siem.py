@@ -28,7 +28,7 @@ import time
 
 # --- Page config ---
 
-st.set_page_config(page_title="MCP Cyber SIEM Monitor", layout="wide")
+st.set_page_config(page_title="KNet Designed MCP Cyber SIEM Monitor", layout="wide")
 
 
 
@@ -588,9 +588,9 @@ def run_isolation_forest_on_hosts(df, n_estimators=100, contamination=0.02):
 
 # ------------------------
 
-st.title("MCP Cyber SIEM Monitor — Prototype")
+st.title("KNet Designed - MCP Cyber SIEM Monitor — Prototype")
 
-st.markdown("A demo SIEM-like app demonstrating structured MCP tool calls, rule-based detection, and basic anomaly detection. Not production-grade.")
+st.markdown("A demo SIEM-like app demonstrating structured MCP tool calls, rule-based detection, and basic anomaly detection.")
 
 
 
@@ -1005,6 +1005,7 @@ if 'src_table' in st.session_state:
 else:
 
     st.info("No detection results yet. Click 'Run all detections & aggregate results' or 'Run detections now (quick)'.")
+
 
 
 
