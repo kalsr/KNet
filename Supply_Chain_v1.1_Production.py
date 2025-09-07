@@ -1,4 +1,4 @@
- Designed
+ # Designed
 # Production-Ready Streamlit App (app.py).
 # THIS SUPPLY-CHAIN CODE IS DESIGNED BY RANDY SINGH FROM KNet CONSULTING GROUP.
 # python
@@ -198,4 +198,5 @@ def convert_json(df):
 
 st.download_button("Download CSV", convert_csv(display_df), "sbom_ai.csv", "text/csv")
 st.download_button("Download JSON", convert_json(display_df), "sbom_ai.json", "application/json")
+
 
