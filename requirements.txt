@@ -10,3 +10,6 @@ openpyxl
 scikit-learn
 streamlit-autorefresh
 python-dateutil
+fastapi
+uvicorn[standard]
+pydantic
