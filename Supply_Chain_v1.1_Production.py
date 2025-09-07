@@ -1,4 +1,4 @@
-
+ Designed
 # Production-Ready Streamlit App (app.py).
 # THIS SUPPLY-CHAIN CODE IS DESIGNED BY RANDY SINGH FROM KNet CONSULTING GROUP.
 # python
@@ -13,8 +13,8 @@ import altair as alt
 # ---------------------------
 # Page configuration
 # ---------------------------
-st.set_page_config(page_title="AI SBOM Monitor", layout="wide")
-st.title("AI SBOM / Supply-Chain Monitor (Production Ready)")
+st.set_page_config(page_title="KNet Designed AI SBOM Monitor", layout="wide")
+st.title("KNet Designed AI SBOM / Supply-Chain Monitor (Production Ready)")
 st.markdown("""
 Monitor software package manifests for risky dependencies using **AI/ML**.  
 Generate sample data, upload SBOM files, visualize risk levels, and download results.
@@ -198,3 +198,4 @@ def convert_json(df):
 
 st.download_button("Download CSV", convert_csv(display_df), "sbom_ai.csv", "text/csv")
 st.download_button("Download JSON", convert_json(display_df), "sbom_ai.json", "application/json")
+
