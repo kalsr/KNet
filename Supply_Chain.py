@@ -1,4 +1,3 @@
-yyyy
 # Features:
 
  # Generate 50 sample SBOM/package-manifest rows (Refresh to regenerate)
@@ -792,3 +791,4 @@ json_bytes = enriched.to_json(orient='records', date_format='iso').encode('utf-8
 st.download_button(f"Download full results CSV ({download_prefix}_results.csv)", csv_bytes, file_name=f"{download_prefix}_results.csv", mime="text/csv")
 
 st.download_button(f"Download full results JSON ({download_prefix}_results.json)", json_bytes, file_name=f"{download_prefix}_results.json", mime="application/json")
+
