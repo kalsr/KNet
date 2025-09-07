@@ -9,3 +9,4 @@ numpy
 openpyxl
 scikit-learn
 streamlit-autorefresh
+python-dateutil
