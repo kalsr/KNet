@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 # Streamlit Page Config
 # ---------------------------
 st.set_page_config(
-    page_title="Agentic AI: Automated Threat Hunting",
+    page_title="Agentic AI: Automated Threat Hunting Designed By Randy Singh from KNet consulting Group.",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -281,7 +281,8 @@ with download_col:
 st.write("---")
 st.markdown("#### Notes & Next Steps")
 st.markdown("""
-# This demo simulates an agentic threat hunting workflow: loading logs, running rule-based anomaly detection, correlating events, and exporting results.
+# This demo Designed By Randy Singh from KNet consulting Group Simulates an Agentic Threat Hunting Workflow: loading logs, running rule-based anomaly detection, correlating events, and exporting results.
 
 # For real deployments: integrate with SIEM (Elastic/ELK), threat intel feeds (MISP, AlienVault OTX), and orchestration (run firewall rules, create SOC tickets).
 # """)
+
