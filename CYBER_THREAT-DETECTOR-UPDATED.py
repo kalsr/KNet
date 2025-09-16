@@ -40,7 +40,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="big-title">Agentic AI — Automated Threat Hunting (Designed By Randy Singh KNet Consulting Group)/div>', unsafe_allow_html=True)
+st.markdown('<div class="big-title">Agentic AI — Automated Threat Hunting - Designed By Randy Singh KNet Consulting Group.', unsafe_allow_html=True)
 st.markdown('<div class="sub-title">Monitors logs, runs anomaly detection, and correlates threat intel (simulated).</div>', unsafe_allow_html=True)
 st.write("")
 
@@ -285,5 +285,6 @@ st.markdown("""
 
 # For real deployments: integrate with SIEM (Elastic/ELK), threat intel feeds (MISP, AlienVault OTX), and orchestration (run firewall rules, create SOC tickets).
 # """)
+
 
 
