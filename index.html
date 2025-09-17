@@ -1,336 +1,300 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
     <title>KALSNET Consulting Services</title>
 
     <style>
-
         html {
-
             scroll-behavior: smooth;
-
         }
-
         body {
-
             margin: 0;
-
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
             background-color: #0e1a2b;
-
             color: #e0e0e0;
-
         }
-
         header {
-
             background-color: #08111f;
-
             text-align: center;
-
             padding: 40px 20px;
-
         }
-
         header img {
-
-            width: 100px;
-
+            width: 120px;
             height: auto;
-
         }
-
         header h1 {
-
             font-size: 2.5rem;
-
             margin: 10px 0 5px;
-
         }
-
         header h2 {
-
             font-size: 1.2rem;
-
             margin: 5px 0 10px;
-
             color: #ffffffcc;
-
         }
-
         header p {
-
             font-size: 1.1rem;
-
         }
-
         .cta-button {
-
             display: inline-block;
-
             margin-top: 20px;
-
             padding: 10px 20px;
-
             background-color: #007BFF;
-
             color: white;
-
             text-decoration: none;
-
             border-radius: 5px;
-
         }
-
         .section {
-
             padding: 40px 20px;
-
             max-width: 1100px;
-
             margin: auto;
-
         }
-
         .section h2 {
-
             border-bottom: 2px solid #007BFF;
-
             padding-bottom: 10px;
-
             margin-bottom: 20px;
-
         }
-
         .columns {
-
             display: flex;
-
             justify-content: space-around;
-
             flex-wrap: wrap;
-
         }
-
         .column {
-
             flex: 1;
-
             margin: 10px;
-
             padding: 20px;
-
             background-color: #1c2e4a;
-
             border-radius: 8px;
-
             min-width: 250px;
-
         }
-
         .footer {
-
             text-align: center;
-
             padding: 20px;
-
             background-color: #08111f;
-
             color: #ccc;
         }
-
-        .about-image {
-
-            float: left;
-
-            margin-right: 20px;
-
+        .about-container {
+            display: flex;
+            align-items: flex-start;
+        }
+        .about-container img {
             width: 150px;
-
-            height: 150px;
-
-            background: url('Kalsnet_logo.png') center/cover no-repeat;
-
-            border-radius: 75px;
-
+            height: auto;
+            margin-right: 20px;
+            border-radius: 12px;
+        }
+        .hub-link {
+            display: inline-block;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #1a73e8;
+            text-decoration: none;
+            margin-top: 10px;
+            background: #ffffff10;
+            padding: 10px 14px;
+            border-radius: 8px;
+        }
+        .hub-link:hover {
+            text-decoration: underline;
+            background: #007BFF;
+            color: white;
         }
 
+        /* Hub content styling (hidden by default) */
+        .intro, .app-section {
+            background: #ffffff;
+            color: #333;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .intro h2, .app-section h2 {
+            color: #0073e6;
+        }
+        .app-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 20px;
+            background: #0073e6;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .app-link:hover {
+            background: #005bb5;
+        }
+        #programming-hub {
+            display: none;
+        }
     </style>
-
 </head>
 
 <body>
     <header>
         <img src="Kalsnet_logo.png" alt="Kalsnet Logo">
-
         <h1>KALSNET Consulting Services</h1>
-
         <h2>Securing the Future Through AI and Cyber Resilience</h2>
-
         <p>35+ Years of Expertise in Cybersecurity, AI, and Emerging Technologies</p>
-
         <a href="#contact" class="cta-button">Schedule a Consultation</a>
-
     </header>
 
     <section class="section">
-
         <h2>Our Services</h2>
-
         <div class="columns">
-
             <div class="column">
-
                 <h3>Cybersecurity Advisory</h3>
-
                 <p>Threat Detection and Mitigation Using AI and Graph Databases, Zero Trust Architecture Design and Simulation, Command-and-Control (C2) Attack Simulation and Defense and Governance Policies Tailored to your Enterprise Security Needs.</p>
-
             </div>
-
             <div class="column">
-
                 <h3>API Security Solutions</h3>
-
                 <p>Secure API integration and validation, API Discovery, Posture Assessment, and Runtime Protection Including F5, NetScout, EMASS, DITPR, MAPS, SIEM & SOAR Integrations.</p>
-
             </div>
-
             <div class="column">
-
                 <h3>Emerging Tech Consulting</h3>
-
                 <p>Custom ML models for Threat Detection, Anomaly Detection, Real Estate Price Prediction, AI/ML Security, Data Labeling, Command & Control Simulations, and Technology Roadmap Development.</p>
-
             </div>
-
             <div class="column">
-
                 <h3>Application Development</h3>
-
                 <p>GUI-based Python and Java applications, Secure Web Application Deployment Using Flask, Bootstrap and REST APIs, Custom File Management, PDF/Excel Handling & Visual Dashboards, Enterprise-Grade Software Engineering Using Object-Oriented Java, Python, COBOL, ORACLE, and C++. Specializing in Mission-Critical Systems and Modernization Efforts.</p>
-
             </div>
-
         </div>
-
     </section>
 
     <section class="section" id="about">
-
         <h2>About Us</h2>
-
-        <div class="about-image"></div>
-
-        <p>KALSNET (KNet) Consulting Services is led by a Veteran Computer Scientist with Several Years of Federal Experience in Cybersecurity, Software Engineering, and Strategic IT management. Formerly at DISA, our Founder has led National-Scale API Security Initiatives, Developed C2 Protection Playbooks, and Advised on AI Governance Policy.</p>
-
-        <p>We bring deep Technical Experience in Full-Stack Application Development, Legacy System Modernization, and Secure System Design using Industry-Standard Programming Languages and Development Methodologies. Deep Understanding of Federal Policies, NIST Frameworks, and Compliance Standards </p>
-
+        <div class="about-container">
+            <img src="Kalsnet_logo.png" alt="Kalsnet Logo">
+            <div>
+                <p>KALSNET (KNet) Consulting Services is led by a Veteran Computer Scientist with Several Years of Federal Experience in Cybersecurity, Software Engineering, and Strategic IT management. Formerly at DISA, our Founder has led National-Scale API Security Initiatives, Developed C2 Protection Playbooks, and Advised on AI Governance Policy.</p>
+                <p>We bring deep Technical Experience in Full-Stack Application Development, Legacy System Modernization, and Secure System Design using Industry-Standard Programming Languages and Development Methodologies. Deep Understanding of Federal Policies, NIST Frameworks, and Compliance Standards </p>
+            </div>
+        </div>
     </section>
 
     <section>
-
         <h2>Differentiators</h2>
-
         <ul>
-
             <li>35+ years of Federal Government Experience in Cybersecurity, AI/NLP, and Emerging Technologies</li>
-
             <li>Framework Development for Detecting and Mitigating Command & Control (C2) Cyber Attacks</li>
-
             <li>Command & Control Simulation Engine Java/Python-Based System Demonstrating Real-World Cyber Threats and Countermeasure Simulations</li>
-
             <li>Unified Cyber Threat Detection System, GUI and Web-Based Platform Integrating AI agents, Graph Databases, and ML Detection for Real-Time Threat Analysis</li>
-
             <li>AI-Powered Weather Forecasting and Real Estate Agents, LangChain-Based Intelligent Systems that Analyze User Prompts, Location, and Context to Deliver Smart Forecasts and Real-Estate Pricing.</li>
-
             <li>Strong background in Teaching, Training, and Mentoring Technology Teams</li>
-
             <li>Design and Implementation of Cybersecurity Playbooks using Real & Synthetic Data</li>
-
         </ul>
-
     </section>
 
     <section>
-
         <h2>Company Information</h2>
-
         <p>
-
             <strong>UEI:</strong> WWECMCC1A513 <br>
-
             <strong>NAICS Codes:</strong> 541512, 541511, 541519 <br>
-
             <strong>Business Type:</strong> Technology Consulting & Cybersecurity Solutions <br>
-
             <strong>Location:</strong> Washington D.C. Metro Area <br>
-
             <strong>Website:</strong> <a href="https://kalsr.github.io/KNet/" target="_blank">https://kalsr.github.io/KNet/</a>
-
         </p>
-
     </section>
 
-    <section class="section" id="KALSNET Programming-Hub">
+    <!-- ===== Hyperlink placed JUST BELOW Company Information ===== -->
+    <section class="section">
+        <p>
+            <a href="javascript:void(0);" class="hub-link" onclick="toggleHub()">
+                KNet Programming Hub
+            </a>
+        </p>
+        <p style="color:#bdbdbd; font-size:0.95rem; margin-top:6px;">
+            Click to show/hide available applications and demos.
+        </p>
+    </section>
 
-    <h2>KALSNET Programming Hub</h2>
+    <!-- Hidden Hub content (will show when user clicks the link above) -->
+    <section class="section" id="programming-hub" aria-hidden="true">
+        <h2>KNet Application Hub</h2>
 
-    <p>Explore Categorized Java and Python Applications:</p>
-C
-    <ul>
-        <li><a href="https://github.com/kalsr/KNet/tree/main/Cyberseurity_Programs" target="_blank">Agentic_AI_Programs</a></li>
+        <div class="intro">
+            <h2>About These Applications</h2>
+            <p>
+              The KNet Application Hub brings together a suite of innovative, AI-powered tools 
+              designed to solve real-world challenges. From analyzing supply chain risks 
+              and monitoring cyber threats to managing dental practices and generating synthetic datasets, 
+              each program leverages the <strong>MCP (Model Control Pipeline)</strong> 
+              and advanced AI/ML methods to deliver insights, automation, and decision support.
+            </p>
+        </div>
 
-        <li><a href="https://github.com/kalsr/KNet/tree/main/Cyberseurity_Programs" target="_blank">Zerotrust_Programs</a></li>
-        
-        <li><a href="https://github.com/kalsr/KNet/tree/main/Cyberseurity_Programs" target="_blank">Cyberseurity_Programs</a></li>
+        <div class="app-section">
+            <h2>Agentic-AI Use_Case for Cyber-Threat_Detector</h2>
+            <p>The Cyber-Threat-Detector harnesses Agentic AI to automatically monitor networks, endpoints, and cloud systems for emerging threats. Intelligent agents work together to spot anomalies, adapt detection in real time, and prioritize risks by severity.</p>
+            <a class="app-link" href="https://jotrfdfnbfxshgjs6ttxmj.streamlit.app/" target="_blank">Open Application</a>
+        </div>
 
-        <li><a href="https://github.com/kalsr/KNet/tree/main/C2_Playbook_Programs" target="_blank">C2_Playbook_Programs</a></li>
+        <div class="app-section">
+            <h2>Supply Chain Risk Estimator</h2>
+            <p>Analyzes SBOMs (Software Bills of Materials) to detect vulnerabilities, license risks, and supplier trust issues using MCP and AI/ML models.</p>
+            <a class="app-link" href="https://k8kopgxw6rayvcezgdjh5u.streamlit.app/" target="_blank">Open Application</a>
+        </div>
 
-        <li><a href="https://github.com/kalsr/KNet/tree/main/Graph_Database_Programs" target="_blank">Graph_Database_Programs</a></li>
+        <div class="app-section">
+            <h2>MCP Cyber Threat Monitor</h2>
+            <p>Tracks and visualizes cyber threat activity across multiple domains using the MCP pipeline.</p>
+            <a class="app-link" href="https://j8d42pf2utsqjnbpvpoetm.streamlit.app/" target="_blank">Open Application</a>
+        </div>
 
-        <li><a href="https://github.com/kalsr/KNet/tree/main/Synthetic_Data_Generators" target="_blank">Synthetic_Data_Generators</a></li>
+        <div class="app-section">
+            <h2>Dental Practice Manager</h2>
+            <p>A practice management tool for dental offices. Supports scheduling, billing, patient records, and task automation.</p>
+            <a class="app-link" href="https://bh7rkqzyztp7xkol2mxcr5.streamlit.app/" target="_blank">Open Application</a>
+        </div>
 
-        <li><a href="https://github.com/kalsr/KNet" target="_blank">View All Programs</a></li>
+        <div class="app-section">
+            <h2>MCP Cyber Threat Dashboard</h2>
+            <p>A visualization-first dashboard for monitoring cyber threat intelligence and AI-detected anomalies in enterprise networks.</p>
+            <a class="app-link" href="https://j8d42pf2utsqjnbpvpoetm.streamlit.app/" target="_blank">Open Application</a>
+        </div>
 
-    </ul>
+        <div class="app-section">
+            <h2>Synthetic F5-NETSCOUT PCAP Generator</h2>
+            <p>Generates synthetic PCAP traffic files for testing and simulation of enterprise-grade F5/NETSCOUT network environments.</p>
+            <a class="app-link" href="https://7dq7jn4z7vcmd2br8tugpe.streamlit.app/" target="_blank">Open Application</a>
+        </div>
 
-</section>
-    
-    <!-- ✳️ Contact Info Section (Target of the CTA Button) -->
+        <div class="app-section">
+            <h2>Synthetic Data Generator</h2>
+            <p>Quickly generate large volumes of realistic synthetic datasets for AI/ML training, testing, and data analysis workflows.</p>
+            <a class="app-link" href="https://geu9ytpucrlxm6sp4dxrdk.streamlit.app/" target="_blank">Open Application</a>
+        </div>
+    </section>
 
+    <!--✳️ Contact Info Section -->
     <section id="contact" class="section">
-
         <h2>Contact Us</h2>
-
         <p>If you'd Like to Schedule a Consultation, Please Reach Out Directly:</p>
-
         <p><strong>Phone:</strong> 301-503-2918</p>
-
         <p><strong>Email:</strong> <a href="mailto:singhr_52@yahoo.com">singhr_52@yahoo.com</a></p>
-
     </section>
 
     <footer class="footer">
-
         &copy; 2025 KALSNET Consulting Services. All rights reserved.
-
     </footer>
 
+    <script>
+        function toggleHub() {
+            var hub = document.getElementById("programming-hub");
+            if (!hub) return;
+            if (hub.style.display === "none" || hub.style.display === "") {
+                hub.style.display = "block";
+                hub.setAttribute("aria-hidden", "false");
+                hub.scrollIntoView({ behavior: "smooth" });
+            } else {
+                hub.style.display = "none";
+                hub.setAttribute("aria-hidden", "true");
+            }
+        }
+    </script>
 </body>
-
 </html>
-
-
-
-
-
-
-
