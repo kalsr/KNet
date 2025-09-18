@@ -523,5 +523,6 @@ else:
 
 # Footer
 st.markdown('---')
-st.markdown('**Notes:** This application was designed by Randy Sing from KNet Consulting Group. This app avoids duplicate Streamlit widget IDs by creating sidebar inputs only once and giving keys where needed. Sample-data generation now supports large user-specified counts and appends to existing data. Charts render only when data exists.')
+st.markdown('**Notes:** This application was designed by Randy Singh from KNet Consulting Group. This app avoids duplicate Streamlit widget IDs by creating sidebar inputs only once and giving keys where needed. Sample-data generation now supports large user-specified counts and appends to existing data. Charts render only when data exists.')
+
 
