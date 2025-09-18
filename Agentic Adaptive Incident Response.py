@@ -15,7 +15,7 @@
 #   pip install paramiko scapy scikit-learn boto3 google-api-python-client google-auth azure-identity azure-mgmt-network
 #
 # Streamlit secrets (recommended for live/cloud/SMTP): ~/.streamlit/secrets.toml
-# See earlier versions in the canvas for example secrets structure.
+
 
 import streamlit as st
 import pandas as pd
@@ -220,7 +220,7 @@ st.markdown("""
 # Header
 with st.container():
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.markdown('<div class="title">KalsNet — Adaptive Incident Response (fixed)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="title">KalsNet (KNet) Designed — Adaptive Incident Response Use-Case.', unsafe_allow_html=True)
     st.markdown('<div class="muted">Safe-by-default demo. Use live/cloud features only with proper credentials in Streamlit secrets.</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -523,4 +523,5 @@ else:
 
 # Footer
 st.markdown('---')
-st.markdown('**Notes:** This corrected app avoids duplicate Streamlit widget IDs by creating sidebar inputs only once and giving keys where needed. Sample-data generation now supports large user-specified counts and appends to existing data. Charts render only when data exists.')
+st.markdown('**Notes:** This application was designed by Randy Sing from KNet Consulting Group. This app avoids duplicate Streamlit widget IDs by creating sidebar inputs only once and giving keys where needed. Sample-data generation now supports large user-specified counts and appends to existing data. Charts render only when data exists.')
+
