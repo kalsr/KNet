@@ -304,10 +304,10 @@ with st.sidebar:
             st.success(f'Model trained. Test accuracy ~ {acc:.2f}')
 
     st.markdown('---')
-    st.markdown('**Requirements**')
-    st.markdown('- Python 3.9+
-- pip install streamlit pandas numpy matplotlib')
-    st.markdown('- Optional: paramiko (live SSH), scapy (packet capture), scikit-learn (ML), boto3 (AWS), google-api-python-client & google-auth (GCP), azure-identity & azure-mgmt-network (Azure).')
+   # st.markdown('**Requirements**')
+    # st.markdown('- Python 3.9+
+#- pip install streamlit pandas numpy matplotlib')
+  #  st.markdown('- Optional: paramiko (live SSH), scapy (packet capture), scikit-learn (ML), boto3 (AWS), google-api-python-client & google-auth (GCP), azure-identity & azure-mgmt-network (Azure).')
 
 # --- Main layout ---
 col1, col2 = st.columns([2,3])
@@ -685,5 +685,6 @@ def cloud_block_ip(provider: str, aws_region: str, aws_sg: str, gcp_project: str
 st.markdown('---')
 st.markdown('## About this application')
 st.markdown('This Streamlit demo implements an Agentic Adaptive Incident Response flow: it ingests alerts, scores them (heuristic or ML), and performs containment actions such as isolating hosts, blocking source IPs (local jump host via iptables), cloud firewall blocks (AWS/GCP/Azure where available), and alerting the SOC via webhook or SMTP. Integrations are optional and require credentials (put these into Streamlit secrets).')
+
 
 st.markdown('If you want I can: 1) replace the AWS placeholder with an actual NACL or WAF call (need IAM permissions), 2) add a secure vault integration for credentials, 3) add a dedicated runbook editor UI with step-by-step playbooks.')
