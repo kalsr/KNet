@@ -1,15 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>KALSNET (KNet) Consulting Services</title>
-
     <style>
-        html {
-            scroll-behavior: smooth;
-        }
+        html { scroll-behavior: smooth; }
         body {
             margin: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -21,119 +17,58 @@
             text-align: center;
             padding: 40px 20px;
         }
-        header img {
-            width: 120px;
-            height: auto;
-        }
-        header h1 {
-            font-size: 2.5rem;
-            margin: 10px 0 5px;
-        }
-        header h2 {
-            font-size: 1.2rem;
-            margin: 5px 0 10px;
-            color: #ffffffcc;
-        }
-        header p {
-            font-size: 1.1rem;
-        }
+        header img { width: 120px; height: auto; }
+        header h1 { font-size: 2.5rem; margin: 10px 0 5px; }
+        header h2 { font-size: 1.2rem; margin: 5px 0 10px; color: #ffffffcc; }
+        header p { font-size: 1.1rem; }
         .cta-button {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .section {
-            padding: 40px 20px;
-            max-width: 1100px;
-            margin: auto;
-        }
-        .section h2 {
-            border-bottom: 2px solid #007BFF;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        .columns {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-        }
-        .column {
-            flex: 1;
-            margin: 10px;
-            padding: 20px;
-            background-color: #1c2e4a;
-            border-radius: 8px;
-            min-width: 250px;
-        }
-        .footer {
-            text-align: center;
-            padding: 20px;
-            background-color: #08111f;
-            color: #ccc;
-        }
-        .about-container {
-            display: flex;
-            align-items: flex-start;
-        }
-        .about-container img {
-            width: 150px;
-            height: auto;
-            margin-right: 20px;
-            border-radius: 12px;
-        }
-        .hub-link {
-            display: inline-block;
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: #1a73e8;
-            text-decoration: none;
-            margin-top: 10px;
-            background: #ffffff10;
-            padding: 10px 14px;
-            border-radius: 8px;
-        }
-        .hub-link:hover {
-            text-decoration: underline;
-            background: #007BFF;
-            color: white;
+            display:inline-block; margin-top:20px; padding:10px 20px; background:#007BFF; color:white; text-decoration:none; border-radius:5px;
         }
 
-        /* Hub content styling (hidden by default) */
-        .intro, .app-section {
-            background: #ffffff;
-            color: #333;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            margin: 20px 0;
+        .section { padding:40px 20px; max-width:1100px; margin:auto; }
+        .section h2 { border-bottom:2px solid #007BFF; padding-bottom:10px; margin-bottom:20px; }
+        .columns { display:flex; justify-content:space-around; flex-wrap:wrap; }
+        .column { flex:1; margin:10px; padding:20px; background:#1c2e4a; border-radius:8px; min-width:250px; }
+
+        .about-container { display:flex; align-items:flex-start; }
+        .about-container img { width:150px; height:auto; margin-right:20px; border-radius:12px; }
+
+        .hub-link {
+            display:inline-block; font-size:1.05rem; font-weight:600; color:#1a73e8;
+            text-decoration:none; margin-top:10px; background:#ffffff10; padding:10px 14px; border-radius:8px;
         }
-        .intro h2, .app-section h2 {
-            color: #0073e6;
+        .hub-link:hover { text-decoration:underline; background:#007BFF; color:white; }
+
+        /* Hub content styling */
+        .intro, .app-section, .brochure-section {
+            background:#ffffff; color:#333; padding:20px; border-radius:12px;
+            box-shadow:0 4px 12px rgba(0,0,0,0.1); margin:20px 0;
         }
+        .intro h2, .app-section h2, .brochure-section h2 { color:#0073e6; }
         .app-link {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 12px 20px;
-            background: #0073e6;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: 0.3s;
+            display:inline-block; margin-top:15px; padding:12px 20px; background:#0073e6; color:white; text-decoration:none; border-radius:8px; font-size:16px; transition:0.3s;
         }
-        .app-link:hover {
-            background: #005bb5;
-        }
-        #programming-hub {
-            display: none;
+        .app-link:hover { background:#005bb5; }
+
+        /* Hidden by default */
+        #programming-hub, #knet-brochure-section { display:none; }
+
+        /* PDF Brochure */
+        .pdf-container { margin-top:20px; }
+        .pdf-iframe { width:100%; height:600px; border:2px solid #ccc; border-radius:8px; }
+
+        /* Hub brochure button area (if you want extra links inside hub later) */
+        .hub-brochure-buttons { text-align:center; margin:18px 0; }
+        .hub-brochure-buttons .app-link { margin:0 10px; }
+
+        .footer { text-align:center; padding:20px; background:#08111f; color:#ccc; margin-top:30px; }
+
+        @media (max-width:700px) {
+            .columns { flex-direction:column; }
+            header h1 { font-size:1.8rem; }
         }
     </style>
 </head>
-
 <body>
     <header>
         <img src="Kalsnet_logo.png" alt="Kalsnet Logo">
@@ -143,6 +78,7 @@
         <a href="#contact" class="cta-button">Schedule a Consultation</a>
     </header>
 
+    <!-- Our Services -->
     <section class="section">
         <h2>Our Services</h2>
         <div class="columns">
@@ -165,18 +101,20 @@
         </div>
     </section>
 
+    <!-- About Us -->
     <section class="section" id="about">
         <h2>About Us</h2>
         <div class="about-container">
             <img src="Kalsnet_logo.png" alt="Kalsnet Logo">
             <div>
                 <p>KALSNET (KNet) Consulting Services is led by a Veteran Computer Scientist with Several Years of Federal Experience in Cybersecurity, Software Engineering, and Strategic IT management. Formerly at DISA, our Founder has led National-Scale API Security Initiatives, Developed C2 Protection Playbooks, and Advised on AI Governance Policy.</p>
-                <p>We bring deep Technical Experience in Full-Stack Application Development, Legacy System Modernization, and Secure System Design using Industry-Standard Programming Languages and Development Methodologies. Deep Understanding of Federal Policies, NIST Frameworks, and Compliance Standards </p>
+                <p>We bring deep Technical Experience in Full-Stack Application Development, Legacy System Modernization, and Secure System Design using Industry-Standard Programming Languages and Development Methodologies. Deep Understanding of Federal Policies, NIST Frameworks, and Compliance Standards.</p>
             </div>
         </div>
     </section>
 
-    <section>
+    <!-- Differentiators -->
+    <section class="section">
         <h2>Differentiators</h2>
         <ul>
             <li>35+ years of Federal Government Experience in Cybersecurity, AI/NLP, and Emerging Technologies</li>
@@ -189,148 +127,116 @@
         </ul>
     </section>
 
-    <section>
+    <!-- Company Info & Links -->
+    <section class="section">
         <h2>Company Information</h2>
         <p>
             <strong>UEI:</strong> WWECMCC1A513 <br>
             <strong>NAICS Codes:</strong> 541512, 541511, 541519 <br>
-            <strong>Business Type:</strong> Technology Consulting & Cybersecurity Solutions <br>
+            <strong>Business Type:</strong> Technology Consulting &amp; Cybersecurity Solutions <br>
             <strong>Location:</strong> Washington D.C. Metro Area <br>
             <strong>Website:</strong> <a href="https://kalsr.github.io/KNet/" target="_blank">https://kalsr.github.io/KNet/</a>
         </p>
-    </section>
 
-    <!-- ===== Hyperlink placed JUST BELOW Company Information ===== -->
-    <section class="section">
-        <p>
-            <a href="javascript:void(0);" class="hub-link" onclick="toggleHub()">
+        <p style="margin-top:18px;">
+            <a href="javascript:void(0);" class="hub-link" onclick="toggleProgrammingHub()">
                 KNet Programming Hub
             </a>
-        </p>
-        <p style="color:#bdbdbd; font-size:0.95rem; margin-top:6px;">
-            Click to show/hide available applications and demos.
+            &nbsp;&nbsp;
+            <a href="javascript:void(0);" class="hub-link" onclick="toggleBrochure()">
+                KNet Brochure
+            </a>
+            <span style="display:block; color:#bdbdbd; font-size:0.95rem; margin-top:8px;">Open a section (they're independent and mutually exclusive).</span>
         </p>
     </section>
 
-    <!-- Hidden Hub content (will show when user clicks the link above) -->
-    <section class="section" id="programming-hub" aria-hidden="true">
-        <!-- Full embedded KNet Application Hub content -->
-        <!-- Paste entire HTML content you provided, including all app-section divs and intro div -->
-        <!— START of embedded content —>
+    <!-- KNet Brochure (separate section) -->
+    <section id="knet-brochure-section" class="section brochure-section" aria-hidden="true">
+        <h2>KNet Brochure</h2>
+        <p>Please view or download our company brochure below.</p>
+        <div class="pdf-container">
+            <iframe class="pdf-iframe" src="KNet Brochure.pdf" title="KNet Brochure PDF"></iframe>
+        </div>
+        <div class="download-link" style="margin-top:12px;">
+            <p><a href="KNet Brochure.pdf" download style="color:#1a73e8; font-weight:600; text-decoration:none;">Download the KNet Brochure (PDF)</a></p>
+        </div>
+    </section>
+
+    <!-- Programming Hub (separate section, no brochure embedded here) -->
+    <section id="programming-hub" class="section" aria-hidden="true">
         <h1>KNet Designed Applications - Randy Singh</h1>
 
         <div class="intro">
             <h2>About These Applications</h2>
             <p>
-                The KNet Application Hub brings together a suite of innovative, AI-powered tools designed to solve 
-                real-world challenges. From analyzing supply chain risks and monitoring cyber threats to managing 
-                dental practices and generating synthetic datasets, each program leverages the 
-                <strong>MCP (Model Control Pipeline)</strong>, <strong>Agentic-AI</strong>, 
-                and advanced AI/ML methods.  
-                Core libraries and tools include <em>Streamlit</em> for interactive interfaces, 
-                <em>Pandas/Numpy</em> for data processing, <em>Matplotlib/Plotly</em> for visualization, 
-                and <em>scikit-learn</em> or custom ML models for analytics.  
-                Together, these applications provide insights, automation, and decision support that benefit 
-                security teams, enterprises, and healthcare providers alike.
+                The KNet Application Hub brings together a suite of innovative, AI-powered tools designed to solve
+                real-world challenges. From analyzing supply chain risks and monitoring cyber threats to managing
+                dental practices and generating synthetic datasets, each program leverages the
+                <strong>MCP (Model Control Pipeline)</strong>, <strong>Agentic-AI</strong>,
+                and advanced AI/ML methods.
+            </p>
+            <p style="margin-top:8px;">
+                Core libraries and tools include <em>Streamlit</em> for interactive interfaces,
+                <em>Pandas/Numpy</em> for data processing, <em>Matplotlib/Plotly</em> for visualization,
+                and <em>scikit-learn</em> or custom ML models for analytics.
             </p>
         </div>
 
         <div class="app-section">
             <h2>Agentic-AI Cyber-Threat Detector</h2>
-            <p>
-                Uses Agentic AI agents to monitor networks, endpoints, and cloud workloads for threats.  
-                Built with <strong>Streamlit</strong>, <strong>Pandas</strong>, anomaly-detection ML models, 
-                and visualization tools, it reduces false positives and adapts in real-time.  
-                <em>Benefit:</em> Enables proactive defense against sophisticated cyberattacks.
-            </p>
+            <p>Uses Agentic AI agents to monitor networks, endpoints, and cloud workloads for threats. Built with Streamlit, Pandas, anomaly-detection ML models, and visualization tools, it reduces false positives and adapts in real-time. <em>Benefit:</em> Enables proactive defense against sophisticated cyberattacks.</p>
             <a class="app-link" href="https://jotrfdfnbfxshgjs6ttxmj.streamlit.app/" target="_blank">Open Application</a>
         </div>
 
         <div class="app-section">
             <h2>MCP Cyber Threat Monitor</h2>
-            <p>
-                Provides real-time dashboards to track and visualize threat activity across domains.  
-                Built using <strong>Streamlit</strong>, <strong>Matplotlib/Plotly</strong>, and the MCP pipeline.  
-                <em>Benefit:</em> Helps security teams quickly detect and respond to abnormal behaviors.
-            </p>
+            <p>Provides real-time dashboards to track and visualize threat activity across domains. Built using Streamlit, Matplotlib/Plotly, and the MCP pipeline. <em>Benefit:</em> Helps security teams quickly detect and respond to abnormal behaviors.</p>
             <a class="app-link" href="https://j8d42pf2utsqjnbpvpoetm.streamlit.app/" target="_blank">Open Application</a>
         </div>
 
         <div class="app-section">
             <h2>MCP Cyber Threat Dashboard</h2>
-            <p>
-                Focused on visualization-first monitoring of cyber threat intelligence and AI-driven anomaly detection.  
-                Developed with <strong>Streamlit</strong>, <strong>Plotly Dashboards</strong>, and data pipelines.  
-                <em>Benefit:</em> Gives executives and analysts a clear view of enterprise-wide threats.
-            </p>
+            <p>Focused on visualization-first monitoring of cyber threat intelligence and AI-driven anomaly detection. Developed with Streamlit, Plotly Dashboards, and data pipelines. <em>Benefit:</em> Gives executives and analysts a clear view of enterprise-wide threats.</p>
             <a class="app-link" href="https://j8d42pf2utsqjnbpvpoetm.streamlit.app/" target="_blank">Open Application</a>
         </div>
 
         <div class="app-section">
             <h2>Agentic-AI Adaptive Incident Response Use-Case</h2>
-            <p>
-                The Agentic Adaptive Incident Response Streamlit App is an AI-powered platform for managing cybersecurity events. 
-                It allows users to generate or upload event data in CSV, JSON, or text formats. 
-                The app visualizes incidents with pie charts, bar charts, and time-trend graphs using Matplotlib, Pandas, and NumPy. 
-                Events are scored either heuristically or via optional ML models built with scikit-learn. 
-                Users can simulate responses like host isolation, IP blocking, or sending SOC alerts. 
-                Live actions can be executed via SSH (Paramiko) or cloud SDKs for AWS, GCP, and Azure. 
-                Alerts can also be delivered through webhooks or SMTP email notifications. 
-                A history log and runbook allow reviewing or replaying all actions. 
-                The system supports scalable sample-data generation and dynamic dashboards. 
-                Real-world benefits include faster, safer, and standardized incident response, improving SOC efficiency and operational resilience.
-            </p>
+            <p>The Agentic Adaptive Incident Response Streamlit App is an AI-powered platform for managing cybersecurity events. It allows users to generate or upload event data in CSV, JSON, or text formats. The app visualizes incidents with pie charts, bar charts, and time-trend graphs using Matplotlib, Pandas, and NumPy. Events are scored either heuristically or via optional ML models built with scikit-learn. Users can simulate responses like host isolation, IP blocking, or sending SOC alerts. Live actions can be executed via SSH (Paramiko) or cloud SDKs for AWS, GCP, and Azure. Alerts can also be delivered through webhooks or SMTP email notifications. A history log and runbook allow reviewing or replaying all actions. The system supports scalable sample-data generation and dynamic dashboards. Real-world benefits include faster, safer, and standardized incident response, improving SOC efficiency and operational resilience.</p>
             <a class="app-link" href="https://knet-brochure-6ekq7dpmf9ynhs2vw6naww.streamlit.app/" target="_blank">Open Application</a>
         </div>
 
         <div class="app-section">
             <h2>Supply Chain Risk Estimator</h2>
-            <p>
-                Analyzes SBOMs (Software Bills of Materials) for vulnerabilities, licensing issues, and trust risks.  
-                Uses <strong>Streamlit</strong>, <strong>Pandas</strong>, <strong>Matplotlib</strong>, and AI classifiers.  
-                <em>Benefit:</em> Allows proactive risk classification into Low, Medium, or High with exportable reports.
-            </p>
+            <p>Analyzes SBOMs (Software Bills of Materials) for vulnerabilities, licensing issues, and trust risks. Uses Streamlit, Pandas, Matplotlib, and AI classifiers. <em>Benefit:</em> Allows proactive risk classification into Low, Medium, or High with exportable reports.</p>
             <a class="app-link" href="https://k8kopgxw6rayvcezgdjh5u.streamlit.app/" target="_blank">Open Application</a>
         </div>
 
         <div class="app-section">
             <h2>Dental Practice Manager</h2>
-            <p>
-                A management tool for dental offices supporting scheduling, billing, and patient records.  
-                Built on <strong>Streamlit</strong>, <strong>SQLite/Postgres</strong>, and task automation APIs.  
-                <em>Benefit:</em> Streamlines clinic operations and improves patient care efficiency.
-            </p>
+            <p>A management tool for dental offices supporting scheduling, billing, and patient records. Built on Streamlit, SQLite/Postgres, and task automation APIs. <em>Benefit:</em> Streamlines clinic operations and improves patient care efficiency.</p>
             <a class="app-link" href="https://bh7rkqzyztp7xkol2mxcr5.streamlit.app/" target="_blank">Open Application</a>
         </div>
 
         <div class="app-section">
             <h2>Synthetic F5-NETSCOUT PCAP Generator</h2>
-            <p>
-                Generates synthetic PCAP traffic files for network simulations.  
-                Uses <strong>Streamlit</strong>, <strong>Scapy</strong>, and traffic emulation libraries.  
-                <em>Benefit:</em> Useful for testing enterprise-grade network monitoring tools without real-world risks.
-            </p>
+            <p>Generates synthetic PCAP traffic files for network simulations. Uses Streamlit, Scapy, and traffic emulation libraries. <em>Benefit:</em> Useful for testing enterprise-grade network monitoring tools without real-world risks.</p>
             <a class="app-link" href="https://7dq7jn4z7vcmd2br8tugpe.streamlit.app/" target="_blank">Open Application</a>
         </div>
 
         <div class="app-section">
             <h2>Synthetic Data Generator</h2>
-            <p>
-                Creates large, realistic datasets for AI/ML model training and testing.  
-                Built with <strong>Streamlit</strong>, <strong>Faker</strong>, <strong>Pandas</strong>, and export modules.  
-                <em>Benefit:</em> Provides abundant training data without privacy or compliance issues.
-            </p>
+            <p>Creates large, realistic datasets for AI/ML model training and testing. Built with Streamlit, Faker, Pandas, and export modules. <em>Benefit:</em> Provides abundant training data without privacy or compliance issues.</p>
             <a class="app-link" href="https://geu9ytpucrlxm6sp4dxrdk.streamlit.app/" target="_blank">Open Application</a>
         </div>
-        <!— END of embedded content —>
     </section>
 
-    <!--✳️ Contact Info Section -->
+    <!-- Contact -->
     <section id="contact" class="section">
         <h2>Contact Us</h2>
         <p>If you'd Like to Schedule a Consultation, Please Reach Out Directly:</p>
         <p><strong>Phone:</strong> 301-503-2918</p>
-        <p><strong>Email:</strong> <a href="mailto:singhr_52@yahoo.com">singhr_52@yahoo.com</a></p>
+        <p><strong>Email:</strong> <a href="mailto:singhr_52@yahoo.com" style="color:#1a73e8;">singhr_52@yahoo.com</a></p>
     </section>
 
     <footer class="footer">
@@ -338,18 +244,49 @@
     </footer>
 
     <script>
-        function toggleHub() {
-            var hub = document.getElementById("programming-hub");
+        function toggleProgrammingHub() {
+            var hub = document.getElementById('programming-hub');
+            var brochure = document.getElementById('knet-brochure-section');
             if (!hub) return;
-            if (hub.style.display === "none" || hub.style.display === "") {
-                hub.style.display = "block";
-                hub.setAttribute("aria-hidden", "false");
-                hub.scrollIntoView({ behavior: "smooth" });
-            } else {
-                hub.style.display = "none";
-                hub.setAttribute("aria-hidden", "true");
+            var isOpen = (hub.style.display === 'block');
+            // Close both first
+            hub.style.display = 'none';
+            hub.setAttribute('aria-hidden','true');
+            if (brochure) { brochure.style.display = 'none'; brochure.setAttribute('aria-hidden','true'); }
+            // If previously closed, open hub (mutually exclusive)
+            if (!isOpen) {
+                hub.style.display = 'block';
+                hub.setAttribute('aria-hidden','false');
+                hub.scrollIntoView({behavior:'smooth'});
             }
         }
+
+        function toggleBrochure() {
+            var hub = document.getElementById('programming-hub');
+            var brochure = document.getElementById('knet-brochure-section');
+            if (!brochure) return;
+            var isOpen = (brochure.style.display === 'block');
+            // Close both first
+            brochure.style.display = 'none';
+            brochure.setAttribute('aria-hidden','true');
+            if (hub) { hub.style.display = 'none'; hub.setAttribute('aria-hidden','true'); }
+            // If previously closed, open brochure (mutually exclusive)
+            if (!isOpen) {
+                brochure.style.display = 'block';
+                brochure.setAttribute('aria-hidden','false');
+                brochure.scrollIntoView({behavior:'smooth'});
+            }
+        }
+
+        // Close on ESC key for convenience
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                var hub = document.getElementById('programming-hub');
+                var brochure = document.getElementById('knet-brochure-section');
+                if (hub) { hub.style.display = 'none'; hub.setAttribute('aria-hidden','true'); }
+                if (brochure) { brochure.style.display = 'none'; brochure.setAttribute('aria-hidden','true'); }
+            }
+        });
     </script>
 </body>
 </html>
