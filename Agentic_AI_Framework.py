@@ -1,4 +1,4 @@
-# Agentic_AI_Framework
+#Agentic_AI_Framework
 
 import streamlit as st
 import pandas as pd
@@ -12,36 +12,42 @@ import datetime
 # Page Setup
 # ----------------------
 st.set_page_config(
-    page_title="Agentic-AI Cyber Defense Framework Designed by Randy Singh From KNet Consulting Group.",
+    page_title="Agentic-AI Cyber Defense Framework",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-st.markdown(
-    """
-    <style>
-    /* Header Styles */
-    .stApp h1 {color: #0073e6;}
-    .stApp h2 {color: #005792;}
-    .stApp h3 {color: #ff6600;}
-    .stButton>button {background-color:#0073e6; color:white; border-radius:10px; height:50px; width:100%;}
-    .stButton>button:hover {background-color:#005bb5; color:white;}
-    a.agent-link {display:inline-block; margin:5px; padding:8px 15px; background:#0073e6; color:white; text-decoration:none; border-radius:8px;}
-    a.agent-link:hover {background:#005bb5; color:white;}
-    </style>
-    """, unsafe_allow_html=True
-)
+# ----------------------
+# Styling
+# ----------------------
+st.markdown("""
+<style>
+.stApp h1 {color: #0073e6;}
+.stApp h2 {color: #005792;}
+.stApp h3 {color: #ff6600;}
+.stButton>button {background-color:#0073e6; color:white; border-radius:10px; height:50px; width:100%;}
+.stButton>button:hover {background-color:#005bb5; color:white;}
+a.agent-link {display:inline-block; margin:5px; padding:8px 15px; background:#0073e6; color:white; text-decoration:none; border-radius:8px;}
+a.agent-link:hover {background:#005bb5; color:white;}
+</style>
+""", unsafe_allow_html=True)
 
 # ----------------------
 # Title
 # ----------------------
-st.title(" Agentic-AI Cyber Defense Framework Designed by Randy Singh From KNet Consulting Group.")
+st.title(" Agentic-AI Cyber Defense Framework Designed by Randy Singh KNet Consulting Group.")
 st.markdown(
     """
     **Agentic AI** = Autonomous AI systems that plan, decide, and act toward goals.  
-    Select a demo agent below to simulate its behavior or generate/upload data.  
+    Use the sidebar to select an action: Dashboard, Upload Data, Generate Sample Data, or Demo Agent.
     """
 )
+
+# ----------------------
+# Initialize Session State
+# ----------------------
+if "data" not in st.session_state:
+    st.session_state["data"] = None
 
 # ----------------------
 # Utility Functions
@@ -67,23 +73,17 @@ def convert_df(df, fmt="csv"):
     elif fmt == "json":
         return df.to_json(orient="records", indent=2).encode("utf-8")
 
-# ----------------------
-# Clear Data Button
-# ----------------------
-if "data" not in st.session_state:
-    st.session_state["data"] = None
-
 def clear_data():
     st.session_state["data"] = None
-    st.success(" Data cleared!")
-
-st.sidebar.button(" Clear All Data", on_click=clear_data)
+    st.success(" All data cleared!")
 
 # ----------------------
-# Sidebar Navigation
+# Sidebar
 # ----------------------
 st.sidebar.title(" Framework Controls")
-choice = st.sidebar.radio(
+st.sidebar.button(" Clear All Data", on_click=clear_data)
+
+action = st.sidebar.radio(
     "Select Action",
     [" Dashboard", " Upload Data", " Generate Sample Data", " Demo Agent"]
 )
@@ -91,18 +91,21 @@ choice = st.sidebar.radio(
 # ----------------------
 # Upload Data
 # ----------------------
-if choice == " Upload Data":
+if action == " Upload Data":
     uploaded_file = st.file_uploader("Upload JSON, CSV, or TXT", type=["json", "csv", "txt"])
     if uploaded_file:
-        if uploaded_file.name.endswith(".csv"):
-            st.session_state["data"] = pd.read_csv(uploaded_file)
-        elif uploaded_file.name.endswith(".json") or uploaded_file.name.endswith(".txt"):
-            st.session_state["data"] = pd.read_json(uploaded_file)
-        else:
-            st.error("Unsupported file format")
+        try:
+            if uploaded_file.name.endswith(".csv"):
+                st.session_state["data"] = pd.read_csv(uploaded_file)
+            elif uploaded_file.name.endswith(".json") or uploaded_file.name.endswith(".txt"):
+                st.session_state["data"] = pd.read_json(uploaded_file)
+            else:
+                st.error("Unsupported file format")
+        except Exception as e:
+            st.error(f"Error reading file: {e}")
 
     if st.session_state["data"] is not None:
-        st.success("Data uploaded successfully!")
+        st.success(" Data uploaded successfully!")
         st.dataframe(st.session_state["data"])
 
         col1, col2 = st.columns(2)
@@ -114,7 +117,7 @@ if choice == " Upload Data":
 # ----------------------
 # Generate Sample Data
 # ----------------------
-elif choice == "🛠 Generate Sample Data":
+elif action == " Generate Sample Data":
     n = st.sidebar.slider("Number of Records", 10, 200, 50, 10)
     st.session_state["data"] = generate_sample_data(n)
     st.success(f" Generated {n} sample records")
@@ -126,7 +129,6 @@ elif choice == "🛠 Generate Sample Data":
     with col2:
         st.download_button(" Download as JSON", convert_df(st.session_state["data"], "json"), "sample_data.json", "application/json")
 
-    # Pie chart visualization
     st.subheader("Threat Distribution")
     fig, ax = plt.subplots(figsize=(6,6))
     st.session_state["data"]["threat"].value_counts().plot.pie(
@@ -138,57 +140,53 @@ elif choice == "🛠 Generate Sample Data":
 # ----------------------
 # Dashboard View
 # ----------------------
-elif choice == "Dashboard":
-    st.info("📡 Live Dashboard: Showing demo data for Agentic-AI use cases")
+elif action == " Dashboard":
+    st.info(" Live Dashboard: Showing current data")
     if st.session_state["data"] is None:
-        st.session_state["data"] = generate_sample_data(30)
-    df = st.session_state["data"]
-    st.dataframe(df)
+        st.warning("No data available. Generate sample data or upload a file first.")
+    else:
+        df = st.session_state["data"]
+        st.dataframe(df)
 
-    col1, col2 = st.columns(2)
-    with col1:
-        st.subheader("Severity Breakdown")
-        fig, ax = plt.subplots(figsize=(5,5))
-        df["severity"].value_counts().plot.pie(
-            autopct="%1.1f%%",
-            ax=ax,
-            colors=["#2ecc71", "#f1c40f", "#e67e22", "#e74c3c"],
-            shadow=True,
-            startangle=90
-        )
-        ax.set_ylabel("")
-        st.pyplot(fig)
+        col1, col2 = st.columns(2)
+        with col1:
+            st.subheader("Severity Breakdown")
+            fig, ax = plt.subplots(figsize=(5,5))
+            df["severity"].value_counts().plot.pie(
+                autopct="%1.1f%%",
+                ax=ax,
+                colors=["#2ecc71", "#f1c40f", "#e67e22", "#e74c3c"],
+                shadow=True,
+                startangle=90
+            )
+            ax.set_ylabel("")
+            st.pyplot(fig)
 
-    with col2:
-        st.subheader("Threat Status Overview")
-        st.bar_chart(df["status"].value_counts())
+        with col2:
+            st.subheader("Threat Status Overview")
+            st.bar_chart(df["status"].value_counts())
 
 # ----------------------
 # Demo Agent View
 # ----------------------
-elif choice == "Demo Agent":
-    st.header("Agentic AI Demo Agents")
+elif action == " Demo Agent":
+    st.header(" Agentic AI Demo Agents - Designed by Randy Singh KNet Consulting Group.")
 
-    # List of available demo agents
     agents = {
-        "Automated Threat Hunting": "Simulates scanning logs, detecting anomalies, querying threat intel feeds.",
+        "Automated Threat Hunting": "Scans logs, detects anomalies, queries threat intel feeds.",
         "Adaptive Incident Response": "Detect intrusions, isolate affected machines, block IPs, alert SOC.",
         "Vulnerability Scanning": "Run vulnerability scans, suggest mitigations, open tickets automatically.",
         "Phishing Email Defense": "Inspect emails, flag phishing, extract IOCs, update blocklists.",
-        "Cyber Deception & Honeypots": "Deploy honeypots/decoys, monitor attacker behavior, update defenses dynamically."
+        "Cyber Deception & Honeypots": "Deploy honeypots, monitor attackers, update defenses dynamically."
     }
 
     agent_choice = st.radio("Select Demo Agent", list(agents.keys()))
     st.info(f" {agents[agent_choice]}")
 
-    st.subheader(f"Demo: {agent_choice}")
-
-    # Generate random sample data for selected agent
     num_records = st.sidebar.slider("Number of Events", 5, 50, 15)
     demo_data = generate_sample_data(num_records)
     st.dataframe(demo_data)
 
-    # Pie chart for threat distribution
     st.subheader("Threat Distribution")
     fig, ax = plt.subplots(figsize=(5,5))
     demo_data["threat"].value_counts().plot.pie(
@@ -204,4 +202,3 @@ elif choice == "Demo Agent":
         st.download_button(" Download Demo as JSON", convert_df(demo_data, "json"), f"{agent_choice}_demo.json", "application/json")
 
     st.success(f" {agent_choice} simulation complete.")
-
