@@ -24,15 +24,12 @@
         .cta-button {
             display:inline-block; margin-top:20px; padding:10px 20px; background:#007BFF; color:white; text-decoration:none; border-radius:5px;
         }
-
         .section { padding:40px 20px; max-width:1100px; margin:auto; }
         .section h2 { border-bottom:2px solid #007BFF; padding-bottom:10px; margin-bottom:20px; }
         .columns { display:flex; justify-content:space-around; flex-wrap:wrap; }
         .column { flex:1; margin:10px; padding:20px; background:#1c2e4a; border-radius:8px; min-width:250px; }
-
         .about-container { display:flex; align-items:flex-start; }
         .about-container img { width:150px; height:auto; margin-right:20px; border-radius:12px; }
-
         .hub-link {
             display:inline-block; font-size:1.05rem; font-weight:600; color:#1a73e8;
             text-decoration:none; margin-top:10px; background:#ffffff10; padding:10px 14px; border-radius:8px;
@@ -56,10 +53,6 @@
         /* PDF Brochure */
         .pdf-container { margin-top:20px; }
         .pdf-iframe { width:100%; height:600px; border:2px solid #ccc; border-radius:8px; }
-
-        /* Hub brochure button area (if you want extra links inside hub later) */
-        .hub-brochure-buttons { text-align:center; margin:18px 0; }
-        .hub-brochure-buttons .app-link { margin:0 10px; }
 
         .footer { text-align:center; padding:20px; background:#08111f; color:#ccc; margin-top:30px; }
 
@@ -162,8 +155,9 @@
         </div>
     </section>
 
-    <!-- Programming Hub (separate section, no brochure embedded here) -->
+    <!-- Programming Hub (Merged Full Index) -->
     <section id="programming-hub" class="section" aria-hidden="true">
+        <!-- Merged content from the KNet Designed Applications index.html -->
         <h1>KNet Designed Applications - Randy Singh</h1>
 
         <div class="intro">
@@ -182,51 +176,117 @@
             </p>
         </div>
 
+        <!-- Applications -->
         <div class="app-section">
-            <h2>Agentic-AI Cyber-Threat Detector</h2>
-            <p>Uses Agentic AI agents to monitor networks, endpoints, and cloud workloads for threats. Built with Streamlit, Pandas, anomaly-detection ML models, and visualization tools, it reduces false positives and adapts in real-time. <em>Benefit:</em> Enables proactive defense against sophisticated cyberattacks.</p>
+            <h2>Agentic-AI Cyber Defense Framework - Randy Singh</h2>
+            <p>
+                The Agentic-AI Framework is an interactive Python/Streamlit platform where users can explore autonomous 
+                AI agents for cybersecurity. Users can upload or generate sample datasets, run demo agents for 
+                Threat Hunting, Adaptive Incident Response, Vulnerability Scanning, Phishing Defense, and Cyber Deception, 
+                visualize results with dynamic charts, and export outcomes in CSV or JSON. The system leverages 
+                <strong>Streamlit</strong>, <strong>Pandas</strong>, <strong>NumPy</strong>, <strong>Matplotlib/Plotly</strong>, 
+                and integrates tools like <strong>LangChain</strong>, <strong>Scapy</strong>, and <strong>Shodan</strong> to 
+                provide real-time insights and automated cyber defense actions.  
+                <em>Benefit:</em> Users gain hands-on understanding of autonomous AI agents, see live threat analysis, and can test defense workflows safely.
+            </p>
+            <a class="app-link" href="https://u5qdmlxtobaufjbujsjbtg.streamlit.app/" target="_blank">Open Agentic-AI Framework</a>
+        </div>
+
+        <div class="app-section">
+            <h2>MCP Cybersecurity Framework - Randy Singh</h2>
+            <p>
+                The MCP (Model Control Pipeline) Framework is a comprehensive platform for monitoring, analyzing, and responding to cybersecurity threats using AI/ML models and automated workflows. 
+                <em>Benefit:</em> Provides centralized threat monitoring, predictive alerts, automated responses, and continuous learning to improve overall cybersecurity posture.
+            </p>
+            <a class="app-link" href="https://iexfg4hykjjmoh9dddrqzi.streamlit.app/~/+/?\" target="_blank">Open MCP Framework</a>
+        </div>
+
+        <!-- Include all other applications as in the full hub index.html -->
+        <div class="app-section">
+            <h2>Agentic-AI Cyber Threat Detector - Randy Singh</h2>
+            <p>
+                Uses Agentic AI agents to monitor networks, endpoints, and cloud workloads for threats.  
+                Built with <strong>Streamlit</strong>, <strong>Pandas</strong>, anomaly-detection ML models, 
+                and visualization tools, it reduces false positives and adapts in real-time.  
+                <em>Benefit:</em> Enables proactive defense against sophisticated cyberattacks.
+            </p>
             <a class="app-link" href="https://jotrfdfnbfxshgjs6ttxmj.streamlit.app/" target="_blank">Open Application</a>
         </div>
 
         <div class="app-section">
-            <h2>MCP Cyber Threat Monitor</h2>
-            <p>Provides real-time dashboards to track and visualize threat activity across domains. Built using Streamlit, Matplotlib/Plotly, and the MCP pipeline. <em>Benefit:</em> Helps security teams quickly detect and respond to abnormal behaviors.</p>
+            <h2>MCP Cyber Threat Monitor - Randy Singh</h2>
+            <p>
+                Provides real-time dashboards to track and visualize threat activity across domains.  
+                Built using <strong>Streamlit</strong>, <strong>Matplotlib/Plotly</strong>, and the MCP pipeline.  
+                <em>Benefit:</em> Helps security teams quickly detect and respond to abnormal behaviors.
+            </p>
             <a class="app-link" href="https://j8d42pf2utsqjnbpvpoetm.streamlit.app/" target="_blank">Open Application</a>
         </div>
 
         <div class="app-section">
-            <h2>MCP Cyber Threat Dashboard</h2>
-            <p>Focused on visualization-first monitoring of cyber threat intelligence and AI-driven anomaly detection. Developed with Streamlit, Plotly Dashboards, and data pipelines. <em>Benefit:</em> Gives executives and analysts a clear view of enterprise-wide threats.</p>
+            <h2>MCP Cyber Threat Dashboard - Randy Singh</h2>
+            <p>
+                Focused on visualization-first monitoring of cyber threat intelligence and AI-driven anomaly detection.  
+                Developed with <strong>Streamlit</strong>, <strong>Plotly Dashboards</strong>, and data pipelines.  
+                <em>Benefit:</em> Gives executives and analysts a clear view of enterprise-wide threats.
+            </p>
             <a class="app-link" href="https://j8d42pf2utsqjnbpvpoetm.streamlit.app/" target="_blank">Open Application</a>
         </div>
 
         <div class="app-section">
-            <h2>Agentic-AI Adaptive Incident Response Use-Case</h2>
-            <p>The Agentic Adaptive Incident Response Streamlit App is an AI-powered platform for managing cybersecurity events. It allows users to generate or upload event data in CSV, JSON, or text formats. The app visualizes incidents with pie charts, bar charts, and time-trend graphs using Matplotlib, Pandas, and NumPy. Events are scored either heuristically or via optional ML models built with scikit-learn. Users can simulate responses like host isolation, IP blocking, or sending SOC alerts. Live actions can be executed via SSH (Paramiko) or cloud SDKs for AWS, GCP, and Azure. Alerts can also be delivered through webhooks or SMTP email notifications. A history log and runbook allow reviewing or replaying all actions. The system supports scalable sample-data generation and dynamic dashboards. Real-world benefits include faster, safer, and standardized incident response, improving SOC efficiency and operational resilience.</p>
+            <h2>Agentic-AI Adaptive Incident Response Use-Case - Randy Singh</h2>
+            <p>
+                The Agentic Adaptive Incident Response Streamlit App is an AI-powered platform for managing cybersecurity events. 
+                It allows users to generate or upload event data in CSV, JSON, or text formats. 
+                The app visualizes incidents with pie charts, bar charts, and time-trend graphs using Matplotlib, Pandas, and NumPy. 
+                Events are scored either heuristically or via optional ML models built with scikit-learn. 
+                Users can simulate responses like host isolation, IP blocking, or sending SOC alerts. 
+                Live actions can be executed via SSH (Paramiko) or cloud SDKs for AWS, GCP, and Azure. 
+                Alerts can also be delivered through webhooks or SMTP email notifications. 
+                A history log and runbook allow reviewing or replaying all actions. 
+                The system supports scalable sample-data generation and dynamic dashboards. 
+                Real-world benefits include faster, safer, and standardized incident response, improving SOC efficiency and operational resilience.
+            </p>
             <a class="app-link" href="https://knet-brochure-6ekq7dpmf9ynhs2vw6naww.streamlit.app/" target="_blank">Open Application</a>
         </div>
 
         <div class="app-section">
-            <h2>Supply Chain Risk Estimator</h2>
-            <p>Analyzes SBOMs (Software Bills of Materials) for vulnerabilities, licensing issues, and trust risks. Uses Streamlit, Pandas, Matplotlib, and AI classifiers. <em>Benefit:</em> Allows proactive risk classification into Low, Medium, or High with exportable reports.</p>
+            <h2>Supply Chain Risk Estimator - Randy Singh</h2>
+            <p>
+                Analyzes SBOMs (Software Bills of Materials) for vulnerabilities, licensing issues, and trust risks.  
+                Uses <strong>Streamlit</strong>, <strong>Pandas</strong>, <strong>Matplotlib</strong>, and AI classifiers.  
+                <em>Benefit:</em> Allows proactive risk classification into Low, Medium, or High with exportable reports.
+            </p>
             <a class="app-link" href="https://k8kopgxw6rayvcezgdjh5u.streamlit.app/" target="_blank">Open Application</a>
         </div>
 
         <div class="app-section">
-            <h2>Dental Practice Manager</h2>
-            <p>A management tool for dental offices supporting scheduling, billing, and patient records. Built on Streamlit, SQLite/Postgres, and task automation APIs. <em>Benefit:</em> Streamlines clinic operations and improves patient care efficiency.</p>
+            <h2>Dental Practice Manager - Randy Singh</h2>
+            <p>
+                A management tool for dental offices supporting scheduling, billing, and patient records.  
+                Built on <strong>Streamlit</strong>, <strong>SQLite/Postgres</strong>, and task automation APIs.  
+                <em>Benefit:</em> Streamlines clinic operations and improves patient care efficiency.
+            </p>
             <a class="app-link" href="https://bh7rkqzyztp7xkol2mxcr5.streamlit.app/" target="_blank">Open Application</a>
         </div>
 
         <div class="app-section">
-            <h2>Synthetic F5-NETSCOUT PCAP Generator</h2>
-            <p>Generates synthetic PCAP traffic files for network simulations. Uses Streamlit, Scapy, and traffic emulation libraries. <em>Benefit:</em> Useful for testing enterprise-grade network monitoring tools without real-world risks.</p>
+            <h2>Synthetic F5-NETSCOUT PCAP Generator - Randy Singh </h2>
+            <p>
+                Generates synthetic PCAP traffic files for network simulations.  
+                Uses <strong>Streamlit</strong>, <strong>Scapy</strong>, and traffic emulation libraries.  
+                <em>Benefit:</em> Useful for testing enterprise-grade network monitoring tools without real-world risks.
+            </p>
             <a class="app-link" href="https://7dq7jn4z7vcmd2br8tugpe.streamlit.app/" target="_blank">Open Application</a>
         </div>
 
         <div class="app-section">
-            <h2>Synthetic Data Generator</h2>
-            <p>Creates large, realistic datasets for AI/ML model training and testing. Built with Streamlit, Faker, Pandas, and export modules. <em>Benefit:</em> Provides abundant training data without privacy or compliance issues.</p>
+            <h2>Synthetic Data Generator - Randy Singh</h2>
+            <p>
+                Creates large, realistic datasets for AI/ML model training and testing.  
+                Built with <strong>Streamlit</strong>, <strong>Faker</strong>, <strong>Pandas</strong>, and export modules.  
+                <em>Benefit:</em> Provides abundant training data without privacy or compliance issues.
+            </p>
             <a class="app-link" href="https://geu9ytpucrlxm6sp4dxrdk.streamlit.app/" target="_blank">Open Application</a>
         </div>
     </section>
@@ -249,16 +309,9 @@
             var brochure = document.getElementById('knet-brochure-section');
             if (!hub) return;
             var isOpen = (hub.style.display === 'block');
-            // Close both first
-            hub.style.display = 'none';
-            hub.setAttribute('aria-hidden','true');
+            hub.style.display = 'none'; hub.setAttribute('aria-hidden','true');
             if (brochure) { brochure.style.display = 'none'; brochure.setAttribute('aria-hidden','true'); }
-            // If previously closed, open hub (mutually exclusive)
-            if (!isOpen) {
-                hub.style.display = 'block';
-                hub.setAttribute('aria-hidden','false');
-                hub.scrollIntoView({behavior:'smooth'});
-            }
+            if (!isOpen) { hub.style.display = 'block'; hub.setAttribute('aria-hidden','false'); hub.scrollIntoView({behavior:'smooth'}); }
         }
 
         function toggleBrochure() {
@@ -266,19 +319,11 @@
             var brochure = document.getElementById('knet-brochure-section');
             if (!brochure) return;
             var isOpen = (brochure.style.display === 'block');
-            // Close both first
-            brochure.style.display = 'none';
-            brochure.setAttribute('aria-hidden','true');
+            brochure.style.display = 'none'; brochure.setAttribute('aria-hidden','true');
             if (hub) { hub.style.display = 'none'; hub.setAttribute('aria-hidden','true'); }
-            // If previously closed, open brochure (mutually exclusive)
-            if (!isOpen) {
-                brochure.style.display = 'block';
-                brochure.setAttribute('aria-hidden','false');
-                brochure.scrollIntoView({behavior:'smooth'});
-            }
+            if (!isOpen) { brochure.style.display = 'block'; brochure.setAttribute('aria-hidden','false'); brochure.scrollIntoView({behavior:'smooth'}); }
         }
 
-        // Close on ESC key for convenience
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 var hub = document.getElementById('programming-hub');
