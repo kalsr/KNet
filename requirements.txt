@@ -16,3 +16,4 @@ pydantic
 seaborn
 altair
 yfinance
+python-pptx
