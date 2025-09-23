@@ -241,7 +241,7 @@ def main():
 
     st.set_page_config(page_title="Cyber Threat Hunting", layout="wide")
 
-    st.title("🛡️ Cyber Threat Hunting & Attack Mapping")
+    st.title("Cyber Threat Hunting & Attack Mapping - Designed By Randy Singh from KNet Consulting Group.")
 
 
 
@@ -342,5 +342,6 @@ def main():
 
 
 if __name__ == "__main__":
+
 
     main()
