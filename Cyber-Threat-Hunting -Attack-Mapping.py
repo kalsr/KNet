@@ -59,7 +59,7 @@ def generate_sample_data(n=200):
 
     hosts = [f"host{i}.corp.local" for i in range(1, 6)]
 
-    ips = [f"10.0.{i}.{j}" for i in range(1, 3) for j in range(1, 20)]
+    ips = [f"10.0.{i}.{j}" for i in range(1, 3) for j in range(1, 100)]
 
     actions = ["login", "file_access", "cmd_exec"]
 
@@ -345,3 +345,4 @@ if __name__ == "__main__":
 
 
     main()
+
