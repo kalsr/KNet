@@ -17,3 +17,6 @@ seaborn
 altair
 yfinance
 python-pptx
+networkx 
+pyvis
+openai
