@@ -1,7 +1,8 @@
 
 
-# app_fixed.py
-# Cyber Threat Hunting & Attack Mapping (fixed: Excel download, robust uploads, theme persistence)
+# app_fixed_queryparams.py
+# Cyber Threat Hunting & Attack Mapping (final)
+# Preserves original functions; fixes query param API usage.
 # Designed by Randy Singh — KNet Consulting Group
 
 import streamlit as st
@@ -14,10 +15,9 @@ import random, os, io, json
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 
-# Optional OpenAI (modern client support)
+# Optional OpenAI (modern client detection)
 try:
     import openai
-    # Try import of new OpenAI client class if available
     try:
         from openai import OpenAI as OpenAIClientClass  # newer client (if installed)
     except Exception:
@@ -78,19 +78,17 @@ def detect_credential_stuffing(df):
 
 # ----------------------------
 # Modern / robust LLM explanation
-# - Tries new OpenAI client pattern if available, then falls back to legacy ChatCompletion
 # ----------------------------
 def explain_detection(text, api_key=None, model="gpt-4o-mini"):
-    # If OpenAI not installed: fallback to local rule-based explanation
     if not OPENAI_AVAILABLE:
-        return f"[No LLM available] Rule-based explanation: {text}. Typical mitigations: block IP, enable MFA, monitor logs."
+        return f"[No LLM installed] Rule-based explanation: {text}. Mitigation: block IP, enable MFA, monitor logs."
 
     key = api_key or os.getenv("OPENAI_API_KEY")
     if not key:
-        return f"[No API key] Rule-based explanation: {text}. Typical mitigations: block IP, enable MFA, monitor logs."
+        return f"[No API key] Rule-based explanation: {text}. Mitigation: block IP, enable MFA, monitor logs."
 
-    # Try modern OpenAI client if available
     try:
+        # Try modern OpenAI client first (if installed)
         if OpenAIClientClass is not None:
             client = OpenAIClientClass(api_key=key)
             resp = client.chat.completions.create(
@@ -101,14 +99,12 @@ def explain_detection(text, api_key=None, model="gpt-4o-mini"):
                 ],
                 max_tokens=220,
             )
-            # Attempt to read content robustly
             try:
                 return resp.choices[0].message.content
             except Exception:
-                # fallback to mapping
                 return str(resp)
         else:
-            # Fallback to the classic openai.ChatCompletion.create (older clients)
+            # Fallback to legacy method if available
             resp = openai.ChatCompletion.create(
                 model=model,
                 messages=[
@@ -140,14 +136,13 @@ def visualize_graph(G, filename="graph.html", height=550):
 
 
 # ----------------------------
-# Utility: robust timestamp normalizer
+# Timestamp normalizer
 # ----------------------------
 def _ensure_timestamp(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     if "timestamp" not in df.columns:
         base = pd.Timestamp.utcnow() - pd.Timedelta(days=1)
         df["timestamp"] = [ (base + pd.Timedelta(seconds=i*60)).isoformat() for i in range(len(df)) ]
-    # extract scalars from lists/dicts if needed
     def _extract(x):
         if isinstance(x, list):
             return x[0] if x else None
@@ -159,7 +154,6 @@ def _ensure_timestamp(df: pd.DataFrame) -> pd.DataFrame:
         return x
     df["timestamp"] = df["timestamp"].apply(_extract)
     df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
-    # fill NaT values
     if df["timestamp"].isna().all():
         base = pd.Timestamp.utcnow() - pd.Timedelta(days=1)
         df["timestamp"] = [ base + pd.Timedelta(seconds=i*60) for i in range(len(df)) ]
@@ -174,7 +168,7 @@ def _ensure_timestamp(df: pd.DataFrame) -> pd.DataFrame:
 
 
 # ----------------------------
-# Other detectors & helpers
+# Additional detectors & helpers
 # ----------------------------
 def detect_bruteforce_user(df, threshold_failures=8, window_minutes=30):
     df = _ensure_timestamp(df)
@@ -266,7 +260,7 @@ def visualize_graph_highlight(G, detections, filename="graph_highlight.html"):
     components.html(html, height=700, scrolling=True)
 
 
-# Targeted anomaly generator (safe if df is None)
+# Targeted anomaly generator
 def generate_targeted_anomaly(df, anomaly_type="credential_stuffing", n=50):
     base_df = df if (df is not None and isinstance(df, pd.DataFrame) and not df.empty) else generate_sample_data(50)
     users = base_df["user"].unique().tolist() if "user" in base_df.columns else [f"user{i}" for i in range(1, 11)]
@@ -333,7 +327,7 @@ def generate_targeted_anomaly(df, anomaly_type="credential_stuffing", n=50):
     return pd.concat([base_df, pd.DataFrame(new_events)], ignore_index=True)
 
 
-# MITRE map + playbooks
+# MITRE mapping + playbooks
 MITRE_MAP = {
     "credential_stuffing": [("TA0006 - Credential Access", "T1110.004 - Credential Stuffing"), ("TA0006", "T1110 - Brute Force")],
     "brute_force_user": [("TA0006", "T1110 - Brute Force"), ("TA0006", "T1110.001 - Password Guessing")],
@@ -357,42 +351,44 @@ PLAYBOOKS = {
         "Check IDS/packet capture for more indicators."
     ],
     "data_exfiltration": [
-        "Isolate endpoint(s), collect forensic artifacts.",
-        "Review outbound logs and cloud uploads, check for unknown hosts.",
+        "Isolate endpoint(s) and collect forensic artifacts.",
+        "Review outbound logs and cloud uploads.",
         "Engage incident response and legal/compliance."
     ]
 }
 
 # ----------------------------
-# Streamlit UI - main
+# Streamlit UI - final
 # ----------------------------
 def main():
-    st.set_page_config(page_title="Cyber Threat Hunting - Fixed", layout="wide", initial_sidebar_state="expanded")
+    st.set_page_config(page_title="Cyber Threat Hunting - Final", layout="wide", initial_sidebar_state="expanded")
 
-    # Theme persisted via URL query params + session_state
-    q = st.experimental_get_query_params()
+    # Query-param backed theme persistence (NO experimental_* calls)
+    qp = st.query_params  # read query params
     if "theme" not in st.session_state:
-        st.session_state["theme"] = q.get("theme", ["Dark"])[0] if q else "Dark"
+        theme_from_q = qp.get("theme")
+        if theme_from_q:
+            st.session_state["theme"] = theme_from_q[0] if isinstance(theme_from_q, list) else theme_from_q
+        else:
+            st.session_state["theme"] = "Dark"
 
     theme = st.sidebar.radio("Theme", ["Dark", "Light"], index=0 if st.session_state["theme"] == "Dark" else 1)
-    # persist to session_state + URL
+    # persist theme back to query params
     st.session_state["theme"] = theme
-    st.experimental_set_query_params(theme=theme)
+    st.query_params = {"theme": theme}
 
-    # simple theme CSS
+    # apply basic CSS theme
     if theme == "Dark":
         st.markdown("""<style>.stApp{background:linear-gradient(180deg,#021026,#071026);color:#e6eef8}</style>""", unsafe_allow_html=True)
     else:
         st.markdown("""<style>.stApp{background:linear-gradient(180deg,#ffffff,#eef2ff);color:#0b1220}</style>""", unsafe_allow_html=True)
 
-    # top title
-    st.title(" Cyber Threat Hunting & Attack Mapping")
+    st.title(" Cyber Threat Hunting & Attack Mapping (Final)")
     st.caption("Designed & Developed by Randy Singh — KNet Consulting Group")
 
     if "df" not in st.session_state:
         st.session_state["df"] = None
 
-    # Sidebar controls
     with st.sidebar:
         st.header("Controls & Data")
         api_key = st.text_input("OpenAI API Key (optional)", type="password")
@@ -479,10 +475,9 @@ def main():
             else:
                 df[col] = np.random.choice(["success","failure"], size=len(df))
 
-    # ensure timestamp dtype
     df["timestamp"] = pd.to_datetime(df["timestamp"])
 
-    # header tiles
+    # Overview metrics
     st.subheader("Overview")
     c1,c2,c3,c4 = st.columns(4)
     c1.metric("Events", f"{len(df)}")
@@ -490,15 +485,13 @@ def main():
     c3.metric("Unique Users", f"{df['user'].nunique()}")
     c4.metric("Unique Hosts", f"{df['dest_host'].nunique()}")
 
-    # preview data
+    # Raw preview
     st.subheader("Raw Events (preview)")
     st.dataframe(df.head(100))
 
-    # charts
+    # Charts & PNG downloads
     st.subheader("Charts & Visuals")
     c1,c2,c3 = st.columns(3)
-
-    # action pie
     action_counts = df["action"].value_counts()
     fig1, ax1 = plt.subplots()
     ax1.pie(action_counts.values, labels=[f"{a} ({c})" for a,c in zip(action_counts.index, action_counts.values)], startangle=90, wedgeprops=dict(edgecolor='w'))
@@ -506,13 +499,9 @@ def main():
     with c1:
         st.markdown("**Actions**")
         st.pyplot(fig1)
-        # safe PNG bytes
-        png1 = io.BytesIO()
-        fig1.savefig(png1, format="png", bbox_inches="tight")
-        png1.seek(0)
+        png1 = io.BytesIO(); fig1.savefig(png1, format="png", bbox_inches="tight"); png1.seek(0)
         st.download_button("Download Actions PNG", png1.getvalue(), "actions.png", mime="image/png")
 
-    # result pie
     result_counts = df["result"].value_counts()
     fig2, ax2 = plt.subplots()
     ax2.pie(result_counts.values, labels=[f"{a} ({c})" for a,c in zip(result_counts.index, result_counts.values)], startangle=90, wedgeprops=dict(edgecolor='w'))
@@ -520,12 +509,9 @@ def main():
     with c2:
         st.markdown("**Results**")
         st.pyplot(fig2)
-        png2 = io.BytesIO()
-        fig2.savefig(png2, format="png", bbox_inches="tight")
-        png2.seek(0)
+        png2 = io.BytesIO(); fig2.savefig(png2, format="png", bbox_inches="tight"); png2.seek(0)
         st.download_button("Download Results PNG", png2.getvalue(), "results.png", mime="image/png")
 
-    # top users
     top_users = df["user"].value_counts().head(6)
     fig3, ax3 = plt.subplots()
     ax3.barh(top_users.index[::-1], top_users.values[::-1])
@@ -533,17 +519,15 @@ def main():
     with c3:
         st.markdown("**Top Users**")
         st.pyplot(fig3)
-        png3 = io.BytesIO()
-        fig3.savefig(png3, format="png", bbox_inches="tight")
-        png3.seek(0)
+        png3 = io.BytesIO(); fig3.savefig(png3, format="png", bbox_inches="tight"); png3.seek(0)
         st.download_button("Download Top Users PNG", png3.getvalue(), "top_users.png", mime="image/png")
 
-    # Attack graph (original)
+    # Attack graph
     st.subheader("Attack Graph")
     G = build_graph(df)
     visualize_graph(G)
 
-    # detections
+    # Detections & playbooks
     st.subheader("Detections & Playbooks")
     params = {
         "port_scan_hosts": port_scan_hosts,
@@ -555,7 +539,6 @@ def main():
         "data_exfil_window": data_exfil_window
     }
     detections = aggregate_detections(df, params)
-
     if not detections:
         st.success("No anomalies detected.")
     else:
@@ -566,27 +549,23 @@ def main():
                 header = f"[{sev.upper()}] {det['text']}"
                 with st.expander(header, expanded=False):
                     st.markdown(f"**Type:** `{det.get('type')}`")
-                    # MITRE mapping
                     mitre = MITRE_MAP.get(det.get("type"), [])
                     if mitre:
                         st.markdown("**MITRE ATT&CK Mapping:**")
                         for t, tech in mitre:
                             st.markdown(f"- {t} | {tech}")
-                    # Explain button
                     if st.button(f"Explain ({i})", key=f"exp_{i}"):
                         st.info(explain_detection(det["text"], api_key=api_key))
-                    # playbook
                     st.markdown("**Recommended Playbook**")
                     for step in PLAYBOOKS.get(det.get("type"), ["Triage and investigate."]):
                         st.write(f"- {step}")
-                    # download playbook
                     pb = f"Playbook for: {det['text']}\nSeverity: {sev}\n\n" + "\n".join([f"- {s}" for s in PLAYBOOKS.get(det.get("type"), ["Triage and investigate."])])
                     st.download_button(f"Download Playbook ({i})", pb.encode("utf-8"), file_name=f"playbook_{i}.txt", mime="text/plain")
         with graph_col:
-            st.markdown("**Attack Graph (highlight suspicious nodes)**")
+            st.markdown("Attack Graph (highlight suspicious nodes)")
             visualize_graph_highlight(G, detections)
 
-    # Data export buttons (CSV, JSON, XLSX)
+    # Exports: CSV, JSON, XLSX
     st.subheader("Export Data")
     try:
         csv_bytes = df.to_csv(index=False).encode("utf-8")
@@ -600,15 +579,12 @@ def main():
     except Exception as e:
         st.error(f"JSON export failed: {e}")
 
-    # Safe Excel export: create BytesIO buffer and write with engine if available
     try:
         to_xlsx = io.BytesIO()
-        # Try openpyxl first; pandas will use an available engine automatically, but specifying avoids surprises
         try:
             with pd.ExcelWriter(to_xlsx, engine="openpyxl") as writer:
                 df.to_excel(writer, index=False, sheet_name="events")
         except Exception:
-            # fallback to default engine
             with pd.ExcelWriter(to_xlsx) as writer:
                 df.to_excel(writer, index=False, sheet_name="events")
         to_xlsx.seek(0)
@@ -619,7 +595,6 @@ def main():
 
     st.markdown("---")
     st.caption("KNet Consulting Group — Cyber Threat Hunting Demo • Built by Randy Singh")
-
 
 if __name__ == "__main__":
     main()
