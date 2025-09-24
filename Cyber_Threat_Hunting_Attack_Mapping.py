@@ -1,10 +1,5 @@
-
-
 # Cyber Threat Hunting & Attack Mapping
-# Use Case:
-# Graph-based reasoning to link attacker behaviors (MITRE ATT&CK, logs, alerts)
-# LLM explanations to describe anomalies and suggest remediation
-# THIS APPLICATION IS DESIGNED & DEVELOPED BY RANDY SINGH FROM KNet CONSULTING GROUP.
+# Designed by Randy Singh – KNet Consulting Group
 
 import streamlit as st
 import pandas as pd
@@ -12,10 +7,9 @@ import numpy as np
 import networkx as nx
 from pyvis.network import Network
 import streamlit.components.v1 as components
-import json, random, os
+import random, os, io
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
-import io
 
 # Optional OpenAI
 try:
@@ -26,7 +20,7 @@ except Exception:
 
 
 # ----------------------------
-# Original: Synthetic log generator
+# Synthetic log generator
 # ----------------------------
 def generate_sample_data(n=200):
     users = [f"user{i}" for i in range(1, 11)]
@@ -68,7 +62,7 @@ def build_graph(df):
 
 
 # ----------------------------
-# Original detection
+# Detections
 # ----------------------------
 def detect_credential_stuffing(df):
     detections = []
@@ -79,14 +73,60 @@ def detect_credential_stuffing(df):
     return detections
 
 
+def detect_bruteforce_user(df, threshold_failures=6, window_minutes=15):
+    detections = []
+    failed = df[(df["action"] == "login") & (df["result"] == "failure")]
+    if failed.empty:
+        return detections
+    failed["timestamp"] = pd.to_datetime(failed["timestamp"], errors="coerce")
+    for user, group in failed.groupby("user"):
+        group = group.sort_values("timestamp")
+        for i in range(len(group)):
+            start = group.iloc[i]["timestamp"]
+            end = start + pd.Timedelta(minutes=window_minutes)
+            subset = group[(group["timestamp"] >= start) & (group["timestamp"] <= end)]
+            if len(subset) >= threshold_failures:
+                detections.append(f"Brute Force Attack on {user} ({len(subset)} failures in {window_minutes}m)")
+                break
+    return detections
+
+
+def detect_data_exfil(df, threshold=8):
+    detections = []
+    files = df[df["action"] == "file_access"]
+    for user, group in files.groupby("user"):
+        if len(group) > threshold:
+            detections.append(f"Data Exfiltration suspected for {user} ({len(group)} file accesses)")
+    return detections
+
+
 # ----------------------------
-# Explanations
+# MITRE mappings
 # ----------------------------
-def explain_detection(text, api_key=None, model="gpt-4o-mini"):
+MITRE_MAP = {
+    "credential_stuffing": [
+        ("TA0006 - Credential Access", "T1110 - Brute Force"),
+        ("TA0006 - Credential Access", "T1110.004 - Credential Stuffing"),
+    ],
+    "brute_force": [
+        ("TA0006 - Credential Access", "T1110 - Brute Force"),
+        ("TA0006 - Credential Access", "T1110.001 - Password Guessing"),
+    ],
+    "data_exfil": [
+        ("TA0010 - Exfiltration", "T1020 - Automated Exfiltration"),
+        ("TA0010 - Exfiltration", "T1048 - Exfiltration Over Alternative Protocol"),
+    ],
+}
+
+
+# ----------------------------
+# Explanations (modern API)
+# ----------------------------
+def explain_detection(text, api_key=None, model="gpt-4.1-mini"):
     if OPENAI_AVAILABLE and (api_key or os.getenv("OPENAI_API_KEY")):
         openai.api_key = api_key or os.getenv("OPENAI_API_KEY")
         try:
-            resp = openai.ChatCompletion.create(
+            resp = openai.chat.completions.create(
                 model=model,
                 messages=[
                     {"role": "system", "content": "You are a SOC assistant."},
@@ -94,15 +134,15 @@ def explain_detection(text, api_key=None, model="gpt-4o-mini"):
                 ],
                 max_tokens=200
             )
-            return resp["choices"][0]["message"]["content"]
+            return resp.choices[0].message.content
         except Exception as e:
             return f"LLM error: {e}"
     else:
-        return f"Rule-based explanation: {text} likely indicates brute-force or credential-stuffing. Mitigate by blocking IP, enabling MFA, and monitoring logs."
+        return f"Rule-based explanation: {text}. Block IP, enable MFA, monitor logs."
 
 
 # ----------------------------
-# Original visualization
+# Visualization
 # ----------------------------
 def visualize_graph(G):
     net = Network(height="500px", width="100%", bgcolor="#0f172a", font_color="white", directed=True)
@@ -118,49 +158,9 @@ def visualize_graph(G):
 
 
 # ----------------------------
-# Helpers: new detections, MITRE mappings, scenarios
+# Targeted anomaly generator
 # ----------------------------
-def _ensure_timestamp(df):
-    if "timestamp" in df.columns:
-        df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
-    return df
-
-
-def detect_bruteforce_user(df, threshold_failures=6, window_minutes=15):
-    df = _ensure_timestamp(df)
-    detections = []
-    failed = df[(df["action"] == "login") & (df["result"] == "failure")]
-    for user, group in failed.groupby("user"):
-        group = group.sort_values("timestamp")
-        for i in range(len(group)):
-            start = group.iloc[i]["timestamp"]
-            end = start + pd.Timedelta(minutes=window_minutes)
-            subset = group[(group["timestamp"] >= start) & (group["timestamp"] <= end)]
-            if len(subset) >= threshold_failures:
-                detections.append(f"Brute Force Attack on {user} ({len(subset)} failures in {window_minutes}m)")
-                break
-    return detections
-
-
-def detect_data_exfil(df, threshold=8):
-    df = _ensure_timestamp(df)
-    detections = []
-    files = df[df["action"] == "file_access"]
-    for user, group in files.groupby("user"):
-        if len(group) > threshold:
-            detections.append(f"Data Exfiltration suspected for {user} ({len(group)} file accesses)")
-    return detections
-
-
-MITRE_MAP = {
-    "credential_stuffing": ("TA0006 - Credential Access", "T1110 - Brute Force"),
-    "brute_force": ("TA0006 - Credential Access", "T1110 - Brute Force"),
-    "data_exfil": ("TA0010 - Exfiltration", "T1020 - Automated Exfiltration"),
-}
-
-
 def targeted_anomaly(df, kind="credential"):
-    """Insert anomalies deliberately for demo."""
     ts = pd.Timestamp.utcnow()
     extra = []
     if kind == "credential":
@@ -190,50 +190,70 @@ def targeted_anomaly(df, kind="credential"):
 # Streamlit app
 # ----------------------------
 def main():
-    st.set_page_config(page_title="Cyber Threat Hunting - Designed by Randy Singh From KNet Consulting Group", layout="wide")
+    st.set_page_config(page_title="Cyber Threat Hunting - Designed By Randy Singh KNet Consulting Group.", layout="wide")
 
-    # theme toggle
-    theme = st.sidebar.radio("Theme", ["Dark", "Light"])
+    # Theme toggle (persistent)
+    if "theme" not in st.session_state:
+        st.session_state["theme"] = "Light"
+    theme = st.sidebar.radio("Theme", ["Light", "Dark"], index=0 if st.session_state["theme"] == "Light" else 1)
+    st.session_state["theme"] = theme
     if theme == "Dark":
-        st.markdown("""<style>body{background-color:#0f172a; color:white;}</style>""", unsafe_allow_html=True)
+        st.markdown("<style>body{background-color:#0f172a; color:white;}</style>", unsafe_allow_html=True)
 
-    st.title("Cyber Threat Hunting & Attack Mapping")
+    st.title(" Cyber Threat Hunting & Attack Mapping")
     st.caption("Designed by Randy Singh – KNet Consulting Group")
 
-    if "df" not in st.session_state:
-        st.session_state["df"] = None
-
-    # Sidebar controls
+    # Sidebar
     st.sidebar.subheader("Data Options")
+    api_key = st.sidebar.text_input("OpenAI API Key (optional)", type="password")
     n_samples = st.sidebar.slider("Generate Records", 50, 200, 100, 10)
-    if st.sidebar.button("Generate Sample Data", help="Creates synthetic dataset"):
+
+    if st.sidebar.button("Generate Sample Data"):
         st.session_state["df"] = generate_sample_data(n=n_samples)
 
+    uploaded = st.sidebar.file_uploader("Upload CSV/JSON/Excel", type=["csv", "json", "xlsx"])
+    if uploaded:
+        if uploaded.name.endswith(".csv"):
+            st.session_state["df"] = pd.read_csv(uploaded)
+        elif uploaded.name.endswith(".json"):
+            st.session_state["df"] = pd.read_json(uploaded)
+        else:
+            st.session_state["df"] = pd.read_excel(uploaded)
+
+    if st.sidebar.button("Clear Data"):
+        st.session_state["df"] = None
+
     if st.sidebar.button("Insert Credential Stuffing Anomaly"):
-        if st.session_state["df"] is not None:
+        if st.session_state.get("df") is not None:
             st.session_state["df"] = targeted_anomaly(st.session_state["df"], "credential")
 
     if st.sidebar.button("Insert Data Exfiltration Anomaly"):
-        if st.session_state["df"] is not None:
+        if st.session_state.get("df") is not None:
             st.session_state["df"] = targeted_anomaly(st.session_state["df"], "exfil")
 
-    # Demo scenario
-    if st.sidebar.button("Load Demo Scenario: Ransomware Exfil"):
-        df = generate_sample_data(120)
-        df = targeted_anomaly(df, "exfil")
-        st.session_state["df"] = df
+    # Load sample Elastic/EDR dataset
+    if st.sidebar.button("Load Sample Elastic Dataset"):
+        data = {
+            "timestamp": pd.date_range(datetime.utcnow(), periods=50, freq="min"),
+            "src_ip": ["192.168.1." + str(i % 20) for i in range(50)],
+            "dest_host": ["edr-host" + str(i % 5) for i in range(50)],
+            "user": ["analyst" + str(i % 3) for i in range(50)],
+            "action": np.random.choice(["login", "file_access", "cmd_exec"], 50),
+            "result": np.random.choice(["success", "failure"], 50)
+        }
+        st.session_state["df"] = pd.DataFrame(data)
 
-    # Main
-    df = st.session_state["df"]
+    # Main content
+    df = st.session_state.get("df")
     if df is None:
-        st.info("Generate or load data to begin analysis.")
+        st.info(" Generate or upload data to begin analysis.")
         return
 
-    df = _ensure_timestamp(df)
+    st.subheader("Raw Events")
     st.dataframe(df.head(30))
 
     # Charts
-    st.subheader("Event Distributions")
+    st.subheader(" Event Distributions")
     col1, col2 = st.columns(2)
 
     with col1:
@@ -257,12 +277,12 @@ def main():
         st.download_button("Download Results Chart", buf2.getvalue(), "results.png")
 
     # Graph
-    st.subheader("Attack Graph")
+    st.subheader(" Attack Graph")
     G = build_graph(df)
     visualize_graph(G)
 
     # Detections
-    st.subheader("Detections")
+    st.subheader(" Detections")
     detections = []
     for d in detect_credential_stuffing(df):
         detections.append(("credential_stuffing", d))
@@ -275,11 +295,12 @@ def main():
         st.success("No anomalies detected ")
     else:
         for i, (dtype, dtext) in enumerate(detections):
-            tactic, technique = MITRE_MAP.get(dtype, ("Unknown", "Unknown"))
             with st.expander(f"[{dtype.upper()}] {dtext}"):
-                st.markdown(f"**MITRE ATT&CK Mapping:** {tactic} | {technique}")
+                st.markdown("**MITRE ATT&CK Mapping:**")
+                for tactic, technique in MITRE_MAP.get(dtype, [("Unknown", "Unknown")]):
+                    st.markdown(f"- {tactic} | {technique}")
                 if st.button(f"Explain {i}", key=f"expl{i}"):
-                    st.info(explain_detection(dtext))
+                    st.info(explain_detection(dtext, api_key=api_key))
                 st.markdown("**Mitigation Playbook:**")
                 if dtype == "credential_stuffing":
                     st.write("- Block IPs, enable MFA, monitor identity systems.")
@@ -287,6 +308,12 @@ def main():
                     st.write("- Lock accounts, enforce strong password policy, enable rate limiting.")
                 elif dtype == "data_exfil":
                     st.write("- Isolate host, monitor outbound traffic, preserve forensic evidence.")
+
+    # Downloads
+    st.subheader(" Download Data")
+    st.download_button("Download CSV", df.to_csv(index=False).encode("utf-8"), "events.csv")
+    st.download_button("Download JSON", df.to_json(orient="records").encode("utf-8"), "events.json")
+    st.download_button("Download Excel", df.to_excel(io.BytesIO(), index=False), "events.xlsx")
 
 
 if __name__ == "__main__":
