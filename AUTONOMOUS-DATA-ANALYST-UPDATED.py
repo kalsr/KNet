@@ -170,7 +170,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.title("Agentic-AI Demo — Autonomous Data Analyst Designed & Developed By Randy Singh from KNet Consulting Group.")
+st.title("Agentic-AI — Autonomous Data Analyst Designed & Developed By Randy Singh.")
 st.write("An Orchestrator Coordinates Small Specialized Agents (Ingestor, Cleaner, Summarizer, Anomaly Detector, Segmenter, Modeler, Reporter).")
 
 # Top controls
@@ -330,4 +330,5 @@ for k, v in st.session_state["report"].items():
             st.write("-", item)
     else:
         st.write(v)
+
 
