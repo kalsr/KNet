@@ -170,8 +170,8 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.title("Autonomous Data Analyst Designed & Developed By Randy Singh.")
-st.write("An Orchestrator which Coordinates Small Specialized Agentic-AI Agents (Ingestor, Cleaner, Summarizer, Anomaly Detector, Segmenter, Modeler, Reporter).")
+st.title("Agentic-AI Autonomous Data Analyst- Developed By Randy Singh.")
+st.write("An Orchestrator which Coordinates Small Specialized Autonomus Agents (Ingestor, Cleaner, Summarizer, Anomaly Detector, Segmenter, Modeler, Reporter).")
 
 # Top controls
 col1, col2, col3 = st.columns([2,1,1])
@@ -330,6 +330,7 @@ for k, v in st.session_state["report"].items():
             st.write("-", item)
     else:
         st.write(v)
+
 
 
 
