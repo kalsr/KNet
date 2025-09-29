@@ -170,7 +170,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.title("Agentic-AI Based Autonomous Data Analyst- Randy Singh.")
+st.title("Agentic-AI Based Autonomous Data Analyst- Developed By Randy Singh.")
 st.write("An Orchestrator which Coordinates Small Specialized Autonomus Agents (Ingestor, Cleaner, Summarizer, Anomaly Detector, Segmenter, Modeler, Reporter).")
 
 # Top controls
@@ -330,6 +330,7 @@ for k, v in st.session_state["report"].items():
             st.write("-", item)
     else:
         st.write(v)
+
 
 
 
