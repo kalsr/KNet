@@ -217,7 +217,7 @@ def create_features(df):
 
     """
 
-    Create numeric features for the IsolationForest.
+   # Create numeric features for the IsolationForest.
 
     - bytes (numeric)
 
@@ -1022,6 +1022,7 @@ if action_param:
 st.markdown("---")
 
 st.caption("Demo: IsolationForest used for anomaly detection (unsupervised). Replace model and data connectors for production-grade integration.")
+
 
 
 
