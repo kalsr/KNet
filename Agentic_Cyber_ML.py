@@ -216,7 +216,7 @@ def html_button(label, key, color, width="200px"):
 # Threat Hunting Page
 # -------------------------
 if page=="Threat Hunting":
-    st.title("Agentic Cyber Threat Hunting - Randy Singh From KNet Consulting Group")
+    st.title("Agentic Cyber Threat Hunting - Developed By Randy Singh")
 
     # Sample log slider
     sample_n = st.sidebar.slider("Number of sample logs", 10, 100, 50, 5)
@@ -318,5 +318,6 @@ if page=="Audit Logs":
         st.info("No audit logs yet.")
 
 st.caption("Agentic Cyber ML — Demo. Local role handling only. Not for production.")
+
 
 
