@@ -93,12 +93,12 @@ def recommend_investments(df):
     rank_text = "\n".join([f"{i+1}. {name} (score {sc})" for i,(name,sc) in enumerate(ranking)])
     top = ranking[0][0]
 
-    return f"✅ Based on these metrics, **{top}** appears to be the strongest investment.\n\n**Ranking:**\n{rank_text}\n\n**Reasons:**\n- " + "\n- ".join(reasons)
+    return f" Based on these metrics, **{top}** appears to be the strongest investment.\n\n**Ranking:**\n{rank_text}\n\n**Reasons:**\n- " + "\n- ".join(reasons)
 
 # ---------------------------
 # UI Header
 # ---------------------------
-st.markdown("<h1 style='color:#0b6fb0'> Stock Comparison Tool</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='color:#0b6fb0'> Stock Comparison Tool - Developed By Randy Singh</h1>", unsafe_allow_html=True)
 st.markdown("Compare up to 5 companies using Yahoo Finance data. Includes ratios, price history, reasoning-based ranking, and report exports. **Not financial advice.**")
 
 # ---------------------------
@@ -235,3 +235,4 @@ if not df.empty:
 
 st.markdown("---")
 st.caption("This tool is designed by Randy Singh from KNet Consulting & uses Yahoo Finance data. Educational use only. Not financial advice.")
+
