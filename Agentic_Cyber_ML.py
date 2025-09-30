@@ -219,11 +219,11 @@ def create_features(df):
 
    # Create numeric features for the IsolationForest.
 
-    - bytes (numeric)
+  # - bytes (numeric)
 
-    - protocol encoded
+   # - protocol encoded
 
-    - optionally: count of dst per src in window (simple feature)
+   # - optionally: count of dst per src in window (simple feature)
 
     """
 
@@ -1022,6 +1022,7 @@ if action_param:
 st.markdown("---")
 
 st.caption("Demo: IsolationForest used for anomaly detection (unsupervised). Replace model and data connectors for production-grade integration.")
+
 
 
 
