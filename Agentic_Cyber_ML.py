@@ -227,7 +227,7 @@ def create_features(df):
 
     #"""
 
-    df = df.copy()
+    # df = df.copy()
 
     # bytes
 
@@ -1022,6 +1022,7 @@ if action_param:
 st.markdown("---")
 
 st.caption("Demo: IsolationForest used for anomaly detection (unsupervised). Replace model and data connectors for production-grade integration.")
+
 
 
 
