@@ -1,3 +1,5 @@
+
+
 # Agentic_Cyber_ML.py
 # Agentic Cyber ML Demo (single-file)
 
@@ -14,7 +16,6 @@
 
 # THIS APPLICATION IS DEVELOPED BY RANDY SINGH FROM KNET CONSULTING GROUP.
 
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -23,11 +24,14 @@ from sklearn.ensemble import IsolationForest
 from io import BytesIO
 import json
 import plotly.express as px
+import plotly.graph_objects as go
 import networkx as nx
 import urllib.parse
 import base64
 
-# Page config
+# -------------------------
+# App configuration
+# -------------------------
 st.set_page_config(
     page_title="Agentic Cyber ML — Autonomous Threat Detection",
     page_icon="🛡️",
@@ -35,7 +39,7 @@ st.set_page_config(
 )
 
 # -------------------------
-# Utilities / helpers
+# Helpers & core functions
 # -------------------------
 def now_iso():
     return datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -53,47 +57,40 @@ def init_state():
         st.session_state.model = None
     if "model_stats" not in st.session_state:
         st.session_state.model_stats = {}
-    if "playbooks" not in st.session_state:
-        st.session_state.playbooks = []
-    if "last_action" not in st.session_state:
-        st.session_state.last_action = None
 
 def audit_add(user, role, action, details=""):
-    entry = {
+    st.session_state.audit.insert(0, {
         "timestamp": now_iso(),
         "user": user,
         "role": role,
         "action": action,
-        "details": details,
-    }
-    st.session_state.audit.insert(0, entry)
+        "details": details
+    })
 
 def generate_sample_logs(n=50):
     rng = np.random.default_rng(seed=42)
-    timestamps = [datetime.utcnow() - timedelta(seconds=int(i * 30)) for i in range(n)]
+    timestamps = [datetime.utcnow() - timedelta(seconds=int(i*30)) for i in range(n)]
     src_ips = [f"10.{rng.integers(0,256)}.{rng.integers(0,256)}.{rng.integers(1,255)}" for _ in range(n)]
     dst_ips = [f"192.168.{rng.integers(0,256)}.{rng.integers(1,255)}" for _ in range(n)]
     protocol = rng.choice(
-        ["TCP", "UDP", "ICMP", "HTTP", "HTTPS", "SSH", "DNS"],
+        ["TCP","UDP","ICMP","HTTP","HTTPS","SSH","DNS"],
         size=n,
-        p=[0.25, 0.2, 0.03, 0.18, 0.18, 0.07, 0.09],
+        p=[0.25,0.2,0.03,0.18,0.18,0.07,0.09]
     )
     bytes_sent = rng.integers(40, 200_000, size=n)
     malicious = np.zeros(n, dtype=int)
-    spikes = rng.choice(n, size=max(1, n // 15), replace=False)
+    spikes = rng.choice(n, size=max(1, n//15), replace=False)
     for s in spikes:
-        bytes_sent[s] = int(bytes_sent[s] * rng.integers(5, 50))
+        bytes_sent[s] = int(bytes_sent[s] * rng.integers(5,50))
         malicious[s] = 1
-    df = pd.DataFrame(
-        {
-            "timestamp": timestamps,
-            "src_ip": src_ips,
-            "dst_ip": dst_ips,
-            "protocol": protocol,
-            "bytes": bytes_sent,
-            "malicious_label": malicious,
-        }
-    )
+    df = pd.DataFrame({
+        "timestamp": timestamps,
+        "src_ip": src_ips,
+        "dst_ip": dst_ips,
+        "protocol": protocol,
+        "bytes": bytes_sent,
+        "malicious_label": malicious
+    })
     df["quarantined"] = False
     return df
 
@@ -124,7 +121,7 @@ def create_features(df):
     df["pair"] = df["src_ip"].astype(str) + "->" + df["dst_ip"].astype(str)
     counts = df["pair"].value_counts().to_dict()
     df["pair_count"] = df["pair"].map(counts).fillna(1)
-    features = df[["bytes", "proto_enc", "pair_count"]].astype(float)
+    features = df[["bytes","proto_enc","pair_count"]].astype(float)
     return df, features
 
 def train_isolation_forest(features, cont=0.05):
@@ -134,12 +131,9 @@ def train_isolation_forest(features, cont=0.05):
 
 def score_with_iforest(df, model, features):
     df = df.copy()
-    raw = -model.decision_function(features)  # higher -> anomalous
+    raw = -model.decision_function(features)
     minv, maxv = raw.min(), raw.max()
-    if maxv - minv <= 0:
-        norm = np.zeros_like(raw)
-    else:
-        norm = (raw - minv) / (maxv - minv)
+    norm = np.zeros_like(raw) if maxv - minv <= 0 else (raw - minv) / (maxv - minv)
     df["anomaly_score"] = np.round(norm, 4)
     df["action"] = "ALLOW"
     df.loc[df["anomaly_score"] >= 0.7, "action"] = "SUSPECT"
@@ -148,80 +142,78 @@ def score_with_iforest(df, model, features):
         df["quarantined"] = False
     return df
 
-def convert_df_to_csv_bytes(df):
+def convert_df_to_csv(df):
     return df.to_csv(index=False).encode("utf-8")
 
-def convert_df_to_json_bytes(df):
+def convert_df_to_json(df):
     return df.to_json(orient="records", date_format="iso").encode("utf-8")
 
-def convert_df_to_excel_bytes(df):
+def convert_df_to_excel(df):
     buffer = BytesIO()
     try:
         with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
             df.to_excel(writer, index=False, sheet_name="results")
     except Exception:
-        # fallback if openpyxl missing
         df.to_excel(buffer, index=False, sheet_name="results")
     return buffer.getvalue()
 
-def html_action_button(label, token, color_hex="#27ae60", size="14px"):
+def html_action_anchor(label, token, color_hex="#27ae60", size="14px"):
     href = "?" + urllib.parse.urlencode({"action": token})
-    html = (
-        '<a href="'
-        + href
-        + '" style="display:inline-block; background:'
-        + color_hex
-        + "; color:#fff; padding:8px 12px; text-decoration:none; border-radius:8px; font-weight:600; font-size:"
-        + size
-        + '; margin:4px 4px;">'
-        + label
-        + "</a>"
-    )
+    html = f'''
+    <a href="{href}" style="
+      display:inline-block;
+      background:{color_hex};
+      color:#fff;
+      padding:8px 12px;
+      text-decoration:none;
+      border-radius:8px;
+      font-weight:600;
+      font-size:{size};
+      margin:4px 4px;
+    ">{label}</a>
+    '''
     st.markdown(html, unsafe_allow_html=True)
 
 def download_link_bytes(data_bytes, filename, label):
     b64 = base64.b64encode(data_bytes).decode()
     href = f'data:application/octet-stream;base64,{b64}'
-    html = f'<a href="{href}" download="{filename}">{label}</a>'
-    st.markdown(html, unsafe_allow_html=True)
+    st.markdown(f'<a href="{href}" download="{filename}">{label}</a>', unsafe_allow_html=True)
 
-def build_network_figure(df):
+def network_plot_from_df(df):
+    # Use only a subset to keep graph readable
     if df is None or df.empty:
         return None
+    # Build graph from top pairs by count
     df_pairs = df.copy()
     df_pairs["pair"] = df_pairs["src_ip"].astype(str) + "->" + df_pairs["dst_ip"].astype(str)
-    top = (
-        df_pairs.groupby(["src_ip", "dst_ip"])
-        .size()
-        .reset_index(name="count")
-        .sort_values("count", ascending=False)
-        .head(40)
-    )
+    top = (df_pairs.groupby(["src_ip","dst_ip"]).size().reset_index(name="count")
+           .sort_values("count", ascending=False).head(80))
     G = nx.DiGraph()
     for _, row in top.iterrows():
-        s = row["src_ip"]
-        d = row["dst_ip"]
-        c = int(row["count"])
-        G.add_node(s)
-        G.add_node(d)
+        s = row["src_ip"]; d = row["dst_ip"]; c = int(row["count"])
+        G.add_node(s); G.add_node(d)
         G.add_edge(s, d, weight=c)
-    if len(G) == 0:
+    if len(G)==0:
         return None
     pos = nx.spring_layout(G, seed=42)
-    node_x = []
-    node_y = []
-    labels = []
-    for n, p in pos.items():
-        node_x.append(p[0])
-        node_y.append(p[1])
-        labels.append(str(n))
-    node_df = pd.DataFrame({"x": node_x, "y": node_y, "label": labels})
-    fig = px.scatter(node_df, x="x", y="y", hover_name="label", size_max=20)
-    for u, v, data in G.edges(data=True):
-        x0, y0 = pos[u]
-        x1, y1 = pos[v]
-        fig.add_shape(type="line", x0=x0, y0=y0, x1=x1, y1=y1, line=dict(width=1, color="LightSeaGreen"))
-    fig.update_layout(xaxis=dict(visible=False), yaxis=dict(visible=False), showlegend=False, height=450)
+    edge_x, edge_y = [], []
+    for u,v in G.edges():
+        x0,y0 = pos[u]; x1,y1 = pos[v]
+        edge_x += [x0, x1, None]
+        edge_y += [y0, y1, None]
+    edge_trace = go.Scatter(x=edge_x, y=edge_y, mode='lines', line=dict(width=1, color="#888"), hoverinfo='none')
+    node_x, node_y, texts, colors = [], [], [], []
+    for n in G.nodes():
+        x,y = pos[n]
+        node_x.append(x); node_y.append(y); texts.append(n)
+        quarantined = df.loc[df["src_ip"]==n, "quarantined"].any() or df.loc[df["dst_ip"]==n, "quarantined"].any()
+        colors.append("red" if quarantined else "green")
+    node_trace = go.Scatter(
+        x=node_x, y=node_y, mode='markers+text', text=texts, textposition='top center',
+        marker=dict(color=colors, size=12, line=dict(width=1))
+    )
+    fig = go.Figure(data=[edge_trace, node_trace])
+    fig.update_layout(title="Network Map (red = quarantined)", showlegend=False, xaxis=dict(visible=False), yaxis=dict(visible=False), height=480)
     return fig
 
 # -------------------------
@@ -229,295 +221,364 @@ def build_network_figure(df):
 # -------------------------
 init_state()
 
-# Sidebar: user/role & navigation
+# -------------------------
+# Sidebar: role + nav
+# -------------------------
 st.sidebar.title("Agentic Cyber ML")
 st.sidebar.subheader("User / Role (demo)")
 user_name = st.sidebar.text_input("Username", value=st.session_state.user)
-role_select = st.sidebar.selectbox(
-    "Role", ["Admin", "Analyst", "Viewer"], index=["Admin", "Analyst", "Viewer"].index(st.session_state.role)
-    if st.session_state.role in ["Admin", "Analyst", "Viewer"]
-    else 2
-)
+role_choice = st.sidebar.selectbox("Role", ["Admin", "Analyst", "Viewer"], index=["Admin","Analyst","Viewer"].index(st.session_state.role) if st.session_state.role in ["Admin","Analyst","Viewer"] else 2)
 if st.sidebar.button("Set Role"):
     st.session_state.user = user_name if user_name.strip() else "guest"
-    st.session_state.role = role_select
-    audit_add(st.session_state.user, st.session_state.role, "SetRole", f"Role set to {role_select}")
+    st.session_state.role = role_choice
+    audit_add(st.session_state.user, st.session_state.role, "SetRole", f"Role set to {role_choice}")
     st.sidebar.success(f"Role set: {st.session_state.role}")
 
 st.sidebar.markdown("---")
 page = st.sidebar.radio("Pages", ["Threat Hunting", "Incident Playbooks", "Audit Logs"])
 st.sidebar.markdown("---")
-st.sidebar.caption("Note: demo only — local role handling (not secure).")
+st.sidebar.caption("Demo only — local role handling. Not for production.")
 
-# URL action param (anchor buttons)
+# permission helpers
+role = st.session_state.role
+can_train = role in ("Admin","Analyst")
+can_score = role in ("Admin","Analyst")
+can_contain = role == "Admin"
+can_reset = role == "Admin"
+can_download = True
+can_upload = role in ("Admin","Analyst","Viewer")
+
+# -------------------------
+# Top header + anchor buttons
+# -------------------------
+col_h1, col_h2 = st.columns([3,1])
+with col_h1:
+    st.title("Agentic Cyber ML — Autonomous Threat Detection (Demo)")
+    st.markdown("Generate or upload logs → train → score → auto-contain (Admin) → visualize & download.")
+with col_h2:
+    # red reset anchor
+    html_action_anchor = lambda label, token, color: st.markdown(
+        f'<a href="?action={token}" style="display:inline-block;background:{color};color:#fff;padding:8px 10px;text-decoration:none;border-radius:8px;font-weight:700;font-size:13px;">{label}</a>', unsafe_allow_html=True
+    )
+    html_action_anchor("Reset", "reset", "#c0392b")
+
+st.markdown("---")
+
+# anchor actions row
+row = st.container()
+with row:
+    html_action_anchor("Generate Sample Logs", "generate", "#27ae60")
+    html_action_anchor("Train Model", "train", "#27ae60")
+    html_action_anchor("Score Logs", "score", "#27ae60")
+    html_action_anchor("Auto-Contain (Admin)", "auto_contain", "#27ae60")
+    html_action_anchor("Download CSV", "download_csv", "#2980b9")
+    html_action_anchor("Download JSON", "download_json", "#2980b9")
+    html_action_anchor("Download XLSX", "download_xlsx", "#2980b9")
+
+st.markdown("---")
+
+# -------------------------
+# Parse action from URL (anchor)
+# -------------------------
 query_params = st.query_params
 action_param = None
 if isinstance(query_params, dict):
     action_param = query_params.get("action", [None])[0] if "action" in query_params else None
 
-# Top header + reset anchor
-col_top_left, col_top_right = st.columns([3, 1])
-with col_top_left:
-    st.markdown("### Agentic Cyber ML — Autonomous Threat Detection")
-    st.markdown(
-        "Generate sample logs, upload data, run unsupervised anomaly detection, auto-contain suspicious IPs, and download results."
-    )
-with col_top_right:
-    href = "?" + urllib.parse.urlencode({"action": "reset"})
-    reset_html = (
-        '<a href="'
-        + href
-        + '" style="display:inline-block; background:#e74c3c; color:#fff; padding:8px 10px; text-decoration:none; border-radius:8px; font-weight:700; font-size:13px;">Reset</a>'
-    )
-    st.markdown(reset_html, unsafe_allow_html=True)
-
-st.markdown("---")
-
-# anchor buttons
-html_action_button("Generate Sample Logs", "generate", color_hex="#27ae60")
-html_action_button("Upload Logs", "upload", color_hex="#27ae60")
-html_action_button("Train/Score (Run ML)", "run_ml", color_hex="#27ae60")
-html_action_button("Auto-Contain Top Suspicious", "auto_contain", color_hex="#27ae60")
-html_action_button("Download CSV", "download_csv", color_hex="#2980b9")
-html_action_button("Download JSON", "download_json", color_hex="#2980b9")
-html_action_button("Download XLSX", "download_xlsx", color_hex="#2980b9")
-
-# -------------------------
-# Anchor-action handler
-# -------------------------
-def handle_action_token(token):
-    st.session_state.last_action = token
-    if token == "generate":
-        df_new = generate_sample_logs(80)
-        st.session_state.df = df_new
-        audit_add(st.session_state.user, st.session_state.role, "Generate", "Generated 80 sample logs")
-        st.success("Sample logs generated (80).")
-    elif token == "upload":
-        audit_add(st.session_state.user, st.session_state.role, "UploadRequested", "User requested upload via anchor")
-        st.info("Use the upload widget below to pick a file (CSV / JSON / XLSX).")
-    elif token == "run_ml":
-        if st.session_state.df is None or st.session_state.df.empty:
-            st.warning("No logs available — generate or upload logs first.")
-            return
-        df, features = create_features(st.session_state.df)
-        model = train_isolation_forest(features, cont=0.05)
-        scored = score_with_iforest(df, model, features)
-        st.session_state.df = scored
-        st.session_state.model = model
-        st.session_state.model_stats = {"contamination": 0.05, "n_samples": len(features)}
-        audit_add(st.session_state.user, st.session_state.role, "RunML", f"Trained IsolationForest on {len(features)} records")
-        st.success("ML run completed — anomaly scores added.")
-    elif token == "auto_contain":
-        if st.session_state.df is None or st.session_state.df.empty:
-            st.warning("No logs available to contain.")
-            return
-        df = st.session_state.df.copy()
-        top_block = df.sort_values("anomaly_score", ascending=False).head(10)
-        ips_to_quarantine = top_block["src_ip"].value_counts().index.tolist()
-        df.loc[df["src_ip"].isin(ips_to_quarantine), "quarantined"] = True
-        st.session_state.df = df
-        audit_add(st.session_state.user, st.session_state.role, "AutoContain", f"Quarantined {len(ips_to_quarantine)} src_ip(s)")
-        st.success(f"Quarantined top {len(ips_to_quarantine)} source IPs.")
-    elif token == "download_csv":
-        if st.session_state.df is None or st.session_state.df.empty:
-            st.warning("No data to download.")
-            return
-        csvb = convert_df_to_csv_bytes(st.session_state.df)
-        download_link_bytes(csvb, "agentic_results.csv", "Click here to download CSV")
-        audit_add(st.session_state.user, st.session_state.role, "Download", "Downloaded CSV")
-    elif token == "download_json":
-        if st.session_state.df is None or st.session_state.df.empty:
-            st.warning("No data to download.")
-            return
-        jsb = convert_df_to_json_bytes(st.session_state.df)
-        download_link_bytes(jsb, "agentic_results.json", "Click here to download JSON")
-        audit_add(st.session_state.user, st.session_state.role, "Download", "Downloaded JSON")
-    elif token == "download_xlsx":
-        if st.session_state.df is None or st.session_state.df.empty:
-            st.warning("No data to download.")
-            return
-        xb = convert_df_to_excel_bytes(st.session_state.df)
-        download_link_bytes(xb, "agentic_results.xlsx", "Click here to download XLSX")
-        audit_add(st.session_state.user, st.session_state.role, "Download", "Downloaded XLSX")
-    elif token == "reset":
-        st.session_state.df = pd.DataFrame()
-        st.session_state.model = None
-        st.session_state.model_stats = {}
-        audit_add(st.session_state.user, st.session_state.role, "Reset", "Application reset by user")
-        try:
-            st.experimental_set_query_params()
-        except Exception:
-            pass
-        st.success("Application reset.")
-    else:
-        st.info(f"Action: {token}")
-
-if action_param:
-    try:
-        handle_action_token(action_param)
-    except Exception as e:
-        st.error(f"Action error: {e}")
-
 # -------------------------
 # Page: Threat Hunting
 # -------------------------
 if page == "Threat Hunting":
-    st.header("🕵️ Threat Hunting (IsolationForest ML)")
-    left, right = st.columns([2, 1])
-    with left:
+    st.header("🕵️ Threat Hunting")
+    col_left, col_right = st.columns([2,1])
+
+    with col_left:
         st.subheader("Data Controls")
-        uploaded = st.file_uploader("Upload logs (CSV / JSON / XLSX)", type=["csv", "json", "xls", "xlsx"])
-        if uploaded is not None:
-            df_u = read_uploaded_file(uploaded)
-            if df_u is not None:
-                st.session_state.df = df_u
-                # ensure columns exist
-                for c in ["timestamp", "src_ip", "dst_ip", "protocol", "bytes", "quarantined"]:
-                    if c not in st.session_state.df.columns:
-                        if c == "quarantined":
-                            st.session_state.df[c] = False
-                        else:
-                            st.session_state.df[c] = ""
-                audit_add(st.session_state.user, st.session_state.role, "Upload", f"Uploaded file: {uploaded.name}")
-                st.success(f"Uploaded: {uploaded.name} ({len(st.session_state.df)} records).")
 
-        if st.button("Generate 50 sample logs"):
-            df_new = generate_sample_logs(50)
+        # sample size slider in sidebar for anchors + in-page generate
+        sample_n = st.sidebar.slider("Sample logs (when generating)", min_value=10, max_value=100, value=50, step=5)
+        if st.button("Generate sample logs (in-page)"):
+            df_new = generate_sample_logs(sample_n)
             st.session_state.df = df_new
-            audit_add(st.session_state.user, st.session_state.role, "Generate", "Generated 50 sample logs")
-            st.success("Generated 50 sample logs.")
+            audit_add(st.session_state.user, st.session_state.role, "Generate", f"{sample_n} sample logs generated (in-page)")
+            st.success(f"Generated {sample_n} sample logs.")
 
-        st.markdown("**Machine Learning**")
-        cont = st.slider("Contamination (expected fraction of anomalies)", min_value=0.01, max_value=0.2, value=0.05, step=0.01)
-        if st.button("Train & Score (IsolationForest)"):
-            if st.session_state.df is None or st.session_state.df.empty:
-                st.warning("No data to train on. Generate or upload logs first.")
+        uploaded = st.file_uploader("Upload logs (CSV / JSON / XLSX)", type=["csv","json","xls","xlsx"])
+        if uploaded is not None:
+            if not can_upload:
+                st.warning("Your role cannot upload files.")
+                audit_add(st.session_state.user, st.session_state.role, "UploadDenied", "Role denied upload")
             else:
-                df, feats = create_features(st.session_state.df)
-                model = train_isolation_forest(feats, cont=cont)
-                scored = score_with_iforest(df, model, feats)
-                st.session_state.df = scored
-                st.session_state.model = model
-                st.session_state.model_stats = {"contamination": cont, "n_samples": len(feats)}
-                audit_add(st.session_state.user, st.session_state.role, "TrainScore", f"Trained model on {len(feats)} rows")
-                st.success("Model trained and anomaly scores computed.")
+                df_u = read_uploaded_file(uploaded)
+                if df_u is not None:
+                    # ensure basic columns exist (best effort)
+                    for c in ["timestamp","src_ip","dst_ip","protocol","bytes"]:
+                        if c not in df_u.columns:
+                            df_u[c] = "" if c!="bytes" else 0
+                    if "quarantined" not in df_u.columns:
+                        df_u["quarantined"] = False
+                    st.session_state.df = df_u
+                    audit_add(st.session_state.user, st.session_state.role, "Upload", f"Uploaded {uploaded.name}")
+                    st.success(f"Uploaded {uploaded.name} ({len(df_u)} rows).")
 
-        st.markdown("**Containment**")
-        if st.button("Auto-Contain Top 5 Suspicious (by src_ip)"):
-            if st.session_state.df is None or st.session_state.df.empty:
-                st.warning("No data to contain.")
+        st.markdown("### Machine Learning")
+        cont = st.slider("Contamination (expected anomaly fraction)", min_value=0.01, max_value=0.2, value=0.05, step=0.01)
+        if st.button("Train & Score (in-page)"):
+            if not can_train:
+                st.warning("Your role cannot train models.")
+                audit_add(st.session_state.user, st.session_state.role, "TrainDenied", "Role denied training")
             else:
-                df = st.session_state.df.copy()
-                top_block = df.sort_values("anomaly_score", ascending=False).head(10)
-                ips_to_quarantine = top_block["src_ip"].value_counts().index.tolist()[:5]
-                df.loc[df["src_ip"].isin(ips_to_quarantine), "quarantined"] = True
-                st.session_state.df = df
-                audit_add(st.session_state.user, st.session_state.role, "AutoContain", f"Quarantined {len(ips_to_quarantine)} IPs")
-                st.success(f"Quarantined {len(ips_to_quarantine)} src_ip(s).")
+                if st.session_state.df is None or st.session_state.df.empty:
+                    st.warning("No data available. Generate or upload logs first.")
+                else:
+                    df_f, feats = create_features(st.session_state.df)
+                    model = train_isolation_forest(feats, cont=cont)
+                    scored = score_with_iforest(df_f, model, feats)
+                    st.session_state.model = model
+                    st.session_state.df = scored
+                    st.session_state.model_stats = {"contamination": cont, "n_samples": len(feats)}
+                    audit_add(st.session_state.user, st.session_state.role, "TrainScore", f"Trained+scored on {len(feats)} rows")
+                    st.success("Model trained and logs scored.")
+
+        st.markdown("### Containment")
+        if st.button("Auto-Contain Top 5 suspicious (in-page)"):
+            if not can_contain:
+                st.warning("Only Admin can auto-contain. Action denied.")
+                audit_add(st.session_state.user, st.session_state.role, "ContainDenied", "Role denied auto-contain")
+            else:
+                if st.session_state.df is None or st.session_state.df.empty or "anomaly_score" not in st.session_state.df.columns:
+                    st.warning("No scored data to contain. Run Train & Score first.")
+                else:
+                    dfc = st.session_state.df.copy()
+                    top = dfc.sort_values("anomaly_score", ascending=False).head(10)
+                    ips = top["src_ip"].value_counts().index.tolist()[:5]
+                    dfc.loc[dfc["src_ip"].isin(ips), "quarantined"] = True
+                    st.session_state.df = dfc
+                    audit_add(st.session_state.user, st.session_state.role, "AutoContain", f"Quarantined {len(ips)} src_ip(s)")
+                    st.success(f"Quarantined {len(ips)} source IP(s).")
 
         st.markdown("---")
-        st.markdown("**Download current results**")
+        st.markdown("### Download / Export")
         if st.session_state.df is not None and not st.session_state.df.empty:
-            col_a, col_b, col_c = st.columns(3)
-            with col_a:
-                st.download_button("Download CSV", data=convert_df_to_csv_bytes(st.session_state.df), file_name="agentic_results.csv", mime="text/csv")
-            with col_b:
-                st.download_button("Download JSON", data=convert_df_to_json_bytes(st.session_state.df), file_name="agentic_results.json", mime="application/json")
-            with col_c:
-                st.download_button("Download XLSX", data=convert_df_to_excel_bytes(st.session_state.df), file_name="agentic_results.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            col_dl1, col_dl2, col_dl3 = st.columns(3)
+            with col_dl1:
+                st.download_button("Download CSV", data=convert_df_to_csv(st.session_state.df),
+                                   file_name="agentic_results.csv", mime="text/csv")
+            with col_dl2:
+                st.download_button("Download JSON", data=convert_df_to_json(st.session_state.df),
+                                   file_name="agentic_results.json", mime="application/json")
+            with col_dl3:
+                st.download_button("Download XLSX", data=convert_df_to_excel(st.session_state.df),
+                                   file_name="agentic_results.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         else:
-            st.info("No results to download yet.")
+            st.info("No data to download yet (generate or upload first).")
 
-    with right:
-        st.subheader("Current Data Snapshot")
-        if st.session_state.df is None or st.session_state.df.empty:
-            st.info("No logs loaded. Generate or upload logs to begin.")
-        else:
-            st.write(f"Records: {len(st.session_state.df)}")
-            preview = st.session_state.df.head(200)
-            st.dataframe(preview)
-        st.markdown("**Model Stats**")
+    with col_right:
+        st.subheader("Session / Model Info")
+        st.write(f"User: **{st.session_state.user}** — Role: **{st.session_state.role}**")
+        st.markdown("**Model stats**")
         st.json(st.session_state.model_stats if st.session_state.model_stats else {"status": "no model"})
+        st.markdown("---")
+        st.subheader("Audit (recent)")
+        if st.session_state.audit:
+            df_a = pd.DataFrame(st.session_state.audit).head(50)
+            st.table(df_a[["timestamp","user","role","action","details"]])
+            st.download_button("Download Audit CSV", data=convert_df_to_csv(df_a),
+                               file_name="audit_recent.csv", mime="text/csv")
+        else:
+            st.info("No audit entries yet.")
 
     st.markdown("---")
-    st.subheader("Visualizations")
-    viz_col1, viz_col2 = st.columns([1, 1])
-    with viz_col1:
-        st.markdown("**Top anomalous records**")
-        if st.session_state.df is not None and not st.session_state.df.empty and "anomaly_score" in st.session_state.df.columns:
-            topn = st.session_state.df.sort_values("anomaly_score", ascending=False).head(25)
-            fig = px.bar(topn, x="src_ip", y="anomaly_score", hover_data=["dst_ip", "protocol", "bytes"], title="Top anomalies by src_ip")
-            fig.update_layout(xaxis_tickangle=-45, height=400)
+    st.subheader("Data Snapshot & Visualizations")
+    if st.session_state.df is None or st.session_state.df.empty:
+        st.info("No logs loaded. Use Generate or Upload to begin.")
+    else:
+        st.write(f"Records: {len(st.session_state.df)}")
+        st.dataframe(st.session_state.df.head(200), use_container_width=True)
+
+        if "anomaly_score" in st.session_state.df.columns:
+            fig = px.histogram(st.session_state.df, x="anomaly_score", nbins=30, title="Anomaly Score Distribution")
             st.plotly_chart(fig, use_container_width=True)
+            net_fig = network_plot_from_df(st.session_state.df)
+            if net_fig is not None:
+                st.plotly_chart(net_fig, use_container_width=True)
         else:
-            st.info("No anomaly scores yet. Run ML.")
-    with viz_col2:
-        st.markdown("**Network Map (top pairs)**")
-        fig_net = build_network_figure(st.session_state.df if st.session_state.df is not None else pd.DataFrame())
-        if fig_net is not None:
-            st.plotly_chart(fig_net, use_container_width=True)
-        else:
-            st.info("Network graph empty — generate/upload logs.")
+            st.info("No anomaly scores present. Run Train & Score.")
 
 # -------------------------
-# Page: Incident Playbooks
+# Anchor action handling (executed regardless of page; enforce role checks)
 # -------------------------
-elif page == "Incident Playbooks":
-    st.header("📘 Incident Playbooks")
-    st.write("Create, view, and update incident playbooks. These are demo templates for response actions.")
-    if st.session_state.playbooks:
-        for i, pb in enumerate(st.session_state.playbooks):
-            with st.expander(f"Playbook #{i+1}: {pb.get('title','Untitled')} - Status: {pb.get('status','open')}"):
-                st.write("**Description**")
-                st.write(pb.get("description", ""))
-                st.write("**Steps**")
-                for step in pb.get("steps", []):
-                    st.write(f"- {step}")
-                cols = st.columns(3)
-                if cols[0].button(f"Mark Mitigated #{i}", key=f"mit_{i}"):
-                    st.session_state.playbooks[i]["status"] = "mitigated"
-                    audit_add(st.session_state.user, st.session_state.role, "PlaybookMitigated", f"Playbook #{i+1} mitigated")
-                    st.success("Marked mitigated.")
-                if cols[1].button(f"Clone #{i}", key=f"clone_{i}"):
-                    st.session_state.playbooks.append(dict(st.session_state.playbooks[i]))
-                    audit_add(st.session_state.user, st.session_state.role, "PlaybookClone", f"Cloned playbook #{i+1}")
-                    st.success("Cloned.")
-                if cols[2].button(f"Delete #{i}", key=f"del_{i}"):
+if action_param:
+    # map anchor actions to operations, but respect role permissions
+    token = action_param
+    # For anchors that affect data, perform them and show messages
+    if token == "generate":
+        # generate using sidebar sample_n if present
+        sample_n = int(st.session_state.get("sample_n", 50)) if "sample_n" in st.session_state else 50
+        # read slider value if present (sidebar)
+        try:
+            # reading slider directly not possible here if not in session; fallback to 50
+            sample_n = int(st.sidebar._state.session_state.get("slider", sample_n)) if False else st.sidebar.slider("Number of sample logs", 10, 100, 50)
+        except Exception:
+            sample_n = st.sidebar.slider("Number of sample logs", 10, 100, 50)
+        st.session_state.df = generate_sample_logs(sample_n)
+        audit_add(st.session_state.user, st.session_state.role, "Generate", f"{sample_n} logs generated (anchor)")
+        st.experimental_rerun()
+
+    if token == "train":
+        if not can_train:
+            st.warning("Your role is not permitted to train models. (Anchor train blocked.)")
+            audit_add(st.session_state.user, st.session_state.role, "TrainDenied", "Role denied anchor-train")
+        else:
+            if st.session_state.df is None or st.session_state.df.empty:
+                st.warning("No data available to train.")
+            else:
+                df_f, feats = create_features(st.session_state.df)
+                model = train_isolation_forest(feats, cont=0.05)
+                st.session_state.model = model
+                st.session_state.df = df_f
+                st.session_state.model_stats = {"contamination":0.05, "n_samples": len(feats)}
+                audit_add(st.session_state.user, st.session_state.role, "Train", f"Trained on {len(feats)} rows (anchor)")
+                st.success("Model trained (anchor).")
+                st.experimental_rerun()
+
+    if token == "score":
+        if not can_score:
+            st.warning("Your role is not permitted to score models. (Anchor score blocked.)")
+            audit_add(st.session_state.user, st.session_state.role, "ScoreDenied", "Role denied anchor-score")
+        else:
+            if st.session_state.model is None:
+                st.warning("No trained model present. Train first.")
+            else:
+                df_f, feats = create_features(st.session_state.df)
+                df_scored = score_with_iforest(df_f, st.session_state.model, feats)
+                st.session_state.df = df_scored
+                audit_add(st.session_state.user, st.session_state.role, "Score", f"Scored {len(feats)} rows (anchor)")
+                st.success("Logs scored (anchor).")
+                st.experimental_rerun()
+
+    if token == "auto_contain":
+        if not can_contain:
+            st.warning("Only Admin can auto-contain. (Anchor blocked.)")
+            audit_add(st.session_state.user, st.session_state.role, "ContainDenied", "Role denied anchor-contain")
+        else:
+            if st.session_state.df is None or st.session_state.df.empty or "anomaly_score" not in st.session_state.df.columns:
+                st.warning("No scored data to contain. Run Train & Score first.")
+            else:
+                dfc = st.session_state.df.copy()
+                top = dfc.sort_values("anomaly_score", ascending=False).head(10)
+                ips = top["src_ip"].value_counts().index.tolist()[:5]
+                dfc.loc[dfc["src_ip"].isin(ips), "quarantined"] = True
+                st.session_state.df = dfc
+                audit_add(st.session_state.user, st.session_state.role, "AutoContain", f"Quarantined {len(ips)} src_ips (anchor)")
+                st.success("Auto-contain executed (anchor).")
+                st.experimental_rerun()
+
+    if token == "download_csv":
+        if st.session_state.df is None or st.session_state.df.empty:
+            st.warning("No data to download.")
+            audit_add(st.session_state.user, st.session_state.role, "DownloadDenied", "No data")
+        else:
+            csvb = convert_df_to_csv(st.session_state.df)
+            download_link_bytes(csvb, "agentic_results.csv", "Download CSV (anchor)")
+            audit_add(st.session_state.user, st.session_state.role, "Download", "CSV downloaded (anchor)")
+
+    if token == "download_json":
+        if st.session_state.df is None or st.session_state.df.empty:
+            st.warning("No data to download.")
+            audit_add(st.session_state.user, st.session_state.role, "DownloadDenied", "No data")
+        else:
+            jb = convert_df_to_json(st.session_state.df)
+            download_link_bytes(jb, "agentic_results.json", "Download JSON (anchor)")
+            audit_add(st.session_state.user, st.session_state.role, "Download", "JSON downloaded (anchor)")
+
+    if token == "download_xlsx":
+        if st.session_state.df is None or st.session_state.df.empty:
+            st.warning("No data to download.")
+            audit_add(st.session_state.user, st.session_state.role, "DownloadDenied", "No data")
+        else:
+            xb = convert_df_to_excel(st.session_state.df)
+            download_link_bytes(xb, "agentic_results.xlsx", "Download XLSX (anchor)")
+            audit_add(st.session_state.user, st.session_state.role, "Download", "XLSX downloaded (anchor)")
+
+    if token == "reset":
+        if not can_reset:
+            st.warning("Only Admin can reset the session. (Anchor reset blocked.)")
+            audit_add(st.session_state.user, st.session_state.role, "ResetDenied", "Role denied anchor-reset")
+        else:
+            st.session_state.df = pd.DataFrame()
+            st.session_state.model = None
+            st.session_state.model_stats = {}
+            audit_add(st.session_state.user, st.session_state.role, "Reset", "Session reset (anchor)")
+            # clear URL params if possible
+            try:
+                st.experimental_set_query_params()
+            except Exception:
+                pass
+            st.success("Session reset (anchor).")
+            st.experimental_rerun()
+
+# -------------------------
+# Incident Playbooks page (simple CRUD demo)
+# -------------------------
+if page == "Incident Playbooks":
+    st.header("📘 Incident Playbooks (Demo)")
+    if "playbooks" not in st.session_state:
+        st.session_state.playbooks = []
+    for i, pb in enumerate(st.session_state.playbooks):
+        with st.expander(f"Playbook #{i+1}: {pb.get('title','Untitled')} (status: {pb.get('status','open')})"):
+            st.write(pb.get("description",""))
+            st.write("Steps:")
+            for s in pb.get("steps", []):
+                st.write(f"- {s}")
+            cols = st.columns(3)
+            if cols[0].button(f"Mark Mitigated #{i}", key=f"mit_{i}"):
+                st.session_state.playbooks[i]["status"] = "mitigated"
+                audit_add(st.session_state.user, st.session_state.role, "PlaybookMitigated", f"Mitigated #{i+1}")
+                st.experimental_rerun()
+            if cols[1].button(f"Clone #{i}", key=f"clone_{i}"):
+                st.session_state.playbooks.append(dict(st.session_state.playbooks[i]))
+                audit_add(st.session_state.user, st.session_state.role, "PlaybookClone", f"Cloned #{i+1}")
+                st.experimental_rerun()
+            if cols[2].button(f"Delete #{i}", key=f"del_{i}"):
+                if st.session_state.role != "Admin":
+                    st.warning("Only Admin can delete playbooks.")
+                    audit_add(st.session_state.user, st.session_state.role, "PlaybookDeleteDenied", f"Tried to delete #{i+1}")
+                else:
                     st.session_state.playbooks.pop(i)
-                    audit_add(st.session_state.user, st.session_state.role, "PlaybookDelete", f"Deleted playbook #{i+1}")
-                    st.success("Deleted.")
-    else:
-        st.info("No playbooks yet. Create one below.")
+                    audit_add(st.session_state.user, st.session_state.role, "PlaybookDelete", f"Deleted #{i+1}")
+                st.experimental_rerun()
 
     st.markdown("### Create new playbook")
-    new_title = st.text_input("Playbook title", key="pb_title")
+    new_title = st.text_input("Title", key="pb_title")
     new_desc = st.text_area("Description", key="pb_desc")
-    new_steps_text = st.text_area("Steps (one per line)", key="pb_steps")
+    new_steps_txt = st.text_area("Steps (one per line)", key="pb_steps")
     if st.button("Add Playbook"):
-        steps = [s.strip() for s in new_steps_text.splitlines() if s.strip()]
-        pb = {
-            "title": new_title or f"Playbook {len(st.session_state.playbooks) + 1}",
-            "description": new_desc,
-            "steps": steps,
-            "status": "open",
-            "created_at": now_iso(),
-        }
+        steps = [s.strip() for s in new_steps_txt.splitlines() if s.strip()]
+        pb = {"title": new_title or f"Playbook {len(st.session_state.playbooks)+1}",
+              "description": new_desc,
+              "steps": steps,
+              "status": "open",
+              "created_at": now_iso()}
         st.session_state.playbooks.append(pb)
-        audit_add(st.session_state.user, st.session_state.role, "PlaybookAdd", f"Added playbook '{pb['title']}'")
-        st.success("Playbook added.")
+        audit_add(st.session_state.user, st.session_state.role, "PlaybookAdd", f"Added '{pb['title']}'")
+        st.success("Playbook created.")
+        st.experimental_rerun()
 
 # -------------------------
-# Page: Audit Logs
+# Audit Logs page
 # -------------------------
-elif page == "Audit Logs":
+if page == "Audit Logs":
     st.header("📜 Audit Logs")
-    st.write("Action history for demo interactions (local only).")
-    if not st.session_state.audit:
-        st.info("No audit entries yet.")
-    else:
+    if st.session_state.audit:
         df_a = pd.DataFrame(st.session_state.audit)
-        st.dataframe(df_a)
-        st.download_button("Download Audit CSV", data=convert_df_to_csv_bytes(df_a), file_name="audit_logs.csv", mime="text/csv")
+        st.dataframe(df_a, use_container_width=True)
+        st.download_button("Download Audit CSV", data=convert_df_to_csv(df_a), file_name="audit_logs.csv", mime="text/csv")
+    else:
+        st.info("No audit entries yet.")
 
+# -------------------------
+# Footer
+# -------------------------
 st.markdown("---")
-st.caption("Agentic Cyber ML — Demo. Not for production use. Local role handling only. Actions recorded in an in-memory audit log.")
+st.caption("Agentic Cyber ML — Demo. Not for production use. Role handling is local and for demonstration only.")
