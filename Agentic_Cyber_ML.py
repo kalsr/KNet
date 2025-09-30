@@ -1,19 +1,10 @@
 
 
 
-# Agentic_Cyber_ML.py
 
-# Agentic Cyber ML — Single-file Streamlit demo
-# Features:
-#- Role-based (Admin / Analyst / Viewer)
-#- Generate 10..100 sample logs
-#- Upload CSV / JSON / XLSX logs
-#- Train IsolationForest, score logs, auto-contain top IPs (Admin)
-#- Anomaly score histogram
-#- Network graph visualization
-#- Download results (CSV / JSON / Excel)
-#- Audit log of all actions
-# Author: Randy Singh / KNet Consulting Group (demo)
+
+# Agentic_Cyber_ML.py
+# Author: Randy Singh / KNet Consulting Group
 
 
 import streamlit as st
@@ -26,9 +17,10 @@ import json
 import plotly.express as px
 import networkx as nx
 import plotly.graph_objects as go
+import urllib.parse
 
 # -------------------------
-# Page configuration
+# App configuration
 # -------------------------
 st.set_page_config(page_title="Agentic Cyber ML", page_icon="🛡️", layout="wide")
 
@@ -53,8 +45,7 @@ def init_state():
         st.session_state.model_stats = {}
 
 def audit_add(user, role, action, details=""):
-    entry = {"timestamp": now_iso(), "user": user, "role": role, "action": action, "details": details}
-    st.session_state.audit.insert(0, entry)
+    st.session_state.audit.insert(0, {"timestamp": now_iso(), "user": user, "role": role, "action": action, "details": details})
 
 def generate_sample_logs(n=50):
     rng = np.random.default_rng(seed=42)
@@ -178,10 +169,9 @@ def network_plot_from_df(df):
 init_state()
 
 # -------------------------
-# Sidebar: Role & Navigation
+# Sidebar
 # -------------------------
 st.sidebar.title("Agentic Cyber ML")
-st.sidebar.subheader("User / Role")
 st.session_state.user = st.sidebar.text_input("Username", value=st.session_state.user)
 st.session_state.role = st.sidebar.selectbox("Role", ["Admin","Analyst","Viewer"], index=["Admin","Analyst","Viewer"].index(st.session_state.role))
 if st.sidebar.button("Set Role"):
@@ -193,7 +183,7 @@ page = st.sidebar.radio("Pages", ["Threat Hunting","Audit Logs"])
 st.sidebar.markdown("---")
 
 # -------------------------
-# Role-based permissions
+# Role permissions
 # -------------------------
 role = st.session_state.role
 can_generate = role in ("Admin","Analyst","Viewer")
@@ -204,26 +194,88 @@ can_reset = role=="Admin"
 can_upload = role in ("Admin","Analyst","Viewer")
 
 # -------------------------
+# HTML styled button
+# -------------------------
+def html_button(label, key, color, width="200px"):
+    href = f"?{urllib.parse.urlencode({'key':key})}"
+    html = f"""
+    <a href="{href}" style="
+        display:inline-block;
+        background:{color};
+        color:#fff;
+        padding:10px 20px;
+        text-decoration:none;
+        border-radius:8px;
+        font-weight:bold;
+        margin:4px;
+    ">{label}</a>
+    """
+    st.markdown(html, unsafe_allow_html=True)
+
+# -------------------------
 # Threat Hunting Page
 # -------------------------
 if page=="Threat Hunting":
     st.title("🕵️ Threat Hunting")
-    col1,col2,col3,col4,col5 = st.columns([1,1,1,1,1])
-    sample_n = st.sidebar.slider("Number of sample logs", 10, 100, 50, 5)
-    with col1:
-        gen_clicked = st.button("Generate Sample Logs")
-    with col2:
-        train_clicked = st.button("Train Model")
-    with col3:
-        score_clicked = st.button("Score Logs")
-    with col4:
-        contain_clicked = st.button("Auto-Contain (Admin)")
-    with col5:
-        reset_clicked = st.button("Reset")
 
-    # Upload
+    # Sample log slider
+    sample_n = st.sidebar.slider("Number of sample logs", 10, 100, 50, 5)
+    contamination = st.sidebar.slider("Contamination fraction", 0.01, 0.2, 0.05, 0.01)
+
+    # Buttons row
+    col1,col2,col3,col4,col5 = st.columns(5)
+    with col1:
+        if can_generate and st.button("Generate Sample Logs", key="gen"):
+            st.session_state.df = generate_sample_logs(sample_n)
+            audit_add(st.session_state.user, st.session_state.role,"Generate",f"{sample_n} logs")
+            st.success(f"Generated {sample_n} logs")
+    with col2:
+        if can_train and st.button("Train Model", key="train"):
+            if st.session_state.df.empty:
+                st.error("No data to train.")
+            else:
+                df_f, feats = create_features(st.session_state.df)
+                model = train_isolation_forest(feats, contamination)
+                st.session_state.model = model
+                st.session_state.df = df_f
+                st.session_state.model_stats = {"contamination": contamination, "n_samples": len(feats)}
+                audit_add(st.session_state.user, st.session_state.role,"Train",f"Trained on {len(feats)} rows")
+                st.success("Model trained")
+    with col3:
+        if can_score and st.button("Score Logs", key="score"):
+            if st.session_state.model is None:
+                st.error("No trained model.")
+            elif st.session_state.df.empty:
+                st.error("No logs to score.")
+            else:
+                df_f, feats = create_features(st.session_state.df)
+                scored = score_with_iforest(df_f, st.session_state.model, feats)
+                st.session_state.df = scored
+                audit_add(st.session_state.user, st.session_state.role,"Score",f"Scored {len(feats)} rows")
+                st.success("Logs scored")
+    with col4:
+        if can_contain and st.button("Auto-Contain (Admin)", key="contain"):
+            if st.session_state.df.empty or "anomaly_score" not in st.session_state.df.columns:
+                st.error("Score logs first.")
+            else:
+                dfc = st.session_state.df.copy()
+                top = dfc.sort_values("anomaly_score", ascending=False).head(10)
+                ips = top["src_ip"].value_counts().index.tolist()[:5]
+                dfc.loc[dfc["src_ip"].isin(ips),"quarantined"] = True
+                st.session_state.df = dfc
+                audit_add(st.session_state.user, st.session_state.role,"AutoContain",f"Quarantined {len(ips)} IPs")
+                st.success(f"Quarantined {len(ips)} source IPs")
+    with col5:
+        if can_reset and st.button("Reset Data", key="reset"):
+            st.session_state.df = pd.DataFrame()
+            st.session_state.model = None
+            st.session_state.model_stats = {}
+            audit_add(st.session_state.user, st.session_state.role,"Reset","Session reset")
+            st.success("Session reset")
+
+    # File upload
     uploaded = st.file_uploader("Upload logs (CSV/JSON/XLSX)", type=["csv","json","xls","xlsx"])
-    if uploaded is not None and can_upload:
+    if uploaded and can_upload:
         df_u = read_uploaded_file(uploaded)
         if df_u is not None:
             for c in ["timestamp","src_ip","dst_ip","protocol","bytes"]:
@@ -235,61 +287,7 @@ if page=="Threat Hunting":
             audit_add(st.session_state.user, st.session_state.role,"Upload",f"{uploaded.name} ({len(df_u)} rows)")
             st.success(f"Uploaded {uploaded.name} ({len(df_u)} rows)")
 
-    # Generate Sample Logs
-    if gen_clicked and can_generate:
-        st.session_state.df = generate_sample_logs(sample_n)
-        audit_add(st.session_state.user, st.session_state.role,"Generate",f"{sample_n} sample logs")
-        st.success(f"Generated {sample_n} sample logs")
-
-    # Train
-    contamination = st.slider("Contamination fraction", 0.01, 0.2, 0.05, 0.01)
-    if train_clicked and can_train:
-        if st.session_state.df.empty:
-            st.error("No data to train. Generate or upload logs first.")
-        else:
-            df_f, feats = create_features(st.session_state.df)
-            model = train_isolation_forest(feats, contamination)
-            st.session_state.model = model
-            st.session_state.df = df_f
-            st.session_state.model_stats = {"contamination": contamination, "n_samples": len(feats)}
-            audit_add(st.session_state.user, st.session_state.role,"Train",f"Trained on {len(feats)} rows")
-            st.success("Model trained")
-
-    # Score
-    if score_clicked and can_score:
-        if st.session_state.model is None:
-            st.error("No trained model. Train first.")
-        elif st.session_state.df.empty:
-            st.error("No logs to score.")
-        else:
-            df_f, feats = create_features(st.session_state.df)
-            scored = score_with_iforest(df_f, st.session_state.model, feats)
-            st.session_state.df = scored
-            audit_add(st.session_state.user, st.session_state.role,"Score",f"Scored {len(feats)} rows")
-            st.success("Logs scored")
-
-    # Auto-Contain
-    if contain_clicked and can_contain:
-        if st.session_state.df.empty or "anomaly_score" not in st.session_state.df.columns:
-            st.error("No scored logs. Run Train & Score first.")
-        else:
-            dfc = st.session_state.df.copy()
-            top = dfc.sort_values("anomaly_score", ascending=False).head(10)
-            ips = top["src_ip"].value_counts().index.tolist()[:5]
-            dfc.loc[dfc["src_ip"].isin(ips),"quarantined"] = True
-            st.session_state.df = dfc
-            audit_add(st.session_state.user, st.session_state.role,"AutoContain",f"Quarantined {len(ips)} src_ip(s)")
-            st.success(f"Quarantined {len(ips)} source IPs")
-
-    # Reset
-    if reset_clicked and can_reset:
-        st.session_state.df = pd.DataFrame()
-        st.session_state.model = None
-        st.session_state.model_stats = {}
-        audit_add(st.session_state.user, st.session_state.role,"Reset","Session reset")
-        st.success("Session reset")
-
-    # Data display and charts
+    # Display data and charts
     if not st.session_state.df.empty:
         st.subheader("Logs snapshot")
         st.dataframe(st.session_state.df.head(200), use_container_width=True)
@@ -300,16 +298,12 @@ if page=="Threat Hunting":
             st.subheader("Network Graph (red=quarantined)")
             net_fig = network_plot_from_df(st.session_state.df)
             if net_fig: st.plotly_chart(net_fig, use_container_width=True)
-
         # Downloads
         st.subheader("Download / Export")
         c1,c2,c3 = st.columns(3)
-        with c1:
-            st.download_button("CSV", convert_df_to_csv_bytes(st.session_state.df), "results.csv")
-        with c2:
-            st.download_button("JSON", convert_df_to_json_bytes(st.session_state.df), "results.json")
-        with c3:
-            st.download_button("Excel", convert_df_to_excel_bytes(st.session_state.df), "results.xlsx")
+        with c1: st.download_button("CSV", convert_df_to_csv_bytes(st.session_state.df), "results.csv")
+        with c2: st.download_button("JSON", convert_df_to_json_bytes(st.session_state.df), "results.json")
+        with c3: st.download_button("Excel", convert_df_to_excel_bytes(st.session_state.df), "results.xlsx")
 
 # -------------------------
 # Audit Logs Page
