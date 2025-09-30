@@ -22,7 +22,7 @@ import urllib.parse
 # -------------------------
 # App configuration
 # -------------------------
-st.set_page_config(page_title="Agentic Cyber ML", page_icon="🛡️", layout="wide")
+st.set_page_config(page_title="Agentic Cyber ML", page_icon="", layout="wide")
 
 # -------------------------
 # Helper functions
@@ -171,7 +171,7 @@ init_state()
 # -------------------------
 # Sidebar
 # -------------------------
-st.sidebar.title("Agentic Cyber ML")
+st.sidebar.title("Agentic Cyber MLDeveloped By Randy Singh From KNet Consulting Group - ")
 st.session_state.user = st.sidebar.text_input("Username", value=st.session_state.user)
 st.session_state.role = st.sidebar.selectbox("Role", ["Admin","Analyst","Viewer"], index=["Admin","Analyst","Viewer"].index(st.session_state.role))
 if st.sidebar.button("Set Role"):
@@ -216,7 +216,7 @@ def html_button(label, key, color, width="200px"):
 # Threat Hunting Page
 # -------------------------
 if page=="Threat Hunting":
-    st.title("🕵️ Threat Hunting")
+    st.title(" Threat Hunting - Developed By Randy Singh From KNet Consulting Group")
 
     # Sample log slider
     sample_n = st.sidebar.slider("Number of sample logs", 10, 100, 50, 5)
@@ -309,7 +309,7 @@ if page=="Threat Hunting":
 # Audit Logs Page
 # -------------------------
 if page=="Audit Logs":
-    st.title("📜 Audit Logs")
+    st.title(" Audit Logs")
     if st.session_state.audit:
         df_a = pd.DataFrame(st.session_state.audit)
         st.dataframe(df_a, use_container_width=True)
@@ -318,3 +318,4 @@ if page=="Audit Logs":
         st.info("No audit logs yet.")
 
 st.caption("Agentic Cyber ML — Demo. Local role handling only. Not for production.")
+
