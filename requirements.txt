@@ -20,3 +20,4 @@ python-pptx
 networkx 
 pyvis
 openai
+anthropic
