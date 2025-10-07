@@ -20,7 +20,7 @@ except ImportError:
 # CONFIG
 # -------------------------------
 st.set_page_config(page_title="Agentic AI (Claude) Threat Analyzer", layout="wide")
-st.title("🤖 Agentic AI (Claude) Threat Intelligence Dashboard")
+st.title(" Agentic AI (Claude) Threat Intelligence Dashboard - Designed By Randy Singh")
 
 # -------------------------------
 # ANTHROPIC CLIENT INITIALIZATION
@@ -84,10 +84,10 @@ def analyze_with_agentic_ai(df):
             )
             return response.content[0].text
         except Exception as e:
-            return f"⚠️ Claude API error: {e}"
+            return f" Claude API error: {e}"
 
     # ---------- FALLBACK (if no Anthropic key) ----------
-    summary = "🔒 Local AI Summary (No Anthropic key detected)\n\n"
+    summary = " Local AI Summary (No Anthropic key detected)\n\n"
     if sev_col:
         severity_counts = df[sev_col].value_counts()
         summary += "Severity Distribution:\n"
@@ -106,7 +106,7 @@ def plot_pie_chart(df):
     """Generate a pie chart if a severity column is found."""
     sev_col = detect_severity_column(df)
     if not sev_col:
-        st.warning("⚠️ No 'Severity' column found for visualization.")
+        st.warning(" No 'Severity' column found for visualization.")
         return
     severity_counts = df[sev_col].value_counts()
     fig, ax = plt.subplots()
@@ -135,15 +135,15 @@ col1, col2, col3, col4, col5, col6 = st.columns(6)
 with col1:
     sample_n = st.number_input("Records", min_value=10, max_value=100, step=10, value=20)
 with col2:
-    btn_generate = st.button("✅ Generate Sample Data", use_container_width=True)
+    btn_generate = st.button(" Generate Sample Data", use_container_width=True)
 with col3:
     uploaded_file = st.file_uploader("Upload CSV", type="csv", label_visibility="collapsed")
 with col4:
-    btn_analyze = st.button("🧠 Run Agentic AI Analysis", use_container_width=True)
+    btn_analyze = st.button(" Run Agentic AI Analysis", use_container_width=True)
 with col5:
-    btn_download = st.button("⬇️ Download Results", use_container_width=True)
+    btn_download = st.button(" Download Results", use_container_width=True)
 with col6:
-    btn_reset = st.button("🔴 Reset Data", use_container_width=True)
+    btn_reset = st.button(" Reset Data", use_container_width=True)
 
 # Style Buttons
 st.markdown("""
@@ -177,19 +177,19 @@ if "analysis" not in st.session_state:
 # -------------------------------
 if btn_generate:
     st.session_state.df = generate_sample_data(sample_n)
-    st.success(f"✅ Generated {sample_n} sample records.")
+    st.success(f" Generated {sample_n} sample records.")
 
 if uploaded_file is not None:
     st.session_state.df = pd.read_csv(uploaded_file)
-    st.success("✅ Uploaded dataset successfully.")
+    st.success(" Uploaded dataset successfully.")
 
 if btn_analyze:
     if not st.session_state.df.empty:
         with st.spinner("Analyzing threats..."):
             st.session_state.analysis = analyze_with_agentic_ai(st.session_state.df)
-        st.success("✅ Agentic AI analysis complete!")
+        st.success(" Agentic AI analysis complete!")
     else:
-        st.warning("⚠️ Please generate or upload data first.")
+        st.warning(" Please generate or upload data first.")
 
 if btn_download:
     if not st.session_state.df.empty:
@@ -197,25 +197,26 @@ if btn_download:
         json_bytes = convert_to_bytes(st.session_state.df, "json")
         xlsx_bytes = convert_to_bytes(st.session_state.df, "excel")
 
-        st.download_button("⬇️ Download CSV", data=csv_bytes, file_name="analysis.csv")
-        st.download_button("⬇️ Download JSON", data=json_bytes, file_name="analysis.json")
-        st.download_button("⬇️ Download Excel", data=xlsx_bytes, file_name="analysis.xlsx")
+        st.download_button(" Download CSV", data=csv_bytes, file_name="analysis.csv")
+        st.download_button(" Download JSON", data=json_bytes, file_name="analysis.json")
+        st.download_button(" Download Excel", data=xlsx_bytes, file_name="analysis.xlsx")
     else:
-        st.warning("⚠️ No data to download.")
+        st.warning(" No data to download.")
 
 if btn_reset:
     st.session_state.df = pd.DataFrame()
     st.session_state.analysis = ""
-    st.success("🔄 All data cleared. Ready to start again!")
+    st.success(" All data cleared. Ready to start again!")
 
 # -------------------------------
 # DISPLAY OUTPUT
 # -------------------------------
 if not st.session_state.df.empty:
-    st.subheader("📊 Threat Dataset")
+    st.subheader(" Threat Dataset")
     st.dataframe(st.session_state.df, use_container_width=True)
     plot_pie_chart(st.session_state.df)
 
 if st.session_state.analysis:
-    st.subheader("🧠 Agentic AI Analysis Result")
+    st.subheader(" Agentic AI Analysis Result")
     st.write(st.session_state.analysis)
+
