@@ -21,7 +21,7 @@ except Exception:
 # ---------------------------
 # Page config
 # ---------------------------
-st.set_page_config(page_title="Agentic Cyber AI Analysis Hub", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Agentic Cyber AI Analysis Hub - Randy Singh", layout="wide", initial_sidebar_state="expanded")
 
 # ---------------------------
 # Helper utilities
@@ -135,12 +135,12 @@ def local_rule_based_analysis(df, mapping):
         summary["severity_counts"] = counts
         high_count = counts.get("High", 0) + counts.get("Critical", 0)
         if high_count > 0:
-            insights.append(f"⚠️ {high_count} high/critical events detected.")
+            insights.append(f" {high_count} high/critical events detected.")
         else:
-            insights.append("✅ No high/critical events detected.")
+            insights.append(" No high/critical events detected.")
     else:
         summary["severity_counts"] = None
-        insights.append("ℹ️ Severity column not found; skipping severity breakdown.")
+        insights.append(" Severity column not found; skipping severity breakdown.")
     # threat types
     th_col = mapping.get("threat")
     if th_col and th_col in df.columns:
@@ -194,7 +194,7 @@ def plot_threat_heatmap(df, mapping):
     th_col = mapping.get("threat")
     sev_col = mapping.get("severity")
     if not th_col or not sev_col or th_col not in df.columns or sev_col not in df.columns:
-        st.info("Threat heatmap requires both threat and severity columns.")
+        st.info("PLEASE NOTE: Threat Heatmap Requires Both Threat and Severity Columns.")
         return
     pivot = pd.crosstab(df[th_col], df[sev_col])
     fig = go.Figure(data=go.Heatmap(
@@ -215,9 +215,9 @@ selected_role = st.sidebar.selectbox("Role", ["Admin","Analyst","Viewer"], index
 st.session_state.role = selected_role
 
 role_style = {
-    "Admin": {"bg":"#2a1a1a", "header":"#b30000", "logo":"🛡️"},
-    "Analyst": {"bg":"#0b2545", "header":"#005f99", "logo":"🔎"},
-    "Viewer": {"bg":"#083d18", "header":"#145A32", "logo":"📊"}
+    "Admin": {"bg":"#2a1a1a", "header":"#b30000", "logo":""},
+    "Analyst": {"bg":"#0b2545", "header":"#005f99", "logo":""},
+    "Viewer": {"bg":"#083d18", "header":"#145A32", "logo":""}
 }
 style = role_style.get(st.session_state.role, role_style["Viewer"])
 
@@ -293,12 +293,12 @@ with col_download:
 
 with col_reset:
     if st.session_state.role == "Admin":
-        if st.button("🔴 Reset Data"):
+        if st.button(" Reset Data"):
             st.session_state.df = pd.DataFrame()
             st.session_state.analysis = {}
             st.success("Session reset.")
     else:
-        if st.button("🔴 Reset Data", disabled=True):
+        if st.button(" Reset Data", disabled=True):
             pass
 
 st.markdown("---")
@@ -315,7 +315,7 @@ else:
 
     # Show record count & mapping
     df2, mapping = create_plottable_df(st.session_state.df)
-    st.markdown(f"**Detected columns mapping:** {mapping}")
+    st.markdown(f" Detected columns mapping: {mapping}")
 
     # Interactive Charts: severity trend & threat heatmap
     st.subheader("Interactive Dashboards")
@@ -371,4 +371,6 @@ else:
         st.info("Click 'Run Agentic AI Analysis' to produce insights.")
 
 st.markdown("---")
-st.caption("Agentic Cyber AI Analysis Hub — demo. Role & API handling are local; not for production use.")
+st.caption("PLEASE NOTE ONLY ADMIN ROLE CAN RESET THE DATA. YOU CAN CHOOSE, ADMIN, ANALYSIS & VIEWER ROLES.")
+st.caption("Agentic Cyber AI Analysis Hub — Demo. Role & API handling are local DESIGNED BY RANDY SINGH FROM KNet CONSULTING GROUP.")
+
