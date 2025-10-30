@@ -21,3 +21,12 @@ networkx
 pyvis
 openai
 anthropic
+fastapi
+sqlalchemy[asyncio]
+asyncpg
+redis
+pydantic
+python-dateutil
+requests
+pytest
+gunicorn
