@@ -50,7 +50,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown('<div class="title">MCP — Agentic AI Cyber IOC Enricher - Designed by Randy Sing From KNet Consulting <div>', unsafe_allow_html=True)
+st.markdown('<div class="title">MCP — Agentic AI Cyber IOC Enricher - Designed by Randy Singh From KNet Consulting Group. <div>', unsafe_allow_html=True)
 st.write("Upload or generate up to 100 Indicators of Compromise (IOCs). Enrich (demo), visualize, and export results.")
 
 # -------------------------
@@ -454,5 +454,6 @@ else:
 # Footer
 # -------------------------
 st.markdown("---")
-st.caption("© 2025 MCP Agentic AI — Demo IOC Enricher by Randy Singh KNet Consulting. All heuristics are simulated for demonstration only.")
+st.caption("© 2025 MCP Agentic AI — Demo IOC Enricher by Randy Singh KNet Consulting Group. All heuristics are simulated for demonstration only.")
+
 
