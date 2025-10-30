@@ -30,3 +30,6 @@ python-dateutil
 requests
 pytest
 gunicorn
+reportlab
+kaleido
+pillow
