@@ -50,7 +50,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown('<div class="title">🧭 MCP — Agentic AI Cyber IOC Enricher (Final)</div>', unsafe_allow_html=True)
+st.markdown('<div class="title">MCP — Agentic AI Cyber IOC Enricher - Designed by Randy Sing From KNet Consulting <div>', unsafe_allow_html=True)
 st.write("Upload or generate up to 100 Indicators of Compromise (IOCs). Enrich (demo), visualize, and export results.")
 
 # -------------------------
@@ -183,9 +183,9 @@ with st.sidebar:
     uploaded_file = st.file_uploader("Upload CSV (optional) — will replace dataset", type=["csv"])
     st.session_state.auto_enrich = st.checkbox("Auto-enrich after Refresh / Upload", value=st.session_state.auto_enrich)
     col1, col2 = st.columns(2)
-    refresh_btn = col1.button("🔄 Refresh / Generate")
-    reset_btn = col2.button("🧹 Reset")
-    run_btn = st.button("🚀 Run Enrichment")
+    refresh_btn = col1.button(" Refresh / Generate")
+    reset_btn = col2.button(" Reset")
+    run_btn = st.button(" Run Enrichment")
 
 # -------------------------
 # Handle Upload
@@ -454,4 +454,5 @@ else:
 # Footer
 # -------------------------
 st.markdown("---")
-st.caption("© 2025 MCP Agentic AI — Demo IOC Enricher. All heuristics are simulated for demonstration only.")
+st.caption("© 2025 MCP Agentic AI — Demo IOC Enricher by Randy Singh KNet Consulting. All heuristics are simulated for demonstration only.")
+
