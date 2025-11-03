@@ -1,3 +1,5 @@
+
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -14,21 +16,22 @@ import os
 
 st.set_page_config(page_title="AI & LLM Platform", layout="wide")
 
-# --- CSS for top menu and buttons ---
+# --- CSS for top colored buttons ---
 st.markdown("""
 <style>
-div.row-widget.stRadio > div {flex-direction:row; justify-content:space-around;}
-.stButton>button {border-radius:10px; padding:0.6em 1.2em; font-weight:bold; color:white; margin:3px;}
-.menu-ML{background-color:#007BFF;}
-.menu-NLP{background-color:#28A745;}
-.menu-CV{background-color:#17A2B8;}
-.menu-Speech{background-color:#FFC107;color:black;}
-.menu-RL{background-color:#6F42C1;}
-.menu-Data{background-color:#FD7E14;}
-.menu-Opt{background-color:#20C997;}
-.menu-Agentic{background-color:#DC3545;}
-.menu-MLOps{background-color:#6610F2;}
-.reset-btn{background-color:#343A40;}
+.menu-button {
+    display:inline-block; padding:10px 15px; margin:2px; border-radius:10px; color:white; font-weight:bold; cursor:pointer;
+}
+.menu-ML{background-color:#007BFF;}        /* Blue */
+.menu-NLP{background-color:#28A745;}       /* Green */
+.menu-CV{background-color:#17A2B8;}        /* Teal */
+.menu-Speech{background-color:#FFC107; color:black;} /* Yellow */
+.menu-RL{background-color:#6F42C1;}        /* Purple */
+.menu-Data{background-color:#FD7E14;}      /* Orange */
+.menu-Opt{background-color:#20C997;}       /* Turquoise */
+.menu-Agentic{background-color:#DC3545;}   /* Red */
+.menu-MLOps{background-color:#6610F2;}     /* Violet */
+.reset-btn{background-color:#343A40; color:white;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -63,15 +66,13 @@ def generate_cv_images(n=50,size=64):
         draw = ImageDraw.Draw(img)
         shape=random.choice(['rectangle','ellipse','line'])
         if shape=='rectangle':
-            x0, y0 = random.randint(0,size//2), random.randint(0,size//2)
-            x1, y1 = random.randint(size//2,size), random.randint(size//2,size)
-            draw.rectangle([x0,y0,x1,y1],
-                           fill=(random.randint(0,255),random.randint(0,255),random.randint(0,255)))
+            x0,y0=random.randint(0,size//2), random.randint(0,size//2)
+            x1,y1=random.randint(size//2,size), random.randint(size//2,size)
+            draw.rectangle([x0,y0,x1,y1],fill=(random.randint(0,255),random.randint(0,255),random.randint(0,255)))
         elif shape=='ellipse':
-            x0, y0 = random.randint(0,size//2), random.randint(0,size//2)
-            x1, y1 = random.randint(size//2,size), random.randint(size//2,size)
-            draw.ellipse([x0,y0,x1,y1],
-                         fill=(random.randint(0,255),random.randint(0,255),random.randint(0,255)))
+            x0,y0=random.randint(0,size//2), random.randint(0,size//2)
+            x1,y1=random.randint(size//2,size), random.randint(size//2,size)
+            draw.ellipse([x0,y0,x1,y1],fill=(random.randint(0,255),random.randint(0,255),random.randint(0,255)))
         else:
             draw.line([random.randint(0,size),random.randint(0,size),random.randint(0,size),random.randint(0,size)],
                       fill=(random.randint(0,255),random.randint(0,255),random.randint(0,255)), width=2)
@@ -83,7 +84,8 @@ def plot_charts(df):
     if numeric_cols:
         st.subheader("Distribution Pie Chart")
         fig,ax=plt.subplots()
-        df[numeric_cols[0]].value_counts().plot.pie(autopct="%1.1f%%",colors=["#66b3ff","#99ff99","#ff9999"],ax=ax)
+        df[numeric_cols[0]].value_counts().plot.pie(autopct="%1.1f%%",
+                                                    colors=["#66b3ff","#99ff99","#ff9999"],ax=ax)
         st.pyplot(fig)
     if "Text" in df.columns:
         st.subheader("Top 10 Words")
@@ -98,30 +100,41 @@ def plot_charts(df):
 def download_csv(df):
     st.download_button("⬇️ Download CSV", df.to_csv(index=False).encode(), "results.csv", "text/csv")
 
+def download_excel(df):
+    output = BytesIO()
+    df.to_excel(output,index=False)
+    st.download_button("⬇️ Download Excel", output.getvalue(),"results.xlsx","application/vnd.ms-excel")
+
+def download_json(df):
+    st.download_button("⬇️ Download JSON", df.to_json(orient="records"),"results.json","application/json")
+
 def download_pdf(df):
     pdf=FPDF()
     pdf.add_page()
-    pdf.set_font("Arial",10)
+    pdf.set_font("Helvetica",10)
     pdf.cell(200,10,txt="AI Demo Results",ln=True,align="C")
     pdf.ln(10)
     for i in range(len(df)):
         pdf.multi_cell(0,8,str(df.iloc[i].to_dict()))
     st.download_button("📄 Download PDF", BytesIO(pdf.output(dest='S').encode('latin1')), "results.pdf","application/pdf")
 
-# --- Top menu selection ---
-menu_cols = st.columns(9)
+# --- Colored top menu buttons ---
 menu_labels = ["ML & DL","NLP & LLMs","Computer Vision","Speech & Audio","Reinforcement",
                "Data & Preprocessing","Model Optimization","Agentic AI","MLOps"]
-for i,label in enumerate(menu_labels):
-    if menu_cols[i].button(label):
+menu_keys = ["ML","NLP","CV","Speech","RL","Data","Opt","Agentic","MLOps"]
+
+st.markdown("<div style='display:flex; justify-content:space-between;'>",unsafe_allow_html=True)
+for label,key in zip(menu_labels,menu_keys):
+    if st.button(label,key=f"menu_{key}"):
         st.session_state.menu=label
+st.markdown("</div>",unsafe_allow_html=True)
 
 st.subheader(f"Selected Menu: {st.session_state.menu}")
 
 # --- Reset ---
 if st.button("🔄 Reset All Data"):
-    for key in list(st.session_state.keys()):
-        del st.session_state[key]
+    for k in list(st.session_state.keys()):
+        del st.session_state[k]
     st.experimental_rerun()
 
 n_records = st.slider("Select number of records",1,100,50)
@@ -132,7 +145,7 @@ if uploaded:
     elif uploaded.name.endswith(".xlsx"): st.session_state.df=pd.read_excel(uploaded)
     else: st.session_state.df=pd.read_json(uploaded)
 
-# --- Generate ---
+# --- Generate Data ---
 if st.button("Generate Synthetic Data"):
     menu = st.session_state.menu
     if menu=="ML & DL": st.session_state.df=generate_classification(n_records)
@@ -146,9 +159,12 @@ if st.button("Generate Synthetic Data"):
             img_cols[i%5].image(img,width=64)
         st.session_state.df=pd.DataFrame({"Image_Index":list(range(len(st.session_state.images)))})
 
+# --- Display Data & Charts ---
 if st.session_state.df is not None:
     st.subheader("Dataset Preview")
     st.dataframe(st.session_state.df.head(50))
     plot_charts(st.session_state.df)
     download_csv(st.session_state.df)
+    download_excel(st.session_state.df)
+    download_json(st.session_state.df)
     download_pdf(st.session_state.df)
