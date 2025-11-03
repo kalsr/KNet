@@ -14,31 +14,28 @@ import os
 
 st.set_page_config(page_title="AI & LLM Platform", layout="wide")
 
-# --- CSS ---
+# --- CSS for top menu and buttons ---
 st.markdown("""
 <style>
 div.row-widget.stRadio > div {flex-direction:row; justify-content:space-around;}
 .stButton>button {border-radius:10px; padding:0.6em 1.2em; font-weight:bold; color:white; margin:3px;}
-.menu-ml{background-color:#007BFF;}
-.menu-nlp{background-color:#28A745;}
-.menu-cv{background-color:#17A2B8;}
-.menu-speech{background-color:#FFC107; color:black;}
-.menu-rl{background-color:#6F42C1;}
-.menu-data{background-color:#FD7E14;}
-.menu-opt{background-color:#20C997;}
-.menu-agentic{background-color:#DC3545;}
-.menu-mlops{background-color:#6610F2;}
+.menu-ML{background-color:#007BFF;}
+.menu-NLP{background-color:#28A745;}
+.menu-CV{background-color:#17A2B8;}
+.menu-Speech{background-color:#FFC107;color:black;}
+.menu-RL{background-color:#6F42C1;}
+.menu-Data{background-color:#FD7E14;}
+.menu-Opt{background-color:#20C997;}
+.menu-Agentic{background-color:#DC3545;}
+.menu-MLOps{background-color:#6610F2;}
 .reset-btn{background-color:#343A40;}
 </style>
 """, unsafe_allow_html=True)
 
 # --- Session state ---
-if 'menu' not in st.session_state:
-    st.session_state.menu = 'Home'
-if 'df' not in st.session_state:
-    st.session_state.df = None
-if 'images' not in st.session_state:
-    st.session_state.images = None
+if 'menu' not in st.session_state: st.session_state.menu='Home'
+if 'df' not in st.session_state: st.session_state.df=None
+if 'images' not in st.session_state: st.session_state.images=None
 
 # --- Helper functions ---
 def generate_classification(n=50):
@@ -66,12 +63,14 @@ def generate_cv_images(n=50,size=64):
         draw = ImageDraw.Draw(img)
         shape=random.choice(['rectangle','ellipse','line'])
         if shape=='rectangle':
-            draw.rectangle([random.randint(0,size//2), random.randint(0,size//2),
-                            random.randint(size//2,size), random.randint(0,size//2)],
+            x0, y0 = random.randint(0,size//2), random.randint(0,size//2)
+            x1, y1 = random.randint(size//2,size), random.randint(size//2,size)
+            draw.rectangle([x0,y0,x1,y1],
                            fill=(random.randint(0,255),random.randint(0,255),random.randint(0,255)))
         elif shape=='ellipse':
-            draw.ellipse([random.randint(0,size//2), random.randint(0,size//2),
-                          random.randint(size//2,size), random.randint(0,size//2)],
+            x0, y0 = random.randint(0,size//2), random.randint(0,size//2)
+            x1, y1 = random.randint(size//2,size), random.randint(size//2,size)
+            draw.ellipse([x0,y0,x1,y1],
                          fill=(random.randint(0,255),random.randint(0,255),random.randint(0,255)))
         else:
             draw.line([random.randint(0,size),random.randint(0,size),random.randint(0,size),random.randint(0,size)],
@@ -109,20 +108,21 @@ def download_pdf(df):
         pdf.multi_cell(0,8,str(df.iloc[i].to_dict()))
     st.download_button("📄 Download PDF", BytesIO(pdf.output(dest='S').encode('latin1')), "results.pdf","application/pdf")
 
-# --- Menu ---
-menu = st.radio("Select AI Demo:", 
-                ["Home","ML & DL","NLP & LLMs","Computer Vision","Speech & Audio","Reinforcement","Data & Preprocessing",
-                 "Model Optimization","Agentic AI","MLOps"], horizontal=True)
+# --- Top menu selection ---
+menu_cols = st.columns(9)
+menu_labels = ["ML & DL","NLP & LLMs","Computer Vision","Speech & Audio","Reinforcement",
+               "Data & Preprocessing","Model Optimization","Agentic AI","MLOps"]
+for i,label in enumerate(menu_labels):
+    if menu_cols[i].button(label):
+        st.session_state.menu=label
 
-st.session_state.menu = menu
+st.subheader(f"Selected Menu: {st.session_state.menu}")
 
 # --- Reset ---
 if st.button("🔄 Reset All Data"):
     for key in list(st.session_state.keys()):
         del st.session_state[key]
     st.experimental_rerun()
-
-st.subheader(f"Selected Menu: {menu}")
 
 n_records = st.slider("Select number of records",1,100,50)
 uploaded = st.file_uploader("Upload CSV/Excel/JSON", type=["csv","xlsx","json"])
@@ -134,6 +134,7 @@ if uploaded:
 
 # --- Generate ---
 if st.button("Generate Synthetic Data"):
+    menu = st.session_state.menu
     if menu=="ML & DL": st.session_state.df=generate_classification(n_records)
     elif menu=="NLP & LLMs": st.session_state.df=generate_text(n_records)
     elif menu=="Data & Preprocessing": st.session_state.df=generate_regression(n_records)
