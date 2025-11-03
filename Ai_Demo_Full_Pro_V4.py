@@ -21,6 +21,12 @@ if 'df' not in st.session_state:
     st.session_state.df = None
 if 'images' not in st.session_state:
     st.session_state.images = None
+if 'n_records' not in st.session_state:
+    st.session_state.n_records = 50
+
+# --- Slider for number of records ---
+st.sidebar.markdown("### Select number of records")
+st.session_state.n_records = st.sidebar.slider("Records:", 1, 100, st.session_state.n_records)
 
 # --- Helper functions ---
 def generate_classification(n=50):
@@ -38,7 +44,8 @@ def generate_regression(n=50):
 def generate_text(n=50):
     texts = ["AI is amazing","I love machine learning","Streamlit is powerful",
              "Data science is fun","NLP is revolutionizing industries",
-             "Python programming is great","Deep learning is fascinating"]
+             "Python programming is great","Deep learning is fascinating",
+             "Speech recognition is cool","Generative AI changes the world"]
     df = pd.DataFrame({'Text':[random.choice(texts) for _ in range(n)]})
     return df
 
@@ -80,27 +87,27 @@ def plot_charts(df):
         st.pyplot(fig)
 
 def download_csv(df):
-    st.download_button("⬇️ Download CSV", df.to_csv(index=False).encode(), "results.csv", "text/csv")
+    st.download_button("⬇️ CSV", df.to_csv(index=False).encode(), "results.csv", "text/csv")
 
 def download_excel(df):
     output = BytesIO()
     df.to_excel(output,index=False)
-    st.download_button("⬇️ Download Excel", output.getvalue(),"results.xlsx","application/vnd.ms-excel")
+    st.download_button("⬇️ Excel", output.getvalue(),"results.xlsx","application/vnd.ms-excel")
 
 def download_json(df):
-    st.download_button("⬇️ Download JSON", df.to_json(orient="records"),"results.json","application/json")
+    st.download_button("⬇️ JSON", df.to_json(orient="records"),"results.json","application/json")
 
 def download_pdf(df):
     pdf=FPDF()
     pdf.add_page()
-    pdf.set_font("Arial", "", 10)
+    pdf.set_font("Arial","",10)
     pdf.cell(200,10,txt="AI Demo Results",ln=True,align="C")
     pdf.ln(10)
     for i in range(len(df)):
         pdf.multi_cell(0,8,str(df.iloc[i].to_dict()))
-    st.download_button("📄 Download PDF", BytesIO(pdf.output(dest='S').encode('latin1')),"results.pdf","application/pdf")
+    st.download_button("📄 PDF", BytesIO(pdf.output(dest='S').encode('latin1')),"results.pdf","application/pdf")
 
-# --- Top menu buttons ---
+# --- Top colored menu buttons ---
 menu_labels=["ML & DL","NLP & LLMs","Computer Vision","Speech & Audio","Reinforcement",
              "Data & Preprocessing","Model Optimization","Agentic AI","MLOps"]
 menu_colors=["#007BFF","#28A745","#17A2B8","#FFC107","#6F42C1","#FD7E14","#20C997","#DC3545","#6610F2"]
@@ -111,40 +118,43 @@ for i,label in enumerate(menu_labels):
         st.session_state.menu=label
         st.session_state.df=None
         st.session_state.images=None
-        # Immediately generate data
-        n_records=50
-        if label=="ML & DL": st.session_state.df=generate_classification(n_records)
-        elif label=="NLP & LLMs": st.session_state.df=generate_text(n_records)
-        elif label=="Data & Preprocessing": st.session_state.df=generate_regression(n_records)
+        n=st.session_state.n_records
+        # Generate data immediately
+        if label=="ML & DL": st.session_state.df=generate_classification(n)
+        elif label=="NLP & LLMs": st.session_state.df=generate_text(n)
+        elif label=="Data & Preprocessing": st.session_state.df=generate_regression(n)
         elif label=="Computer Vision": 
-            st.session_state.images=generate_cv_images(n_records)
+            st.session_state.images=generate_cv_images(n)
             st.session_state.df=pd.DataFrame({"Image_Index":list(range(len(st.session_state.images)))})
         elif label=="Reinforcement": 
-            st.session_state.df=pd.DataFrame({"Step":range(n_records),"Reward":np.cumsum(np.random.randn(n_records))})
+            st.session_state.df=pd.DataFrame({"Step":range(n),"Reward":np.cumsum(np.random.randn(n))})
         elif label=="Model Optimization":
-            st.session_state.df=pd.DataFrame({"Compression (%)": np.linspace(0,90,n_records),
-                                             "Accuracy": np.linspace(98,70,n_records)+np.random.randn(n_records),
-                                             "Latency (ms)": np.linspace(10,200,n_records)})
+            st.session_state.df=pd.DataFrame({"Compression (%)": np.linspace(0,90,n),
+                                             "Accuracy": np.linspace(98,70,n)+np.random.randn(n),
+                                             "Latency (ms)": np.linspace(10,200,n)})
         elif label=="Agentic AI":
             steps=["Collect Data","Analyze Input","Call Model","Generate Output","Refine Result"]
             st.session_state.df=pd.DataFrame({"Step":steps,"Execution Time (s)":np.random.uniform(0.1,1.5,len(steps))})
         elif label=="MLOps":
             st.session_state.df=pd.DataFrame({"Metric":["Accuracy","Precision","Recall","F1 Score"],
                                              "Value":[round(random.uniform(0.7,0.99),2) for _ in range(4)]})
+        elif label=="Speech & Audio":
+            rate=44100
+            t=np.linspace(0,1,n*441)
+            amplitude=np.sin(2*np.pi*220*t)+np.random.normal(0,0.1,len(t))
+            st.session_state.df=pd.DataFrame({"Time":t[:n*10],"Amplitude":amplitude[:n*10]})
 
 st.markdown(f"### Selected Menu: {st.session_state.menu}")
 
 # --- Reset button ---
 if st.button("🔄 Reset All Data"):
-    keys_to_keep=['menu']
-    for k in list(st.session_state.keys()):
-        if k not in keys_to_keep: del st.session_state[k]
-    st.experimental_rerun()
+    st.session_state.df=None
+    st.session_state.images=None
 
-# --- Display data & charts ---
+# --- Display data ---
 if st.session_state.df is not None:
     st.subheader("Dataset Preview")
-    st.dataframe(st.session_state.df.head(50))
+    st.dataframe(st.session_state.df.head(100))
     plot_charts(st.session_state.df)
     download_csv(st.session_state.df)
     download_excel(st.session_state.df)
@@ -157,3 +167,12 @@ if st.session_state.images is not None:
     img_cols=st.columns(5)
     for i,img in enumerate(st.session_state.images[:25]):
         img_cols[i%5].image(img,width=64)
+
+# --- Play Audio for Speech & Audio ---
+if st.session_state.menu=="Speech & Audio" and st.session_state.df is not None:
+    st.subheader("🔊 Play Synthetic Audio")
+    samples=(st.session_state.df['Amplitude'].values*32767).astype(np.int16)
+    tmp_file=tempfile.NamedTemporaryFile(delete=False,suffix=".wav")
+    write(tmp_file.name,44100,samples)
+    st.audio(tmp_file.name)
+    os.unlink(tmp_file.name)
