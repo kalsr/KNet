@@ -1,5 +1,3 @@
-
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -17,33 +15,6 @@ import os
 # --- Page config ---
 st.set_page_config(page_title="AI & LLM Platform", layout="wide")
 
-# --- CSS for colored top menu buttons ---
-st.markdown("""
-<style>
-.menu-button {
-    display:inline-block;
-    padding:10px 18px;
-    margin:2px;
-    border-radius:12px;
-    color:white;
-    font-weight:bold;
-    cursor:pointer;
-    text-align:center;
-    font-size:14px;
-}
-.menu-ML{background-color:#007BFF;}        /* Blue */
-.menu-NLP{background-color:#28A745;}       /* Green */
-.menu-CV{background-color:#17A2B8;}        /* Teal */
-.menu-Speech{background-color:#FFC107; color:black;} /* Yellow */
-.menu-RL{background-color:#6F42C1;}        /* Purple */
-.menu-Data{background-color:#FD7E14;}      /* Orange */
-.menu-Opt{background-color:#20C997;}       /* Turquoise */
-.menu-Agentic{background-color:#DC3545;}   /* Red */
-.menu-MLOps{background-color:#6610F2;}     /* Violet */
-.reset-btn{background-color:#343A40; color:white; padding:10px 20px; border-radius:12px; font-weight:bold;}
-</style>
-""", unsafe_allow_html=True)
-
 # --- Session state defaults ---
 if 'menu' not in st.session_state:
     st.session_state.menu = 'Home'
@@ -51,6 +22,29 @@ if 'df' not in st.session_state:
     st.session_state.df = None
 if 'images' not in st.session_state:
     st.session_state.images = None
+
+# --- CSS for colored buttons ---
+st.markdown("""
+<style>
+.top-btn{
+    padding:10px 15px;
+    border-radius:10px;
+    font-weight:bold;
+    color:white;
+    margin:2px;
+}
+.ml-btn{background-color:#007BFF;}
+.nlp-btn{background-color:#28A745;}
+.cv-btn{background-color:#17A2B8;}
+.speech-btn{background-color:#FFC107; color:black;}
+.rl-btn{background-color:#6F42C1;}
+.data-btn{background-color:#FD7E14;}
+.opt-btn{background-color:#20C997;}
+.agentic-btn{background-color:#DC3545;}
+.mlo-btn{background-color:#6610F2;}
+.reset-btn{background-color:#343A40; color:white; padding:10px 20px; border-radius:12px; font-weight:bold;}
+</style>
+""", unsafe_allow_html=True)
 
 # --- Helper functions ---
 def generate_classification(n=50):
@@ -130,45 +124,41 @@ def download_pdf(df):
         pdf.multi_cell(0,8,str(df.iloc[i].to_dict()))
     st.download_button("📄 Download PDF", BytesIO(pdf.output(dest='S').encode('latin1')),"results.pdf","application/pdf")
 
-# --- Top menu buttons HTML ---
-menu_items = [
-    ("ML & DL","ML"),
-    ("NLP & LLMs","NLP"),
-    ("Computer Vision","CV"),
-    ("Speech & Audio","Speech"),
-    ("Reinforcement","RL"),
-    ("Data & Preprocessing","Data"),
-    ("Model Optimization","Opt"),
-    ("Agentic AI","Agentic"),
-    ("MLOps","MLOps")
-]
+# --- Top menu buttons as columns ---
+cols=st.columns(9)
+menu_keys=['ML','NLP','CV','Speech','RL','Data','Opt','Agentic','MLOps']
+menu_labels=["ML & DL","NLP & LLMs","Computer Vision","Speech & Audio","Reinforcement",
+             "Data & Preprocessing","Model Optimization","Agentic AI","MLOps"]
+menu_colors=['ml-btn','nlp-btn','cv-btn','speech-btn','rl-btn','data-btn','opt-btn','agentic-btn','mlo-btn']
 
-menu_html=""
-for label,key in menu_items:
-    menu_html += f"<button class='menu-button menu-{key}' onclick='window.location.href=\"#{key}\"'>{label}</button> "
-st.markdown(menu_html, unsafe_allow_html=True)
+for i in range(9):
+    if cols[i].button(menu_labels[i], key=f"menu_{menu_keys[i]}", help=f"Select {menu_labels[i]}", 
+                      args=None):
+        st.session_state.menu = menu_labels[i]
+        st.session_state.df=None
+        st.session_state.images=None
 
-st.subheader(f"Selected Menu: {st.session_state.menu}")
+st.markdown(f"### Selected Menu: {st.session_state.menu}")
 
 # --- Reset button ---
-if st.button("🔄 Reset All Data", key="reset", help="Reset all data and reload app"):
-    keys_to_keep = ['menu']
+if st.button("🔄 Reset All Data"):
+    keys_to_keep=['menu']
     for k in list(st.session_state.keys()):
         if k not in keys_to_keep:
             del st.session_state[k]
     st.experimental_rerun()
 
 # --- Records slider & uploader ---
-n_records = st.slider("Select number of records",1,100,50)
-uploaded = st.file_uploader("Upload CSV/Excel/JSON", type=["csv","xlsx","json"])
+n_records=st.slider("Select number of records",1,100,50)
+uploaded=st.file_uploader("Upload CSV/Excel/JSON", type=["csv","xlsx","json"])
 if uploaded:
     if uploaded.name.endswith(".csv"): st.session_state.df=pd.read_csv(uploaded)
     elif uploaded.name.endswith(".xlsx"): st.session_state.df=pd.read_excel(uploaded)
     else: st.session_state.df=pd.read_json(uploaded)
 
-# --- Generate synthetic data ---
+# --- Generate synthetic data button ---
 if st.button("Generate Synthetic Data"):
-    menu = st.session_state.menu
+    menu=st.session_state.menu
     if menu=="ML & DL": st.session_state.df=generate_classification(n_records)
     elif menu=="NLP & LLMs": st.session_state.df=generate_text(n_records)
     elif menu=="Data & Preprocessing": st.session_state.df=generate_regression(n_records)
