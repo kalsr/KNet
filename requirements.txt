@@ -33,5 +33,4 @@ gunicorn
 reportlab
 kaleido
 pillow
-fpdf
-nginx
+
