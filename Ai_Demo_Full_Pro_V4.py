@@ -12,39 +12,15 @@ import tempfile
 from scipy.io.wavfile import write
 import os
 
-# --- Page config ---
 st.set_page_config(page_title="AI & LLM Platform", layout="wide")
 
-# --- Session state defaults ---
+# --- Initialize session state ---
 if 'menu' not in st.session_state:
     st.session_state.menu = 'Home'
 if 'df' not in st.session_state:
     st.session_state.df = None
 if 'images' not in st.session_state:
     st.session_state.images = None
-
-# --- CSS for colored buttons ---
-st.markdown("""
-<style>
-.top-btn{
-    padding:10px 15px;
-    border-radius:10px;
-    font-weight:bold;
-    color:white;
-    margin:2px;
-}
-.ml-btn{background-color:#007BFF;}
-.nlp-btn{background-color:#28A745;}
-.cv-btn{background-color:#17A2B8;}
-.speech-btn{background-color:#FFC107; color:black;}
-.rl-btn{background-color:#6F42C1;}
-.data-btn{background-color:#FD7E14;}
-.opt-btn{background-color:#20C997;}
-.agentic-btn{background-color:#DC3545;}
-.mlo-btn{background-color:#6610F2;}
-.reset-btn{background-color:#343A40; color:white; padding:10px 20px; border-radius:12px; font-weight:bold;}
-</style>
-""", unsafe_allow_html=True)
 
 # --- Helper functions ---
 def generate_classification(n=50):
@@ -61,7 +37,8 @@ def generate_regression(n=50):
 
 def generate_text(n=50):
     texts = ["AI is amazing","I love machine learning","Streamlit is powerful",
-             "Data science is fun","NLP is revolutionizing industries"]
+             "Data science is fun","NLP is revolutionizing industries",
+             "Python programming is great","Deep learning is fascinating"]
     df = pd.DataFrame({'Text':[random.choice(texts) for _ in range(n)]})
     return df
 
@@ -90,8 +67,7 @@ def plot_charts(df):
     if numeric_cols:
         st.subheader("Distribution Pie Chart")
         fig,ax=plt.subplots()
-        df[numeric_cols[0]].value_counts().plot.pie(autopct="%1.1f%%",
-                                                    colors=["#66b3ff","#99ff99","#ff9999"], ax=ax)
+        df[numeric_cols[0]].value_counts().plot.pie(autopct="%1.1f%%", colors=["#66b3ff","#99ff99","#ff9999"], ax=ax)
         st.pyplot(fig)
     if "Text" in df.columns:
         st.subheader("Top 10 Words Frequency")
@@ -117,26 +93,44 @@ def download_json(df):
 def download_pdf(df):
     pdf=FPDF()
     pdf.add_page()
-    pdf.set_font("Helvetica",10)
+    pdf.set_font("Arial", "", 10)
     pdf.cell(200,10,txt="AI Demo Results",ln=True,align="C")
     pdf.ln(10)
     for i in range(len(df)):
         pdf.multi_cell(0,8,str(df.iloc[i].to_dict()))
     st.download_button("📄 Download PDF", BytesIO(pdf.output(dest='S').encode('latin1')),"results.pdf","application/pdf")
 
-# --- Top menu buttons as columns ---
-cols=st.columns(9)
-menu_keys=['ML','NLP','CV','Speech','RL','Data','Opt','Agentic','MLOps']
+# --- Top menu buttons ---
 menu_labels=["ML & DL","NLP & LLMs","Computer Vision","Speech & Audio","Reinforcement",
              "Data & Preprocessing","Model Optimization","Agentic AI","MLOps"]
-menu_colors=['ml-btn','nlp-btn','cv-btn','speech-btn','rl-btn','data-btn','opt-btn','agentic-btn','mlo-btn']
+menu_colors=["#007BFF","#28A745","#17A2B8","#FFC107","#6F42C1","#FD7E14","#20C997","#DC3545","#6610F2"]
 
-for i in range(9):
-    if cols[i].button(menu_labels[i], key=f"menu_{menu_keys[i]}", help=f"Select {menu_labels[i]}", 
-                      args=None):
-        st.session_state.menu = menu_labels[i]
+cols=st.columns(9)
+for i,label in enumerate(menu_labels):
+    if cols[i].button(label):
+        st.session_state.menu=label
         st.session_state.df=None
         st.session_state.images=None
+        # Immediately generate data
+        n_records=50
+        if label=="ML & DL": st.session_state.df=generate_classification(n_records)
+        elif label=="NLP & LLMs": st.session_state.df=generate_text(n_records)
+        elif label=="Data & Preprocessing": st.session_state.df=generate_regression(n_records)
+        elif label=="Computer Vision": 
+            st.session_state.images=generate_cv_images(n_records)
+            st.session_state.df=pd.DataFrame({"Image_Index":list(range(len(st.session_state.images)))})
+        elif label=="Reinforcement": 
+            st.session_state.df=pd.DataFrame({"Step":range(n_records),"Reward":np.cumsum(np.random.randn(n_records))})
+        elif label=="Model Optimization":
+            st.session_state.df=pd.DataFrame({"Compression (%)": np.linspace(0,90,n_records),
+                                             "Accuracy": np.linspace(98,70,n_records)+np.random.randn(n_records),
+                                             "Latency (ms)": np.linspace(10,200,n_records)})
+        elif label=="Agentic AI":
+            steps=["Collect Data","Analyze Input","Call Model","Generate Output","Refine Result"]
+            st.session_state.df=pd.DataFrame({"Step":steps,"Execution Time (s)":np.random.uniform(0.1,1.5,len(steps))})
+        elif label=="MLOps":
+            st.session_state.df=pd.DataFrame({"Metric":["Accuracy","Precision","Recall","F1 Score"],
+                                             "Value":[round(random.uniform(0.7,0.99),2) for _ in range(4)]})
 
 st.markdown(f"### Selected Menu: {st.session_state.menu}")
 
@@ -144,31 +138,8 @@ st.markdown(f"### Selected Menu: {st.session_state.menu}")
 if st.button("🔄 Reset All Data"):
     keys_to_keep=['menu']
     for k in list(st.session_state.keys()):
-        if k not in keys_to_keep:
-            del st.session_state[k]
+        if k not in keys_to_keep: del st.session_state[k]
     st.experimental_rerun()
-
-# --- Records slider & uploader ---
-n_records=st.slider("Select number of records",1,100,50)
-uploaded=st.file_uploader("Upload CSV/Excel/JSON", type=["csv","xlsx","json"])
-if uploaded:
-    if uploaded.name.endswith(".csv"): st.session_state.df=pd.read_csv(uploaded)
-    elif uploaded.name.endswith(".xlsx"): st.session_state.df=pd.read_excel(uploaded)
-    else: st.session_state.df=pd.read_json(uploaded)
-
-# --- Generate synthetic data button ---
-if st.button("Generate Synthetic Data"):
-    menu=st.session_state.menu
-    if menu=="ML & DL": st.session_state.df=generate_classification(n_records)
-    elif menu=="NLP & LLMs": st.session_state.df=generate_text(n_records)
-    elif menu=="Data & Preprocessing": st.session_state.df=generate_regression(n_records)
-    elif menu=="Computer Vision":
-        st.session_state.images=generate_cv_images(n_records)
-        st.subheader("Sample Images")
-        img_cols=st.columns(5)
-        for i,img in enumerate(st.session_state.images[:25]):
-            img_cols[i%5].image(img,width=64)
-        st.session_state.df=pd.DataFrame({"Image_Index":list(range(len(st.session_state.images)))})
 
 # --- Display data & charts ---
 if st.session_state.df is not None:
@@ -179,3 +150,10 @@ if st.session_state.df is not None:
     download_excel(st.session_state.df)
     download_json(st.session_state.df)
     download_pdf(st.session_state.df)
+
+# --- Display CV images ---
+if st.session_state.images is not None:
+    st.subheader("Sample Images")
+    img_cols=st.columns(5)
+    for i,img in enumerate(st.session_state.images[:25]):
+        img_cols[i%5].image(img,width=64)
