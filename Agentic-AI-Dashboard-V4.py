@@ -76,8 +76,8 @@ use_cases = {
 # ---------------- LAYOUT ----------------
 if st.session_state["selected_case"] is None:
     # ---- MAIN MENU ----
-    st.title(" Agentic AI Dashboard")
-    st.write("Select an Agentic AI Use Case to explore synthetic or uploaded datasets, visualize metrics, and export results.")
+    st.title(" Agentic AI Dashboard - Top 10 Use-cases ")
+    st.write("Select an Agentic AI Use Case to Explore Synthetic or Uploaded Datasets, Visualize Metrics, and Export Results.")
 
     for case, color in use_cases.items():
         if st.button(case, use_container_width=True, type="primary", key=f"btn_{keyify(case)}"):
@@ -224,5 +224,6 @@ else:
     # Footer
     st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown("<center>© 2025 KNet Consulting Group | Designed by Randy Singh</center>", unsafe_allow_html=True)
+
 
 
