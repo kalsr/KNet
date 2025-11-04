@@ -13,8 +13,8 @@ from datetime import datetime
 
 # ---------------- CONFIG ----------------
 st.set_page_config(
-    page_title="Agentic AI Dashboard - KNet Consulting",
-    page_icon="🤖",
+    page_title="Agentic AI Dashboard - Designed & by Randy Singh from KNet Consulting",
+    page_icon="",
     layout="wide"
 )
 
@@ -76,7 +76,7 @@ use_cases = {
 # ---------------- LAYOUT ----------------
 if st.session_state["selected_case"] is None:
     # ---- MAIN MENU ----
-    st.title("🤖 Agentic AI Dashboard")
+    st.title(" Agentic AI Dashboard")
     st.write("Select an Agentic AI Use Case to explore synthetic or uploaded datasets, visualize metrics, and export results.")
 
     for case, color in use_cases.items():
@@ -97,7 +97,7 @@ else:
     st.markdown(
         f"""
         <div style='background:{color};padding:15px;border-radius:10px;margin-bottom:20px;'>
-            <h2 style='color:white;margin:0;text-align:center;'>🧠 {selected_case}</h2>
+            <h2 style='color:white;margin:0;text-align:center;'> {selected_case}</h2>
         </div>
         """,
         unsafe_allow_html=True
@@ -106,7 +106,7 @@ else:
     # --- ACTION BUTTONS ---
     top_col1, top_col2 = st.columns([1, 1])
     with top_col1:
-        if st.button("⬅️ Back to Main Menu"):
+        if st.button(" Back to Main Menu"):
             st.session_state["selected_case"] = None
             st.rerun()
     with top_col2:
@@ -115,11 +115,11 @@ else:
                 if case_key in k:
                     del st.session_state[k]
             st.session_state["selected_case"] = None
-            st.success("✅ Use case reset successfully.")
+            st.success(" Use case reset successfully.")
             st.rerun()
 
     # --- UPLOAD SECTION ---
-    st.subheader("📤 Upload Your Own Dataset")
+    st.subheader(" Upload Your Own Dataset")
     uploaded_file = st.file_uploader(
         "Upload CSV, Excel, or JSON file",
         type=["csv", "xlsx", "json"],
@@ -137,38 +137,38 @@ else:
             st.session_state[uploaded_name_key] = uploaded_file.name
             df = parse_uploaded_bytes(bytes_data, uploaded_file.name)
             st.session_state[data_key] = df
-            st.success("✅ File uploaded and processed successfully!")
+            st.success(" File uploaded and processed successfully!")
         except Exception as e:
             st.error(f"Error reading uploaded file: {e}")
 
     # --- SYNTHETIC DATA GENERATOR ---
-    st.subheader("📈 Synthetic Data Generator")
+    st.subheader(" Synthetic Data Generator")
     n = st.slider("Number of synthetic data points", 0, 100, 50, key=f"slider_{case_key}")
 
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("🔄 Refresh Data"):
+        if st.button(" Refresh Data"):
             if uploaded_bytes_key in st.session_state and st.session_state[uploaded_bytes_key]:
                 df = parse_uploaded_bytes(st.session_state[uploaded_bytes_key], st.session_state[uploaded_name_key])
                 st.session_state[data_key] = df
-                st.success("✅ Data refreshed from uploaded file.")
+                st.success(" Data refreshed from uploaded file.")
             else:
                 df = make_synthetic_df(selected_case, n)
                 st.session_state[data_key] = df
-                st.success("✅ Synthetic data regenerated.")
+                st.success(" Synthetic data regenerated.")
     with col2:
-        if st.button("🧪 Generate Synthetic Data"):
+        if st.button(" Generate Synthetic Data"):
             df = make_synthetic_df(selected_case, n)
             st.session_state[data_key] = df
-            st.success("✅ Synthetic data created!")
+            st.success(" Synthetic data created!")
 
     # --- DATA PREVIEW & VISUALIZATION ---
     if data_key in st.session_state and not st.session_state[data_key].empty:
         df = st.session_state[data_key]
-        st.subheader("📋 Data Preview")
+        st.subheader(" Data Preview")
         st.dataframe(df, use_container_width=True)
 
-        st.subheader("📊 Visualizations")
+        st.subheader(" Visualizations")
         numeric_data = df.select_dtypes(include=[np.number]).drop(columns="ID", errors="ignore")
         mean_vals = numeric_data.mean()
 
@@ -200,12 +200,12 @@ else:
 
         # Insights
         st.markdown("**Quick Insights:**")
-        st.write(f"- 🥇 Best Metric: **{mean_vals.idxmax()}** ({mean_vals.max():.2f})")
-        st.write(f"- ⚠️ Weakest Metric: **{mean_vals.idxmin()}** ({mean_vals.min():.2f})")
-        st.write(f"- 📊 Overall Average: {mean_vals.mean():.2f}")
+        st.write(f"-  Best Metric: **{mean_vals.idxmax()}** ({mean_vals.max():.2f})")
+        st.write(f"-  Weakest Metric: **{mean_vals.idxmin()}** ({mean_vals.min():.2f})")
+        st.write(f"-  Overall Average: {mean_vals.mean():.2f}")
 
         # Downloads
-        st.subheader("💾 Download Results")
+        st.subheader(" Download Results")
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         csv_bytes = df.to_csv(index=False).encode("utf-8")
         json_bytes = df.to_json(orient="records", indent=2).encode("utf-8")
@@ -213,14 +213,15 @@ else:
         df.to_excel(excel_buf, index=False)
         excel_buf.seek(0)
 
-        st.download_button("⬇️ Download CSV", csv_bytes, f"{case_key}_{ts}.csv", "text/csv")
-        st.download_button("⬇️ Download JSON", json_bytes, f"{case_key}_{ts}.json", "application/json")
-        st.download_button("⬇️ Download Excel", excel_buf, f"{case_key}_{ts}.xlsx",
+        st.download_button(" Download CSV", csv_bytes, f"{case_key}_{ts}.csv", "text/csv")
+        st.download_button(" Download JSON", json_bytes, f"{case_key}_{ts}.json", "application/json")
+        st.download_button(" Download Excel", excel_buf, f"{case_key}_{ts}.xlsx",
                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
     else:
-        st.info("📂 No data yet — upload a file or generate synthetic data above.")
+        st.info(" No data yet — upload a file or generate synthetic data above.")
 
     # Footer
     st.markdown("<hr>", unsafe_allow_html=True)
-    st.markdown("<center>© 2025 KNet Consulting Group | Developed by Randy Singh</center>", unsafe_allow_html=True)
+    st.markdown("<center>© 2025 KNet Consulting Group | Designed by Randy Singh</center>", unsafe_allow_html=True)
+
