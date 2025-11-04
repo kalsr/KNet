@@ -110,7 +110,7 @@ else:
             st.session_state["selected_case"] = None
             st.rerun()
     with top_col2:
-        if st.button("🧹 Reset Use Case"):
+        if st.button(" Reset Use Case"):
             for k in list(st.session_state.keys()):
                 if case_key in k:
                     del st.session_state[k]
@@ -224,4 +224,5 @@ else:
     # Footer
     st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown("<center>© 2025 KNet Consulting Group | Designed by Randy Singh</center>", unsafe_allow_html=True)
+
 
