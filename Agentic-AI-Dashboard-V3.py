@@ -2,6 +2,7 @@
 
 # Agentic_AI_Dashboard_V3.py
 # Fixed version – all use-case buttons work, only selected use case visible, Reset & Refresh stable
+# THIS APPLICATION IS DEVELOPED BY RANDY SINGH FROM KNet CONSULTING GROUP.
 
 import streamlit as st
 import pandas as pd
@@ -11,8 +12,8 @@ from io import BytesIO
 from datetime import datetime
 
 # ---------------- CONFIG ----------------
-st.set_page_config(page_title="Agentic AI Dashboard - KNet Consulting",
-                   page_icon="🤖", layout="wide")
+st.set_page_config(page_title="Agentic AI Dashboard - Designed by Randy Singh From KNet Consulting",
+                   page_icon="", layout="wide")
 
 # ---------------- UTILITIES ----------------
 def keyify(name: str) -> str:
@@ -72,7 +73,7 @@ use_cases = {
 # ---------------- LAYOUT ----------------
 if st.session_state["selected_case"] is None:
     # ---- MAIN MENU (all use-case buttons visible) ----
-    st.title("🤖 Agentic AI Dashboard")
+    st.title(" Agentic AI Dashboard")
     st.write("Select a use case below to explore synthetic data, upload datasets, visualize, and download results.")
     for case, color in use_cases.items():
         if st.button(case, use_container_width=True, type="primary", key=f"btn_{keyify(case)}"):
@@ -88,16 +89,16 @@ else:
     gen_key = f"gen_n_{case_key}"
 
     # Header
-    st.markdown(f"<h2 style='color:#2196F3;'>🧠 {selected_case}</h2>", unsafe_allow_html=True)
+    st.markdown(f"<h2 style='color:#2196F3;'> {selected_case}</h2>", unsafe_allow_html=True)
     st.markdown("---")
 
     # Back button
-    if st.button("⬅️ Back to Main Menu"):
+    if st.button(" Back to Main Menu"):
         st.session_state["selected_case"] = None
         st.rerun()
 
     # Upload section
-    st.subheader("📤 Upload Dataset (CSV / Excel / JSON)")
+    st.subheader(" Upload Dataset (CSV / Excel / JSON)")
     uploaded_file = st.file_uploader("Upload your dataset", type=["csv", "xlsx", "json"], key=f"upload_{case_key}")
 
     if uploaded_file is not None:
@@ -107,36 +108,36 @@ else:
             st.session_state[uploaded_name_key] = uploaded_file.name
             df = parse_uploaded_bytes(bytes_data, uploaded_file.name)
             st.session_state[data_key] = df
-            st.success("✅ Dataset uploaded successfully!")
+            st.success(" Dataset uploaded successfully!")
         except Exception as e:
             st.error(f"Error reading file: {e}")
 
     # Synthetic data slider
-    st.subheader("📈 Synthetic Data Generator")
+    st.subheader(" Synthetic Data Generator")
     n = st.slider("Generate data points", 0, 100, st.session_state.get(gen_key, 50), key=f"slider_{case_key}")
     st.session_state[gen_key] = n
 
     # Buttons: Refresh, Reset
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("🔄 Refresh Data"):
+        if st.button(" Refresh Data"):
             if uploaded_key in st.session_state and st.session_state[uploaded_key]:
                 df = parse_uploaded_bytes(st.session_state[uploaded_key], st.session_state[uploaded_name_key])
                 st.session_state[data_key] = df
-                st.success("✅ Data refreshed from uploaded file.")
+                st.success(" Data refreshed from uploaded file.")
             else:
                 df = make_synthetic_df(selected_case, n)
                 st.session_state[data_key] = df
-                st.success("✅ Synthetic data regenerated.")
+                st.success(" Synthetic data regenerated.")
 
     with col2:
-        if st.button("🧹 Reset Use Case"):
+        if st.button(" Reset Use Case"):
             # Safely clear all keys related to this case
             for k in [uploaded_key, uploaded_name_key, data_key, gen_key]:
                 if k in st.session_state:
                     del st.session_state[k]
             st.session_state["selected_case"] = None
-            st.success("✅ Use case reset successfully.")
+            st.success(" Use case reset successfully.")
             st.rerun()
 
     # Generate synthetic data if no upload
@@ -149,11 +150,11 @@ else:
     # Display data if exists
     if data_key in st.session_state and not st.session_state[data_key].empty:
         df = st.session_state[data_key]
-        st.subheader("📋 Data Preview")
+        st.subheader(" Data Preview")
         st.dataframe(df, use_container_width=True)
 
         # Visualizations
-        st.subheader("📊 Visualizations")
+        st.subheader(" Visualizations")
         numeric_data = df.select_dtypes(include=[np.number]).drop(columns="ID", errors="ignore")
         mean_vals = numeric_data.mean()
 
@@ -191,7 +192,7 @@ else:
         st.write(f"- Overall Avg: {mean_vals.mean():.2f}")
 
         # Download section
-        st.subheader("💾 Download Results")
+        st.subheader(" Download Results")
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         csv_bytes = df.to_csv(index=False).encode("utf-8")
         json_bytes = df.to_json(orient="records", indent=2).encode("utf-8")
@@ -199,11 +200,12 @@ else:
         df.to_excel(excel_buf, index=False)
         excel_buf.seek(0)
 
-        st.download_button("⬇️ Download CSV", csv_bytes, f"{case_key}_{ts}.csv", "text/csv")
-        st.download_button("⬇️ Download JSON", json_bytes, f"{case_key}_{ts}.json", "application/json")
-        st.download_button("⬇️ Download Excel", excel_buf, f"{case_key}_{ts}.xlsx",
+        st.download_button(" Download CSV", csv_bytes, f"{case_key}_{ts}.csv", "text/csv")
+        st.download_button(" Download JSON", json_bytes, f"{case_key}_{ts}.json", "application/json")
+        st.download_button(" Download Excel", excel_buf, f"{case_key}_{ts}.xlsx",
                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     else:
         st.info("No data yet. Upload a file or use the slider to generate synthetic data.")
 
 # ---------------- END ----------------
+
