@@ -122,9 +122,9 @@ def call_openai(prompt, model="gpt-4o-mini"):
         return f"OpenAI call failed: {e}"
 
 def call_anthropic(prompt):
-    key = st.secrets.get("ANTHROPIC_API_KEY")
+    key = st.secrets.get("sk-ant-api03-G0w...wAAA")
     if not key:
-        return missing_key_message("Anthropic", "ANTHROPIC_API_KEY")
+        return missing_key_message("Anthropic", "sk-ant-api03-G0w...wAAA")
     try:
         url = "https://api.anthropic.com/v1/complete"  # some Anthropic APIs use different endpoints
         headers = {"x-api-key": key, "Content-Type":"application/json"}
@@ -349,3 +349,4 @@ with c3:
 
 st.markdown("---")
 st.markdown("<small>To enable a provider: add its API key into `.streamlit/secrets.toml` or Streamlit Cloud secrets and restart the app.</small>", unsafe_allow_html=True)
+
