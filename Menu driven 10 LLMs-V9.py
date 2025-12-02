@@ -106,9 +106,9 @@ def missing_key_message(provider_name, secret_name):
 # Keep implementation generic and safe to run with placeholders.
 # -------------------------
 def call_openai(prompt, model="gpt-4o-mini"):
-    key = st.secrets.get("OPENAI_API_KEY")
+    key = st.secrets.get("sk-...sjcA")
     if not key:
-        return missing_key_message("OpenAI", "OPENAI_API_KEY")
+        return missing_key_message("OpenAI", "sk-...sjcA")
     try:
         url = "https://api.openai.com/v1/chat/completions"
         headers = {"Authorization": f"Bearer {key}", "Content-Type":"application/json"}
@@ -349,4 +349,5 @@ with c3:
 
 st.markdown("---")
 st.markdown("<small>To enable a provider: add its API key into `.streamlit/secrets.toml` or Streamlit Cloud secrets and restart the app.</small>", unsafe_allow_html=True)
+
 
