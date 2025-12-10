@@ -1,7 +1,7 @@
 
 # Unified Fraud/Scam Detector (Single-file Streamlit app)
 
-Features:
+# Features:
 # Single-page with sidebar navigation
 # ML-only offline mode (IsolationForest)
 # LLM+ML online mode (optional LLMs if API keys/libs present)
@@ -476,3 +476,4 @@ with col2:
 
 st.markdown("---")
 st.caption("Converted from a Tkinter single-file desktop app into Streamlit by ChatGPT. All core analysis logic preserved.")
+
