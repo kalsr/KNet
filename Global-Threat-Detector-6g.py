@@ -1,234 +1,156 @@
-# Global-Threat-Detector-6g
+###6GGGG
+
+# Global-Threat-Detector-6g (FIXED + ENHANCED)
 
 import streamlit as st
-
 import pandas as pd
-
-import numpy as np
-
 import random
-
 import matplotlib.pyplot as plt
-
 from fpdf import FPDF
 
-import geopandas as gpd
+# ---------------- PAGE CONFIG ----------------
+st.set_page_config(
+    page_title="Global Threat Detector",
+    layout="wide"
+)
 
-from shapely.geometry import Point
+# ---------------- CUSTOM CSS ----------------
+st.markdown("""
+<style>
+.title-box {
+    background: linear-gradient(90deg,#0a63c7,#3fa9ff);
+    padding: 18px;
+    border-radius: 14px;
+    text-align: center;
+    color: white;
+}
+.title-box h1 {
+    font-size: 36px;
+    margin-bottom: 4px;
+}
+.title-box h3 {
+    font-weight: 400;
+    font-size: 18px;
+}
+.reset-btn {
+    background-color: #ff4b4b !important;
+    color: white !important;
+    font-weight: bold !important;
+}
+</style>
+""", unsafe_allow_html=True)
 
+# ---------------- HEADER ----------------
+st.markdown("""
+<div class="title-box">
+    <h1>Global Real-Time Threat Detection and Analysis</h1>
+    <h3>Designed & Developed By Randy Singh</h3>
+</div>
+""", unsafe_allow_html=True)
 
+st.markdown("---")
 
-# Sample threat data generator
-
-def generate_sample_data(n=10):
-
-    data = []
-
+# ---------------- SAMPLE DATA GENERATOR ----------------
+def generate_sample_data(n):
+    threats = []
     for _ in range(n):
+        threats.append({
+            "Latitude": random.uniform(-90, 90),
+            "Longitude": random.uniform(-180, 180),
+            "Threat Type": random.choice(["Missile Launch", "Cyber-Attack", "Drone Infiltration"]),
+            "Severity": random.choice(["Low", "Medium", "High"])
+        })
+    return pd.DataFrame(threats)
 
-        # Randomly generate threat data: coordinates, threat type, timestamp, and severity
-
-        lat = random.uniform(-90, 90)
-
-        lon = random.uniform(-180, 180)
-
-        threat_type = random.choice(['Missile Launch', 'Cyber-Attack', 'Drone Infiltration'])
-
-        timestamp = pd.to_datetime(f"2025-12-01 {random.randint(0,23)}:{random.randint(0,59)}:{random.randint(0,59)}")
-
-        severity = random.choice(['Low', 'Medium', 'High'])
-
-        data.append([lat, lon, threat_type, timestamp, severity])
-
-    df = pd.DataFrame(data, columns=['Latitude', 'Longitude', 'Threat Type', 'Timestamp', 'Severity'])
-
-    return df
-
-
-
-# Function to handle file upload (CSV)
-
-def upload_data():
-
-    uploaded_file = st.file_uploader("Upload your threat data (CSV)", type=["csv"])
-
-    if uploaded_file is not None:
-
-        data = pd.read_csv(uploaded_file)
-
-        st.write("Data Uploaded Successfully!")
-
-        return data
-
-    return None
-
-
-
-# Function to create a PDF report of the analysis
-
-def save_to_pdf(data, filename="threat_analysis_report.pdf"):
-
+# ---------------- PDF EXPORT ----------------
+def export_pdf(df):
     pdf = FPDF()
-
     pdf.add_page()
-
-    pdf.set_font("Arial", size=12)
-
-    pdf.cell(200, 10, txt="Global Real-Time Threat Detection Report", ln=True, align='C')
-
-    pdf.ln(10)
-
-
-
-    for _, row in data.iterrows():
-
-        pdf.multi_cell(0, 8, txt=f"Threat: {row['Threat Type']}\nLocation: ({row['Latitude']}, {row['Longitude']})\n"
-
-                                  f"Timestamp: {row['Timestamp']}\nSeverity: {row['Severity']}\n")
-
-        pdf.ln(5)
-
-
-
-    pdf.output(filename)
-
-    st.success(f"PDF saved as {filename}")
-
-
-
-# Function to save results to CSV
-
-def save_to_csv(data, filename="threat_analysis_results.csv"):
-
-    data.to_csv(filename, index=False)
-
-    st.success(f"Results saved to CSV: {filename}")
-
-
-
-# Function to visualize the threat data
-
-def visualize_threat_data(data):
-
-    st.subheader("Threat Data Visualization")
-
-
-
-    # Display map with threat locations (simplified version using latitude and longitude)
-
-    gdf = gpd.GeoDataFrame(data, geometry=gpd.points_from_xy(data['Longitude'], data['Latitude']))
-
-
-
-    # Create a simple map with threats visualized
-
-    world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-
-    ax = world.plot(figsize=(10, 6))
-
-    gdf.plot(ax=ax, color='red', marker='o', markersize=50)
-
-
-
-    plt.title("Global Threat Locations")
-
-    st.pyplot(plt)
-
-
-
-    # Show some summary statistics
-
-    st.write(f"Total number of threats detected: {len(data)}")
-
-    st.write(f"Threats by type:")
-
-    st.write(data['Threat Type'].value_counts())
-
-
-
-    # Display a severity breakdown chart
-
-    severity_count = data['Severity'].value_counts()
-
-    st.bar_chart(severity_count)
-
-
-
-# Streamlit app interface
-
-def main():
-
-    st.title("Global Real-Time Threat Detection and Analysis")
-
-
-
-    # Sidebar with options
-
-    st.sidebar.header("Options")
-
-    option = st.sidebar.selectbox("Select Action", ["Generate Sample Data", "Upload Your Data", "Reset"])
-
-
-
-    if option == "Generate Sample Data":
-
-        st.subheader("Generated Threat Data")
-
-        data = generate_sample_data(n=10)
-
-        st.write(data)
-
-        visualize_threat_data(data)
-
-
-
-    elif option == "Upload Your Data":
-
-        data = upload_data()
-
-        if data is not None:
-
-            st.write(data)
-
-            visualize_threat_data(data)
-
-
-
-    elif option == "Reset":
-
-        st.experimental_rerun()
-
-
-
-    # Export results to CSV and PDF
-
-    if st.button("Export to CSV"):
-
-        if 'data' in locals():
-
-            save_to_csv(data)
-
-        else:
-
-            st.warning("No data to export!")
-
-
-
-    if st.button("Export to PDF"):
-
-        if 'data' in locals():
-
-            save_to_pdf(data)
-
-        else:
-
-            st.warning("No data to export!")
-
-
-
-if __name__ == "__main__":
-
-    main()
-
-
-
+    pdf.set_font("Arial", "B", 14)
+    pdf.cell(0, 10, "Global Threat Detection Report", ln=True, align="C")
+    pdf.ln(5)
+
+    pdf.set_font("Arial", size=10)
+    for _, r in df.iterrows():
+        pdf.multi_cell(
+            0, 8,
+            f"Threat: {r['Threat Type']}\n"
+            f"Location: ({r['Latitude']:.2f}, {r['Longitude']:.2f})\n"
+            f"Severity: {r['Severity']}\n"
+        )
+        pdf.ln(2)
+
+    path = "/tmp/threat_report.pdf"
+    pdf.output(path)
+    return path
+
+# ---------------- SESSION STATE ----------------
+if "data" not in st.session_state:
+    st.session_state.data = None
+
+# ---------------- CONTROLS ----------------
+col1, col2, col3 = st.columns([2,2,1])
+
+with col1:
+    record_count = st.slider(
+        "Generate Sample Threat Records",
+        5, 200, 20
+    )
+
+with col2:
+    run_analysis = st.button("🚀 Run Analysis")
+
+with col3:
+    reset = st.button("🔴 RESET", key="reset")
+
+# ---------------- RESET ----------------
+if reset:
+    st.session_state.data = None
+    st.experimental_rerun()
+
+# ---------------- RUN ANALYSIS ----------------
+if run_analysis:
+    st.session_state.data = generate_sample_data(record_count)
+
+# ---------------- DISPLAY RESULTS ----------------
+if st.session_state.data is not None:
+    df = st.session_state.data
+
+    st.subheader("📋 Threat Data")
+    st.dataframe(df)
+
+    st.subheader("🌍 Global Threat Map")
+    st.map(df.rename(columns={"Latitude": "lat", "Longitude": "lon"}))
+
+    colA, colB = st.columns(2)
+
+    with colA:
+        st.subheader("Threat Type Distribution")
+        st.bar_chart(df["Threat Type"].value_counts())
+
+    with colB:
+        st.subheader("Severity Breakdown")
+        st.bar_chart(df["Severity"].value_counts())
+
+    st.markdown("---")
+
+    colX, colY = st.columns(2)
+
+    with colX:
+        csv = df.to_csv(index=False).encode("utf-8")
+        st.download_button(
+            "⬇️ Export CSV",
+            csv,
+            file_name="global_threats.csv",
+            mime="text/csv"
+        )
+
+    with colY:
+        pdf_path = export_pdf(df)
+        with open(pdf_path, "rb") as f:
+            st.download_button(
+                "⬇️ Export PDF",
+                f,
+                file_name="global_threat_report.pdf",
+                mime="application/pdf"
+            )
