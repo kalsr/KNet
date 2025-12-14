@@ -1,6 +1,6 @@
-###6GGGG
 
-# Global-Threat-Detector-6g (FIXED + ENHANCED)
+
+# Global-Threat-Detector-6g-V1
 
 import streamlit as st
 import pandas as pd
@@ -98,7 +98,7 @@ with col1:
     )
 
 with col2:
-    run_analysis = st.button("🚀 Run Analysis")
+    run_analysis = st.button("Run Analysis on Selected Data")
 
 with col3:
     reset = st.button("🔴 RESET", key="reset")
@@ -116,10 +116,10 @@ if run_analysis:
 if st.session_state.data is not None:
     df = st.session_state.data
 
-    st.subheader("📋 Threat Data")
+    st.subheader("Threat Data")
     st.dataframe(df)
 
-    st.subheader("🌍 Global Threat Map")
+    st.subheader("Global Threat Map")
     st.map(df.rename(columns={"Latitude": "lat", "Longitude": "lon"}))
 
     colA, colB = st.columns(2)
@@ -139,7 +139,7 @@ if st.session_state.data is not None:
     with colX:
         csv = df.to_csv(index=False).encode("utf-8")
         st.download_button(
-            "⬇️ Export CSV",
+            "Result To Export In CSV Format",
             csv,
             file_name="global_threats.csv",
             mime="text/csv"
@@ -149,8 +149,9 @@ if st.session_state.data is not None:
         pdf_path = export_pdf(df)
         with open(pdf_path, "rb") as f:
             st.download_button(
-                "⬇️ Export PDF",
+                "Results To Export In PDF Format",
                 f,
                 file_name="global_threat_report.pdf",
                 mime="application/pdf"
             )
+
