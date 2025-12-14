@@ -141,6 +141,7 @@ if st.session_state.data is not None:
 # ---------------- LIVE MAP ----------------
 if st.session_state.data is not None:
     st.subheader(" Live Global Threat Map (Satellite View)")
+
     fig = px.scatter_geo(
         st.session_state.data,
         lat="Latitude",
@@ -148,13 +149,36 @@ if st.session_state.data is not None:
         color="Severity",
         size="Final Risk",
         hover_name="Country",
-        hover_data=["Threat","Severity","Final Risk"],
+        hover_data=["Threat", "Severity", "Final Risk"],
         text="Country",
         projection="natural earth",
         title="Global Threat Overlay (Country + Severity)"
     )
-    fig.update_traces(textposition="top center")
+
+    # 🔹 Improve readability
+    fig.update_traces(
+        textposition="top center",
+        textfont=dict(size=9),
+        marker=dict(opacity=0.8)
+    )
+
+    # 🔹 Make map MUCH larger
+    fig.update_layout(
+        height=750,                  # <<< MAIN FIX
+        margin=dict(l=0, r=0, t=60, b=0),
+        geo=dict(
+            showcountries=True,
+            countrycolor="LightGray",
+            showland=True,
+            landcolor="rgb(243,243,243)",
+            showocean=True,
+            oceancolor="rgb(230,245,255)",
+            projection_scale=1.2      # <<< prevents label crowding
+        )
+    )
+
     st.plotly_chart(fig, use_container_width=True)
+
 
 # ---------------- SIGINT / CYBER FEED ----------------
 st.subheader(" Live SIGINT / Cyber Feed (Simulated)")
@@ -225,4 +249,5 @@ if st.session_state.data is not None and "export" in ROLES[st.session_state.role
 
     with open(path, "rb") as f:
         st.download_button("Export PDF", f, "STANAG_Report.pdf")
+
 
