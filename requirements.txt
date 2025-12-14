@@ -34,3 +34,4 @@ reportlab
 kaleido
 pillow
 fpdf
+geopandas
