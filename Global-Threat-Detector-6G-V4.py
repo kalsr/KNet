@@ -64,7 +64,7 @@ if "role" not in st.session_state:
 
 # ---------------- LOGIN / LOGOUT ----------------
 if st.session_state.role is None:
-    st.markdown("### 🔐 Secure Role-Based Access")
+    st.markdown("###  Secure Role-Based Access")
     role = st.selectbox("Select Role", list(ROLES.keys()))
     if st.button("Login"):
         st.session_state.role = role
@@ -135,12 +135,12 @@ with c4:
 
 # ---------------- DISPLAY DATA ----------------
 if st.session_state.data is not None:
-    st.subheader("📋 Active Threat Data")
+    st.subheader(" Active Threat Data")
     st.dataframe(st.session_state.data, use_container_width=True)
 
 # ---------------- LIVE MAP ----------------
 if st.session_state.data is not None:
-    st.subheader("🛰 Live Global Threat Map (Satellite View)")
+    st.subheader(" Live Global Threat Map (Satellite View)")
     fig = px.scatter_geo(
         st.session_state.data,
         lat="Latitude",
@@ -157,7 +157,7 @@ if st.session_state.data is not None:
     st.plotly_chart(fig, use_container_width=True)
 
 # ---------------- SIGINT / CYBER FEED ----------------
-st.subheader("📡 Live SIGINT / Cyber Feed (Simulated)")
+st.subheader(" Live SIGINT / Cyber Feed (Simulated)")
 feed = [{
     "Time": datetime.utcnow() - timedelta(minutes=i*3),
     "Event": random.choice([
@@ -171,7 +171,7 @@ feed = [{
 st.table(pd.DataFrame(feed))
 
 # ---------------- 6G ANALYTICS ----------------
-st.subheader("⚡ 6G Intelligence Analytics")
+st.subheader(" 6G Intelligence Analytics")
 
 m1, m2, m3 = st.columns(3)
 with m1:
@@ -198,7 +198,7 @@ Higher edge decision rates reduce response time and core-network load.
 """, unsafe_allow_html=True)
 
 # ---------------- DIGITAL TWIN ----------------
-st.subheader("🔮 6G Digital Twin Threat Forecast")
+st.subheader(" 6G Digital Twin Threat Forecast")
 forecast = pd.DataFrame({
     "Time": ["Now", "T+5 min", "T+15 min"],
     "Projected Risk": [42, 58, 75]
@@ -207,7 +207,7 @@ st.line_chart(forecast.set_index("Time"))
 
 # ---------------- EXPORT ----------------
 if st.session_state.data is not None and "export" in ROLES[st.session_state.role]:
-    st.subheader("📤 STANAG-Compliant Export")
+    st.subheader(" STANAG-Compliant Export")
 
     st.download_button(
         "Export CSV",
@@ -225,3 +225,4 @@ if st.session_state.data is not None and "export" in ROLES[st.session_state.role
 
     with open(path, "rb") as f:
         st.download_button("Export PDF", f, "STANAG_Report.pdf")
+
