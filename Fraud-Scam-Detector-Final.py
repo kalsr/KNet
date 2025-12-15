@@ -1,9 +1,9 @@
 
-
 # ============================================================
 # ENTERPRISE FRAUD & SCAM DETECTION PLATFORM (STABLE)
 # Designed & Developed by Randy Singh – KNet Consulting
 # ============================================================
+
 
 import streamlit as st
 import pandas as pd
@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from sklearn.ensemble import IsolationForest
 from PIL import Image, ImageDraw
 from fpdf import FPDF
-import random, io
+import random
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(page_title="Enterprise Fraud Detection", layout="wide")
@@ -26,17 +26,17 @@ st.markdown("""
     border-radius: 16px;
     color: white;
     text-align: center;
-    font-size: 34px;
+    font-size: 36px;
     font-weight: 900;
 }
 .stTabs [role="tab"] {
-    font-size: 24px !important;
+    font-size: 28px !important;
     font-weight: 900 !important;
 }
 .stButton button {
-    font-size: 18px;
-    font-weight: 800;
-    padding: 12px 36px;
+    font-size: 20px;
+    font-weight: 900;
+    padding: 14px 40px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -49,14 +49,14 @@ Enterprise Fraud & Scam Detection Platform<br>
 </div>
 """, unsafe_allow_html=True)
 
-# ---------------- FRAUD RULES ----------------
+# ---------------- RULES ----------------
 KEYWORDS = ["urgent","verify","bank","click","password","wire","lottery","gift card"]
 
 def rule_score(text):
     score = sum(1 for k in KEYWORDS if k in text.lower())
-    confidence = min(100, score * 20)
-    risk = "High" if score >= 4 else "Medium" if score >= 2 else "Low"
-    result = "Fraud / Scam" if score >= 2 else "Legitimate"
+    confidence = min(100, score*20)
+    risk = "High" if score >=4 else "Medium" if score >=2 else "Low"
+    result = "Fraud / Scam" if score>=2 else "Legitimate"
     return result, score, confidence, risk
 
 # ---------------- SAMPLE GENERATORS ----------------
@@ -69,15 +69,17 @@ def generate_sample_text():
         "Invoice attached for last month's services."
     ])
 
+def generate_sample_image_text():
+    # Fake OCR extraction from generated screenshot
+    return "URGENT: verify bank account now"
+
 def generate_sample_image():
-    img = Image.new("RGB", (650, 260), "white")
+    img = Image.new("RGB", (650,260),"white")
     d = ImageDraw.Draw(img)
-    d.text((20, 70),
-           "URGENT SECURITY ALERT\nVerify your bank account now!",
-           fill="black")
+    d.text((20,70),"URGENT SECURITY ALERT\nVerify your bank account now!",fill="black")
     return img
 
-# ---------------- SESSION STATE INIT ----------------
+# ---------------- SESSION STATE ----------------
 if "results" not in st.session_state:
     st.session_state.results = pd.DataFrame(
         columns=["Source","Content","RuleScore","ML","Confidence","Risk","Result"]
@@ -87,7 +89,7 @@ if "model" not in st.session_state:
     st.session_state.model = IsolationForest(contamination=0.3, random_state=42)
     st.session_state.model_trained = False
 
-# ---------------- ML FUNCTIONS ----------------
+# ---------------- ML ----------------
 def vectorize(text):
     return [len(text), sum(c.isupper() for c in text)]
 
@@ -101,9 +103,9 @@ def ensure_model_trained():
 def ml_predict(text):
     ensure_model_trained()
     X = np.array([vectorize(text)])
-    return "Suspicious" if st.session_state.model.predict(X)[0] == -1 else "Normal"
+    return "Suspicious" if st.session_state.model.predict(X)[0]==-1 else "Normal"
 
-# ---------------- RESET (FIXED) ----------------
+# ---------------- RESET ----------------
 def reset_all():
     st.session_state.clear()
     st.rerun()
@@ -135,11 +137,10 @@ with tab1:
 # ---------------- TAB 2: SCREENSHOT ----------------
 with tab2:
     img_file = st.file_uploader("Upload Screenshot", type=["png","jpg","jpeg"])
-
     if img_file:
         img = Image.open(img_file)
         st.image(img, width=450)
-        text = "urgent verify bank"
+        text = "urgent verify bank"  # Placeholder text for uploaded screenshot
         res, score, conf, risk = rule_score(text)
         ml = ml_predict(text)
         st.session_state.results.loc[len(st.session_state.results)] = (
@@ -148,12 +149,19 @@ with tab2:
         st.success(f"{res} | Risk: {risk} | ML: {ml}")
 
     if st.button("Generate Sample Screenshot"):
-        st.image(generate_sample_image())
+        img = generate_sample_image()
+        st.image(img)
+        text = generate_sample_image_text()
+        res, score, conf, risk = rule_score(text)
+        ml = ml_predict(text)
+        st.session_state.results.loc[len(st.session_state.results)] = (
+            "Sample Screenshot", text, score, ml, conf, risk, res
+        )
+        st.success("Sample screenshot analyzed")
 
 # ---------------- TAB 3: SAMPLE GENERATOR ----------------
 with tab3:
     n = st.slider("Generate Sample Messages", 0, 100, 20)
-
     samples = []
     for _ in range(n):
         msg = generate_sample_text()
@@ -162,31 +170,26 @@ with tab3:
         samples.append([msg, score, ml, conf, risk, res])
 
     df_samples = pd.DataFrame(
-        samples,
-        columns=["Message","RuleScore","ML","Confidence","Risk","Result"]
+        samples, columns=["Message","RuleScore","ML","Confidence","Risk","Result"]
     )
-
     st.dataframe(df_samples)
 
     if st.button("Add Samples to Analytics"):
         for _, r in df_samples.iterrows():
             st.session_state.results.loc[len(st.session_state.results)] = (
-                "Sample", r["Message"], r["RuleScore"],
-                r["ML"], r["Confidence"], r["Risk"], r["Result"]
+                "Sample", r["Message"], r["RuleScore"], r["ML"],
+                r["Confidence"], r["Risk"], r["Result"]
             )
         st.success("Samples added to Analytics")
 
 # ---------------- TAB 4: ANALYTICS ----------------
 with tab4:
     if st.session_state.results.empty:
-        st.info("No analysis results available.")
+        st.info("No analysis results available")
     else:
         st.dataframe(st.session_state.results)
-
         fig, ax = plt.subplots()
-        st.session_state.results["Result"].value_counts().plot(
-            kind="bar", ax=ax, title="Fraud vs Legitimate"
-        )
+        st.session_state.results["Result"].value_counts().plot(kind="bar", ax=ax, title="Fraud vs Legitimate")
         st.pyplot(fig)
 
 # ---------------- TAB 5: EXPORT ----------------
@@ -194,18 +197,16 @@ with tab5:
     if not st.session_state.results.empty:
         csv = st.session_state.results.to_csv(index=False).encode()
         st.download_button("Download CSV", csv, "fraud_results.csv")
-
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", size=10)
         for _, r in st.session_state.results.iterrows():
             pdf.multi_cell(
-                0, 8,
+                0,8,
                 f"{r['Source']} | {r['Result']} | Risk: {r['Risk']} | ML: {r['ML']}\n{r['Content']}\n"
             )
-        buffer = io.BytesIO()
-        pdf.output(buffer)
-        st.download_button("Download PDF", buffer.getvalue(), "fraud_results.pdf")
+        pdf_bytes = pdf.output(dest='S').encode('latin1')
+        st.download_button("Download PDF", pdf_bytes, "fraud_results.pdf")
 
 # ---------------- FOOTER ----------------
 st.markdown("---")
