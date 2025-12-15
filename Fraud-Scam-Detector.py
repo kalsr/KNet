@@ -4,7 +4,7 @@
 # Fraud/Scam-Detector
 
 
-
+import pytesseract
 import streamlit as st
 
 import pandas as pd
@@ -520,6 +520,7 @@ st.markdown(
     "© KNet Consulting Group | Enterprise Fraud & Scam Detection Platform"
 
 )
+
 
 
 
