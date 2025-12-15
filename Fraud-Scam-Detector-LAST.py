@@ -156,37 +156,45 @@ with tab1:
     with col2:
         st.button("🔴 Reset All Data", on_click=reset_all)
 
-# ---------------- TAB 2: SCREENSHOT ----------------
+# ---------------- TAB 2: SCREENSHOT (FIXED) ----------------
 with tab2:
     col1, col2 = st.columns([2,1])
     with col1:
         img_file = st.file_uploader("Upload Screenshot", type=["png","jpg","jpeg"])
         if img_file:
             img = Image.open(img_file)
-            st.image(img, width=800)
-            text = generate_sample_image_text()  # Simulated OCR
+            st.image(img, width=900)  # Bigger display
+            # Simulate OCR from uploaded screenshot
+            text = generate_sample_image_text()
             res, score, conf, risk = rule_score(text)
             ml = ml_predict(text)
             llm = llm_explain(text)
             st.session_state.results.loc[len(st.session_state.results)] = (
                 "Uploaded Screenshot", text, score, ml, conf, risk, res, llm
             )
-            st.success(f"{res} | Risk: {risk} | ML: {ml}")
+            st.success(f"{res} | Risk: {risk} | ML: {ml} | Confidence: {conf}%")
             st.info(llm)
+
     with col2:
         n = st.number_input("Generate Sample Screenshots", min_value=1, max_value=10, value=1)
         if st.button("Generate & Analyze Sample Screenshots"):
             for _ in range(n):
-                img = generate_sample_image()
-                st.image(img, width=800)
-                text = generate_sample_image_text()
-                res, score, conf, risk = rule_score(text)
-                ml = ml_predict(text)
-                llm = llm_explain(text)
+                # Create larger image and bigger font
+                img = Image.new("RGB", (1200,600),"white")
+                d = ImageDraw.Draw(img)
+                text_img = generate_sample_image_text()
+                d.text((50,250), text_img, fill="black", align="center")
+                st.image(img, width=900)  # Larger display
+                # Analysis for generated screenshot
+                res, score, conf, risk = rule_score(text_img)
+                ml = ml_predict(text_img)
+                llm = llm_explain(text_img)
                 st.session_state.results.loc[len(st.session_state.results)] = (
-                    "Sample Screenshot", text, score, ml, conf, risk, res, llm
+                    "Sample Screenshot", text_img, score, ml, conf, risk, res, llm
                 )
-            st.success(f"{n} Sample screenshots generated and analyzed.")
+                st.success(f"{res} | Risk: {risk} | ML: {ml} | Confidence: {conf}%")
+                st.info(llm)
+
 
 # ---------------- TAB 3: SAMPLE GENERATOR ----------------
 with tab3:
@@ -242,3 +250,4 @@ with tab5:
 
 st.markdown("---")
 st.caption("© KNet Consulting Group | Enterprise Fraud & Scam Detection Platform")
+
