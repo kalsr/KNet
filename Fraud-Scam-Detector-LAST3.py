@@ -135,11 +135,11 @@ def reset_all():
 
 # ---------------- TABS ----------------
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "✍ Detection",
-    "📷 Screenshot",
-    "🎲 Sample Generator",
-    "📊 Executive Dashboard",
-    "📤 Export"
+    " DETECTION",
+    " SCREENSHOT",
+    " SAMPLE DATA GNERATOR",
+    " EXECUTIVE DASHBOARD",
+    " EXPORT RESULTS" 
 ])
 
 # ---------------- TAB 1: DETECTION ----------------
@@ -158,7 +158,7 @@ with tab1:
             st.success(f"{res} | Risk: {risk} | Confidence: {conf}% | ML: {ml}")
             st.info(llm)
 
-    st.button("🔴 Reset All Data", on_click=reset_all)
+    st.button(" RESET ALL DATA", on_click=reset_all)
 
 # ---------------- TAB 2: SCREENSHOT ----------------
 with tab2:
@@ -177,7 +177,7 @@ with tab2:
                 "Uploaded Screenshot", text, score, ml, conf, risk, res, llm
             )
             # Display full analysis below the image
-            st.subheader("📊 Screenshot Analysis Result")
+            st.subheader("SCREENSHOT ANALYSIS RESULT")
             st.markdown(f"**Result:** {res}")
             st.markdown(f"**Risk Level:** {risk}")
             st.markdown(f"**Confidence:** {conf}%")
@@ -198,7 +198,7 @@ with tab2:
                     "Sample Screenshot", text, score, ml, conf, risk, res, llm
                 )
                 # Display detailed analysis immediately
-                st.subheader(f"📊 Sample Screenshot {i+1} Analysis Result")
+                st.subheader(f" Sample Screenshot {i+1} Analysis Result")
                 st.markdown(f"**Result:** {res}")
                 st.markdown(f"**Risk Level:** {risk}")
                 st.markdown(f"**Confidence:** {conf}%")
@@ -266,4 +266,5 @@ with tab5:
 
 st.markdown("---")
 st.caption("© KNet Consulting Group | Enterprise Fraud & Scam Detection Platform")
+
 
