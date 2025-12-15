@@ -168,19 +168,26 @@ with tab2:
         if img_file:
             img = Image.open(img_file)
             st.image(img, width=600)
-            text = generate_sample_image_text()  # Simulated OCR
+            # Simulate OCR text for demo purposes
+            text = generate_sample_image_text()
             res, score, conf, risk = rule_score(text)
             ml = ml_predict(text)
             llm = llm_explain(text)
             st.session_state.results.loc[len(st.session_state.results)] = (
                 "Uploaded Screenshot", text, score, ml, conf, risk, res, llm
             )
-            st.success(f"{res} | Risk: {risk} | ML: {ml}")
-            st.info(llm)
+            # Display full analysis below the image
+            st.subheader("📊 Screenshot Analysis Result")
+            st.markdown(f"**Result:** {res}")
+            st.markdown(f"**Risk Level:** {risk}")
+            st.markdown(f"**Confidence:** {conf}%")
+            st.markdown(f"**ML Prediction:** {ml}")
+            st.markdown(f"**LLM Explanation:** {llm}")
+
     with col2:
         n = st.number_input("Generate Sample Screenshots", min_value=1, max_value=10, value=1)
         if st.button("Generate & Analyze Sample Screenshots"):
-            for _ in range(n):
+            for i in range(n):
                 img = generate_sample_image()
                 st.image(img, width=600)
                 text = generate_sample_image_text()
@@ -190,7 +197,15 @@ with tab2:
                 st.session_state.results.loc[len(st.session_state.results)] = (
                     "Sample Screenshot", text, score, ml, conf, risk, res, llm
                 )
+                # Display detailed analysis immediately
+                st.subheader(f"📊 Sample Screenshot {i+1} Analysis Result")
+                st.markdown(f"**Result:** {res}")
+                st.markdown(f"**Risk Level:** {risk}")
+                st.markdown(f"**Confidence:** {conf}%")
+                st.markdown(f"**ML Prediction:** {ml}")
+                st.markdown(f"**LLM Explanation:** {llm}")
             st.success(f"{n} Sample screenshots generated and analyzed.")
+
 
 # ---------------- TAB 3: SAMPLE GENERATOR ----------------
 with tab3:
@@ -251,3 +266,4 @@ with tab5:
 
 st.markdown("---")
 st.caption("© KNet Consulting Group | Enterprise Fraud & Scam Detection Platform")
+
