@@ -1,7 +1,7 @@
 
 
 # ============================================================
-# ENTERPRISE FRAUD & SCAM DETECTION PLATFORM
+# ENTERPRISE FRAUD & SCAM DETECTION PLATFORM (STABLE)
 # Designed & Developed by Randy Singh – KNet Consulting
 # ============================================================
 
@@ -10,7 +10,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.ensemble import IsolationForest
-from sklearn.exceptions import NotFittedError
 from PIL import Image, ImageDraw
 from fpdf import FPDF
 import random, io
@@ -23,21 +22,21 @@ st.markdown("""
 <style>
 .header {
     background: linear-gradient(90deg,#0b4f9c,#1fa2ff);
-    padding: 26px;
-    border-radius: 14px;
+    padding: 30px;
+    border-radius: 16px;
     color: white;
     text-align: center;
-    font-size: 30px;
-    font-weight: 800;
+    font-size: 34px;
+    font-weight: 900;
 }
 .stTabs [role="tab"] {
-    font-size: 22px !important;
-    font-weight: 800 !important;
+    font-size: 24px !important;
+    font-weight: 900 !important;
 }
 .stButton button {
-    font-size: 17px;
-    font-weight: 700;
-    padding: 10px 30px;
+    font-size: 18px;
+    font-weight: 800;
+    padding: 12px 36px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -73,12 +72,12 @@ def generate_sample_text():
 def generate_sample_image():
     img = Image.new("RGB", (650, 260), "white")
     d = ImageDraw.Draw(img)
-    d.text((20, 60),
-            "URGENT SECURITY ALERT\nVerify your bank account now!",
-            fill="black")
+    d.text((20, 70),
+           "URGENT SECURITY ALERT\nVerify your bank account now!",
+           fill="black")
     return img
 
-# ---------------- SESSION STATE ----------------
+# ---------------- SESSION STATE INIT ----------------
 if "results" not in st.session_state:
     st.session_state.results = pd.DataFrame(
         columns=["Source","Content","RuleScore","ML","Confidence","Risk","Result"]
@@ -94,7 +93,7 @@ def vectorize(text):
 
 def ensure_model_trained():
     if not st.session_state.model_trained:
-        baseline = [generate_sample_text() for _ in range(50)]
+        baseline = [generate_sample_text() for _ in range(60)]
         X = np.array([vectorize(t) for t in baseline])
         st.session_state.model.fit(X)
         st.session_state.model_trained = True
@@ -104,12 +103,10 @@ def ml_predict(text):
     X = np.array([vectorize(text)])
     return "Suspicious" if st.session_state.model.predict(X)[0] == -1 else "Normal"
 
-# ---------------- RESET ----------------
+# ---------------- RESET (FIXED) ----------------
 def reset_all():
-    st.session_state.results = st.session_state.results.iloc[0:0]
-    st.session_state.model = IsolationForest(contamination=0.3, random_state=42)
-    st.session_state.model_trained = False
-    st.experimental_rerun()
+    st.session_state.clear()
+    st.rerun()
 
 # ---------------- TABS ----------------
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
@@ -120,12 +117,12 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📤 Export"
 ])
 
-# ---------------- TAB 1 ----------------
+# ---------------- TAB 1: DETECTION ----------------
 with tab1:
     text = st.text_area("Enter Email / Message")
 
     if st.button("Analyze Message"):
-        if text:
+        if text.strip():
             res, score, conf, risk = rule_score(text)
             ml = ml_predict(text)
             st.session_state.results.loc[len(st.session_state.results)] = (
@@ -133,56 +130,79 @@ with tab1:
             )
             st.success(f"{res} | Risk: {risk} | Confidence: {conf}% | ML: {ml}")
 
-    st.button("Reset All Data", on_click=reset_all)
+    st.button("🔴 Reset All Data", on_click=reset_all)
 
-# ---------------- TAB 2 ----------------
+# ---------------- TAB 2: SCREENSHOT ----------------
 with tab2:
     img_file = st.file_uploader("Upload Screenshot", type=["png","jpg","jpeg"])
+
     if img_file:
         img = Image.open(img_file)
-        st.image(img, width=420)
+        st.image(img, width=450)
         text = "urgent verify bank"
         res, score, conf, risk = rule_score(text)
         ml = ml_predict(text)
         st.session_state.results.loc[len(st.session_state.results)] = (
             "Screenshot", text, score, ml, conf, risk, res
         )
-        st.success(f"{res} | {risk} | ML: {ml}")
+        st.success(f"{res} | Risk: {risk} | ML: {ml}")
 
     if st.button("Generate Sample Screenshot"):
-        demo = generate_sample_image()
-        st.image(demo)
+        st.image(generate_sample_image())
 
-# ---------------- TAB 3 ----------------
+# ---------------- TAB 3: SAMPLE GENERATOR ----------------
 with tab3:
-    n = st.slider("Number of Sample Messages", 0, 100, 20)
-    samples = [generate_sample_text() for _ in range(n)]
-    df = pd.DataFrame(samples, columns=["Message"])
-    st.dataframe(df)
+    n = st.slider("Generate Sample Messages", 0, 100, 20)
 
-# ---------------- TAB 4 ----------------
+    samples = []
+    for _ in range(n):
+        msg = generate_sample_text()
+        res, score, conf, risk = rule_score(msg)
+        ml = ml_predict(msg)
+        samples.append([msg, score, ml, conf, risk, res])
+
+    df_samples = pd.DataFrame(
+        samples,
+        columns=["Message","RuleScore","ML","Confidence","Risk","Result"]
+    )
+
+    st.dataframe(df_samples)
+
+    if st.button("Add Samples to Analytics"):
+        for _, r in df_samples.iterrows():
+            st.session_state.results.loc[len(st.session_state.results)] = (
+                "Sample", r["Message"], r["RuleScore"],
+                r["ML"], r["Confidence"], r["Risk"], r["Result"]
+            )
+        st.success("Samples added to Analytics")
+
+# ---------------- TAB 4: ANALYTICS ----------------
 with tab4:
     if st.session_state.results.empty:
         st.info("No analysis results available.")
     else:
         st.dataframe(st.session_state.results)
+
         fig, ax = plt.subplots()
-        st.session_state.results["Result"].value_counts().plot(kind="bar", ax=ax)
+        st.session_state.results["Result"].value_counts().plot(
+            kind="bar", ax=ax, title="Fraud vs Legitimate"
+        )
         st.pyplot(fig)
 
-# ---------------- TAB 5 ----------------
+# ---------------- TAB 5: EXPORT ----------------
 with tab5:
-    if st.button("Export CSV"):
+    if not st.session_state.results.empty:
         csv = st.session_state.results.to_csv(index=False).encode()
         st.download_button("Download CSV", csv, "fraud_results.csv")
 
-    if st.button("Export PDF"):
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", size=10)
         for _, r in st.session_state.results.iterrows():
-            pdf.multi_cell(0, 8,
-                f"{r['Source']} | {r['Result']} | Risk: {r['Risk']} | ML: {r['ML']}\n{r['Content']}\n")
+            pdf.multi_cell(
+                0, 8,
+                f"{r['Source']} | {r['Result']} | Risk: {r['Risk']} | ML: {r['ML']}\n{r['Content']}\n"
+            )
         buffer = io.BytesIO()
         pdf.output(buffer)
         st.download_button("Download PDF", buffer.getvalue(), "fraud_results.pdf")
