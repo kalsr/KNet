@@ -221,7 +221,7 @@ def add_result(src, content):
 
     res, score = detect_fraud(content)
 
-    st.session_state.results.loc[len(st.session_state.results)] = \(src, content, score, res)
+    st.session_state.results.loc[len(st.session_state.results)] = (src, content, score, res)
 
         
 
@@ -520,6 +520,7 @@ st.markdown(
     "© KNet Consulting Group | Enterprise Fraud & Scam Detection Platform"
 
 )
+
 
 
 
