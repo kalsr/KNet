@@ -1,5 +1,5 @@
 
-
+# Advanced Enterprise Global Intelligence System
 # =========================================================
 # AEGIS-6X | 6G AI/ML Threat Intelligence Platform
 # Designed & Developed by Randy Singh Computer Scientist.
@@ -197,4 +197,5 @@ for _, r in df.iterrows():
     )
 pdf_bytes = pdf.output(dest="S").encode("latin1")
 st.download_button("Download PDF", pdf_bytes, "AEGIS_Report.pdf")
+
 
