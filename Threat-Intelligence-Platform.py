@@ -2,7 +2,7 @@
 
 # =========================================================
 # AEGIS-6X | 6G AI/ML Threat Intelligence Platform
-# Designed & Developed by Randy Singh – KNet Consulting
+# Designed & Developed by Randy Singh Computer Scientist.
 # =========================================================
 
 import streamlit as st
@@ -45,7 +45,7 @@ st.markdown("""
 st.markdown("""
 <div class="header">
 <h2>AEGIS-6X | 6G AI/ML Threat Intelligence Platform</h2>
-<p>DISA / JADC2 / NATO-Aligned | Randy Singh – KNet Consulting</p>
+<p>DISA / NATO-Aligned | Randy Singh – Computer Scientist</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -129,13 +129,13 @@ df["confidence"] = np.clip(
 
 df["Risk_Label"] = df["anomaly"].map({-1:"High Risk",1:"Normal"}).astype(str)
 
-# 🔒 CRITICAL: Remove bad rows
+#  CRITICAL: Remove bad rows
 df = df.dropna(subset=["risk_score","Risk_Label"])
 
 st.session_state.data = df
 
 # ---------------- DASHBOARD ----------------
-st.subheader("📊 Threat Intelligence Dashboard")
+st.subheader(" THREAT INTELLIGENCE DASHBOARD")
 st.dataframe(df, use_container_width=True)
 
 fig = px.scatter(
@@ -152,7 +152,7 @@ fig = px.scatter(
 st.plotly_chart(fig, use_container_width=True)
 
 # ---------------- MAP ----------------
-st.subheader("🌍 Global Threat Map (Satellite View)")
+st.subheader(" Global Threat Map (Satellite View)")
 
 map_fig = px.scatter_geo(
     df,
@@ -197,3 +197,4 @@ for _, r in df.iterrows():
     )
 pdf_bytes = pdf.output(dest="S").encode("latin1")
 st.download_button("Download PDF", pdf_bytes, "AEGIS_Report.pdf")
+
