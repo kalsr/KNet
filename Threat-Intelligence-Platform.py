@@ -45,7 +45,7 @@ st.markdown("""
 # ---------------- HEADER ----------------
 st.markdown("""
 <div class="header">
-<h2>AEGIS-6X | 6G AI/ML Threat Intelligence Platform</h2>
+<h2>Advanced Enterprise Global Intelligence System (AEGIS-6X) | 6G AI/ML Threat Intelligence Platform</h2>
 <p>DISA / NATO-Aligned | Randy Singh – Computer Scientist</p>
 </div>
 """, unsafe_allow_html=True)
@@ -198,6 +198,7 @@ for _, r in df.iterrows():
     )
 pdf_bytes = pdf.output(dest="S").encode("latin1")
 st.download_button("Download PDF", pdf_bytes, "AEGIS_Report.pdf")
+
 
 
 
