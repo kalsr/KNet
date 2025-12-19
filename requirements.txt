@@ -35,3 +35,4 @@ kaleido
 pillow
 fpdf
 geopandas
+Groq
