@@ -46,7 +46,7 @@ st.caption("Compare multiple free-tier LLMs with a clean UI")
 
 # -----------------------------
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_API_KEY = os.getenv("org_01kcwbz9dvf72bk17h2y4bjtpw")
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
@@ -183,3 +183,4 @@ if ask and prompt:
         except Exception as e:
 
             st.error(f"Error: {e}")
+
