@@ -82,8 +82,8 @@ provider = st.sidebar.selectbox(
 
 MODEL_MAP = {
     "Groq": [
-        "llama3-70b-8192",
-        "mixtral-8x7b-32768"
+        "llama3-70b-8192",  # active model
+        "another_supported_model_here"
     ],
     "Hugging Face": [
         "mistralai/Mistral-7B-Instruct",
@@ -95,6 +95,7 @@ MODEL_MAP = {
         "phi3"
     ]
 }
+
 
 model = st.sidebar.selectbox("Select Model", MODEL_MAP[provider])
 
@@ -143,4 +144,5 @@ if st.button("🚀 Generate Response"):
 # =========================================================
 st.markdown("---")
 st.caption("© 2025 • KNet Consulting • Multi-LLM Hub")
+
 
