@@ -20,7 +20,7 @@ if "GROQ_API_KEY" not in st.secrets:
     st.error("❌ GROQ_API_KEY not found in Streamlit secrets")
     st.stop()
 
-GROQ_API_KEY = st.secrets["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"]
+GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
 HF_API_KEY = st.secrets.get("HF_API_KEY", "")
 
 # =========================================================
@@ -143,3 +143,4 @@ if st.button("🚀 Generate Response"):
 # =========================================================
 st.markdown("---")
 st.caption("© 2025 • KNet Consulting • Multi-LLM Hub")
+
