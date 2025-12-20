@@ -18,8 +18,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# =========================================================
-# SESSION STATE INIT (S# =============================
+# =============================
 # SESSION STATE INIT (FIXED)
 # =============================
 if "HF_API_KEY" not in st.session_state:
@@ -30,7 +29,7 @@ if "HF_API_KEY" not in st.session_state:
 if "GROQ_API_KEY" not in st.session_state:
     st.session_state.GROQ_API_KEY = (
         st.secrets.get("GROQ_API_KEY", "") or os.getenv("GROQ_API_KEY", "")
-  #  )AFE)
+    )
 # =========================================================
 if "HF_API_KEY" not in st.session_state:
     st.session_state.HF_API_KEY = os.getenv("HF_API_KEY", "")
@@ -154,6 +153,7 @@ if st.button("🚀 Generate Response"):
 # =========================================================
 st.markdown("---")
 st.caption("© 2025 • Multi-LLM Hub")
+
 
 
 
