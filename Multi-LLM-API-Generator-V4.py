@@ -28,7 +28,7 @@ if "HF_API_KEY" not in st.session_state:
 
 if "GROQ_API_KEY" not in st.session_state:
     st.session_state.GROQ_API_KEY = (
-        st.secrets.get("GROQ_API_KEY", "") or os.getenv("GROQ_API_KEY", "")
+        st.secrets.get("GROQ_API_KEY", "") or os.getenv("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", "")
     )
 # =========================================================
 if "HF_API_KEY" not in st.session_state:
@@ -153,6 +153,7 @@ if st.button("🚀 Generate Response"):
 # =========================================================
 st.markdown("---")
 st.caption("© 2025 • Multi-LLM Hub")
+
 
 
 
