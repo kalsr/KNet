@@ -82,7 +82,7 @@ provider = st.sidebar.selectbox(
 
 MODEL_MAP = {
     "Groq": [
-        "llama3-70b-8192",  # active model
+        "llama-3.1-8b-instant",  # active model
         "another_supported_model_here"
     ],
     "Hugging Face": [
@@ -144,5 +144,6 @@ if st.button("🚀 Generate Response"):
 # =========================================================
 st.markdown("---")
 st.caption("© 2025 • KNet Consulting • Multi-LLM Hub")
+
 
 
