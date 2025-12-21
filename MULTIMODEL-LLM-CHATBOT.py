@@ -1,5 +1,5 @@
-# MULTI-MODEL LLM CHATBOT — WINDOWS GUARANTEED FIX
-# Uses Ollama CLI (same as working terminal chatbot)
+# MULTI-MODEL LLM CHATBOT — FINAL WINDOWS FIX
+# Uses Ollama CLI correctly via subprocess
 
 import streamlit as st
 import subprocess
@@ -47,20 +47,27 @@ for msg in st.session_state.messages:
         st.markdown(msg["content"])
 
 # ---------------------------------
-# Chat Input
+# Ollama CLI Call (CORRECT)
 # ---------------------------------
-user_input = st.chat_input(f"Message {model_name}...")
-
 def call_ollama_cli(model, prompt):
-    """Call Ollama exactly like terminal"""
     result = subprocess.run(
         ["ollama", "run", model],
         input=prompt,
         text=True,
-        capture_output=True,
-        shell=True
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False   # allow error capture
     )
+
+    if result.returncode != 0:
+        return f"❌ Ollama error:\n{result.stderr}"
+
     return result.stdout.strip()
+
+# ---------------------------------
+# Chat Input
+# ---------------------------------
+user_input = st.chat_input(f"Message {model_name}...")
 
 if user_input:
     st.session_state.messages.append(
@@ -72,14 +79,10 @@ if user_input:
 
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-            try:
-                reply = call_ollama_cli(model_name, user_input)
+            reply = call_ollama_cli(model_name, user_input)
 
-                if not reply:
-                    reply = "⚠️ No response received from Ollama."
-
-            except Exception as e:
-                reply = f"❌ Ollama CLI error: {e}"
+            if not reply:
+                reply = "❌ Ollama returned empty output (unexpected)."
 
             st.markdown(reply)
 
