@@ -49,21 +49,31 @@ for msg in st.session_state.messages:
 user_input = st.chat_input("Ask something...")
 
 def call_llm(provider, prompt):
+
     if provider == "Groq (FREE)":
+        if "GROQ_API_KEY" not in st.secrets:
+            return "❌ GROQ_API_KEY not found in secrets.toml"
+
         client = Groq(api_key=st.secrets["GROQ_API_KEY"])
-        resp = client.chat.completions.create(
-            model="llama3-70b-8192",
-            messages=[{"role": "user", "content": prompt}]
+
+        response = client.chat.completions.create(
+            model="llama3-8b-8192",   # more reliable than 70b
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.3
         )
-        return resp.choices[0].message.content
+
+        return response.choices[0].message.content
 
     if provider == "OpenAI":
         client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-        resp = client.chat.completions.create(
+        response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}]
         )
-        return resp.choices[0].message.content
+        return response.choices[0].message.content
 
     if provider == "Anthropic":
         client = anthropic.Anthropic(
@@ -82,11 +92,12 @@ def call_llm(provider, prompt):
             base_url=f"{st.secrets['AZURE_OPENAI_ENDPOINT']}/openai/deployments/{st.secrets['AZURE_OPENAI_DEPLOYMENT']}",
             default_headers={"api-key": st.secrets["AZURE_OPENAI_KEY"]}
         )
-        resp = client.chat.completions.create(
+        response = client.chat.completions.create(
             model=st.secrets["AZURE_OPENAI_DEPLOYMENT"],
             messages=[{"role": "user", "content": prompt}]
         )
-        return resp.choices[0].message.content
+        return response.choices[0].message.content
+
 
 # ---------------------------------
 # Run Chat
@@ -111,5 +122,6 @@ if user_input:
     st.session_state.messages.append(
         {"role": "assistant", "content": reply}
     )
+
 
 
