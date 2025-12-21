@@ -86,8 +86,8 @@ MODEL_MAP = {
         "another_supported_model_here"
     ],
     "Hugging Face": [
-        "mistralai/Mixtral-8x7B-Instruct-v0.1",
-        "google/gemma-7b"
+        "mistralai/Mistral-7B-Instruct",
+        "bigcode/starcoder"
     ],
     "Ollama (Local)": [
         "llama3",
@@ -144,6 +144,7 @@ if st.button("🚀 Generate Response"):
 # =========================================================
 st.markdown("---")
 st.caption("© 2025 • KNet Consulting • Multi-LLM Hub")
+
 
 
 
