@@ -36,3 +36,4 @@ pillow
 fpdf
 geopandas
 Groq
+ollama
