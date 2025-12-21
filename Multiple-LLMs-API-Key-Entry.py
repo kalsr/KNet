@@ -50,7 +50,7 @@ user_input = st.chat_input("Ask something...")
 
 def call_llm(provider, prompt):
     if provider == "Groq (FREE)":
-        client = Groq(api_key=st.secrets["GROQ_API_KEY"])
+        client = Groq(api_key=st.secrets["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"])
         resp = client.chat.completions.create(
             model="llama3-70b-8192",
             messages=[{"role": "user", "content": prompt}]
@@ -111,3 +111,4 @@ if user_input:
     st.session_state.messages.append(
         {"role": "assistant", "content": reply}
     )
+
