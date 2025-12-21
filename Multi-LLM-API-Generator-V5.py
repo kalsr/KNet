@@ -86,7 +86,7 @@ MODEL_MAP = {
         "another_supported_model_here"
     ],
     "Hugging Face": [
-        "meta‑llama/Llama‑2‑7b‑chat‑hf",
+        "openai/gpt‑oss‑120b",
         "meta-llama/Llama-2-7b-chat-hf"
     ],
     "Ollama (Local)": [
@@ -144,6 +144,7 @@ if st.button("🚀 Generate Response"):
 # =========================================================
 st.markdown("---")
 st.caption("© 2025 • KNet Consulting • Multi-LLM Hub")
+
 
 
 
