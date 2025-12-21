@@ -87,7 +87,7 @@ MODEL_MAP = {
     ],
     "Hugging Face": [
         "gpt2",
-        "bigcode/starcoder"
+        "meta-llama/Llama-2-7b-chat-hf"
     ],
     "Ollama (Local)": [
         "llama3",
@@ -144,6 +144,7 @@ if st.button("🚀 Generate Response"):
 # =========================================================
 st.markdown("---")
 st.caption("© 2025 • KNet Consulting • Multi-LLM Hub")
+
 
 
 
