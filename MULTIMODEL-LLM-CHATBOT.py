@@ -1,8 +1,7 @@
-# MULTIMODEL LLM CHATBOT (WINDOWS-SAFE FIX)
+# MULTIMODEL LLM CHATBOT — WINDOWS STREAMLIT FIX
 
 import streamlit as st
 import ollama
-import time
 
 # ---------------------------------
 # Page Configuration
@@ -17,26 +16,11 @@ st.title("🤖 Multi-Model LLM Chatbot (Ollama)")
 st.caption("ChatGPT-style interface with selectable local LLMs")
 
 # ---------------------------------
-# Try Connecting to Ollama (Graceful)
+# Force Ollama HTTP Client (CRITICAL)
 # ---------------------------------
-def check_ollama():
-    try:
-        ollama.list()
-        return True
-    except Exception:
-        return False
+OLLAMA_HOST = "http://127.0.0.1:11434"
 
-with st.spinner("Checking Ollama service..."):
-    time.sleep(1)
-    if not check_ollama():
-        st.error(
-            "❌ Ollama is not running.\n\n"
-            "### Fix:\n"
-            "1. Open **Start Menu → Ollama**\n"
-            "2. OR run: `ollama serve`\n"
-            "3. Refresh this page"
-        )
-        st.stop()
+client = ollama.Client(host=OLLAMA_HOST)
 
 # ---------------------------------
 # Sidebar – Model Selector
@@ -83,11 +67,24 @@ if user_input:
 
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-            response = ollama.chat(
-                model=model_name,
-                messages=st.session_state.messages
-            )
-            reply = response["message"]["content"]
+            try:
+                response = client.chat(
+                    model=model_name,
+                    messages=st.session_state.messages
+                )
+                reply = response["message"]["content"]
+
+            except Exception as e:
+                reply = (
+                    "❌ Unable to connect to Ollama from Streamlit.\n\n"
+                    "### Verified Facts\n"
+                    "- Ollama CLI works\n"
+                    "- Ollama app is running\n\n"
+                    "### Root Cause\n"
+                    "Streamlit requires an explicit HTTP host on Windows.\n\n"
+                    f"**Details:** {e}"
+                )
+
             st.markdown(reply)
 
     st.session_state.messages.append(
