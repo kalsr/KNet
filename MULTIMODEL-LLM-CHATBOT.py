@@ -1,8 +1,8 @@
-# MULTIMODEL LLM CHATBOT (FIXED OLLAMA CONNECTION)
+# MULTIMODEL LLM CHATBOT (WINDOWS-SAFE FIX)
 
 import streamlit as st
 import ollama
-import requests
+import time
 
 # ---------------------------------
 # Page Configuration
@@ -17,27 +17,26 @@ st.title("🤖 Multi-Model LLM Chatbot (Ollama)")
 st.caption("ChatGPT-style interface with selectable local LLMs")
 
 # ---------------------------------
-# Check Ollama Server Health
+# Try Connecting to Ollama (Graceful)
 # ---------------------------------
-OLLAMA_HOST = "http://localhost:11434"
-
-def ollama_is_running():
+def check_ollama():
     try:
-        r = requests.get(f"{OLLAMA_HOST}/api/tags", timeout=2)
-        return r.status_code == 200
+        ollama.list()
+        return True
     except Exception:
         return False
 
-if not ollama_is_running():
-    st.error(
-        "❌ Ollama server is not reachable.\n\n"
-        "Please make sure Ollama is running:\n"
-        "`ollama serve`"
-    )
-    st.stop()
-
-# Explicit Ollama client
-client = ollama.Client(host=OLLAMA_HOST)
+with st.spinner("Checking Ollama service..."):
+    time.sleep(1)
+    if not check_ollama():
+        st.error(
+            "❌ Ollama is not running.\n\n"
+            "### Fix:\n"
+            "1. Open **Start Menu → Ollama**\n"
+            "2. OR run: `ollama serve`\n"
+            "3. Refresh this page"
+        )
+        st.stop()
 
 # ---------------------------------
 # Sidebar – Model Selector
@@ -47,36 +46,20 @@ with st.sidebar:
 
     model_name = st.selectbox(
         "Select LLM Model",
-        [
-            "llama3",
-            "mistral",
-            "phi",
-            "gemma",
-            "llama2"
-        ]
+        ["llama3", "mistral", "phi", "gemma", "llama2"]
     )
 
-    st.markdown("**Active Model**")
-    st.code(model_name)
+    st.code(f"Active model: {model_name}")
 
     if st.button("🔄 Reset Chat"):
         st.session_state.messages = []
         st.rerun()
 
 # ---------------------------------
-# Initialize Session State
+# Session State
 # ---------------------------------
 if "messages" not in st.session_state:
     st.session_state.messages = []
-
-if "current_model" not in st.session_state:
-    st.session_state.current_model = model_name
-
-# Reset chat when model changes
-if st.session_state.current_model != model_name:
-    st.session_state.messages = []
-    st.session_state.current_model = model_name
-    st.rerun()
 
 # ---------------------------------
 # Display Chat History
@@ -99,22 +82,14 @@ if user_input:
         st.markdown(user_input)
 
     with st.chat_message("assistant"):
-        with st.spinner(f"{model_name} is thinking..."):
-            try:
-                response = client.chat(
-                    model=model_name,
-                    messages=st.session_state.messages
-                )
-                bot_reply = response["message"]["content"]
-
-            except Exception as e:
-                bot_reply = (
-                    "❌ Failed to generate response.\n\n"
-                    f"**Details:** {e}"
-                )
-
-            st.markdown(bot_reply)
+        with st.spinner("Thinking..."):
+            response = ollama.chat(
+                model=model_name,
+                messages=st.session_state.messages
+            )
+            reply = response["message"]["content"]
+            st.markdown(reply)
 
     st.session_state.messages.append(
-        {"role": "assistant", "content": bot_reply}
+        {"role": "assistant", "content": reply}
     )
