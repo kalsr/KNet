@@ -1,5 +1,3 @@
-
-
 import streamlit as st
 import requests
 
@@ -38,14 +36,17 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 # =====================================================
-# SECRETS DIAGNOSTICS (IMPORTANT)
+# SECRETS
 # =====================================================
-st.sidebar.header("🔑 API Keys Status")
-
 secrets = st.secrets.to_dict()
 
 def has(key):
-    return key in secrets and secrets[key] != ""
+    return key in secrets and secrets[key]
+
+# =====================================================
+# SIDEBAR – API STATUS
+# =====================================================
+st.sidebar.header("🔑 API Keys Status")
 
 providers = {}
 
@@ -57,7 +58,11 @@ else:
 
 if has("HF_API_KEY"):
     st.sidebar.success("Hugging Face key loaded")
-    providers["Hugging Face"] = ["meta-llama/Llama-3.1-8B-Instruct"]
+    providers["Hugging Face"] = [
+        "HuggingFaceH4/zephyr-7b-beta",
+        "tiiuae/falcon-7b-instruct",
+        "mistralai/Mistral-7B-Instruct-v0.2"
+    ]
 else:
     st.sidebar.warning("Hugging Face key missing")
 
@@ -75,7 +80,7 @@ else:
 
 if has("AZURE_OPENAI_KEY"):
     st.sidebar.success("Azure OpenAI key loaded")
-    providers["Azure OpenAI"] = [secrets.get("AZURE_OPENAI_DEPLOYMENT", "deployment")]
+    providers["Azure OpenAI"] = [secrets.get("AZURE_OPENAI_DEPLOYMENT")]
 else:
     st.sidebar.warning("Azure OpenAI key missing")
 
@@ -85,24 +90,13 @@ providers["Ollama (Local)"] = ["llama3", "mistral", "phi3"]
 # =====================================================
 # PROVIDER SELECTION
 # =====================================================
-provider = st.sidebar.selectbox(
-    "Select LLM Provider",
-    list(providers.keys())
-)
-
-model = st.sidebar.selectbox(
-    "Select Model",
-    providers[provider]
-)
+provider = st.sidebar.selectbox("Select LLM Provider", list(providers.keys()))
+model = st.sidebar.selectbox("Select Model", providers[provider])
 
 # =====================================================
 # PROMPT
 # =====================================================
-prompt = st.text_area(
-    "Enter your prompt",
-    height=150,
-    placeholder="Ask anything..."
-)
+prompt = st.text_area("Enter your prompt", height=150)
 
 # =====================================================
 # QUERY FUNCTIONS
@@ -117,14 +111,16 @@ def query_groq(prompt):
 
 def query_huggingface(prompt, model):
     headers = {
-        "Authorization": f"Bearer {st.secrets['HF_API_KEY']}"
+        "Authorization": f"Bearer {secrets['HF_API_KEY']}",
+        "Content-Type": "application/json"
     }
 
     payload = {
         "inputs": prompt,
         "parameters": {
             "max_new_tokens": 200,
-            "temperature": 0.7
+            "temperature": 0.7,
+            "return_full_text": False
         }
     }
 
@@ -137,16 +133,13 @@ def query_huggingface(prompt, model):
 
     data = response.json()
 
-    # ✅ Case 1: Normal response
     if isinstance(data, list) and "generated_text" in data[0]:
         return data[0]["generated_text"]
 
-    # ⚠️ Case 2: Model loading
     if isinstance(data, dict) and "error" in data:
         return f"⚠️ Hugging Face error: {data['error']}"
 
     return f"⚠️ Unexpected response: {data}"
-
 
 def query_openai(prompt):
     client = OpenAI(api_key=secrets["OPENAI_API_KEY"])
@@ -197,7 +190,7 @@ if st.button("🚀 Generate"):
                 if provider == "Groq":
                     result = query_groq(prompt)
                 elif provider == "Hugging Face":
-                    result = query_hf(prompt)
+                    result = query_huggingface(prompt, model)  # ✅ FIX
                 elif provider == "OpenAI":
                     result = query_openai(prompt)
                 elif provider == "Anthropic":
@@ -211,4 +204,3 @@ if st.button("🚀 Generate"):
 
             except Exception as e:
                 st.error(f"❌ {e}")
-
