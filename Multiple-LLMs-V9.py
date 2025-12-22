@@ -4,20 +4,9 @@ import streamlit as st
 import requests
 
 # Optional SDKs
-try:
-    from groq import Groq
-except:
-    Groq = None
-
-try:
-    from openai import OpenAI
-except:
-    OpenAI = None
-
-try:
-    import anthropic
-except:
-    anthropic = None
+from groq import Groq
+from openai import OpenAI
+import anthropic
 
 # =====================================================
 # PAGE CONFIG
@@ -29,7 +18,7 @@ st.set_page_config(
 )
 
 st.title("🧠 Enterprise Multi-LLM Hub")
-st.caption("Groq • Hugging Face Router • OpenRouter • OpenAI • Anthropic • Azure • Ollama")
+st.caption("Groq • Hugging Face • OpenRouter • OpenAI • Anthropic • Azure • Ollama")
 
 # =====================================================
 # SESSION STATE
@@ -40,61 +29,102 @@ if "messages" not in st.session_state:
 # =====================================================
 # SECRETS
 # =====================================================
-secrets = st.secrets.to_dict()
+secrets = st.secrets
 
-def has(k): return k in secrets and secrets[k]
+def has(k):
+    return k in secrets and secrets[k] != ""
 
 # =====================================================
-# SIDEBAR – PROVIDERS
+# MODEL REGISTRY (EXPLICIT & USER-VISIBLE)
 # =====================================================
-st.sidebar.header("🔑 Provider Status")
-
-providers = {}
+MODEL_REGISTRY = {}
 
 if has("GROQ_API_KEY"):
-    st.sidebar.success("Groq ✔")
-    providers["Groq"] = ["llama-3.1-8b-instant"]
+    MODEL_REGISTRY["Groq"] = [
+        "llama-3.1-8b-instant",
+        "llama-3.1-70b-versatile"
+    ]
 
 if has("HF_API_KEY"):
-    st.sidebar.success("Hugging Face Router ✔")
-    providers["Hugging Face"] = [
+    MODEL_REGISTRY["Hugging Face"] = [
         "NousResearch/Hermes-3-Llama-3.1-8B"
     ]
 
 if has("OPENROUTER_API_KEY"):
-    st.sidebar.success("OpenRouter ✔")
-    providers["OpenRouter"] = [
+    MODEL_REGISTRY["OpenRouter"] = [
         "nousresearch/hermes-3-llama-3.1-8b",
         "mistralai/mistral-7b-instruct",
         "meta-llama/llama-3.1-8b-instruct"
     ]
 
 if has("OPENAI_API_KEY"):
-    st.sidebar.success("OpenAI ✔")
-    providers["OpenAI"] = ["gpt-4o-mini"]
+    MODEL_REGISTRY["OpenAI"] = [
+        "gpt-4o-mini",
+        "gpt-4o"
+    ]
 
 if has("ANTHROPIC_API_KEY"):
-    st.sidebar.success("Anthropic ✔")
-    providers["Anthropic"] = ["claude-3-haiku-20240307"]
+    MODEL_REGISTRY["Anthropic"] = [
+        "claude-3-haiku-20240307",
+        "claude-3-sonnet-20240229"
+    ]
 
 if has("AZURE_OPENAI_KEY"):
-    st.sidebar.success("Azure OpenAI ✔")
-    providers["Azure OpenAI"] = [secrets["AZURE_OPENAI_DEPLOYMENT"]]
+    MODEL_REGISTRY["Azure OpenAI"] = [
+        secrets["AZURE_OPENAI_DEPLOYMENT"]
+    ]
 
-providers["Ollama (Local)"] = ["llama3", "mistral", "phi3"]
-
-# =====================================================
-# SELECTION
-# =====================================================
-provider = st.sidebar.selectbox("Select Provider", list(providers.keys()))
-model = st.sidebar.selectbox("Select Model", providers[provider])
-
-prompt = st.text_area("Enter prompt", height=160)
+# Ollama is always available
+MODEL_REGISTRY["Ollama (Local)"] = [
+    "llama3",
+    "mistral",
+    "phi3"
+]
 
 # =====================================================
-# QUERY FUNCTIONS
+# SIDEBAR UI
 # =====================================================
-def hf_router(prompt, model):
+st.sidebar.header("🔌 LLM Selection")
+
+provider = st.sidebar.selectbox(
+    "Select Provider",
+    list(MODEL_REGISTRY.keys())
+)
+
+model = st.sidebar.selectbox(
+    "Select Model",
+    MODEL_REGISTRY[provider]
+)
+
+st.sidebar.markdown("---")
+st.sidebar.subheader("🔑 Key Status")
+
+for key in [
+    "GROQ_API_KEY", "HF_API_KEY", "OPENROUTER_API_KEY",
+    "OPENAI_API_KEY", "ANTHROPIC_API_KEY", "AZURE_OPENAI_KEY"
+]:
+    st.sidebar.success(key) if has(key) else st.sidebar.warning(key)
+
+# =====================================================
+# PROMPT
+# =====================================================
+prompt = st.text_area(
+    "Enter your prompt",
+    height=160,
+    placeholder="Ask anything…"
+)
+
+# =====================================================
+# PROVIDER IMPLEMENTATIONS
+# =====================================================
+def groq_llm(prompt):
+    client = Groq(api_key=secrets["GROQ_API_KEY"])
+    return client.chat.completions.create(
+        model=model,
+        messages=[{"role": "user", "content": prompt}]
+    ).choices[0].message.content
+
+def hf_router(prompt):
     r = requests.post(
         "https://router.huggingface.co/v1/chat/completions",
         headers={
@@ -104,7 +134,7 @@ def hf_router(prompt, model):
         json={
             "model": model,
             "messages": [{"role": "user", "content": prompt}],
-            "max_tokens": 256
+            "max_tokens": 300
         },
         timeout=60
     )
@@ -113,7 +143,7 @@ def hf_router(prompt, model):
         raise RuntimeError(data["error"])
     return data["choices"][0]["message"]["content"]
 
-def openrouter(prompt, model):
+def openrouter_llm(prompt):
     r = requests.post(
         "https://openrouter.ai/api/v1/chat/completions",
         headers={
@@ -123,33 +153,26 @@ def openrouter(prompt, model):
         json={
             "model": model,
             "messages": [{"role": "user", "content": prompt}],
-            "max_tokens": 256
+            "max_tokens": 300
         },
         timeout=60
     )
     return r.json()["choices"][0]["message"]["content"]
 
-def groq(prompt):
-    return Groq(api_key=secrets["GROQ_API_KEY"])\
-        .chat.completions.create(
-            model=model,
-            messages=[{"role": "user", "content": prompt}]
-        ).choices[0].message.content
-
 def openai_llm(prompt):
-    return OpenAI(api_key=secrets["OPENAI_API_KEY"])\
-        .chat.completions.create(
-            model=model,
-            messages=[{"role": "user", "content": prompt}]
-        ).choices[0].message.content
+    client = OpenAI(api_key=secrets["OPENAI_API_KEY"])
+    return client.chat.completions.create(
+        model=model,
+        messages=[{"role": "user", "content": prompt}]
+    ).choices[0].message.content
 
 def anthropic_llm(prompt):
-    return anthropic.Anthropic(api_key=secrets["ANTHROPIC_API_KEY"])\
-        .messages.create(
-            model=model,
-            max_tokens=256,
-            messages=[{"role": "user", "content": prompt}]
-        ).content[0].text
+    client = anthropic.Anthropic(api_key=secrets["ANTHROPIC_API_KEY"])
+    return client.messages.create(
+        model=model,
+        max_tokens=300,
+        messages=[{"role": "user", "content": prompt}]
+    ).content[0].text
 
 def azure_llm(prompt):
     client = OpenAI(
@@ -162,47 +185,43 @@ def azure_llm(prompt):
         messages=[{"role": "user", "content": prompt}]
     ).choices[0].message.content
 
-def ollama(prompt):
-    return requests.post(
+def ollama_llm(prompt):
+    r = requests.post(
         "http://localhost:11434/api/generate",
-        json={"model": model, "prompt": prompt, "stream": False}
-    ).json().get("response")
+        json={"model": model, "prompt": prompt, "stream": False},
+        timeout=60
+    )
+    return r.json().get("response", "No response")
 
 # =====================================================
-# EXECUTION (WITH HF → OPENROUTER FALLBACK)
+# EXECUTION
 # =====================================================
-if st.button("🚀 Generate"):
+if st.button("🚀 Generate Response"):
     if not prompt.strip():
-        st.warning("Enter a prompt")
+        st.warning("Please enter a prompt")
     else:
-        with st.spinner("Thinking..."):
+        with st.spinner("Thinking…"):
             try:
-                if provider == "Hugging Face":
+                if provider == "Groq":
+                    reply = groq_llm(prompt)
+                elif provider == "Hugging Face":
                     try:
-                        result = hf_router(prompt, model)
+                        reply = hf_router(prompt)
                     except Exception:
                         st.warning("HF Router failed → falling back to OpenRouter")
-                        result = openrouter(prompt, "nousresearch/hermes-3-llama-3.1-8b")
-
+                        reply = openrouter_llm(prompt)
                 elif provider == "OpenRouter":
-                    result = openrouter(prompt, model)
-
-                elif provider == "Groq":
-                    result = groq(prompt)
-
+                    reply = openrouter_llm(prompt)
                 elif provider == "OpenAI":
-                    result = openai_llm(prompt)
-
+                    reply = openai_llm(prompt)
                 elif provider == "Anthropic":
-                    result = anthropic_llm(prompt)
-
+                    reply = anthropic_llm(prompt)
                 elif provider == "Azure OpenAI":
-                    result = azure_llm(prompt)
-
+                    reply = azure_llm(prompt)
                 else:
-                    result = ollama(prompt)
+                    reply = ollama_llm(prompt)
 
-                st.success(result)
+                st.success(reply)
 
             except Exception as e:
                 st.error(f"❌ {e}")
