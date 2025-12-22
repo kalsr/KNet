@@ -115,21 +115,38 @@ def query_groq(prompt):
     )
     return r.choices[0].message.content
 
-def query_hf(prompt):
-    r = requests.post(
-        "https://router.huggingface.co/v1/chat/completions",
-        headers={
-            "Authorization": f"Bearer {secrets['HF_API_KEY']}",
-            "Content-Type": "application/json"
-        },
-        json={
-            "model": model,
-            "messages": [{"role": "user", "content": prompt}],
-            "max_tokens": 150
-        },
-        timeout=60
+def query_huggingface(prompt, model):
+    headers = {
+        "Authorization": f"Bearer {st.secrets['HF_API_KEY']}"
+    }
+
+    payload = {
+        "inputs": prompt,
+        "parameters": {
+            "max_new_tokens": 200,
+            "temperature": 0.7
+        }
+    }
+
+    response = requests.post(
+        f"https://api-inference.huggingface.co/models/{model}",
+        headers=headers,
+        json=payload,
+        timeout=90
     )
-    return r.json()["choices"][0]["message"]["content"]
+
+    data = response.json()
+
+    # ✅ Case 1: Normal response
+    if isinstance(data, list) and "generated_text" in data[0]:
+        return data[0]["generated_text"]
+
+    # ⚠️ Case 2: Model loading
+    if isinstance(data, dict) and "error" in data:
+        return f"⚠️ Hugging Face error: {data['error']}"
+
+    return f"⚠️ Unexpected response: {data}"
+
 
 def query_openai(prompt):
     client = OpenAI(api_key=secrets["OPENAI_API_KEY"])
@@ -194,3 +211,4 @@ if st.button("🚀 Generate"):
 
             except Exception as e:
                 st.error(f"❌ {e}")
+
