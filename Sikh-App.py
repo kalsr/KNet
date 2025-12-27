@@ -2,23 +2,17 @@ import os
 import streamlit as st
 from openai import OpenAI
 
-# -------------------------------
-# FORCE API KEY LOAD (2 methods)
-# -------------------------------
+# --- DEBUG (safe, remove later) ---
+st.write("Secrets detected:", list(st.secrets.keys()))
 
-# Method 1: Streamlit secrets
-api_key = st.secrets.get("OPENAI_API_KEY")
-
-# Method 2: Environment variable fallback
-if not api_key:
-    api_key = os.getenv("OPENAI_API_KEY")
+api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
 
 if not api_key:
-    st.error("❌ OPENAI_API_KEY not found in secrets or environment variables")
+    st.error("OPENAI_API_KEY not found. Add it via Streamlit Cloud → Settings → Secrets")
     st.stop()
 
-# ✅ Explicit client initialization (THIS IS REQUIRED)
 client = OpenAI(api_key=api_key)
+
 
 # -------------------------------
 # UI CONFIG
@@ -78,3 +72,4 @@ if topic:
     st.write(answer)
 else:
     st.info("Please select a topic from the sidebar.")
+
