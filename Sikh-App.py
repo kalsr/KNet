@@ -1,26 +1,28 @@
-
-
-# Streamlit SIKH App Code
-# Sikh-App.py
-
+import os
 import streamlit as st
 from openai import OpenAI
 
-# ----------------------------------------
-# Load OpenAI API Key securely
-# ----------------------------------------
+# -------------------------------
+# FORCE API KEY LOAD (2 methods)
+# -------------------------------
+
+# Method 1: Streamlit secrets
 api_key = st.secrets.get("OPENAI_API_KEY")
 
+# Method 2: Environment variable fallback
 if not api_key:
-    st.error("OPENAI_API_KEY not found in Streamlit secrets.")
+    api_key = os.getenv("OPENAI_API_KEY")
+
+if not api_key:
+    st.error("❌ OPENAI_API_KEY not found in secrets or environment variables")
     st.stop()
 
-# Initialize OpenAI client WITH key
+# ✅ Explicit client initialization (THIS IS REQUIRED)
 client = OpenAI(api_key=api_key)
 
-# ----------------------------------------
-# Streamlit UI
-# ----------------------------------------
+# -------------------------------
+# UI CONFIG
+# -------------------------------
 st.set_page_config(
     page_title="Sikh Knowledge Explorer",
     layout="centered"
@@ -32,7 +34,7 @@ st.write(
     "the Guru Granth Sahib, or Sikh history."
 )
 
-# Sidebar options
+# Sidebar
 st.sidebar.header("Choose a Topic")
 
 topic = None
@@ -52,31 +54,27 @@ if st.sidebar.button("Sikh History"):
         "key events, and values."
     )
 
-# ----------------------------------------
-# OpenAI call
-# ----------------------------------------
+# -------------------------------
+# OpenAI Call
+# -------------------------------
 def get_chatgpt_response(prompt):
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            {
-                "role": "system",
-                "content": "You are a knowledgeable and respectful expert on Sikhism."
-            },
+            {"role": "system", "content": "You are a knowledgeable expert on Sikhism."},
             {"role": "user", "content": prompt}
         ],
         max_tokens=500
     )
     return response.choices[0].message.content
 
-# ----------------------------------------
-# Display output
-# ----------------------------------------
+# -------------------------------
+# Output
+# -------------------------------
 if topic:
     with st.spinner("Fetching information..."):
         answer = get_chatgpt_response(topic)
-
     st.subheader("📘 Information")
     st.write(answer)
 else:
-    st.info("Please select a topic from the sidebar to begin.")
+    st.info("Please select a topic from the sidebar.")
