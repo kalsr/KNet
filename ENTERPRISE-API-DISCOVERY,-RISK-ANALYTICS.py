@@ -21,11 +21,11 @@ import tempfile
 # ------------------------------------------------------------
 st.set_page_config(
     page_title="Enterprise API Discovery Platform",
-    page_icon="🔐",
+    page_icon="",
     layout="wide"
 )
 
-st.title("🔐 Enterprise API Discovery, Risk & Analytics Platform")
+st.title(" Enterprise API Discovery, Risk & Analytics Platform")
 st.markdown(
     "Automatically discover APIs from traffic, assess risk exposure, "
     "and generate executive-ready security reports."
@@ -141,7 +141,7 @@ def generate_pdf(discovery_df):
 # ------------------------------------------------------------
 st.sidebar.header("⚙️ Controls")
 records = st.sidebar.slider("Number of API Records", 50, 500, 150, 50)
-run_btn = st.sidebar.button("🚀 Run Discovery & Risk Analysis")
+run_btn = st.sidebar.button(" Run Discovery & Risk Analysis")
 
 # ------------------------------------------------------------
 # Main Execution
@@ -171,7 +171,7 @@ if run_btn:
     # --------------------------------------------------------
     # Metrics
     # --------------------------------------------------------
-    st.subheader("📊 Executive Summary")
+    st.subheader(" Executive Summary")
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Total API Calls", len(mock_df))
     c2.metric("Unique APIs", len(discovery_df))
@@ -181,16 +181,16 @@ if run_btn:
     # --------------------------------------------------------
     # Tables
     # --------------------------------------------------------
-    st.subheader("🧪 API Traffic Sample")
+    st.subheader(" API Traffic Sample")
     st.dataframe(mock_df.head(20), use_container_width=True)
 
-    st.subheader("🔍 Discovered APIs with Risk Scoring")
+    st.subheader(" Discovered APIs with Risk Scoring")
     st.dataframe(discovery_df, use_container_width=True)
 
     # --------------------------------------------------------
     # Charts
     # --------------------------------------------------------
-    st.subheader("📈 Analytics & Risk Visualization")
+    st.subheader(" Analytics & Risk Visualization")
 
     col1, col2, col3 = st.columns(3)
 
@@ -216,14 +216,14 @@ if run_btn:
     # --------------------------------------------------------
     # Downloads
     # --------------------------------------------------------
-    st.subheader("📥 Export Reports")
+    st.subheader(" Export Reports")
 
     json_report = json.dumps(
         {"mock_data": mock_data, "discovered_apis": discovered}, indent=4
     )
 
     st.download_button(
-        "⬇️ Download JSON Report",
+        " Download JSON Report",
         json_report,
         "api_discovery_report.json",
         "application/json"
@@ -233,7 +233,7 @@ if run_btn:
 
     with open(pdf_path, "rb") as f:
         st.download_button(
-            "⬇️ Download Executive PDF Report",
+            " Download Executive PDF Report",
             f,
             "api_discovery_risk_report.pdf",
             "application/pdf"
@@ -242,7 +242,7 @@ if run_btn:
     # --------------------------------------------------------
     # Recommendations
     # --------------------------------------------------------
-    st.subheader("🧠 Security Recommendations")
+    st.subheader(" Security Recommendations")
     st.markdown(
         """
         - Enforce **OAuth 2.0** on all production APIs  
@@ -263,3 +263,4 @@ st.markdown("---")
 st.markdown(
     "**Enterprise API Discovery Platform** | © KNet Consulting Group | Randy Singh"
 )
+
