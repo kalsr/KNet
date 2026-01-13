@@ -41,7 +41,7 @@ st.markdown("""
 # Title
 # ------------------------------------------------------------
 st.markdown(
-    '<div class="title-bar">🔐 API Simulation & Security Analytics Platform</div>',
+    '<div class="title-bar"> API Simulation & Security Analytics Platform</div>',
     unsafe_allow_html=True
 )
 st.markdown(
@@ -162,19 +162,19 @@ def detect_anomalies(df):
 
     if (df["Status"] == "404").sum() >= 5:
         findings.append(
-            "🔎 Endpoint enumeration detected. "
+            " Endpoint enumeration detected. "
             "Fix: Disable unused endpoints, WAF, rate limiting."
         )
 
     if df["Request"].str.contains("/login").sum() >= 4:
         findings.append(
-            "🔐 Possible brute-force login attempts. "
+            "CAUTION -  Possible brute-force login attempts. "
             "Fix: MFA, CAPTCHA, lockout policies."
         )
 
     if len(df[df["Status"].isin(["401", "403", "500"])]) / len(df) > 0.4:
         findings.append(
-            "⚠️ High error ratio detected. "
+            "CAUTION - High error ratio detected. "
             "Fix: Improve authentication, logging, alerts."
         )
 
@@ -220,7 +220,7 @@ else:
     st.subheader("📄 API Records")
     st.dataframe(df, use_container_width=True)
 
-    st.subheader("📊 API Analytics")
+    st.subheader(" API Analytics")
     status_counts = df["Status"].value_counts()
 
     col1, col2 = st.columns(2)
@@ -236,17 +236,18 @@ else:
         ax2.axis("equal")
         st.pyplot(fig2)
 
-    st.subheader("🚨 Anomaly & Fraud Detection")
+    st.subheader(" Anomaly & Fraud Detection")
     anomalies = detect_anomalies(df)
 
     if anomalies:
         for a in anomalies:
             st.warning(a)
     else:
-        st.success("✅ No anomalies detected in this dataset.")
+        st.success(" No anomalies detected in this dataset.")
 
 # ------------------------------------------------------------
 # Footer
 # ------------------------------------------------------------
 st.divider()
 st.caption("© Kalsnet (KNet) Consulting Group – API Simulation Platform")
+
