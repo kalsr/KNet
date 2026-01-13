@@ -29,7 +29,7 @@ st.title(" Enterprise API Discovery, Risk & Analytics Platform")
 st.markdown(
     "Automatically discover APIs from traffic, assess risk exposure, "
     "and generate executive-ready security reports."
-    " Designed & Developed by Randy Singh Kalsnet (KNet) Consulting Group."
+    " /n Designed & Developed by Randy Singh Kalsnet (KNet) Consulting Group."
 )
 
 # ------------------------------------------------------------
@@ -264,5 +264,6 @@ st.markdown("---")
 st.markdown(
     "**Enterprise API Discovery Platform** | © KNet Consulting Group | Randy Singh"
 )
+
 
 
