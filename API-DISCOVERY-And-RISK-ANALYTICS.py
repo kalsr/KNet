@@ -1,227 +1,253 @@
+
+
 # ============================================================
-# API Simulation & Security Analytics Platform
-# Developed by Randy Singh
-# Kalsnet (KNet) Consulting Group
+# ENTERPRISE API DISCOVERY, RISK & ANALYTICS PLATFORM
+# Designed & Developed by Randy Singh – KNet Consulting Group
 # ============================================================
 
 import streamlit as st
+import random
+import json
 import pandas as pd
 import matplotlib.pyplot as plt
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import LETTER
-from reportlab.pdfgen import canvas
+from reportlab.lib import colors
 import tempfile
-import random
-import uuid
 
 # ------------------------------------------------------------
-# Page Config
+# Page Configuration
 # ------------------------------------------------------------
-st.set_page_config(page_title="API Security Analytics", layout="wide")
+st.set_page_config(
+    page_title="Enterprise API Discovery Platform",
+    page_icon="🔐",
+    layout="wide"
+)
+
+# Title Bar with subtitle
+st.markdown('<h1 style="color:#0B5ED7; font-weight:bold;">🔐 Enterprise API Discovery, Risk & Analytics Platform</h1>', unsafe_allow_html=True)
+st.markdown('<h4 style="border-bottom:2px solid #0B5ED7; padding-bottom:5px;">Developed by Randy Singh – Kalsnet (KNet) Consulting Group</h4>', unsafe_allow_html=True)
+st.markdown("---")
 
 # ------------------------------------------------------------
-# Custom CSS
+# Session State for Data
 # ------------------------------------------------------------
-st.markdown("""
-<style>
-.title-bar {
-    font-size: 40px;
-    font-weight: 800;
-    color: #0B5ED7;
-}
-.subtitle {
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-    border-bottom: 2px solid #0B5ED7;
-    padding-bottom: 8px;
-}
-.reset-btn button {
-    background-color: #DC3545 !important;
-    color: white !important;
-    font-weight: bold;
-    width: 100%;
-}
-</style>
-""", unsafe_allow_html=True)
-
-# ------------------------------------------------------------
-# Title
-# ------------------------------------------------------------
-st.markdown('<div class="title-bar">🔐 API Simulation & Risk Analytics Platform</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Developed by Randy Singh — Kalsnet (KNet) Consulting Group</div>', unsafe_allow_html=True)
-
-st.divider()
-
-# ------------------------------------------------------------
-# Session State
-# ------------------------------------------------------------
-if "df" not in st.session_state:
-    st.session_state.df = None
-if "mode" not in st.session_state:
-    st.session_state.mode = None
-if "data_version" not in st.session_state:
-    st.session_state.data_version = uuid.uuid4().hex
-if "uploader_key" not in st.session_state:
-    st.session_state.uploader_key = uuid.uuid4().hex
+if "mock_data" not in st.session_state:
+    st.session_state.mock_data = None
+if "discovery_df" not in st.session_state:
+    st.session_state.discovery_df = None
+if "uploaded_file" not in st.session_state:
+    st.session_state.uploaded_file = None
 
 # ------------------------------------------------------------
 # Sidebar Controls
 # ------------------------------------------------------------
-st.sidebar.header("⚙️ Data Controls")
+st.sidebar.header("⚙️ Controls")
 
-record_count = st.sidebar.slider(
-    "Generate Synthetic API Records",
-    0, 100, step=10, value=0
-)
+records = st.sidebar.slider("Number of Synthetic API Records", 50, 500, 150, 50)
 
 uploaded_file = st.sidebar.file_uploader(
-    "Upload API Log File (.txt)",
-    type=["txt"],
-    key=st.session_state.uploader_key
+    "Upload Your API Log File (.csv/.txt)",
+    type=["txt", "csv"]
 )
 
-with st.sidebar.container():
-    st.markdown('<div class="reset-btn">', unsafe_allow_html=True)
-    if st.button("RESET APPLICATION"):
-        st.session_state.df = None
-        st.session_state.mode = None
-        st.session_state.data_version = uuid.uuid4().hex
-        st.session_state.uploader_key = uuid.uuid4().hex
-        st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+if st.sidebar.button("🔄 Reset Data"):
+    st.session_state.mock_data = None
+    st.session_state.discovery_df = None
+    st.session_state.uploaded_file = None
+    st.experimental_rerun()
+
+run_btn = st.sidebar.button("🚀 Run Discovery & Risk Analysis")
 
 # ------------------------------------------------------------
-# Synthetic Data Generator
+# Mock API Data Generator
 # ------------------------------------------------------------
-def generate_synthetic_data(n, seed):
-    random.seed(seed)
-    endpoints = [
-        "/api/login", "/api/logout", "/api/data", "/api/user",
-        "/api/admin", "/api/delete", "/api/update", "/api/search",
-        "/api/report", "/api/unknown"
-    ]
-    statuses = ["200", "401", "403", "404", "500"]
+def generate_mock_api_data(num_records=150):
+    data = []
+    for i in range(1, num_records + 1):
+        method = random.choice(["GET", "POST", "PUT", "DELETE", "PATCH"])
+        version = random.choice(["v1", "v2", "v3"])
+        auth = random.choice(["OAuth", "API Key", "None"])
+        endpoint = f"/api/{version}/resource/{random.randint(1, 100)}"
+        data.append({
+            "id": i,
+            "http_method": method,
+            "endpoint": endpoint,
+            "authentication": auth
+        })
+    return data
 
-    anomaly_ratio = random.choice([0, 0.2, 0.4, 0.6])
-    records = []
-
-    for _ in range(n):
-        endpoint = random.choice(endpoints)
-        if random.random() < anomaly_ratio:
-            status = random.choice(statuses[1:])
+# ------------------------------------------------------------
+# API Discovery
+# ------------------------------------------------------------
+def discover_apis(mock_data):
+    discovered = {}
+    for r in mock_data:
+        ep = r["endpoint"]
+        version = ep.split("/")[2]
+        if ep not in discovered:
+            discovered[ep] = {
+                "version": version,
+                "authentication": r["authentication"],
+                "http_methods": set([r["http_method"]])
+            }
         else:
-            status = "200"
-
-        records.append({
-            "Request": f"GET {endpoint}",
-            "Endpoint": endpoint,
-            "Status": status
-        })
-
-    return pd.DataFrame(records)
+            discovered[ep]["http_methods"].add(r["http_method"])
+    for ep in discovered:
+        discovered[ep]["http_methods"] = list(discovered[ep]["http_methods"])
+    return discovered
 
 # ------------------------------------------------------------
-# Load Uploaded Logs + API Discovery
+# API Risk Scoring Engine
 # ------------------------------------------------------------
-def load_uploaded_logs(file):
-    rows = []
-    discovered_apis = set()
-
-    for line in file:
-        line = line.decode("utf-8").strip()
-        if "|" not in line:
-            continue
-
-        req, res = line.split("|", 1)
-        status = res.strip().split()[0]
-
-        endpoint = req.strip().split(" ", 1)[1]
-        discovered_apis.add(endpoint)
-
-        rows.append({
-            "Request": req.strip(),
-            "Endpoint": endpoint,
-            "Status": status
-        })
-
-    df = pd.DataFrame(rows)
-    return df, sorted(discovered_apis)
-
-# ------------------------------------------------------------
-# Anomaly & Risk Detection
-# ------------------------------------------------------------
-def detect_risks(df):
-    risks = []
-
-    if (df["Status"] == "404").sum() > 5:
-        risks.append("🔍 API Enumeration detected (multiple 404s). Use WAF and disable unused endpoints.")
-
-    if df["Endpoint"].str.contains("admin").sum() > 0:
-        risks.append("🔐 Admin endpoint exposure. Restrict by IP, role-based access.")
-
-    if (df["Status"] == "401").sum() > 3:
-        risks.append("⚠️ Brute-force authentication attempts. Enable MFA and rate limiting.")
-
-    if (df["Status"] == "500").sum() > 2:
-        risks.append("🔥 Backend instability detected. Improve exception handling and monitoring.")
-
-    return risks
-
-# ------------------------------------------------------------
-# Data Selection Logic
-# ------------------------------------------------------------
-discovered_apis = None
-
-if uploaded_file:
-    st.session_state.df, discovered_apis = load_uploaded_logs(uploaded_file)
-    st.session_state.mode = "uploaded"
-
-elif record_count > 0:
-    st.session_state.df = generate_synthetic_data(
-        record_count,
-        st.session_state.data_version
-    )
-    st.session_state.mode = "synthetic"
-
-# ------------------------------------------------------------
-# Display Section
-# ------------------------------------------------------------
-if st.session_state.df is None:
-    st.info("Use the slider to generate synthetic data or upload a log file for API discovery.")
-else:
-    df = st.session_state.df
-
-    st.subheader("📄 API Records")
-    st.dataframe(df, use_container_width=True)
-
-    if discovered_apis:
-        st.subheader("🧭 Discovered APIs from Uploaded Logs")
-        st.write(", ".join(discovered_apis))
-
-    st.subheader("📊 API Status Analytics")
-    status_counts = df["Status"].value_counts()
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        fig1, ax1 = plt.subplots()
-        status_counts.plot(kind="bar", ax=ax1)
-        st.pyplot(fig1)
-
-    with col2:
-        fig2, ax2 = plt.subplots()
-        ax2.pie(status_counts, labels=status_counts.index, autopct="%1.1f%%")
-        ax2.axis("equal")
-        st.pyplot(fig2)
-
-    st.subheader("🚨 Risk & Vulnerability Analysis")
-    findings = detect_risks(df)
-
-    if findings:
-        for f in findings:
-            st.warning(f)
+def calculate_risk(http_methods, authentication):
+    score = 0
+    if authentication == "None":
+        score += 50
+    elif authentication == "API Key":
+        score += 25
+    elif authentication == "OAuth":
+        score += 10
+    if "DELETE" in http_methods:
+        score += 20
+    if "PUT" in http_methods or "PATCH" in http_methods:
+        score += 10
+    if len(http_methods) > 3:
+        score += 10
+    if score >= 70:
+        level = "High"
+    elif score >= 40:
+        level = "Medium"
     else:
-        st.success("✅ No major risks detected.")
+        level = "Low"
+    return score, level
 
-st.divider()
-st.caption("© Kalsnet (KNet) Consulting Group — API Security & Simulation Platform")
+# ------------------------------------------------------------
+# PDF Report Generator
+# ------------------------------------------------------------
+def generate_pdf(discovery_df):
+    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+    doc = SimpleDocTemplate(tmp.name, pagesize=LETTER)
+    styles = getSampleStyleSheet()
+    elements = []
+    elements.append(Paragraph("<b>Enterprise API Discovery & Risk Report</b>", styles["Title"]))
+    elements.append(Paragraph("Generated by KNet Consulting Group", styles["Normal"]))
+    table_data = [discovery_df.columns.tolist()] + discovery_df.values.tolist()
+    table = Table(table_data, repeatRows=1)
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0,0), (-1,0), colors.lightgrey),
+        ("GRID", (0,0), (-1,-1), 0.5, colors.black),
+        ("ALIGN", (0,0), (-1,-1), "CENTER")
+    ]))
+    elements.append(table)
+    doc.build(elements)
+    return tmp.name
+
+# ------------------------------------------------------------
+# Load Uploaded File
+# ------------------------------------------------------------
+def load_uploaded_file(uploaded_file):
+    if uploaded_file.name.endswith(".csv"):
+        df = pd.read_csv(uploaded_file)
+    else:
+        # Assuming txt file in format: id,http_method,endpoint,authentication
+        df = pd.read_csv(uploaded_file, sep=",")
+    return df.to_dict(orient="records")
+
+# ------------------------------------------------------------
+# Main Execution
+# ------------------------------------------------------------
+if run_btn:
+    if uploaded_file:
+        st.session_state.uploaded_file = uploaded_file
+        mock_data = load_uploaded_file(uploaded_file)
+    else:
+        mock_data = generate_mock_api_data(records)
+    
+    st.session_state.mock_data = mock_data
+    discovered = discover_apis(mock_data)
+
+    mock_df = pd.DataFrame(mock_data)
+
+    rows = []
+    for ep, d in discovered.items():
+        risk_score, risk_level = calculate_risk(d["http_methods"], d["authentication"])
+        rows.append({
+            "Endpoint": ep,
+            "Version": d["version"],
+            "HTTP Methods": ", ".join(d["http_methods"]),
+            "Authentication": d["authentication"],
+            "Risk Score": risk_score,
+            "Risk Level": risk_level
+        })
+    discovery_df = pd.DataFrame(rows)
+    st.session_state.discovery_df = discovery_df
+
+    # --------------------------------------------------------
+    # Metrics
+    # --------------------------------------------------------
+    st.subheader("📊 Executive Summary")
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Total API Calls", len(mock_df))
+    c2.metric("Unique APIs", len(discovery_df))
+    c3.metric("High-Risk APIs", (discovery_df["Risk Level"]=="High").sum())
+    c4.metric("Unauthenticated APIs", (discovery_df["Authentication"]=="None").sum())
+
+    # --------------------------------------------------------
+    # Tables
+    # --------------------------------------------------------
+    st.subheader("🧪 API Traffic Sample")
+    st.dataframe(mock_df.head(20), use_container_width=True)
+
+    st.subheader("🔍 Discovered APIs with Risk Scoring")
+    st.dataframe(discovery_df, use_container_width=True)
+
+    # --------------------------------------------------------
+    # Charts
+    # --------------------------------------------------------
+    st.subheader("📈 Analytics & Risk Visualization")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        fig, ax = plt.subplots()
+        discovery_df["Risk Level"].value_counts().plot(kind="bar", ax=ax)
+        ax.set_title("API Risk Distribution")
+        st.pyplot(fig)
+    with col2:
+        fig, ax = plt.subplots()
+        mock_df["http_method"].value_counts().plot(kind="pie", autopct="%1.0f%%", ax=ax)
+        ax.set_ylabel("")
+        ax.set_title("HTTP Method Usage")
+        st.pyplot(fig)
+    with col3:
+        fig, ax = plt.subplots()
+        mock_df["authentication"].value_counts().plot(kind="bar", ax=ax)
+        ax.set_title("Authentication Types")
+        st.pyplot(fig)
+
+    # --------------------------------------------------------
+    # Downloads
+    # --------------------------------------------------------
+    st.subheader("📥 Export Reports")
+    json_report = json.dumps({"mock_data": mock_data, "discovered_apis": discovered}, indent=4)
+    st.download_button("⬇️ Download JSON Report", json_report, "api_discovery_report.json", "application/json")
+
+    pdf_path = generate_pdf(discovery_df)
+    with open(pdf_path, "rb") as f:
+        st.download_button("⬇️ Download Executive PDF Report", f, "api_discovery_risk_report.pdf", "application/pdf")
+
+    # --------------------------------------------------------
+    # Recommendations
+    # --------------------------------------------------------
+    st.subheader("🧠 Security Recommendations")
+    st.markdown(
+        """
+        - Enforce **OAuth 2.0** on all production APIs  
+        - Restrict **DELETE / PUT** methods where not required  
+        - Monitor high-risk APIs continuously  
+        - Implement API gateways and rate-limiting  
+        - Maintain version lifecycle governance  
+        """
+    )
+else:
+    st.info("Use the sidebar to generate synthetic API records or upload your own log file to run discovery and risk analysis.")
