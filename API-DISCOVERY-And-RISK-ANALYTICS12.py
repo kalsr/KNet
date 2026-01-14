@@ -22,11 +22,11 @@ import tempfile
 # ---------------------------
 st.set_page_config(
     page_title="Enterprise API Discovery",
-    page_icon="🔐",
+    page_icon="",
     layout="wide"
 )
 
-st.title("🔐 Enterprise API Discovery & Risk Analytics Platform")
+st.title(" Enterprise API Discovery & Risk Analytics Platform - Designed & Developed by Randy Singh Kalsnet Consulting Group.")
 st.markdown(
     "Automatically discover APIs from traffic, assess risk exposure, "
     "and generate executive-ready security reports."
@@ -150,7 +150,7 @@ st.sidebar.header("⚙️ Controls")
 
 records = st.sidebar.slider("Number of Synthetic Records", 50, 500, 150, 50)
 uploaded_file = st.sidebar.file_uploader("Upload API Data (CSV or JSON)", type=["csv", "json"])
-reset_btn = st.sidebar.button("🔄 Reset / Generate Data")
+reset_btn = st.sidebar.button(" Reset / Generate Data")
 
 # ---------------------------
 # Main Logic
@@ -188,7 +188,7 @@ if df is not None:
     # ---------------------------
     # Metrics
     # ---------------------------
-    st.subheader("📊 Summary Metrics")
+    st.subheader(" Summary Metrics")
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Total API Calls", len(df))
     c2.metric("Unique APIs", len(discovery_df))
@@ -198,16 +198,16 @@ if df is not None:
     # ---------------------------
     # Tables
     # ---------------------------
-    st.subheader("🧪 API Traffic Sample")
+    st.subheader(" API Traffic Sample")
     st.dataframe(df.head(20), use_container_width=True)
 
-    st.subheader("🔍 Discovered APIs with Risk Scoring")
+    st.subheader(" Discovered APIs with Risk Scoring")
     st.dataframe(discovery_df, use_container_width=True)
 
     # ---------------------------
     # Charts
     # ---------------------------
-    st.subheader("📈 Analytics & Risk Visualization")
+    st.subheader(" Analytics & Risk Visualization")
     col1, col2, col3 = st.columns(3)
 
     with col1:
@@ -232,19 +232,19 @@ if df is not None:
     # ---------------------------
     # Downloads
     # ---------------------------
-    st.subheader("📥 Export Reports")
+    st.subheader(" Export Reports")
 
     json_report = json.dumps({"mock_data": df.to_dict(orient="records"), "discovered_apis": discovered}, indent=4)
-    st.download_button("⬇️ Download JSON Report", json_report, "api_discovery_report.json", "application/json")
+    st.download_button(" Download JSON Report", json_report, "api_discovery_report.json", "application/json")
 
     pdf_path = generate_pdf(discovery_df)
     with open(pdf_path, "rb") as f:
-        st.download_button("⬇️ Download PDF Report", f, "api_discovery_risk_report.pdf", "application/pdf")
+        st.download_button(" Download PDF Report", f, "api_discovery_risk_report.pdf", "application/pdf")
 
     # ---------------------------
     # Recommendations
     # ---------------------------
-    st.subheader("🧠 Security Recommendations")
+    st.subheader(" Security Recommendations")
     st.markdown(
         """
         - Enforce **OAuth 2.0** on all production APIs  
@@ -260,3 +260,4 @@ if df is not None:
 # ---------------------------
 st.markdown("---")
 st.markdown("**Enterprise API Discovery Platform** | © KNet Consulting Group | Randy Singh")
+
