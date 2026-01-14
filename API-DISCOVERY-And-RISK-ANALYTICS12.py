@@ -26,7 +26,7 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title(" Enterprise API Discovery & Risk Analytics Platform - Designed & Developed by Randy Singh Kalsnet Consulting Group.")
+st.title(" Enterprise API Discovery & Risk Analytics Platform - Designed & Developed by Randy Singh Kalsnet (KNet) Consulting Group.")
 st.markdown(
     "Automatically discover APIs from traffic, assess risk exposure, "
     "and generate executive-ready security reports."
@@ -260,4 +260,5 @@ if df is not None:
 # ---------------------------
 st.markdown("---")
 st.markdown("**Enterprise API Discovery Platform** | © KNet Consulting Group | Randy Singh")
+
 
