@@ -15,7 +15,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 import io
 
 # ---------------- PAGE CONFIG ----------------
-st.set_page_config(page_title="KNet Threat Hunting Studio", layout="wide")
+st.set_page_config(page_title="Kalsnet(KNet) Threat Hunting Studio - Designed by Randy Singh", layout="wide")
 
 # ---------------- CUSTOM CSS ----------------
 st.markdown("""
@@ -216,3 +216,4 @@ else:
 
 st.markdown("---")
 st.markdown("**© Randy Singh – Kalsnet (KNet) Consulting Group**")
+
