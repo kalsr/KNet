@@ -51,7 +51,7 @@ body { background-color: #f8f9fa; }
 """, unsafe_allow_html=True)
 
 st.markdown(
-    '<div class="top-bar">🛡️ KNet Cyber Threat Hunting Studio – AI/ML Enterprise Platform</div>',
+    '<div class="top-bar"> Kalsnet (KNet) Cyber Threat Hunting Studio – AI/ML Enterprise Platform</div>',
     unsafe_allow_html=True
 )
 
@@ -157,7 +157,7 @@ def generate_pdf(results):
 
 # ====================== UI ======================
 
-st.markdown('<div class="section-title">📥 Data Ingestion</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title"> Data Ingestion</div>', unsafe_allow_html=True)
 c1, c2, c3, c4 = st.columns(4)
 
 with c1:
@@ -185,20 +185,20 @@ with c4:
 
 # ---------------- DATA DISPLAY ----------------
 if not st.session_state.data.empty:
-    st.markdown('<div class="section-title">📊 Loaded Records</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title"> Loaded Records</div>', unsafe_allow_html=True)
     st.dataframe(st.session_state.data, use_container_width=True, height=300)
 
     c5, c6 = st.columns(2)
     with c5:
-        if st.button("🔍 Run Threat Hunting"):
+        if st.button(" Run Threat Hunting"):
             st.session_state.results = hunt_threats(st.session_state.data)
     with c6:
-        if st.button("🧠 Run AI/ML Predictions"):
+        if st.button(" Run AI/ML Predictions"):
             st.session_state.ml_results = run_ml_predictions(st.session_state.data)
 
 # ---------------- THREAT RESULTS ----------------
 if st.session_state.results:
-    st.markdown('<div class="section-title">📈 Threat Distribution</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title"> Threat Distribution</div>', unsafe_allow_html=True)
 
     labels = []
     sizes = []
@@ -213,7 +213,7 @@ if st.session_state.results:
         ax.axis("equal")
         st.pyplot(fig)
 
-    st.markdown('<div class="section-title">🧩 MITRE ATT&CK Mapping</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title"> MITRE ATT&CK Mapping</div>', unsafe_allow_html=True)
     for threat, records in st.session_state.results.items():
         if not records.empty:
             tactic, tid, name = MITRE_MAP[threat]
@@ -222,33 +222,33 @@ if st.session_state.results:
                 f"**Records:** {list(records.index)}"
             )
 
-    st.markdown('<div class="section-title">🧠 AI Remediation Playbooks</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title"> AI Remediation Playbooks</div>', unsafe_allow_html=True)
     for threat, records in st.session_state.results.items():
         if not records.empty:
             st.markdown(f"**{threat}:** {ai_playbook(threat)}")
 
 # ---------------- ML RESULTS ----------------
 if st.session_state.ml_results is not None:
-    st.markdown('<div class="section-title">🧠 AI/ML Anomaly Predictions</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title"> AI/ML Anomaly Predictions</div>', unsafe_allow_html=True)
     st.dataframe(st.session_state.ml_results, use_container_width=True, height=300)
 
     anomalies = st.session_state.ml_results[
         st.session_state.ml_results["ML_Prediction"] == "Anomalous"
     ]
     if not anomalies.empty:
-        st.warning(f"🚨 Anomalous Records Detected: {list(anomalies.index)}")
+        st.warning(f" Anomalous Records Detected: {list(anomalies.index)}")
     else:
-        st.success("✅ No anomalies detected by ML model.")
+        st.success(" No anomalies detected by ML model.")
 
 # ---------------- RECORD EXPLANATION ----------------
 if not st.session_state.data.empty:
-    st.markdown('<div class="section-title">🔍 Explain a Record</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title"> Explain a Record</div>', unsafe_allow_html=True)
     idx = st.selectbox("Select Record #", st.session_state.data.index)
     st.write(explain_record(st.session_state.data.loc[idx]))
 
 # ---------------- PDF ----------------
 if st.session_state.results:
-    st.markdown('<div class="section-title">📄 Executive Report</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title"> Executive Report</div>', unsafe_allow_html=True)
     pdf = generate_pdf(st.session_state.results)
     st.download_button(
         "Download Executive PDF Report",
@@ -258,3 +258,4 @@ if st.session_state.results:
 
 st.markdown("---")
 st.markdown("**© Randy Singh – Kalsnet (KNet) Consulting Group**")
+
