@@ -2,7 +2,7 @@
 
 
 # ============================================================
-# F5 BIG-IP API POSTURE MANAGEMENT – STREAMLIT VERSION
+# F5 BIG-IP API POSTURE MANAGEMENT – ENTERPRISE STREAMLIT
 # Designed by Randy Singh
 # Kalsnet (KNet) Consulting Group
 # ============================================================
@@ -12,20 +12,20 @@ import pandas as pd
 import random
 import time
 import matplotlib.pyplot as plt
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import LETTER
 
 # -------------------------------
-# STREAMLIT PAGE CONFIG
+# PAGE CONFIG
 # -------------------------------
 st.set_page_config(page_title="F5 BIG-IP API Posture Management", layout="wide")
 
 # -------------------------------
-# SESSION STATE DEFAULTS (CRITICAL)
+# SESSION RESET COUNTER (KEY FIX)
 # -------------------------------
-if "record_count" not in st.session_state:
-    st.session_state.record_count = 50
-
-if "uploaded_file" not in st.session_state:
-    st.session_state.uploaded_file = None
+if "reset_counter" not in st.session_state:
+    st.session_state.reset_counter = 0
 
 # -------------------------------
 # TOP BLUE BANNER
@@ -42,92 +42,101 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.write("")
-
 # -------------------------------
-# RESET HANDLER (FULL RESET)
+# RESET FUNCTION (STREAMLIT SAFE)
 # -------------------------------
 def reset_all():
-    st.session_state.record_count = 50
-    st.session_state.uploaded_file = None
     plt.close("all")
+    st.session_state.reset_counter += 1
     st.rerun()
 
 # -------------------------------
-# SYNTHETIC DATA GENERATOR
+# SYNTHETIC F5 DATA GENERATOR
 # -------------------------------
 def generate_f5_bigip_records(num_records):
     apis = [
         '/api/v1/users', '/api/v1/products', '/api/v1/orders',
-        '/api/v2/customers', '/api/v2/inventory',
-        '/login', '/logout'
+        '/api/v2/customers', '/api/v2/inventory', '/login', '/logout'
     ]
     status_codes = [200, 201, 204, 400, 401, 403, 404, 429, 500]
 
-    records = []
+    data = []
     for _ in range(num_records):
-        record = {
+        data.append({
             "timestamp": time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime()),
             "src_ip": f"203.0.{random.randint(1,255)}.{random.randint(1,255)}",
-            "dst_ip": f"192.168.{random.randint(0,1)}.{random.randint(1,255)}",
-            "src_port": random.randint(1024, 65535),
-            "dst_port": random.choice([80, 443]),
-            "virtual_server": "vs_http",
-            "pool": "HTTP_Pool",
-            "pool_member": f"192.168.{random.randint(0,1)}.{random.randint(1,255)}",
-            "http_request": f"GET {random.choice(apis)} HTTP/1.1",
+            "api": random.choice(apis),
             "status_code": random.choice(status_codes),
-            "bytes_in": random.randint(100, 5000),
-            "bytes_out": random.randint(500, 10000),
-            "request_time": round(random.uniform(0.1, 2.0), 3)
-        }
-        records.append(record)
+            "latency": round(random.uniform(0.1, 2.5), 3)
+        })
 
-    return pd.DataFrame(records)
+    return pd.DataFrame(data)
 
 # -------------------------------
-# API POSTURE ANALYSIS
+# POSTURE + ZERO TRUST ANALYSIS
 # -------------------------------
 def analyze_posture(df):
-    df["api"] = df["http_request"].str.split().str[1]
-
     posture = df.groupby("api").agg(
         hits=("api", "count"),
-        success=("status_code", lambda x: (x < 400).sum()),
-        failure=("status_code", lambda x: (x >= 400).sum()),
-        avg_latency=("request_time", "mean")
+        failures=("status_code", lambda x: (x >= 400).sum()),
+        avg_latency=("latency", "mean")
     ).reset_index()
 
+    posture["zero_trust_violation"] = posture["failures"] > 5
     return posture
 
 # -------------------------------
-# THREAT DETECTION
+# THREAT SCORING + COMPLIANCE
 # -------------------------------
-def detect_threats(df, posture):
+def threat_scoring(posture):
     threats = []
-    recommendations = []
 
-    if (df["status_code"] == 401).sum() > 5:
-        threats.append("Excessive authentication failures (401)")
-        recommendations.append("Implement MFA and brute-force protection")
+    for _, row in posture.iterrows():
+        score = row["failures"] * 10 + int(row["avg_latency"] * 10)
 
-    if (df["status_code"] == 429).sum() > 3:
-        threats.append("API rate abuse detected (429)")
-        recommendations.append("Enable F5 BIG-IP rate limiting and bot defense")
+        if score > 80:
+            severity = "CRITICAL"
+        elif score > 50:
+            severity = "HIGH"
+        elif score > 30:
+            severity = "MEDIUM"
+        else:
+            severity = "LOW"
 
-    if (df["status_code"] == 500).sum() > 3:
-        threats.append("Backend instability (500 errors)")
-        recommendations.append("Investigate backend services and health checks")
+        threats.append({
+            "API": row["api"],
+            "Severity": severity,
+            "NIST": "SI-4 / IA-7",
+            "STIG": "SRG-APP-000516",
+            "Zero Trust": "Continuous Verification"
+        })
 
-    if posture["avg_latency"].max() > 1.5:
-        threats.append("High API latency detected")
-        recommendations.append("Enable caching and performance optimization")
+    return pd.DataFrame(threats)
 
-    if not threats:
-        threats.append("No critical threats detected")
-        recommendations.append("Continue continuous monitoring")
+# -------------------------------
+# PDF EXPORT (DOD BRIEFING)
+# -------------------------------
+def generate_pdf(threats_df):
+    file_name = "F5_API_Posture_DoD_Report.pdf"
+    doc = SimpleDocTemplate(file_name, pagesize=LETTER)
+    styles = getSampleStyleSheet()
+    elements = []
 
-    return threats, recommendations
+    elements.append(Paragraph("F5 BIG-IP API Posture Report", styles["Title"]))
+    elements.append(Spacer(1, 12))
+
+    for _, row in threats_df.iterrows():
+        elements.append(
+            Paragraph(
+                f"<b>{row['API']}</b> | Severity: {row['Severity']}<br/>"
+                f"NIST: {row['NIST']} | STIG: {row['STIG']} | Zero Trust: {row['Zero Trust']}",
+                styles["Normal"]
+            )
+        )
+        elements.append(Spacer(1, 8))
+
+    doc.build(elements)
+    return file_name
 
 # -------------------------------
 # SIDEBAR CONTROLS
@@ -136,14 +145,14 @@ st.sidebar.header("Controls")
 
 record_count = st.sidebar.slider(
     "Generate Synthetic F5 Records",
-    0, 100,
-    key="record_count"
+    0, 100, 50,
+    key=f"slider_{st.session_state.reset_counter}"
 )
 
 uploaded_file = st.sidebar.file_uploader(
     "Upload Real F5 BIG-IP CSV Data",
     type=["csv"],
-    key="uploaded_file"
+    key=f"uploader_{st.session_state.reset_counter}"
 )
 
 # -------------------------------
@@ -151,7 +160,6 @@ uploaded_file = st.sidebar.file_uploader(
 # -------------------------------
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
-    st.success("Real F5 data loaded successfully")
 else:
     df = generate_f5_bigip_records(record_count)
 
@@ -159,59 +167,35 @@ else:
 # ANALYSIS
 # -------------------------------
 posture = analyze_posture(df)
-threats, recommendations = detect_threats(df, posture)
+threats_df = threat_scoring(posture)
 
 # -------------------------------
-# METRICS
-# -------------------------------
-st.subheader("API Usage & Security Posture")
-
-c1, c2, c3 = st.columns(3)
-c1.metric("Total API Calls", len(df))
-c2.metric("Unique APIs", df["http_request"].nunique())
-c3.metric("Detected Threats", len(threats))
-
-# -------------------------------
-# CHARTS
-# -------------------------------
-st.subheader("HTTP Status Code Distribution")
-fig1, ax1 = plt.subplots()
-df["status_code"].value_counts().plot.pie(autopct="%1.1f%%", ax=ax1)
-ax1.set_ylabel("")
-st.pyplot(fig1)
-
-st.subheader("API Hits per Endpoint")
-fig2, ax2 = plt.subplots()
-posture.set_index("api")["hits"].plot.bar(ax=ax2)
-ax2.set_ylabel("Hits")
-ax2.set_xlabel("API Endpoint")
-st.pyplot(fig2)
-
-# -------------------------------
-# TABLES
+# DASHBOARD
 # -------------------------------
 st.subheader("API Posture Summary")
 st.dataframe(posture)
 
-# -------------------------------
-# THREATS & MITIGATION
-# -------------------------------
-st.subheader("Detected Threats")
-for t in threats:
-    st.error(t)
-
-st.subheader("Mitigation Recommendations")
-for r in recommendations:
-    st.success(r)
+st.subheader("Threat Severity & Compliance Mapping")
+st.dataframe(threats_df)
 
 # -------------------------------
-# RAW DATA
+# CHART
 # -------------------------------
-with st.expander("View Raw F5 BIG-IP Records"):
-    st.dataframe(df)
+st.subheader("Threat Severity Distribution")
+fig, ax = plt.subplots()
+threats_df["Severity"].value_counts().plot.bar(ax=ax)
+st.pyplot(fig)
 
 # -------------------------------
-# RESET BUTTON (RED)
+# PDF EXPORT
+# -------------------------------
+if st.button("📄 Export DoD PDF Report"):
+    pdf = generate_pdf(threats_df)
+    with open(pdf, "rb") as f:
+        st.download_button("Download Report", f, file_name=pdf)
+
+# -------------------------------
+# RESET BUTTON
 # -------------------------------
 st.markdown(
     """
