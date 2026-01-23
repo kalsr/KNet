@@ -39,12 +39,9 @@ st.markdown("""
 # ------------------------------
 # SESSION STATE INIT
 # ------------------------------
-if "data" not in st.session_state:
-    st.session_state.data = None
-if "analysis" not in st.session_state:
-    st.session_state.analysis = None
-if "view_mode" not in st.session_state:
-    st.session_state.view_mode = "Executive"
+for key in ["data", "analysis", "view_mode"]:
+    if key not in st.session_state:
+        st.session_state[key] = None
 
 # ------------------------------
 # RESET FUNCTION
@@ -65,7 +62,7 @@ def generate_f5_runtime_data(num_records):
     records = []
     for _ in range(num_records):
         response_time = random.uniform(100,300)
-        if random.random() < 0.15:
+        if random.random() < 0.15:  # 15% anomalies
             response_time = random.uniform(500,1200)
         records.append({
             "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -81,31 +78,45 @@ def generate_f5_runtime_data(num_records):
 # ANALYSIS ENGINE
 # ------------------------------
 def analyze_api_behavior(df):
-    threshold = 400
-    analysis = (
-        df.groupby("api")
-        .agg(
-            total_requests=("response_time_ms","count"),
-            avg_response_time=("response_time_ms","mean"),
-            anomalies=("response_time_ms", lambda x: (x>=threshold).sum()),
-            errors=("status_code", lambda x: (x>=400).sum()),
-        ).reset_index()
-    )
+    df["anomaly"] = df["response_time_ms"] >= 400
+    df["error"] = df["status_code"] >= 400
+
+    # Group by API
+    analysis = df.groupby("api").agg(
+        total_requests=("response_time_ms","count"),
+        avg_response_time=("response_time_ms","mean"),
+        anomalies=("anomaly","sum"),
+        errors=("error","sum")
+    ).reset_index()
+
     analysis["anomaly_percent"] = (analysis["anomalies"]/analysis["total_requests"])*100
+
+    # Threat severity
     analysis["severity"] = analysis["anomaly_percent"].apply(
         lambda x: "Critical" if x>25 else "High" if x>15 else "Medium" if x>5 else "Low"
     )
-    # Zero Trust trust-score: 0-100 based on anomaly %
+
+    # Zero Trust scoring
     analysis["zero_trust_score"] = 100 - analysis["anomaly_percent"]
-    # NIST / STIG mapping
+
+    # Compliance mappings
     analysis["NIST_Control"] = "SI-4 / RA-5 / AC-7"
     analysis["STIG_ID"] = "SRG-APP-000516"
-    # MITRE ATT&CK example mapping
+
+    # MITRE ATT&CK mapping (example)
     analysis["MITRE_Technique"] = "T1071 / T1486 / T1210"
+
+    # Recommendations
+    analysis["Recommendation"] = analysis.apply(lambda x:
+        "Investigate and optimize API performance; verify access controls; monitor repeated failures"
+        if x["severity"] in ["High","Critical"] else
+        "Monitor API performance; minor adjustments if needed", axis=1
+    )
+
     return analysis
 
 # ------------------------------
-# PDF EXPORT FUNCTION
+# PDF EXPORT
 # ------------------------------
 def export_pdf(df):
     buffer = BytesIO()
@@ -113,7 +124,8 @@ def export_pdf(df):
     styles = getSampleStyleSheet()
     elements = [Paragraph("<b>API Runtime & Posture Report (DoD ATO)</b>", styles["Title"])]
     elements.append(Spacer(1,12))
-    # Table for executive summary
+
+    # Add table
     table_data = [df.columns.tolist()] + df.values.tolist()
     table = Table(table_data)
     table.setStyle(TableStyle([
@@ -132,9 +144,9 @@ def export_pdf(df):
 st.sidebar.header("Controls")
 record_count = st.sidebar.slider("Synthetic Record Count",0,100,50)
 uploaded_file = st.sidebar.file_uploader("Upload Real F5 BIG-IP CSV Data", type=["csv"])
-st.sidebar.markdown("### View Mode")
 view_mode = st.sidebar.radio("Select view:", ["Executive","SOC","Engineer"], index=0)
 st.session_state.view_mode = view_mode
+
 if st.sidebar.button("🔴 RESET ALL DATA"):
     reset_all()
 
@@ -143,6 +155,8 @@ if st.sidebar.button("🔴 RESET ALL DATA"):
 # ------------------------------
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
+    if "response_time_ms" not in df.columns or "api" not in df.columns:
+        st.error("Uploaded CSV must contain 'api' and 'response_time_ms' columns")
     st.session_state.data = df
 elif st.session_state.data is None:
     st.session_state.data = generate_f5_runtime_data(record_count)
@@ -155,11 +169,17 @@ st.session_state.analysis = analysis
 # DASHBOARD DISPLAY
 # ------------------------------
 st.subheader("API Runtime & Discovery Summary")
+
+# Show records
+st.markdown("### All API Runtime Records")
+st.dataframe(df, use_container_width=True)
+
+# Show analysis based on view mode
 if view_mode=="Executive":
-    st.dataframe(analysis[["api","total_requests","avg_response_time","anomalies","severity","zero_trust_score"]])
+    st.dataframe(analysis[["api","total_requests","avg_response_time","anomalies","severity","zero_trust_score","Recommendation"]])
 elif view_mode=="SOC":
-    st.dataframe(analysis[["api","status_code","errors","anomalies","severity","MITRE_Technique"]])
-else:
+    st.dataframe(analysis[["api","total_requests","anomalies","errors","severity","MITRE_Technique","Recommendation"]])
+else:  # Engineer view
     st.dataframe(analysis)
 
 # ------------------------------
@@ -168,7 +188,7 @@ else:
 st.subheader("API Risk Heatmap")
 heatmap_df = analysis.set_index("api")[["anomalies","errors"]]
 fig, ax = plt.subplots(figsize=(10,4))
-sns.heatmap(heatmap_df, annot=True,cmap="Reds",ax=ax)
+sns.heatmap(heatmap_df, annot=True, cmap="Reds", ax=ax)
 st.pyplot(fig)
 
 # ------------------------------
@@ -189,12 +209,13 @@ ax3.axis("equal")
 st.pyplot(fig3)
 
 # ------------------------------
-# THREAT ALERTS
+# THREAT ALERTS & RECOMMENDATIONS
 # ------------------------------
-st.subheader("Detected Threats / Findings")
+st.subheader("Detected Threats & Mitigation Recommendations")
 for _, row in analysis.iterrows():
     if row["severity"] in ["High","Critical"]:
         st.error(f"{row['api']} | Severity: {row['severity']} | Zero Trust Score: {row['zero_trust_score']} | MITRE: {row['MITRE_Technique']}")
+        st.info(f"Recommendation: {row['Recommendation']}")
 
 # ------------------------------
 # PDF EXPORT
