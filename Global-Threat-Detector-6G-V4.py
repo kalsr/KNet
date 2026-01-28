@@ -83,7 +83,7 @@ else:
 if st.session_state.role:
     st.markdown(f"""
     <div class="header">
-    <h1>DISA / DoD 6G AI Threat Intelligence Platform</h1>
+    <h1>Kalsnet (KNet)6G AI Threat Intelligence Platform</h1>
     <h3>Role: {st.session_state.role} | Designed & Developed by Randy Singh</h3>
     </div>
     """, unsafe_allow_html=True)
@@ -249,5 +249,6 @@ if st.session_state.data is not None and "export" in ROLES[st.session_state.role
 
     with open(path, "rb") as f:
         st.download_button("Export PDF", f, "STANAG_Report.pdf")
+
 
 
