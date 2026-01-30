@@ -198,7 +198,7 @@ layers = [
 
 
 
-st.markdown("## 🛡 Defense-in-Depth Security Layers")
+st.markdown("##  Defense-in-Depth Security Layers")
 
 
 
@@ -234,7 +234,7 @@ for i, layer in enumerate(layers):
 
 if selected_layer:
 
-    st.markdown(f"## ✅ Selected Layer: {selected_layer}")
+    st.markdown(f"##  Selected Layer: {selected_layer}")
 
 
 
@@ -396,7 +396,7 @@ if df is not None:
 
 
 
-    if st.button("📄 Generate PDF Report (Top 10 Records)"):
+    if st.button(" Generate PDF Report (Top 10 Records)"):
 
         pdf_file = generate_pdf(df)
 
@@ -420,4 +420,5 @@ else:
 
 
     st.info("Please generate or upload data to enable exports.")
+
 
