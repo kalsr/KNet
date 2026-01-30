@@ -28,7 +28,7 @@ from fpdf import FPDF
 
 st.set_page_config(
 
-    page_title="Defense-in-Depth Cybersecurity Demo",
+    page_title="Defense-in-Depth Cyberscecurity Demo",
 
     layout="wide"
 
@@ -162,7 +162,7 @@ else:
 
 if df is not None:
 
-    st.subheader("📌 Active Security Dataset")
+    st.subheader(" Active Security Dataset")
 
     st.dataframe(df)
 
@@ -176,23 +176,23 @@ if df is not None:
 
 layers = [
 
-    "🔥 IAM (Identity & Access Management)",
+    " IAM (Identity & Access Management)",
 
-    "🔥 Firewalls",
+    " Firewalls",
 
-    "🖥 EDR & NDR",
+    " EDR & NDR",
 
-    "🚨 IDS / IPS",
+    " IDS / IPS",
 
-    "📊 SIEM",
+    " SIEM",
 
-    "☁ Cloud Security",
+    " Cloud Security",
 
-    "📁 DLP (Data Loss Prevention)",
+    " DLP (Data Loss Prevention)",
 
-    "🛠 Incident Response",
+    " Incident Response",
 
-    "🧠 Security Awareness"
+    " Security Awareness"
 
 ]
 
@@ -322,7 +322,7 @@ if selected_layer:
 
 st.markdown("---")
 
-st.markdown("## 📤 Export Reports")
+st.markdown("##  Export Reports")
 
 
 
@@ -420,3 +420,4 @@ else:
 
 
     st.info("Please generate or upload data to enable exports.")
+
