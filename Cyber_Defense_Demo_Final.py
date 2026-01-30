@@ -63,7 +63,7 @@ if "df" not in st.session_state:
 # -------------------------------
 # SIDEBAR
 # -------------------------------
-st.sidebar.header("⚙ Control Panel")
+st.sidebar.header(" Control Panel")
 
 dashboard_mode = st.sidebar.radio(
     "Dashboard Mode",
@@ -80,7 +80,7 @@ data_mode = st.sidebar.radio(
 # -------------------------------
 with st.sidebar.container():
     st.markdown('<div class="reset-btn">', unsafe_allow_html=True)
-    if st.button("🔴 RESET & REGENERATE DATA"):
+    if st.button(" RESET & REGENERATE DATA"):
         st.session_state.clear()
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
@@ -137,7 +137,7 @@ if df is not None:
 # -------------------------------
 if df is not None and dashboard_mode == "Executive / DoD View":
 
-    st.markdown("## 🛡 Executive Cyber Posture Overview")
+    st.markdown("##  Executive Cyber Posture Overview")
 
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Total Users", len(df))
@@ -156,14 +156,14 @@ if df is not None and dashboard_mode == "Executive / DoD View":
 # -------------------------------
 elif df is not None:
 
-    st.subheader("📋 Active Security Dataset")
+    st.subheader(" Active Security Dataset")
     st.dataframe(df)
 
 # -------------------------------
 # DEFENSE-IN-DEPTH SECURITY LAYERS (RESTORED)
 # -------------------------------
 if df is not None:
-    st.markdown("## 🛡 Defense-in-Depth Security Layers")
+    st.markdown("##  Defense-in-Depth Security Layers")
 
     layers = [
         (" IAM (Identity & Access Management)", "layer-iam"),
@@ -188,7 +188,7 @@ if df is not None:
             st.markdown('</div>', unsafe_allow_html=True)
 
     if selected_layer:
-        st.markdown(f"### 🔍 Selected Layer: {selected_layer}")
+        st.markdown(f"###  Selected Layer: {selected_layer}")
 
         if "IAM" in selected_layer:
             st.success("IAM: Analyzing authentication abuse")
@@ -230,7 +230,7 @@ if df is not None:
 # MITRE ATT&CK
 # -------------------------------
 if df is not None:
-    st.markdown("## 🧩 MITRE ATT&CK Mapping")
+    st.markdown("##  MITRE ATT&CK Mapping")
 
     mitre = pd.DataFrame({
         "Indicator": [
@@ -266,3 +266,4 @@ if df is not None:
         "cyber_defense_output.csv",
         "text/csv"
     )
+
