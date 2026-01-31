@@ -64,21 +64,21 @@ Designed & Developed by <b>Randy Singh</b>
 
 attacks = {
 
-    "🎣 Phishing Attack": "Fake emails/messages trick users into sharing credentials.",
+    " Phishing Attack": "Fake emails/messages trick users into sharing credentials.",
 
-    "🔒💰 Ransomware": "Malware locks files and demands payment.",
+    " Ransomware": "Malware locks files and demands payment.",
 
-    "🚫💻 Denial-of-Service (DoS)": "Fake traffic overloads systems.",
+    " Denial-of-Service (DoS)": "Fake traffic overloads systems.",
 
-    "🕵️‍♂️ Man-in-the-Middle (MitM)": "Attacker intercepts communications.",
+    " Man-in-the-Middle (MitM)": "Attacker intercepts communications.",
 
-    "🗄️⚠️ SQL Injection": "Weak forms allow database theft.",
+    " SQL Injection": "Weak forms allow database theft.",
 
-    "💻📜 Cross-Site Scripting (XSS)": "Malicious scripts run in browsers.",
+    " Cross-Site Scripting (XSS)": "Malicious scripts run in browsers.",
 
-    "⏳🐞 Zero-Day Exploit": "Attack uses unknown software flaw.",
+    " Zero-Day Exploit": "Attack uses unknown software flaw.",
 
-    "🌍🔁 DNS Spoofing": "Users redirected to fake websites."
+    " DNS Spoofing": "Users redirected to fake websites."
 
 }
 
@@ -90,7 +90,7 @@ attacks = {
 
 # ==========================================================
 
-st.sidebar.header("⚙ Data Controls")
+st.sidebar.header(" Data Controls")
 
 
 
@@ -120,7 +120,7 @@ if data_mode == "Generate Synthetic Data":
 
 
 
-    if st.sidebar.button("🔴 RESET & REGENERATE DATA"):
+    if st.sidebar.button(" RESET & REGENERATE DATA"):
 
         st.session_state["reset"] = True
 
@@ -178,7 +178,7 @@ if df is None:
 
 # ==========================================================
 
-st.subheader("📊 Cyber Attack Executive Dashboard")
+st.subheader(" Cyber Attack Executive Dashboard")
 
 
 
@@ -206,7 +206,7 @@ st.markdown("---")
 
 # ==========================================================
 
-st.subheader("🧩 Attack Distribution (Pie Chart)")
+st.subheader(" Attack Distribution (Pie Chart)")
 
 
 
@@ -230,7 +230,7 @@ st.pyplot(fig1)
 
 # ==========================================================
 
-st.subheader("📌 Severity Levels (Bar Chart)")
+st.subheader(" Severity Levels (Bar Chart)")
 
 
 
@@ -258,7 +258,7 @@ st.pyplot(fig2)
 
 # ==========================================================
 
-st.markdown("## 🚨 Select an Attack Type to Demo")
+st.markdown("##  Select an Attack Type to Demo")
 
 
 
@@ -390,7 +390,7 @@ if selected_attack:
 
 
 
-    if st.button("📄 Generate PDF Report"):
+    if st.button(" Generate PDF Report"):
 
         pdf_file = generate_pdf(selected_attack, attack_data)
 
@@ -420,7 +420,8 @@ if selected_attack:
 
 st.markdown("---")
 
-st.subheader("📌 Full Dataset Preview")
+st.subheader(" Full Dataset Preview")
 
 st.dataframe(df)
+
 
