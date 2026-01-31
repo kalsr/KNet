@@ -230,6 +230,7 @@ c1.metric("Total Events", len(df))
 
 c2.metric("Critical Events", len(df[df["Severity"] == "Critical"]))
 
-...
+# ...
 
-Show trimmed content
+
+# Show trimmed content
