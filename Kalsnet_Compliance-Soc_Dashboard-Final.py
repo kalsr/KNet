@@ -70,7 +70,7 @@ fedramp_controls = {
 # ============================================================
 # SIDEBAR
 # ============================================================
-st.sidebar.header("⚙️ SOC Configuration")
+st.sidebar.header(" SOC Configuration")
 
 mode = st.sidebar.radio(
     "SOC Mode",
@@ -90,7 +90,7 @@ uploaded = st.sidebar.file_uploader(
     "Upload Log File (CSV)", type=["csv"]
 )
 
-# ✅ FIXED RESET BUTTON (NO experimental_rerun)
+#  FIXED RESET BUTTON (NO experimental_rerun)
 if st.sidebar.button("🔴 RESET DATA", use_container_width=True):
     st.rerun()
 
@@ -102,7 +102,7 @@ if uploaded:
 else:
     df = pd.DataFrame({
         "Time": [datetime.now().strftime("%H:%M:%S") for _ in range(records)],
-        "Sector": [sector for _ in range(records)],  # ✅ NEW FIELD
+        "Sector": [sector for _ in range(records)],  #  NEW FIELD
         "Attack_Type": np.random.choice(list(attack_map.keys()), records),
         "Severity": np.random.choice(["Low", "Medium", "High", "Critical"], records),
         "Detected": np.random.choice(["Yes", "No"], records),
@@ -127,7 +127,7 @@ df["Threat_Score"] = df.apply(score_event, axis=1)
 # ============================================================
 # EXECUTIVE METRICS
 # ============================================================
-st.subheader("📊 Executive SOC Overview")
+st.subheader(" Executive SOC Overview")
 
 c1, c2, c3, c4 = st.columns(4)
 c1.metric("Total Events", len(df))
@@ -138,7 +138,7 @@ c4.metric("Avg Threat Score", round(df["Threat_Score"].mean(), 1))
 # ============================================================
 # PIE CHARTS
 # ============================================================
-st.subheader("📈 Threat Distribution")
+st.subheader(" Threat Distribution")
 
 p1, p2, p3 = st.columns(3)
 
@@ -167,7 +167,7 @@ with p3:
 # FEDRAMP / DOD EXPLANATION
 # ============================================================
 if mode == "FedRAMP / DoD SOC":
-    st.subheader("🛡️ FedRAMP / DoD Compliance Mapping")
+    st.subheader(" FedRAMP / DoD Compliance Mapping")
 
     st.markdown("""
 **This SOC dashboard aligns with FedRAMP Moderate / High requirements by:**
@@ -186,7 +186,7 @@ if mode == "FedRAMP / DoD SOC":
 # COMMERCIAL SOC INFO
 # ============================================================
 if mode == "Commercial SOC":
-    st.subheader(f"🏦 Commercial SOC – {sector}")
+    st.subheader(f" Commercial SOC – {sector}")
 
     st.markdown(f"""
 **Sector-Specific SOC Coverage for {sector}:**
@@ -200,13 +200,13 @@ if mode == "Commercial SOC":
 # ============================================================
 # DATA TABLE
 # ============================================================
-st.subheader("📄 SOC Event Log")
+st.subheader(" SOC Event Log")
 st.dataframe(df, use_container_width=True)
 
 # ============================================================
 # EXPORTS
 # ============================================================
-st.subheader("⬇️ Export Results")
+st.subheader(" Export Results")
 
 c1, c2, c3 = st.columns(3)
 
@@ -241,3 +241,4 @@ with c3:
         "soc_results.pdf",
         "application/pdf"
     )
+
