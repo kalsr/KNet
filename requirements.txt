@@ -38,8 +38,3 @@ geopandas
 Groq
 ollama
 st_aggrid
-streamlit==1.31.1
-pandas==2.1.4
-numpy==1.26.4
-matplotlib==3.8.2
-reportlab==4.0.9
