@@ -37,3 +37,4 @@ fpdf
 geopandas
 Groq
 ollama
+st_aggrid
