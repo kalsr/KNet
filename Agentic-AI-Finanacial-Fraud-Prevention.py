@@ -42,7 +42,7 @@ Agentic AI Risk Analytics Platform<br>
 
 The Power of Agentic AI in Fraud & Financial Crime Prevention<br>
 
-Developed by Randy Singh – Kalsnet (KNet) Consulting Group
+Developed by Randy Singh – Kalsnet (KNet) Consulting Group.
 
 </span>
 
@@ -64,7 +64,7 @@ st.write("")
 
 # -------------------------------
 
-with st.expander("ℹ️ How Key Metrics are Calculated (Click to Expand)", expanded=True):
+with st.expander(" How Key Metrics are Calculated (Click to Expand)", expanded=True):
 
     st.markdown("""
 
@@ -138,7 +138,7 @@ with st.expander("ℹ️ How Key Metrics are Calculated (Click to Expand)", expa
 
 # -------------------------------
 
-st.sidebar.header("⚙️ Controls")
+st.sidebar.header(" Controls")
 
 
 
@@ -154,7 +154,7 @@ scenario = st.sidebar.selectbox(
 
 
 
-reset = st.sidebar.button("🔄 Reset / Generate New Data")
+reset = st.sidebar.button(" Reset / Generate New Data")
 
 uploaded_file = st.sidebar.file_uploader("Upload User CSV", type=["csv"])
 
@@ -308,7 +308,7 @@ if not df.empty:
 
 
 
-    st.subheader("📊 Transaction Risk Data")
+    st.subheader(" Transaction Risk Data")
 
     st.dataframe(df, use_container_width=True)
 
@@ -340,7 +340,7 @@ if not df.empty:
 
     # EXPLAINABLE AI INSIGHTS
 
-    st.subheader("🧠 Agentic AI Strategy Insights")
+    st.subheader(" Agentic AI Strategy Insights")
 
     st.info(f"""
 
@@ -423,5 +423,6 @@ if not df.empty:
 
 
 else:
+
 
     st.warning("Use the slider or upload data to begin.")
