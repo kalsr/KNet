@@ -37,3 +37,4 @@ fpdf
 geopandas
 Groq
 ollama
+AgGrid
