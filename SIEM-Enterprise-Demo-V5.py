@@ -25,7 +25,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 st.set_page_config(
     layout="wide",
     page_title="SIEM Enterprise Platform | Kalsnet (KNet)",
-    page_icon="🛡️"
+    page_icon=""
 )
 
 # ------------------------------------------------------------
@@ -51,7 +51,7 @@ st.markdown("---")
 # RBAC
 # ------------------------------------------------------------
 ROLES = ["Admin", "SOC Analyst", "Viewer"]
-role = st.sidebar.selectbox("🔐 Select Role", ROLES)
+role = st.sidebar.selectbox(" Select Role", ROLES)
 
 def allow(roles):
     return role in roles
@@ -59,23 +59,23 @@ def allow(roles):
 # ------------------------------------------------------------
 # SIDEBAR CONTROLS
 # ------------------------------------------------------------
-st.sidebar.header("🛠️ SIEM Controls")
+st.sidebar.header(" SIEM Controls")
 
 records = st.sidebar.slider("Synthetic Events", 50, 500, 100)
 
 ingestion_source = st.sidebar.selectbox(
-    "📡 Data Ingestion Source",
+    " Data Ingestion Source",
     ["Synthetic", "Kafka", "AWS CloudWatch", "Azure Sentinel"]
 )
 
-realtime = st.sidebar.toggle("📡 Controlled Real-Time Simulation")
+realtime = st.sidebar.toggle(" Controlled Real-Time Simulation")
 
 if allow(["Admin"]):
-    uploaded_file = st.sidebar.file_uploader("📂 Upload Log Data (CSV)", type=["csv"])
+    uploaded_file = st.sidebar.file_uploader(" Upload Log Data (CSV)", type=["csv"])
 else:
     uploaded_file = None
 
-if allow(["Admin"]) and st.sidebar.button("🔄 Reset Platform"):
+if allow(["Admin"]) and st.sidebar.button(" Reset Platform"):
     st.session_state.clear()
     st.rerun()
 
@@ -106,13 +106,13 @@ else:
 # ------------------------------------------------------------
 # LOG DISPLAY
 # ------------------------------------------------------------
-st.subheader("📥 Security Event Logs")
+st.subheader(" Security Event Logs")
 st.dataframe(df, use_container_width=True)
 
 # ------------------------------------------------------------
 # INGESTION VISUAL
 # ------------------------------------------------------------
-st.subheader("📡 Data Ingestion Overview")
+st.subheader(" Data Ingestion Overview")
 
 fig_src, ax_src = plt.subplots()
 df["ingestion_source"].value_counts().plot.pie(
@@ -124,7 +124,7 @@ st.pyplot(fig_src)
 # ------------------------------------------------------------
 # UEBA SCORING
 # ------------------------------------------------------------
-st.subheader("🧠 UEBA (User & Entity Behavior Analytics)")
+st.subheader(" UEBA (User & Entity Behavior Analytics)")
 
 ueba = df.groupby("username").agg(
     failed_logins=("status", lambda x: (x == "FAILED").sum()),
@@ -167,10 +167,10 @@ alert_df = pd.DataFrame(alerts, columns=[
     "Alert Type","Entity","Severity","NIST 800-53","MITRE ATT&CK"
 ])
 
-st.subheader("🚨 Security Alerts")
+st.subheader(" Security Alerts")
 
 if alert_df.empty:
-    st.success("✅ No high-risk behavior detected")
+    st.success(" No high-risk behavior detected")
 else:
     st.dataframe(alert_df, use_container_width=True)
 
@@ -186,7 +186,7 @@ if not alert_df.empty:
 # ------------------------------------------------------------
 # RMF / ATO TRACEABILITY
 # ------------------------------------------------------------
-st.subheader("🧾 RMF / ATO Control Traceability")
+st.subheader(" RMF / ATO Control Traceability")
 
 rmf = pd.DataFrame([
     ["Log Collection","AU-2","FedRAMP Moderate"],
@@ -200,9 +200,9 @@ st.dataframe(rmf, use_container_width=True)
 # ------------------------------------------------------------
 # EXPLANATION SECTION (GUI)
 # ------------------------------------------------------------
-st.subheader("📘 How This Platform Works")
+st.subheader(" How This Platform Works")
 
-with st.expander("🧠 UEBA Risk Scoring Explained"):
+with st.expander(" UEBA Risk Scoring Explained"):
     st.markdown("""
 UEBA assigns a **risk score per user** using behavioral patterns:
 
@@ -214,7 +214,7 @@ Each factor is weighted to reflect real-world insider threat and account comprom
 Higher scores indicate anomalous behavior requiring investigation.
 """)
 
-with st.expander("🚨 Alert Generation Explained"):
+with st.expander(" Alert Generation Explained"):
     st.markdown("""
 Alerts are triggered when behavioral or correlation thresholds are exceeded.
 
@@ -225,7 +225,7 @@ Example:
 Alerts are mapped directly to **MITRE ATT&CK** and **NIST 800-53** controls.
 """)
 
-with st.expander("🧾 RMF / ATO Control Traceability Explained"):
+with st.expander(" RMF / ATO Control Traceability Explained"):
     st.markdown("""
 Each SIEM capability is mapped to compliance controls:
 
@@ -237,7 +237,7 @@ Each SIEM capability is mapped to compliance controls:
 This mapping supports **ATO packages, SSPs, and FedRAMP audits**.
 """)
 
-with st.expander("📡 Kafka vs AWS CloudWatch vs Azure Sentinel"):
+with st.expander(" Kafka vs AWS CloudWatch vs Azure Sentinel"):
     st.markdown("""
 **Kafka**  
 • High-throughput event streaming  
@@ -258,7 +258,7 @@ This platform normalizes all sources into a **common SIEM schema**.
 # EXPORTS
 # ------------------------------------------------------------
 if allow(["Admin","SOC Analyst"]):
-    st.subheader("📤 Compliance & Reporting Exports")
+    st.subheader(" Compliance & Reporting Exports")
 
     csv_buf = io.StringIO()
     rmf.to_csv(csv_buf, index=False)
@@ -302,12 +302,13 @@ if realtime:
         st.session_state.ticks = 0
 
     st.session_state.ticks += 1
-    st.info(f"📡 Real-Time Simulation Cycle {st.session_state.ticks}")
+    st.info(f" Real-Time Simulation Cycle {st.session_state.ticks}")
 
     if st.session_state.ticks < 4:
         time.sleep(1)
         st.rerun()
     else:
-        st.success("✅ Real-Time Simulation Completed")
+        st.success(" Real-Time Simulation Completed")
+
 
 
