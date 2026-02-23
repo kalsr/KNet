@@ -155,7 +155,7 @@ else:
 # ---------------------------------------------------
 
 st.markdown("""
-### 📊 Synthetic Data Record Fields Explanation
+###  Synthetic Data Record Fields Explanation
 
 The synthetic dataset simulates enterprise AI risk modeling scenarios across cybersecurity, fraud analytics, and federal compliance operations. Each field is carefully chosen to demonstrate real-world risk assessment and explainable AI analytics:
 
@@ -203,7 +203,7 @@ fedramp_score = round(100 - avg_risk, 2)
 # ---------------------------------------------------
 
 st.markdown(f"""
-### 📘 Risk Scoring Methodology
+###  Risk Scoring Methodology
 
 - **Average Risk Score** = mean of all Agentic Risk Scores in dataset.  
 - **Risk Category**: LOW <30, MEDIUM 30-59, HIGH 60-79, CRITICAL ≥80.  
@@ -332,3 +332,4 @@ Kalsnet (KNet) Consulting Group
 """)
 
 st.success("Enterprise AI Platform Running Successfully")
+
