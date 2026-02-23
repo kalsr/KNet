@@ -103,12 +103,12 @@ module = st.sidebar.selectbox(
 "Select Platform Mode",
 
 [
-"🔥 Executive Boardroom Dashboard",
-"🛡 Federal / DoD AI Security",
-"📱 iPhone Camera AI Vision",
-"👤 Personal AI Assistant",
-"💼 Commercial AI Platform",
-"☁️ Kalsnet Enterprise Integration"
+" Executive Boardroom Dashboard",
+" Federal / DoD AI Security",
+" iPhone Camera AI Vision",
+" Personal AI Assistant",
+" Commercial AI Platform",
+" Kalsnet Enterprise Integration"
 
 ]
 
@@ -118,7 +118,7 @@ data_volume = st.sidebar.slider("Synthetic Data Volume",0,200,50)
 
 dod_mode = st.sidebar.checkbox("Enable Zero Trust / DoD Mode")
 
-if st.sidebar.button("🔄 Reset & Refresh Data"):
+if st.sidebar.button(" Reset & Refresh Data"):
 
     st.rerun()
 
@@ -129,7 +129,7 @@ if st.sidebar.button("🔄 Reset & Refresh Data"):
 
 mode_explanations={
 
-"🔥 Executive Boardroom Dashboard":
+" Executive Boardroom Dashboard":
 
 "Provides senior leadership enterprise risk visibility and executive decision intelligence.",
 
@@ -137,19 +137,19 @@ mode_explanations={
 
 "Simulates Zero Trust cybersecurity operations aligned with RMF, NIST controls, and MITRE ATT&CK mapping.",
 
-"📱 iPhone Camera AI Vision":
+" iPhone Camera AI Vision":
 
 "Demonstrates real-time AI visual analysis and mobile threat scoring capabilities.",
 
-"👤 Personal AI Assistant":
+" Personal AI Assistant":
 
 "Models AI assistants providing contextual analytics and decision automation.",
 
-"💼 Commercial AI Platform":
+" Commercial AI Platform":
 
 "Represents enterprise fraud monitoring and behavioral analytics operations.",
 
-"☁️ Kalsnet Enterprise Integration":
+" Kalsnet Enterprise Integration":
 
 "Simulates hybrid enterprise cloud integrations across APIs and SaaS systems."
 
@@ -232,23 +232,22 @@ else:
 
 st.markdown("""
 
-### 📊 Synthetic Data Record Field Explanation
+  Synthetic Data Record Fields Explanation:
 
 The synthetic dataset represents enterprise AI risk modeling scenarios commonly used across cybersecurity operations, fraud analytics, and federal compliance simulations.
-
-**Category**
+Category-Field
 
 Represents overall operational severity classification assigned to each event or transaction. Categories simulate analyst triage levels used within SOC environments and executive dashboards.
 
-**Agentic Risk Score**
+Agentic Risk Score-Field
 
 A simulated AI-derived risk probability score ranging from 1–100 generated from behavioral anomalies, threat indicators, or suspicious activities. Higher values indicate elevated risk requiring mitigation or investigation.
 
-**Confidence Score**
+Confidence Score-Field
 
 Represents the AI model confidence level associated with each risk decision. Higher confidence scores indicate stronger analytical certainty derived from supporting indicators or corroborating signals.
 
-**MITRE Technique**
+MITRE Technique-Field
 
 Maps simulated activity to recognized MITRE ATT&CK adversarial tactics and techniques used by cybersecurity professionals and federal agencies for threat intelligence tracking and RMF risk assessments.
 
@@ -297,7 +296,7 @@ fedramp_score=round(100-avg_risk,2)
 
 st.markdown("""
 
-### 📘 Risk Scoring Methodology
+###  Risk Scoring Methodology
 
 Agentic Risk Score represents averaged AI threat exposure across records.
 
@@ -525,7 +524,7 @@ if module=="🛡 Federal / DoD AI Security":
 # CAMERA
 # ---------------------------------------------------
 
-if module=="📱 iPhone Camera AI Vision":
+if module==" iPhone Camera AI Vision":
 
     image=st.camera_input("Capture Image")
 
@@ -564,3 +563,4 @@ Kalsnet (KNet) Consulting Group
 """)
 
 st.success("Enterprise AI Platform Running Successfully")
+
