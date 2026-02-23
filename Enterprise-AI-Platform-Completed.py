@@ -296,7 +296,7 @@ fedramp_score=round(100-avg_risk,2)
 
 st.markdown("""
 
-###  Risk Scoring Methodology
+Explanation on How Risk Scoring Methodologies Calculated:
 
 Agentic Risk Score represents averaged AI threat exposure across records.
 
@@ -563,4 +563,5 @@ Kalsnet (KNet) Consulting Group
 """)
 
 st.success("Enterprise AI Platform Running Successfully")
+
 
