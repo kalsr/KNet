@@ -1,6 +1,9 @@
+
+
+
 # ===============================================
 # KALSNET ENTERPRISE AI PLATFORM
-# Full Enterprise Version
+# Full Enterprise Version - Prototype
 # ===============================================
 
 import streamlit as st
@@ -11,71 +14,57 @@ import plotly.graph_objects as go
 import random
 from datetime import datetime
 import io
-
-# PDF Export
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
 
-# ---------------------------------------------------
+# ---------------------------
+# SESSION STATE RESET HANDLER
+# ---------------------------
+if "reset_requested" not in st.session_state:
+    st.session_state.reset_requested = False
+
+# If reset requested, clear all relevant session variables and rerun
+if st.session_state.reset_requested:
+    st.session_state.reset_requested = False
+    # Clear any variables stored in session_state if needed
+    for key in list(st.session_state.keys()):
+        if key != "reset_requested":
+            del st.session_state[key]
+    st.experimental_rerun()
+
+# ---------------------------
 # PAGE CONFIG
-# ---------------------------------------------------
+# ---------------------------
 st.set_page_config(
     page_title="KALSNET AI ENTERPRISE PLATFORM",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# ---------------------------------------------------
-# EXECUTIVE DARK THEME + FORCE BLUE HEADER
-# ---------------------------------------------------
+# ---------------------------
+# HEADER BLUE STYLE
+# ---------------------------
 st.markdown("""
 <style>
-body {
-    background-color:#0E1117;
-}
-/* Top Title Header */
-.knet-title {
-    color:#007BFF !important;
-    font-weight:1000;
-    font-size:52px;
-    text-align:center;
-    letter-spacing:1px;
-}
-/* Subtitle */
-.knet-sub {
-    color:#007BFF !important;
-    font-weight:900;
-    font-size:22px;
-    text-align:center;
-}
+body { background-color:#0E1117; }
+.knet-title { color:#007BFF !important; font-weight:1000; font-size:52px; text-align:center; letter-spacing:1px; }
+.knet-sub { color:#007BFF !important; font-weight:900; font-size:22px; text-align:center; }
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------------------------------------------
-# HEADER (BOLD BLUE)
-# ---------------------------------------------------
+# ---------------------------
+# HEADER
+# ---------------------------
 st.markdown("""
-<h1 class="knet-title">
-KALSNET AI VISION ENTERPRISE PLATFORM
-</h1>
-
-<h3 class="knet-sub">
-Developed by Randy Singh | Kalsnet (KNet) Consulting Group
-</h3>
+<h1 class="knet-title">KALSNET AI VISION ENTERPRISE PLATFORM</h1>
+<h3 class="knet-sub">Developed by Randy Singh | Kalsnet (KNet) Consulting Group</h3>
 """, unsafe_allow_html=True)
-
 st.divider()
 
-# ---------------------------------------------------
-# SESSION STATE FOR REFRESH
-# ---------------------------------------------------
-if 'refresh_flag' not in st.session_state:
-    st.session_state['refresh_flag'] = False
-
-# ---------------------------------------------------
+# ---------------------------
 # SIDEBAR
-# ---------------------------------------------------
+# ---------------------------
 st.sidebar.header("🎛 Simulation Controls")
 MODULES = [
     "Executive Boardroom Dashboard",
@@ -89,16 +78,14 @@ module = st.sidebar.selectbox("Select Platform Mode", MODULES)
 data_volume = st.sidebar.slider("Synthetic Data Volume", 0, 200, 50)
 dod_mode = st.sidebar.checkbox("Enable Zero Trust / DoD Mode")
 
-# Reset / Refresh Button (safe version)
+# Safe Reset Button
 if st.sidebar.button("Reset & Refresh Data"):
-    st.session_state['refresh_flag'] = True
-if st.session_state['refresh_flag']:
-    st.session_state['refresh_flag'] = False
+    st.session_state.reset_requested = True
     st.experimental_rerun()
 
-# ---------------------------------------------------
+# ---------------------------
 # MODE EXPLANATIONS
-# ---------------------------------------------------
+# ---------------------------
 mode_explanations = {
     "Executive Boardroom Dashboard": "Provides senior leadership enterprise risk visibility and executive decision intelligence.",
     "Federal / DoD AI Security": "Simulates Zero Trust cybersecurity operations aligned with RMF, NIST controls, and MITRE ATT&CK mapping.",
@@ -109,15 +96,15 @@ mode_explanations = {
 }
 st.info(mode_explanations.get(module, "No description available."))
 
-# ---------------------------------------------------
+# ---------------------------
 # DATA UPLOAD
-# ---------------------------------------------------
+# ---------------------------
 st.sidebar.subheader("Upload Your Own Dataset")
 uploaded_file = st.sidebar.file_uploader("Upload CSV or JSON", type=["csv","json"])
 
-# ---------------------------------------------------
+# ---------------------------
 # DATA GENERATOR
-# ---------------------------------------------------
+# ---------------------------
 def generate_data(records):
     categories = ["Low", "Medium", "High", "Critical"]
     mitre_techniques = [
@@ -135,9 +122,9 @@ def generate_data(records):
     }
     return pd.DataFrame(data)
 
-# ---------------------------------------------------
+# ---------------------------
 # LOAD DATA
-# ---------------------------------------------------
+# ---------------------------
 if uploaded_file:
     if uploaded_file.name.endswith(".csv"):
         df = pd.read_csv(uploaded_file)
@@ -147,38 +134,38 @@ if uploaded_file:
 else:
     df = generate_data(data_volume)
 
-# ---------------------------------------------------
+# ---------------------------
 # SYNTHETIC DATA FIELD EXPLANATION
-# ---------------------------------------------------
+# ---------------------------
 st.markdown("""
-###  Synthetic Data Record Fields Explanation
+### Synthetic Data Record Fields Explanation
 
 The synthetic dataset simulates enterprise AI risk modeling scenarios across cybersecurity, fraud analytics, and federal compliance operations. Each field is carefully chosen to demonstrate real-world risk assessment and explainable AI analytics:
 
 **1. Category**  
-Represents the overall operational severity classification assigned to each event, transaction, or activity. Categories (`Low`, `Medium`, `High`, `Critical`) simulate analyst triage levels in Security Operations Centers (SOC) and executive dashboards. This allows visualization of risk distribution for strategic decision-making.
+Operational severity classification assigned to each record. Categories (`Low`, `Medium`, `High`, `Critical`) simulate SOC triage and executive dashboards.
 
 **2. Agentic Risk Score**  
-An AI-generated probability score (1–100) representing potential threat exposure or risk associated with a record. This is computed from behavioral anomalies, suspicious activities, or risk indicators. Higher scores indicate elevated risk requiring mitigation or investigation.
+AI-derived probability score (1–100) representing potential threat exposure. Computed from behavioral anomalies, risk indicators, and suspicious activity.
 
 **3. Confidence Score**  
-Represents the model's confidence in the assigned Agentic Risk Score. Values range from 50–100, where higher confidence indicates stronger supporting evidence or corroborating indicators. This helps executives understand the reliability of AI predictions.
+Indicates the reliability of the Agentic Risk Score. Values range from 50–100, with higher scores meaning more corroborated AI predictions.
 
 **4. MITRE Technique**  
-Maps the simulated event to known adversarial tactics and techniques from the MITRE ATT&CK framework. This demonstrates how enterprise AI integrates threat intelligence for compliance, RMF mapping, and actionable cybersecurity insights.
+Maps events to known MITRE ATT&CK tactics/techniques. Demonstrates integration with threat intelligence, RMF mapping, and actionable cybersecurity insights.
 
-These fields collectively demonstrate enterprise-grade AI analytics, explainability, compliance readiness, and executive risk visibility.
+These fields demonstrate enterprise-grade AI analytics, explainability, compliance readiness, and executive risk visibility.
 """)
 
-# ---------------------------------------------------
+# ---------------------------
 # DISPLAY DATA
-# ---------------------------------------------------
+# ---------------------------
 st.subheader("Synthetic / Uploaded Records")
 st.dataframe(df, use_container_width=True)
 
-# ---------------------------------------------------
+# ---------------------------
 # RISK ENGINE
-# ---------------------------------------------------
+# ---------------------------
 avg_risk = round(df["Agentic Risk Score"].mean(), 2) if len(df) > 0 else 0
 if avg_risk < 30:
     risk_level = "LOW"
@@ -188,25 +175,23 @@ elif avg_risk < 80:
     risk_level = "HIGH"
 else:
     risk_level = "CRITICAL"
-
 fedramp_score = round(100 - avg_risk, 2)
 
-# ---------------------------------------------------
+# ---------------------------
 # RISK EXPLANATION
-# ---------------------------------------------------
+# ---------------------------
 st.markdown(f"""
-###  Risk Scoring Methodology
+### Risk Scoring Methodology
 
 - **Average Risk Score** = mean of all Agentic Risk Scores in dataset.  
 - **Risk Category**: LOW <30, MEDIUM 30-59, HIGH 60-79, CRITICAL ≥80.  
 - **FedRAMP Readiness Score** = 100 − Average Risk Score.  
-
 Higher FedRAMP Readiness indicates stronger cybersecurity posture and improved compliance readiness.
 """)
 
-# ---------------------------------------------------
+# ---------------------------
 # EXPORT FUNCTIONS
-# ---------------------------------------------------
+# ---------------------------
 def create_pdf():
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer)
@@ -227,9 +212,9 @@ st.sidebar.download_button("Export CSV", df.to_csv(index=False).encode(), "enter
 st.sidebar.download_button("Export JSON", df.to_json(orient="records").encode(), "enterprise_results.json", "application/json")
 st.sidebar.download_button("Export Executive PDF", create_pdf(), "enterprise_report.pdf", "application/pdf")
 
-# ---------------------------------------------------
+# ---------------------------
 # EXECUTIVE GAUGE
-# ---------------------------------------------------
+# ---------------------------
 def executive_gauge(score):
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
@@ -247,9 +232,9 @@ def executive_gauge(score):
     ))
     st.plotly_chart(fig, use_container_width=True)
 
-# ---------------------------------------------------
+# ---------------------------
 # MODULE DISPLAY
-# ---------------------------------------------------
+# ---------------------------
 st.subheader(module)
 if dod_mode:
     st.warning("🛡 Zero Trust Enforcement Enabled")
@@ -263,33 +248,33 @@ col4.metric("FedRAMP Readiness Score", fedramp_score)
 st.divider()
 executive_gauge(avg_risk)
 
-# ---------------------------------------------------
+# ---------------------------
 # PIE CHART
-# ---------------------------------------------------
+# ---------------------------
 st.subheader("Risk Category Distribution")
 fig1, ax1 = plt.subplots()
 df["Category"].value_counts().plot.pie(autopct='%1.1f%%', ax=ax1)
 ax1.axis('equal')
 st.pyplot(fig1)
 
-# ---------------------------------------------------
+# ---------------------------
 # HISTOGRAM
-# ---------------------------------------------------
+# ---------------------------
 st.subheader("Agentic Risk Score Distribution")
 fig2, ax2 = plt.subplots()
 ax2.hist(df["Agentic Risk Score"], bins=10)
 st.pyplot(fig2)
 
-# ---------------------------------------------------
+# ---------------------------
 # MITRE
-# ---------------------------------------------------
+# ---------------------------
 if module == "Federal / DoD AI Security":
     st.subheader("MITRE ATT&CK Technique Distribution")
     st.bar_chart(df["MITRE Technique"].value_counts())
 
-# ---------------------------------------------------
+# ---------------------------
 # CAMERA
-# ---------------------------------------------------
+# ---------------------------
 if module == "iPhone Camera AI Vision":
     image = st.camera_input("Capture Image")
     if image:
@@ -297,9 +282,9 @@ if module == "iPhone Camera AI Vision":
         st.success("AI Vision Analysis Complete")
         st.write("Threat Probability Index:", random.randint(1,100))
 
-# ---------------------------------------------------
+# ---------------------------
 # EXECUTIVE SUMMARY
-# ---------------------------------------------------
+# ---------------------------
 st.divider()
 st.subheader("Executive Summary")
 st.write(f"""
