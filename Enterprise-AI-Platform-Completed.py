@@ -235,19 +235,19 @@ st.markdown("""
   Synthetic Data Record Fields Explanation:
 
 The synthetic dataset represents enterprise AI risk modeling scenarios commonly used across cybersecurity operations, fraud analytics, and federal compliance simulations.
-Category-Field
+- Category-Field:
 
 Represents overall operational severity classification assigned to each event or transaction. Categories simulate analyst triage levels used within SOC environments and executive dashboards.
 
-Agentic Risk Score-Field
+- Agentic Risk Score-Field:
 
 A simulated AI-derived risk probability score ranging from 1–100 generated from behavioral anomalies, threat indicators, or suspicious activities. Higher values indicate elevated risk requiring mitigation or investigation.
 
-Confidence Score-Field
+- Confidence Score-Field:
 
 Represents the AI model confidence level associated with each risk decision. Higher confidence scores indicate stronger analytical certainty derived from supporting indicators or corroborating signals.
 
-MITRE Technique-Field
+- MITRE Technique-Field:
 
 Maps simulated activity to recognized MITRE ATT&CK adversarial tactics and techniques used by cybersecurity professionals and federal agencies for threat intelligence tracking and RMF risk assessments.
 
@@ -563,5 +563,6 @@ Kalsnet (KNet) Consulting Group
 """)
 
 st.success("Enterprise AI Platform Running Successfully")
+
 
 
