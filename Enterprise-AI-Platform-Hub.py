@@ -1,6 +1,7 @@
 # ===============================================
 # KALSNET ENTERPRISE AI PLATFORM
-# Fixed Reset/Refresh Implementation
+# Full Enterprise Version
+# Reset/Refresh Fixed
 # ===============================================
 
 import streamlit as st
@@ -21,17 +22,18 @@ from reportlab.lib.units import inch
 if "reset_request" not in st.session_state:
     st.session_state.reset_request = False
 
-def safe_reset():
-    # Clear all keys except reset_request
-    keys_to_clear = [k for k in st.session_state.keys() if k != "reset_request"]
-    for k in keys_to_clear:
-        del st.session_state[k]
-    st.session_state.reset_request = False
-
 # ---------------------------
 # MAIN APP FUNCTION
 # ---------------------------
 def app():
+    # If Reset requested, clear all keys except reset_request
+    if st.session_state.reset_request:
+        keys_to_clear = [k for k in st.session_state.keys() if k != "reset_request"]
+        for k in keys_to_clear:
+            del st.session_state[k]
+        st.session_state.reset_request = False
+        st.experimental_rerun()  # Safe here at the very start
+
     # ---------------------------
     # PAGE CONFIG
     # ---------------------------
@@ -80,7 +82,7 @@ def app():
     # Reset button
     if st.sidebar.button("Reset & Refresh Data"):
         st.session_state.reset_request = True
-        st.experimental_rerun()  # Safe here because flag triggers rerun
+        st.experimental_rerun()
 
     # ---------------------------
     # MODE EXPLANATIONS
@@ -134,15 +136,24 @@ def app():
         df = generate_data(data_volume)
 
     # ---------------------------
-    # SYNTHETIC DATA FIELD EXPLANATION
+    # SYNTHETIC DATA FIELD EXPLANATION (FULL)
     # ---------------------------
     st.markdown("""
-    ### Synthetic Data Record Fields Explanation
+### Synthetic Data Record Fields Explanation
 
-    **1. Category**: Operational severity classification assigned to each record. `Low/Medium/High/Critical` simulates SOC triage and dashboards.  
-    **2. Agentic Risk Score**: AI probability score (1–100) representing potential threat exposure.  
-    **3. Confidence Score**: Model confidence (50–100) in the Agentic Risk Score.  
-    **4. MITRE Technique**: Maps events to MITRE ATT&CK tactics/techniques for threat intelligence and RMF mapping.
+**1. Category**  
+Represents the overall operational severity classification for each event, transaction, or activity. Categories (`Low`, `Medium`, `High`, `Critical`) simulate triage levels used in SOCs and executive dashboards, helping visualize risk distribution for strategic decision-making.
+
+**2. Agentic Risk Score**  
+An AI-generated probability score (1–100) representing potential threat exposure or risk associated with each record. Computed from behavioral anomalies, suspicious activities, or risk indicators. Higher scores indicate elevated risk requiring mitigation or investigation.
+
+**3. Confidence Score**  
+Represents the model's confidence in the Agentic Risk Score (50–100). Higher confidence values indicate stronger supporting evidence or corroborating signals, helping executives gauge the reliability of AI predictions.
+
+**4. MITRE Technique**  
+Maps simulated events to known adversarial tactics and techniques from the MITRE ATT&CK framework. Demonstrates how enterprise AI integrates threat intelligence for compliance, RMF mapping, and actionable cybersecurity insights.
+
+These fields collectively illustrate enterprise-grade AI analytics, explainability, compliance readiness, and executive risk visibility.
     """)
 
     # ---------------------------
@@ -165,11 +176,11 @@ def app():
     # RISK EXPLANATION
     # ---------------------------
     st.markdown(f"""
-    ### Risk Scoring Methodology
-    - **Average Risk Score** = mean of all Agentic Risk Scores.  
-    - **Risk Category**: LOW <30, MEDIUM 30-59, HIGH 60-79, CRITICAL ≥80.  
-    - **FedRAMP Readiness Score** = 100 − Average Risk Score.
-    """)
+### Risk Scoring Methodology
+- **Average Risk Score** = mean of all Agentic Risk Scores.  
+- **Risk Category**: LOW <30, MEDIUM 30-59, HIGH 60-79, CRITICAL ≥80.  
+- **FedRAMP Readiness Score** = 100 − Average Risk Score.
+""")
 
     # ---------------------------
     # EXPORT FUNCTIONS
@@ -210,9 +221,6 @@ def app():
         ))
         st.plotly_chart(fig, use_container_width=True)
 
-    # ---------------------------
-    # MODULE DISPLAY
-    # ---------------------------
     st.subheader(module)
     if dod_mode:
         st.warning("🛡 Zero Trust Enforcement Enabled")
@@ -226,33 +234,25 @@ def app():
     st.divider()
     executive_gauge(avg_risk)
 
-    # ---------------------------
     # PIE CHART
-    # ---------------------------
     st.subheader("Risk Category Distribution")
     fig1, ax1 = plt.subplots()
     df["Category"].value_counts().plot.pie(autopct='%1.1f%%', ax=ax1)
     ax1.axis('equal')
     st.pyplot(fig1)
 
-    # ---------------------------
     # HISTOGRAM
-    # ---------------------------
     st.subheader("Agentic Risk Score Distribution")
     fig2, ax2 = plt.subplots()
     ax2.hist(df["Agentic Risk Score"], bins=10)
     st.pyplot(fig2)
 
-    # ---------------------------
     # MITRE
-    # ---------------------------
     if module == "Federal / DoD AI Security":
         st.subheader("MITRE ATT&CK Technique Distribution")
         st.bar_chart(df["MITRE Technique"].value_counts())
 
-    # ---------------------------
     # CAMERA
-    # ---------------------------
     if module == "iPhone Camera AI Vision":
         image = st.camera_input("Capture Image")
         if image:
@@ -260,25 +260,22 @@ def app():
             st.success("AI Vision Analysis Complete")
             st.write("Threat Probability Index:", random.randint(1,100))
 
-    # ---------------------------
     # EXECUTIVE SUMMARY
-    # ---------------------------
     st.divider()
     st.subheader("Executive Summary")
     st.write(f"""
-    As of {datetime.now().strftime('%Y-%m-%d %H:%M:%S')},
+As of {datetime.now().strftime('%Y-%m-%d %H:%M:%S')},
 
-    The enterprise AI agent processed {len(df)} records.
+The enterprise AI agent processed {len(df)} records.
 
-    Average Risk Score : {avg_risk}
-    Risk Category : {risk_level}
-    FedRAMP Readiness Score : {fedramp_score}
+Average Risk Score : {avg_risk}
+Risk Category : {risk_level}
+FedRAMP Readiness Score : {fedramp_score}
 
-    Platform Designed by Randy Singh
-    Kalsnet (KNet) Consulting Group
-    """)
+Platform Designed by Randy Singh
+Kalsnet (KNet) Consulting Group
+""")
     st.success("Enterprise AI Platform Running Successfully")
-
 
 # ---------------------------
 # RUN APP
