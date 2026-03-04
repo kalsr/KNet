@@ -53,8 +53,8 @@ st.markdown("""
 <h1 style='text-align:center; color:#0A3D91;'>
 
 KNet Enterprise Cyber Range Platform<br>
-A Simulated Controlled Virtual Environment<br>
-A Platform to Practice Cyber Security Skills Safely<br>
+A Simulated Controlled Virtual Environment
+A Platform to Practice Cyber Security Skills Safely
 
 Developed by Randy Singh – KNet Consulting Group
 
@@ -473,4 +473,5 @@ with open(pdf_file,"rb") as f:
 
 
 st.success("Enterprise Cyber Range SaaS Demo Running Successfully")
+
 
