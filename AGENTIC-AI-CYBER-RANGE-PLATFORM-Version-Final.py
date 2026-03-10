@@ -24,7 +24,7 @@ st.set_page_config(layout="wide")
 # -------------------------------------------------
 st.markdown("""
 <h1 style='background-color:#0b3d91;color:white;padding:15px;text-align:center'>
-Agentic AI Cyber Range Platform – Version 8
+Agentic AI Cyber Range Platform
 <br>
 AI Cyber Defense Training Environment
 <br>
@@ -328,4 +328,5 @@ if df is not None:
         elements.append(Paragraph(str(row.to_dict()), styles['BodyText']))
     doc = SimpleDocTemplate(buffer)
     doc.build(elements)
+
     st.download_button("Download PDF", buffer.getvalue(), "cyber_report.pdf")
