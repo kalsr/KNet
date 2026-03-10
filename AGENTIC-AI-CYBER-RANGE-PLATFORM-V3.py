@@ -1,0 +1,476 @@
+
+
+# ============================================================
+# AGENTIC AI CYBER RANGE PLATFORM
+# Developed by Randy Singh – Kalsnet (KNet) Consulting Group
+# ============================================================
+
+import streamlit as st
+import pandas as pd
+import random
+import numpy as np
+import io
+import plotly.express as px
+import plotly.graph_objects as go
+import networkx as nx
+
+from sklearn.ensemble import IsolationForest
+
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+
+
+st.set_page_config(layout="wide")
+
+# ---------------------------------------------------------
+# HEADER
+# ---------------------------------------------------------
+
+st.markdown("""
+<h1 style='background-color:#0b3d91;color:white;padding:15px;text-align:center'>
+Agentic AI Cyber Range Platform
+<br>
+Developed by Randy Singh – Kalsnet (KNet) Consulting Group
+</h1>
+""",unsafe_allow_html=True)
+
+# ---------------------------------------------------------
+# SIDEBAR
+# ---------------------------------------------------------
+
+st.sidebar.header("Cyber Data Controls")
+
+records = st.sidebar.slider("Generate Synthetic Records",0,500,100)
+
+generate = st.sidebar.button("Generate Synthetic Data")
+reset = st.sidebar.button("Reset Data")
+
+uploaded_file = st.sidebar.file_uploader(
+"Upload Real Cyber Dataset (CSV)",
+type=["csv"]
+)
+
+# ---------------------------------------------------------
+# MITRE ATTACK MAP
+# ---------------------------------------------------------
+
+mitre_map = {
+
+"Phishing":"T1566",
+"Brute Force":"T1110",
+"Privilege Escalation":"T1068",
+"Lateral Movement":"T1021",
+"Malware":"T1204",
+"SQL Injection":"T1190",
+"DDoS":"T1499",
+"Recon":"T1595"
+}
+
+attack_types=list(mitre_map.keys())
+severity_levels=["Low","Medium","High","Critical"]
+
+# ---------------------------------------------------------
+# RESPONSE MAP (INTELLIGENT AGENTS)
+# ---------------------------------------------------------
+
+response_map = {
+
+"Phishing":{
+"blue":"Block phishing domain and reset compromised credentials.",
+"soc":"Analyze email gateway logs and user mailbox behavior.",
+"ir":"Quarantine infected host and remove payload.",
+"hunter":"Search enterprise email logs for similar phishing campaigns."
+},
+
+"Brute Force":{
+"blue":"Enable account lockout and block attacker IP address.",
+"soc":"Analyze authentication logs for repeated login failures.",
+"ir":"Force password resets across affected accounts.",
+"hunter":"Scan identity systems for credential stuffing activity."
+},
+
+"DDoS":{
+"blue":"Enable network traffic filtering and rate limiting.",
+"soc":"Analyze abnormal traffic spikes across network segments.",
+"ir":"Coordinate with ISP and activate DDoS mitigation.",
+"hunter":"Identify botnet source IP clusters."
+},
+
+"SQL Injection":{
+"blue":"Deploy WAF rules blocking malicious SQL payloads.",
+"soc":"Inspect web application logs and database queries.",
+"ir":"Patch vulnerable application input validation.",
+"hunter":"Search logs for suspicious database access."
+}
+}
+
+# ---------------------------------------------------------
+# SYNTHETIC DATA GENERATOR
+# ---------------------------------------------------------
+
+def generate_data(n):
+
+    rows=[]
+
+    for i in range(n):
+
+        attack=random.choice(attack_types)
+        severity=random.choice(severity_levels)
+
+        source=f"192.168.1.{random.randint(1,254)}"
+        target=f"10.0.0.{random.randint(1,254)}"
+
+        likelihood=random.randint(1,5)
+        impact=random.randint(1,5)
+        weight=random.randint(1,5)
+
+        risk=likelihood*impact*weight
+
+        rows.append([attack,severity,source,target,likelihood,impact,weight,risk,mitre_map[attack]])
+
+    df=pd.DataFrame(rows,columns=[
+
+        "Attack","Severity","Source IP","Target IP",
+        "Likelihood","Impact","Severity Weight","Risk Score","MITRE Technique"
+    ])
+
+    return df
+
+# ---------------------------------------------------------
+# DATA LOADING
+# ---------------------------------------------------------
+
+if generate:
+    st.session_state["data"]=generate_data(records)
+
+if reset:
+    st.session_state["data"]=pd.DataFrame()
+
+if uploaded_file is not None:
+    df=pd.read_csv(uploaded_file)
+    st.session_state["data"]=df
+
+# ---------------------------------------------------------
+# DATA DISPLAY
+# ---------------------------------------------------------
+
+if "data" in st.session_state and not st.session_state["data"].empty:
+
+    df=st.session_state["data"]
+
+    st.subheader("Cyber Event Logs")
+    st.dataframe(df)
+
+    # -----------------------------------------------------
+    # AI ANOMALY DETECTION
+    # -----------------------------------------------------
+
+    st.subheader("AI Anomaly Detection")
+
+    model=IsolationForest(contamination=0.1)
+    df["anomaly"]=model.fit_predict(df[["Risk Score"]])
+
+    anomalies=df[df["anomaly"]==-1]
+
+    st.write("Detected anomalies:",len(anomalies))
+    st.dataframe(anomalies)
+
+    # -----------------------------------------------------
+    # SOC DASHBOARD
+    # -----------------------------------------------------
+
+    st.subheader("SOC Security Dashboard")
+
+    c1,c2,c3,c4=st.columns(4)
+
+    c1.metric("Total Events",len(df))
+    c2.metric("High Risk Events",len(df[df["Risk Score"]>40]))
+    c3.metric("Anomalies",len(anomalies))
+    c4.metric("Attack Types",df["Attack"].nunique())
+
+# ---------------------------------------------------------
+# ATTACK DISTRIBUTION
+# ---------------------------------------------------------
+
+st.subheader("Attack Distribution Analysis")
+
+st.info("""
+This visualization shows the frequency of different attack types
+observed in the cyber dataset.
+
+Security analysts use this information to identify dominant threat
+vectors and prioritize defensive resources.
+
+Example insights:
+• Frequent phishing campaigns
+• Increasing brute force attempts
+• Malware infection patterns
+""")
+
+if "data" in st.session_state:
+
+    df=st.session_state["data"]
+
+    col1,col2=st.columns(2)
+
+    fig=px.bar(df,x="Attack",title="Attack Distribution")
+    col1.plotly_chart(fig,use_container_width=True)
+
+    fig2=px.pie(df,names="Severity",title="Severity Distribution")
+    col2.plotly_chart(fig2,use_container_width=True)
+
+# ---------------------------------------------------------
+# MITRE ATTACK HEATMAP
+# ---------------------------------------------------------
+
+st.subheader("MITRE ATT&CK Technique Heatmap")
+
+st.info("""
+The heatmap maps detected cyber activity to the MITRE ATT&CK
+framework used by cybersecurity professionals.
+
+Each attack event corresponds to a known MITRE technique ID.
+
+Higher activity indicates adversaries frequently using that
+specific tactic or technique.
+""")
+
+tech=list(mitre_map.values())
+heat=pd.DataFrame(np.random.randint(0,10,(1,len(tech))),columns=tech)
+
+fig=px.imshow(heat,labels=dict(x="Technique",color="Activity"))
+st.plotly_chart(fig,use_container_width=True)
+
+# ---------------------------------------------------------
+# NETWORK ATTACK GRAPH
+# ---------------------------------------------------------
+
+st.subheader("Network Attack Graph")
+
+st.info("""
+This graph visualizes attacker movement inside a network.
+
+Nodes represent systems.
+Edges represent attack connections between systems.
+
+Security teams use attack graphs to identify
+lateral movement paths and compromised hosts.
+""")
+
+G=nx.Graph()
+
+for i in range(15):
+
+    src=f"192.168.1.{random.randint(1,20)}"
+    dst=f"10.0.0.{random.randint(1,20)}"
+
+    G.add_edge(src,dst)
+
+pos=nx.spring_layout(G)
+
+edge_x=[]
+edge_y=[]
+
+for edge in G.edges():
+
+    x0,y0=pos[edge[0]]
+    x1,y1=pos[edge[1]]
+
+    edge_x.extend([x0,x1,None])
+    edge_y.extend([y0,y1,None])
+
+edge_trace=go.Scatter(x=edge_x,y=edge_y,mode='lines')
+
+node_x=[]
+node_y=[]
+
+for node in G.nodes():
+
+    x,y=pos[node]
+    node_x.append(x)
+    node_y.append(y)
+
+node_trace=go.Scatter(
+x=node_x,
+y=node_y,
+mode='markers+text',
+text=list(G.nodes())
+)
+
+fig=go.Figure(data=[edge_trace,node_trace])
+
+st.plotly_chart(fig,use_container_width=True)
+
+# ---------------------------------------------------------
+# 3D CYBER ATTACK SIMULATION
+# ---------------------------------------------------------
+
+st.subheader("3D Cyber Attack Kill Chain Simulation")
+
+st.info("""
+This simulation models the cyber kill chain used by attackers.
+
+Stages:
+Recon → Initial Access → Privilege Escalation → Lateral Movement → Data Exfiltration
+
+The 3D visualization demonstrates how attackers progress
+through a network compromise.
+""")
+
+stages=["Recon","Access","Privilege","Lateral","Exfiltration"]
+
+fig=go.Figure(data=[go.Scatter3d(
+
+x=[1,2,3,4,5],
+y=[1,1,1,1,1],
+z=[1,2,3,4,5],
+mode='markers+lines',
+text=stages
+
+)])
+
+fig.update_layout(title="Cyber Attack Progression")
+
+st.plotly_chart(fig,use_container_width=True)
+
+# ---------------------------------------------------------
+# LIVE THREAT INTELLIGENCE
+# ---------------------------------------------------------
+
+st.subheader("Live Threat Intelligence Feed")
+
+st.info("""
+Threat intelligence alerts simulate global cyber threat
+information gathered from security feeds.
+
+Indicators include:
+• Malware campaigns
+• Zero-day vulnerabilities
+• Malicious IP scanning
+• Credential attacks
+""")
+
+intel=[
+
+"New ransomware campaign detected",
+"Zero-day vulnerability discovered",
+"Malicious IP scanning networks",
+"Credential stuffing attacks increasing",
+"APT group targeting finance sector"
+
+]
+
+for i in range(4):
+    st.warning(random.choice(intel))
+
+# ---------------------------------------------------------
+# AUTONOMOUS CYBER AGENTS
+# ---------------------------------------------------------
+
+st.subheader("Autonomous Agentic Cyber Defense")
+
+col1,col2,col3,col4,col5=st.columns(5)
+
+# RED TEAM
+
+with col1:
+
+    red=st.button("Red Team Attack")
+
+    if red:
+
+        attack=random.choice(attack_types)
+
+        st.session_state["last_attack"]=attack
+
+        st.error(f"""
+
+RED TEAM ATTACK DETECTED
+
+Attack Type: {attack}
+
+MITRE Technique: {mitre_map[attack]}
+
+Attack Simulation:
+Recon → Exploit → Privilege Escalation
+""")
+
+# BLUE TEAM
+
+with col2:
+
+    blue=st.button("Blue Team Response")
+
+    if blue and "last_attack" in st.session_state:
+
+        attack=st.session_state["last_attack"]
+
+        st.info(response_map.get(attack,{}).get("blue","Containment executed"))
+
+# SOC
+
+with col3:
+
+    soc=st.button("SOC Copilot")
+
+    if soc and "last_attack" in st.session_state:
+
+        attack=st.session_state["last_attack"]
+
+        st.warning(response_map.get(attack,{}).get("soc","SOC investigation started"))
+
+# INCIDENT RESPONSE
+
+with col4:
+
+    ir=st.button("Incident Response")
+
+    if ir and "last_attack" in st.session_state:
+
+        attack=st.session_state["last_attack"]
+
+        st.success(response_map.get(attack,{}).get("ir","IR containment executed"))
+
+# THREAT HUNTER
+
+with col5:
+
+    hunter=st.button("Threat Hunter")
+
+    if hunter and "last_attack" in st.session_state:
+
+        attack=st.session_state["last_attack"]
+
+        st.success(response_map.get(attack,{}).get("hunter","Threat hunting started"))
+
+# ---------------------------------------------------------
+# EXPORT RESULTS
+# ---------------------------------------------------------
+
+st.subheader("Export Results")
+
+if "data" in st.session_state and not st.session_state["data"].empty:
+
+    df=st.session_state["data"]
+
+    csv=df.to_csv(index=False).encode()
+
+    st.download_button("Download CSV",csv,"cyber_range.csv")
+
+    st.download_button("Download JSON",df.to_json(),"cyber_range.json")
+
+    buffer=io.BytesIO()
+
+    styles=getSampleStyleSheet()
+
+    elements=[Paragraph("Cyber Range Security Report",styles["Title"]),Spacer(1,20)]
+
+    for i,row in df.iterrows():
+
+        elements.append(Paragraph(str(row.to_dict()),styles["BodyText"]))
+
+    doc=SimpleDocTemplate(buffer)
+
+    doc.build(elements)
+
+    st.download_button("Download PDF",buffer.getvalue(),"cyber_report.pdf")
