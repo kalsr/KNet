@@ -19,7 +19,7 @@ st.set_page_config(layout="wide")
 # -------------------------------------------------
 st.markdown("""
 <h1 style='background-color:#0b3d91;color:white;padding:15px;text-align:center'>
-Agentic AI Cyber Range Platform – Version 8
+Agentic AI Cyber Range Platform – With Red & Blue Teams
 <br>
 AI Cyber Defense Training Environment
 <br>
@@ -291,5 +291,6 @@ if st.session_state.logs:
 
     doc = SimpleDocTemplate(buffer)
     doc.build(elements)
+
 
     st.download_button("Download PDF", buffer.getvalue(), "cyber_range_report.pdf")
