@@ -1,4 +1,4 @@
-]# Cyber-Range-Modified
+# Cyber-Range-Modified
 
 import streamlit as st
 
