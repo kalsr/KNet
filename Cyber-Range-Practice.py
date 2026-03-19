@@ -72,7 +72,7 @@ st.markdown("""
 
 # -------------------------------
 
-st.markdown('<div class="title">KALSNET CYBER RANGE DASHBOARD<br>Developed by Tandy Singh (KNet Consulting Group)</div>', unsafe_allow_html=True)
+st.markdown('<div class="title">KALSNET CYBER RANGE DASHBOARD<br>Developed by Randy Singh (Kalsnet - Consulting Group)</div>', unsafe_allow_html=True)
 
 
 
