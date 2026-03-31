@@ -24,7 +24,7 @@ st.markdown(
     <h2 style='color:blue; font-weight:bold;'>
     Application developed by Randy Singh from Kalsnet (KNet) Consulting Group
     </h2>
-    <h1>🔥 Real-Time Battlefield Intelligence & Target Prioritization System</h1>
+    <h1> Real-Time Battlefield Intelligence & Target Prioritization System</h1>
     """,
     unsafe_allow_html=True
 )
@@ -32,26 +32,26 @@ st.markdown(
 # ------------------------------
 # SIDEBAR CONTROLS + EXPLANATION
 # ------------------------------
-st.sidebar.header("⚙️ Controls")
+st.sidebar.header(" Controls")
 
 num_records = st.sidebar.slider("Synthetic Data Records", 0, 200, 50)
 
-st.sidebar.markdown("### 📘 Data Field Explanation")
+st.sidebar.markdown(" Data Field Explanation")
 st.sidebar.info("""
-**Target_ID**: Unique identifier for each detected target.
+-Target_ID-: Unique identifier for each detected target.
 
-**Threat_Level**: Randomly generated (1–100) representing enemy threat severity.
+-Threat_Level-: Randomly generated (1–100) representing enemy threat severity.
 
-**Distance_km**: Distance from base (1–500 km).
+-Distance_km-: Distance from base (1–500 km).
 
-**Strategic_Value**: Importance of target (1–100).
+-Strategic_Value-: Importance of target (1–100).
 
-**Civilian_Risk**: Risk to civilians (1–100).
+-Civilian_Risk-: Risk to civilians (1–100).
 
 These values are synthetically generated using **NumPy random functions** to simulate real battlefield intelligence feeds.
 """)
 
-if st.sidebar.button("🔄 Generate New Data"):
+if st.sidebar.button(" Generate New Data"):
     st.session_state["data"] = None
 
 # ------------------------------
@@ -84,7 +84,7 @@ df = st.session_state["data"]
 # ------------------------------
 # PRIORITY SCORE EXPLANATION
 # ------------------------------
-st.markdown("### 🧠 How Priority Score is Calculated")
+st.markdown(" How Priority Score is Calculated")
 st.success("""
 Priority Score is calculated using an AI-weighted formula:
 
@@ -101,7 +101,7 @@ This ensures **high-impact, low-risk targets are prioritized**.
 # ------------------------------
 # DISPLAY DATA
 # ------------------------------
-st.subheader("📊 Battlefield Intelligence Data")
+st.subheader(" Battlefield Intelligence Data")
 st.dataframe(df, use_container_width=True)
 
 # ------------------------------
@@ -110,19 +110,19 @@ st.dataframe(df, use_container_width=True)
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    attack = st.button("🔴 Launch Attack Simulation")
+    attack = st.button(" Launch Attack Simulation")
 
 with col2:
-    defense = st.button("🛡️ Defense Mode")
+    defense = st.button(" Defense Mode")
 
 with col3:
-    optimize = st.button("⚡ Optimize Resources")
+    optimize = st.button(" Optimize Resources")
 
 # ------------------------------
 # SIMULATION RESULTS + EXPLANATION
 # ------------------------------
 if attack:
-    st.success("🚀 Attack Simulation Executed")
+    st.success(" Attack Simulation Executed")
 
     st.info("""
     **How Attack Works:**
@@ -137,7 +137,7 @@ if attack:
 
 
 if defense:
-    st.info("🛡️ Defense Mode Activated")
+    st.info(" Defense Mode Activated")
 
     st.info("""
     **How Defense Mode Works:**
@@ -152,7 +152,7 @@ if defense:
 
 
 if optimize:
-    st.warning("⚡ Resource Optimization Running...")
+    st.warning(" Resource Optimization Running...")
 
     st.info("""
     **How Resource Optimization Works:**
@@ -169,7 +169,7 @@ if optimize:
 # ------------------------------
 # VISUALIZATIONS
 # ------------------------------
-st.subheader("📈 Analytics Dashboard")
+st.subheader(" Analytics Dashboard")
 
 col1, col2 = st.columns(2)
 
@@ -206,7 +206,7 @@ st.pyplot(fig3)
 # ------------------------------
 # EXPORT FUNCTIONS
 # ------------------------------
-st.subheader("📤 Export Results")
+st.subheader(" Export Results")
 
 csv = df.to_csv(index=False)
 st.download_button("Download CSV", csv, "battlefield_data.csv")
