@@ -16,7 +16,7 @@ import random
 st.markdown(
     "<h1 style='color:blue; text-align:center;'>"
     "Financial Cyber Attack Simulator<br>"
-    "Developed by Randy Singh (Kalsnet - KNet Consulting Group)"
+    "Developed by Randy Singh (Kalsnet (KNet) - Consulting Group)"
     "</h1>",
     unsafe_allow_html=True
 )
@@ -124,7 +124,7 @@ if st.sidebar.button("Generate Data"):
     st.session_state.data = generate_data(num_records)
     st.session_state.attack_log = []
 
-# ✅ MODIFIED RESET BUTTON
+#  MODIFIED RESET BUTTON
 if st.sidebar.button("Reset Data"):
     st.session_state.data = generate_data(num_records)
     st.session_state.attack_log = []
@@ -134,13 +134,13 @@ if st.sidebar.button("Reset Data"):
 # -----------------------------
 if st.session_state.data is not None:
 
-    st.subheader("📊 Financial Dataset")
+    st.subheader(" Financial Dataset")
     st.dataframe(st.session_state.data)
 
     # -----------------------------
     # ATTACK BUTTON
     # -----------------------------
-    if st.button("🚨 Launch Cyber Attack"):
+    if st.button(" Launch Cyber Attack"):
         attacked_data, details = launch_attack(st.session_state.data)
         st.session_state.data = attacked_data
         st.session_state.attack_log = details
@@ -148,7 +148,7 @@ if st.session_state.data is not None:
     # -----------------------------
     # COUNTER BUTTON
     # -----------------------------
-    if st.button("🛡️ Counter Attack"):
+    if st.button(" Counter Attack"):
         st.session_state.data = counter_attack(st.session_state.data)
 
     # -----------------------------
@@ -170,7 +170,7 @@ if st.session_state.data is not None:
     # ATTACK DETAILS TABLE
     # -----------------------------
     if st.session_state.attack_log:
-        st.subheader("🚨 Compromised Account Details")
+        st.subheader(" Compromised Account Details")
 
         attack_df = pd.DataFrame(st.session_state.attack_log)
         st.dataframe(attack_df)
@@ -178,7 +178,7 @@ if st.session_state.data is not None:
     # -----------------------------
     # GRAPH
     # -----------------------------
-    st.subheader("📉 Damage Visualization")
+    st.subheader(" Damage Visualization")
 
     fig, ax = plt.subplots()
     status_counts = st.session_state.data["Status"].value_counts()
@@ -188,7 +188,7 @@ if st.session_state.data is not None:
     # -----------------------------
     # DAMAGE EXPLANATION
     # -----------------------------
-    st.subheader("📘 Damage Explanation")
+    st.subheader(" Damage Explanation")
 
     st.write("""
     **How Accounts Were Compromised:**
@@ -219,7 +219,7 @@ if st.session_state.data is not None:
     # -----------------------------
     # EXPORT OPTIONS
     # -----------------------------
-    st.subheader("📁 Export Results")
+    st.subheader(" Export Results")
 
     csv = st.session_state.data.to_csv(index=False)
     st.download_button("Download CSV", csv, "data.csv")
