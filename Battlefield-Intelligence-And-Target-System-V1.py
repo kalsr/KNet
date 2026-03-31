@@ -22,7 +22,7 @@ st.set_page_config(page_title="Battlefield AI System", layout="wide")
 st.markdown(
     """
     <h2 style='color:blue; font-weight:bold;'>
-    Application developed by Randy Singh from Kalsnet (KNet) Consulting Group
+    Application developed by Randy Singh - Kalsnet (KNet) Consulting Group
     </h2>
     <h1> Real-Time Battlefield Intelligence & Target Prioritization System</h1>
     """,
