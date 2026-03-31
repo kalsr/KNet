@@ -12,7 +12,7 @@ import random
 # -----------------------------
 st.markdown(
     "<h1 style='color:#0033cc; text-align:center; font-weight:900; font-size:40px;'>"
-    "AI-Powered Financial Cyber Range Platform<br>"
+    "AI-Powered Financial Cyber Range Platform - Developed by Randy Singh Kalsnet (KNet) Consulting Group.<br>"
     "Red Team | Blue Team | SOC | Threat Hunting | AI Detection"
     "</h1>",
     unsafe_allow_html=True
@@ -88,7 +88,7 @@ def blue_team_defense(df):
     return secured
 
 # -----------------------------
-# 🤖 AI FRAUD DETECTION
+#  AI FRAUD DETECTION
 # -----------------------------
 def ai_fraud_detection(df):
     alerts = []
@@ -104,26 +104,26 @@ def ai_fraud_detection(df):
     return alerts
 
 # -----------------------------
-# 🕵️ THREAT HUNTING
+#  THREAT HUNTING
 # -----------------------------
 def threat_hunting(df):
     suspicious = df[df["Transactions"] > 30]
     return suspicious
 
 # -----------------------------
-# 📡 SOC DASHBOARD
+#  SOC DASHBOARD
 # -----------------------------
 def soc_dashboard(alerts):
     if alerts:
-        st.error("🚨 SOC ALERTS DETECTED")
+        st.error(" SOC ALERTS DETECTED")
         st.dataframe(pd.DataFrame(alerts))
     else:
-        st.success("✅ No Threats Detected")
+        st.success(" No Threats Detected")
 
 # -----------------------------
 # UI CONTROLS
 # -----------------------------
-st.sidebar.header("⚙️ Controls")
+st.sidebar.header(" Controls")
 
 num_records = st.sidebar.slider("Select Data Size", 10, 200, 50)
 
@@ -142,7 +142,7 @@ if st.sidebar.button("Reset Data"):
 # -----------------------------
 if st.session_state.data is not None:
 
-    st.subheader("📊 Financial Dataset")
+    st.subheader(" Financial Dataset")
     st.dataframe(st.session_state.data)
 
     colA, colB, colC, colD = st.columns(4)
@@ -157,12 +157,12 @@ if st.session_state.data is not None:
     if colB.button("🔵 Blue Team Defense"):
         st.session_state.data = blue_team_defense(st.session_state.data)
 
-    # 🤖 AI DETECTION
-    if colC.button("🤖 AI Fraud Detection"):
+    #  AI DETECTION
+    if colC.button(" AI Fraud Detection"):
         st.session_state.alerts = ai_fraud_detection(st.session_state.data)
 
-    # 🕵️ THREAT HUNTING
-    if colD.button("🕵️ Threat Hunting"):
+    #  THREAT HUNTING
+    if colD.button(" Threat Hunting"):
         suspicious = threat_hunting(st.session_state.data)
         st.subheader("Suspicious Accounts Identified")
         st.dataframe(suspicious)
@@ -176,20 +176,20 @@ if st.session_state.data is not None:
     total_loss = sum([x["Loss"] for x in st.session_state.attack_log]) if st.session_state.attack_log else 0
 
     col1, col2, col3 = st.columns(3)
-    col1.metric("💰 Total Balance", f"${total_balance:,.0f}")
-    col2.metric("⚠️ Compromised Accounts", compromised)
-    col3.metric("🔥 Total Loss", f"${total_loss:,.0f}")
+    col1.metric(" Total Balance", f"${total_balance:,.0f}")
+    col2.metric(" Compromised Accounts", compromised)
+    col3.metric(" Total Loss", f"${total_loss:,.0f}")
 
     # -----------------------------
     # SOC DASHBOARD
     # -----------------------------
-    st.subheader("📡 SOC Analyst Dashboard")
+    st.subheader(" SOC Analyst Dashboard")
     soc_dashboard(st.session_state.alerts)
 
     # -----------------------------
     # GRAPH
     # -----------------------------
-    st.subheader("📉 Attack Impact Visualization")
+    st.subheader(" Attack Impact Visualization")
 
     fig, ax = plt.subplots()
     status_counts = st.session_state.data["Status"].value_counts()
@@ -200,21 +200,21 @@ if st.session_state.data is not None:
     # ATTACK LOG
     # -----------------------------
     if st.session_state.attack_log:
-        st.subheader("🚨 Attack Details")
+        st.subheader(" Attack Details")
         st.dataframe(pd.DataFrame(st.session_state.attack_log))
 
     # -----------------------------
     # COUNTER ATTACK EXPLANATION
     # -----------------------------
-    st.subheader("🛡️ How Counter Attack Works")
+    st.subheader(" How Counter Attack Works")
 
     st.write("""
-    The **Blue Team Counter Attack** simulates real-world incident response and cyber defense operations. 
+    The Blue Team Counter Attack - simulates real-world incident response and cyber defense operations. 
     Once an attack is detected, the system identifies all compromised accounts and immediately applies containment and remediation strategies. 
-    These include isolating affected accounts, stopping further unauthorized transactions, and marking them as **Recovered**. 
+    These include isolating affected accounts, stopping further unauthorized transactions, and marking them as -Recovered-. 
     Financial recovery is simulated by partially restoring lost funds, representing fraud reimbursement, insurance claims, or rollback mechanisms. 
     In real-world environments, this process would involve Security Operations Center (SOC) monitoring, automated response systems (SOAR), 
     endpoint isolation, credential resets, and deployment of patches or security controls. 
-    The goal of the counter attack is to **minimize financial damage, restore system integrity, and prevent future breaches** 
-    by strengthening defenses such as multi-factor authentication, anomaly detection, and continuous monitoring.
+    The goal of the counter attack is to -minimize financial damage, restore system integrity, and prevent future breaches- 
+    by strengthening defenses such as Multi-Factor Authentication, Anomaly Detection, and Continuous Monitoring.
     """)
