@@ -24,7 +24,7 @@ st.set_page_config(layout="wide")
 # -----------------------------
 st.markdown(
     "<h1 style='text-align:center; color:blue;'>"
-    "Enterprise TPFDD Simulator Web Platform<br>"
+    "Enterprise TPFDD Generator Using AI/ML Platform<br>"
     "Developed by Randy Singh – Kalsnet (KNet) Group"
     "</h1>",
     unsafe_allow_html=True
