@@ -42,3 +42,6 @@ reportlab
 folium
 ultralytics
 streamlit-folium
+python-docx
+ultralytics
+reportlab
