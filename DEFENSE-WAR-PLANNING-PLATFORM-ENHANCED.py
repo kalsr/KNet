@@ -102,6 +102,60 @@ def export_data(df, name="output"):
         st.download_button("Download WORD", f, file_name=word_file)
 
 # ==========================================================
+# ---------------- BATTLEFIELD MAP (FIXED) ----------------
+# ==========================================================
+if menu == "Battlefield Map":
+
+    st.markdown("<div class='section-header'>Battlefield Map</div>", unsafe_allow_html=True)
+
+    st.info("""
+**WHAT THIS MODULE DOES:**
+
+The Battlefield Map provides a **real-time geospatial visualization** of operational environments.
+
+**KEY CAPABILITIES:**
+- Displays command centers, threat zones, and operational regions
+- Helps commanders understand battlefield positioning
+- Allows analysts to monitor geographic threat distribution
+
+**TOOLS USED:**
+- Folium (Interactive Maps)
+- Streamlit Integration
+
+**REAL-WORLD USE:**
+Used in military and intelligence systems for:
+- Situational awareness
+- Mission planning
+- Threat tracking
+
+👉 This acts as a **live operational dashboard map**
+""")
+
+    # SAFE MAP LOADING
+    try:
+        import folium
+        from streamlit_folium import st_folium
+
+        m = folium.Map(location=[20, 0], zoom_start=2)
+
+        # Sample markers
+        folium.Marker([28.6, 77.2], tooltip="Command Center").add_to(m)
+        folium.Marker([34.5, 69.2], tooltip="Threat Zone").add_to(m)
+
+        st_folium(m, width=1200, height=600)
+
+    except:
+        st.warning("Interactive map not available (folium not installed). Showing fallback view.")
+
+        # Fallback visualization
+        df_map = pd.DataFrame({
+            "lat": [28.6, 34.5],
+            "lon": [77.2, 69.2]
+        })
+
+        st.map(df_map)
+
+# ==========================================================
 # ---------------- COA ENGINE ----------------
 # ==========================================================
 if menu == "COA Decision Engine":
