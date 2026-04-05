@@ -44,7 +44,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------- TITLE ----------------
-st.markdown("<div class='title-bar'>Kalsnet (KNet) AI WAR COMMAND PLATFORM</div>", unsafe_allow_html=True)
+st.markdown("<div class='title-bar'>Kalsnet (KNet) AI CONTROLED - WAR COMMAND PLATFORM</div>", unsafe_allow_html=True)
 st.markdown("<div class='subtitle'>Developed by Randy Singh – KNet Consulting Group</div>", unsafe_allow_html=True)
 
 # ---------------- ROLE ----------------
@@ -58,7 +58,7 @@ if role == "Commander":
 Responsible for mission success, strategic decisions, and operational execution.  
 Uses AI outputs (COA, Threat Scores, Logistics) to take action.
 
-👉 Focus: **Decision Making + Execution**
+ Focus: **Decision Making + Execution**
 """)
 else:
     st.info("""
@@ -66,7 +66,7 @@ else:
 Responsible for analyzing data, identifying patterns, and generating intelligence.  
 Supports commanders with insights.
 
-👉 Focus: **Data + Intelligence**
+ Focus: **Data + Intelligence**
 """)
 
 # ---------------- MENU ----------------
@@ -128,7 +128,7 @@ Used in military and intelligence systems for:
 - Mission planning
 - Threat tracking
 
-👉 This acts as a **live operational dashboard map**
+ This acts as a **live operational dashboard map**
 """)
 
     # SAFE MAP LOADING
@@ -169,7 +169,7 @@ if menu == "COA Decision Engine":
 - Logistics → Available resources (fuel, weapons, support)
 - Weather → Environmental condition impact
 
-👉 These fields simulate **real battlefield variables**
+ These fields simulate **real battlefield variables**
 """)
 
     n = st.slider("Synthetic Scenarios", 0, 200, 50)
@@ -198,7 +198,7 @@ Success = (Logistics / Enemy) × Weather
 - More enemy → lower success  
 - Weather → multiplier impact  
 
-👉 Used to simulate **mission success probability**
+Used to simulate **mission success probability**
 """)
 
         st.bar_chart(df["Success"])
@@ -224,7 +224,7 @@ Success = (Logistics / Enemy) × Weather
 - Each node = COA option
 - Edges represent decision paths
 
-👉 Used in military planning for **decision trees & probability flow**
+ Used in military planning for **decision trees & probability flow**
 """)
 
         export_data(df, "coa")
@@ -242,7 +242,7 @@ elif menu == "Threat Detection":
 - Distance → How far threat is
 - Signal → Detection strength / confidence
 
-👉 Used to calculate threat urgency
+ Used to calculate threat urgency
 """)
 
     n = st.slider("Synthetic Threat Data", 0, 200, 50)
@@ -267,7 +267,7 @@ elif menu == "Threat Detection":
 Threat Score = Speed / Distance  
 
 - Faster + closer = higher threat  
-👉 Used for **target prioritization**
+ Used for **target prioritization**
 """)
 
         st.bar_chart(df["ThreatScore"])
@@ -286,7 +286,7 @@ Threat Score = Speed / Distance
 - Network graph shows relationships between base & threats
 - Helps visualize multiple threats simultaneously
 
-👉 Used in **radar tracking & defense systems**
+ Used in **radar tracking & defense systems**
 """)
 
         export_data(df, "threat")
@@ -306,7 +306,7 @@ Threat Score = Speed / Distance
 3. AI assigns confidence scores
 4. Bounding boxes drawn
 
-👉 Used in defense for:
+ Used in defense for:
 - Drone detection
 - Surveillance
 - Target identification
@@ -335,7 +335,7 @@ elif menu == "Logistics Optimization":
 - Cost → Transportation cost
 - Time → Delivery time
 
-👉 Used to optimize supply chain
+ Used to optimize supply chain
 """)
 
     n = st.slider("Synthetic Logistics Data", 0, 200, 50)
@@ -362,7 +362,7 @@ Efficiency = Cost / Time
 
 - Lower cost + faster delivery = better efficiency  
 
-👉 Used for **optimal military logistics planning**
+ Used for **optimal military logistics planning**
 """)
 
         st.bar_chart(df["Efficiency"])
@@ -381,7 +381,7 @@ Efficiency = Cost / Time
 - Edges = routes
 - Weight = cost
 
-👉 Used for **shortest path optimization (like Dijkstra algorithm)**
+ Used for **shortest path optimization (like Dijkstra algorithm)**
 """)
 
         export_data(df, "logistics")
