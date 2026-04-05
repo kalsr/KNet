@@ -39,3 +39,6 @@ Groq
 ollama
 faker
 reportlab
+folium
+ultralytics
+streamlit-folium
