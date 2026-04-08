@@ -28,7 +28,7 @@ import numpy as np
 st.set_page_config(layout="wide")
 
 # ---------------- HEADER ----------------
-st.markdown("<h1 style='text-align:center;color:blue;font-weight:bold;'>Iran's-Critical-Energy-Ifrastructure_Intelligence Dashboard</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align:center;color:blue;font-weight:bold;'>Iran's-Critical-Energy-Infrastructure-Intelligence-Dashboard</h1>", unsafe_allow_html=True)
 st.markdown("<h3 style='text-align:center;color:blue;font-weight:bold;'>Developed by Randy Singh - Kalsnet (KNet) Consulting Group</h3>", unsafe_allow_html=True)
 
 # ---------------- FILE UPLOAD ----------------
