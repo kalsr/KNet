@@ -84,7 +84,7 @@ df["City"] = df.apply(lambda row: get_nearest_city(row["latitude"], row["longitu
 st.sidebar.header("Filters")
 
 fuel = st.sidebar.multiselect("Fuel Type", df["primary_fuel"].unique(), default=df["primary_fuel"].unique())
-capacity = st.sidebar.slider("Capacity (MW)", 0, int(df["capacity_mw"].max()), (0, int(df["capacity_mw"].max()))
+capacity = st.sidebar.slider("Capacity (MW)", 0, int(df["capacity_mw"].max()), (0, int(df["capacity_mw"].max())))
 
 filtered_df = df[
     (df["primary_fuel"].isin(fuel)) &
