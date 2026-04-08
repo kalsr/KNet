@@ -144,7 +144,7 @@ st.info("""
 - System compares coordinates with known city locations
 - Assigns nearest city using distance calculation
 
-👉 This is commonly used in **GIS systems, satellite intelligence, and defense mapping**
+ This is commonly used in **GIS systems, satellite intelligence, and defense mapping**
 """)
 
 # ---------------- CHARTS ----------------
