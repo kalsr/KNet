@@ -28,7 +28,7 @@ import numpy as np
 st.set_page_config(layout="wide")
 
 # ---------------- HEADER ----------------
-st.markdown("<h1 style='text-align:center;color:blue;font-weight:bold;'>Energy Infrastructure Intelligence Dashboard</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align:center;color:blue;font-weight:bold;'>Iran's-Critical-Energy-Ifrastructure_Intelligence Dashboard</h1>", unsafe_allow_html=True)
 st.markdown("<h3 style='text-align:center;color:blue;font-weight:bold;'>Developed by Randy Singh - Kalsnet (KNet) Consulting Group</h3>", unsafe_allow_html=True)
 
 # ---------------- FILE UPLOAD ----------------
@@ -86,7 +86,7 @@ st.info("""
 - **Solar:** Clean energy; dependent on sunlight conditions.
 - **Wind:** Renewable; varies with wind patterns.
 
-👉 These fuel types help assess **energy resilience, dependency, and vulnerability**.
+ These fuel types help assess **energy resilience, dependency, and vulnerability**.
 """)
 
 st.markdown("## 🔹 Data Fields Explained")
@@ -97,7 +97,7 @@ st.info("""
 - **Latitude/Longitude:** Geographic location (from GIS/satellite data)
 - **Country:** Used for geopolitical filtering
 
-👉 Data typically comes from **government databases, satellite mapping, and energy reports**.
+ Data typically comes from **government databases, satellite mapping, and energy reports**.
 """)
 
 # ---------------- KPI ----------------
@@ -121,7 +121,7 @@ This map shows where each power plant is physically located.
 - Bigger dot = higher capacity  
 - Color = fuel type  
 
-👉 Example:
+ Example:
 A large red dot means a **high-capacity oil plant**, while a green dot may represent **renewable energy like hydro or wind**.
 """)
 
@@ -146,7 +146,7 @@ with col1:
     st.info("""
 This chart shows how total power capacity is distributed across fuel types.
 
-👉 Helps answer:
+ Helps answer:
 - Which energy source dominates?
 - How dependent is the country on fossil fuels vs renewables?
 """)
@@ -158,7 +158,7 @@ with col2:
     st.info("""
 This chart highlights the largest power plants by capacity.
 
-👉 Helps identify:
+ Helps identify:
 - Critical infrastructure nodes
 - High-value strategic targets
 - Key contributors to national power supply
