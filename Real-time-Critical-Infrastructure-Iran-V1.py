@@ -147,29 +147,30 @@ st.markdown("---")
 # ==========================================================
 # MAP
 # ==========================================================
-st.subheader("Power Plant Locations by Fuel Type")
 
-st.info("""
-Each marker represents a power plant location.
+st.subheader("Power Plant Locations")
 
-- Color = Fuel Type  
-- Size = Capacity  
-- Hover = Name + Location  
-""")
+if not filtered_df.empty and all(col in filtered_df.columns for col in ["latitude", "longitude"]):
 
-if not filtered_df.empty:
-    fig = px.scatter_mapbox(
-        filtered_df,
-        lat="latitude",
-        lon="longitude",
-        color="primary_fuel",
-        size="capacity_mw",
-        hover_name="name",
-        hover_data=["location_name", "capacity_mw"],
-        zoom=4
-    )
-    fig.update_layout(mapbox_style="open-street-map")
-    st.plotly_chart(fig, use_container_width=True)
+    try:
+        fig = px.scatter_mapbox(
+            filtered_df,
+            lat="latitude",
+            lon="longitude",
+            color="primary_fuel",
+            size="capacity_mw",
+            hover_name="name",
+            zoom=4
+        )
+
+        fig.update_layout(mapbox_style="open-street-map")
+        st.plotly_chart(fig, use_container_width=True)
+
+    except Exception as e:
+        st.error(f"Map rendering error: {e}")
+
+else:
+    st.warning("Map cannot be displayed. Missing or invalid latitude/longitude data.")
 
 # ==========================================================
 # FUEL-SPECIFIC LOCATION VIEW (NEW)
