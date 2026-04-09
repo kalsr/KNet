@@ -1,17 +1,5 @@
 
 
-# Auto-load Global Power Plant Database
-# Country = Iran pre-filter
-# KPI Dashboard (Total Plants, Capacity, Renewable %)
-# Advanced filters (fuel type, capacity range)
-# Interactive map + clustering
-# Charts (fuel mix, top plants, distribution)
-# Data quality indicator (coverage %)
-# Export:CSV,JSON, PDF report (formatted)
-
-# Professional UI styling (blue header, centered)
-# Sidebar controls (modern dashboard style)
-
 
 import streamlit as st
 
