@@ -1,7 +1,7 @@
 
 
 
-streamlit run app.py
+# streamlit run app.py
 
 import streamlit as st
 
