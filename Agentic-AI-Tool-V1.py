@@ -1,101 +1,99 @@
-
-
-
 import streamlit as st
 import pandas as pd
 import numpy as np
 import json
 import matplotlib.pyplot as plt
-from sqlalchemy import create_engine
 from sklearn.linear_model import LinearRegression
 from fpdf import FPDF
 import os
 
-# ✅ FIXED: Updated LangChain import
-try:
-    from langchain_openai import ChatOpenAI
-    LANGCHAIN_AVAILABLE = True
-except:
-    LANGCHAIN_AVAILABLE = False
-
-# -----------------------------
-# CONFIG
-# -----------------------------
+# =============================
+# CONFIG + HEADER (BLUE TITLE)
+# =============================
 st.set_page_config(page_title="Agentic AI Platform", layout="wide")
 
-# -----------------------------
-# HEADER
-# -----------------------------
-st.markdown("<h1 style='text-align:center;'>🚀 Agentic AI Autonomous Platform</h1>", unsafe_allow_html=True)
-st.markdown("<h3 style='text-align:center; color:blue;'>Developed by Randy Singh - Kalsnet (KNet)</h3>", unsafe_allow_html=True)
+st.markdown("""
+<h1 style='text-align:center; color:white; background-color:#003366; padding:15px; border-radius:10px;'>
+🚀 Agentic AI Autonomous Platform
+</h1>
+""", unsafe_allow_html=True)
 
-# -----------------------------
-# INIT LLM (SAFE)
-# -----------------------------
-llm = None
+st.markdown("<h4 style='text-align:center; color:blue;'>Developed by Randy Singh – Kalsnet (KNet)</h4>", unsafe_allow_html=True)
 
-if LANGCHAIN_AVAILABLE:
-    try:
-        if "OPENAI_API_KEY" in st.secrets:
-            os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
+# =============================
+# LLM SETUP (SAFE)
+# =============================
+try:
+    from langchain_openai import ChatOpenAI
+    if "OPENAI_API_KEY" in st.secrets:
+        os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
-        llm = ChatOpenAI(
-            temperature=0.3,
-            model="gpt-4o-mini"
-        )
-    except Exception as e:
-        st.warning("LLM not initialized. Check API key or package install.")
-else:
-    st.warning("LangChain not installed. Running without AI features.")
+    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3)
+except:
+    llm = None
 
-# -----------------------------
-# SAFE LLM CALL
-# -----------------------------
 def call_llm(prompt):
-    if llm:
-        try:
-            return llm.invoke(prompt).content
-        except:
-            return "⚠️ LLM call failed."
-    return "⚠️ No LLM available. Please configure API key."
+    try:
+        return llm.invoke(prompt).content if llm else "LLM not available"
+    except:
+        return "LLM error"
 
-# -----------------------------
+# =============================
 # AGENTS
-# -----------------------------
+# =============================
 def planner_agent(task):
-    prompt = f"Break this task into structured steps:\n{task}"
-    return call_llm(prompt)
+    return call_llm(f"Break this into steps:\n{task}")
 
-def critic_agent(result):
-    prompt = f"Evaluate this result and suggest improvements:\n{result}"
-    return call_llm(prompt)
+def data_agent(task):
+    try:
+        prompt = f"""
+        Create dataset for task: {task}
+        Return JSON with:
+        columns + data (10 rows)
+        """
+        res = call_llm(prompt)
+        data_json = json.loads(res)
+        return pd.DataFrame(data_json["data"], columns=data_json["columns"])
+    except:
+        if "cyber" in task.lower():
+            return pd.DataFrame({
+                "IP": [f"192.168.1.{i}" for i in range(1,50)],
+                "Threat Score": np.random.randint(1,100,49),
+                "Status": np.random.choice(["Safe","Suspicious","Malicious"],49)
+            })
+        elif "finance" in task.lower():
+            return pd.DataFrame({
+                "Revenue": np.random.randint(1000,5000,50),
+                "Cost": np.random.randint(500,3000,50)
+            })
+        else:
+            return pd.DataFrame({
+                "Value": np.random.randint(1,100,50)
+            })
 
 def insight_agent(df):
-    prompt = f"Analyze this dataset:\n{df.head().to_string()}"
-    return call_llm(prompt)
+    return call_llm(f"Analyze dataset:\n{df.head().to_string()}")
 
-# -----------------------------
-# DATA PROCESSING
-# -----------------------------
-def process_data(df):
-    df = df.copy()
-    if "Revenue" in df.columns and "Cost" in df.columns:
-        df["Profit"] = df["Revenue"] - df["Cost"]
-        df["Profit Margin (%)"] = (df["Profit"] / df["Revenue"]) * 100
-    return df
+def critic_agent(text):
+    return call_llm(f"Critique and improve:\n{text}")
 
-# -----------------------------
+def explain_columns(df):
+    return call_llm(f"Explain each column in dataset:\n{df.columns.tolist()}")
+
+# =============================
 # FORECAST
-# -----------------------------
+# =============================
 def forecast(df):
-    if "Revenue" not in df.columns:
+    numeric = df.select_dtypes(include=np.number).columns
+    if len(numeric) == 0:
         return None
 
+    target = numeric[0]
     df = df.reset_index()
     df["index"] = df.index
 
     X = df[["index"]]
-    y = df["Revenue"]
+    y = df[target]
 
     model = LinearRegression()
     model.fit(X, y)
@@ -103,9 +101,9 @@ def forecast(df):
     future = np.array([[len(df)+i] for i in range(5)])
     return model.predict(future)
 
-# -----------------------------
+# =============================
 # PDF EXPORT
-# -----------------------------
+# =============================
 def create_pdf(text):
     pdf = FPDF()
     pdf.add_page()
@@ -118,81 +116,73 @@ def create_pdf(text):
     pdf.output(file)
     return file
 
-# -----------------------------
-# SIDEBAR
-# -----------------------------
-st.sidebar.title("⚙️ Controls")
+# =============================
+# UI CONTROLS
+# =============================
+st.sidebar.title(" Controls")
 
 task = st.sidebar.text_area("Enter Task")
-uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
-db_url = st.sidebar.text_input("SQL Connection String", "sqlite:///data.db")
 run = st.sidebar.button("Run Agentic AI")
 
-# -----------------------------
+# =============================
 # MAIN EXECUTION
-# -----------------------------
+# =============================
 if run:
 
-    st.subheader("🧠 Planner Agent")
-    st.write(planner_agent(task))
+    st.subheader(" Planner Agent")
+    plan = planner_agent(task)
+    st.write(plan)
 
-    # LOAD DATA
-    if uploaded_file:
-        df = pd.read_csv(uploaded_file)
-    else:
-        df = pd.DataFrame({
-            "Revenue": np.random.randint(1000,5000,50),
-            "Cost": np.random.randint(500,3000,50)
-        })
-
-    # SQL
-    engine = create_engine(db_url)
-    df.to_sql("agent_data", engine, if_exists="replace")
-
-    st.subheader("📊 Raw Data")
+    # AUTONOMOUS DATA
+    st.subheader(" Autonomous Data Generation")
+    df = data_agent(task)
     st.dataframe(df)
 
-    # PROCESS
-    df = process_data(df)
-    st.subheader("📈 Processed Data")
-    st.dataframe(df)
+    # COLUMN EXPLANATION
+    st.subheader(" Field Explanation")
+    explanation = explain_columns(df)
+    st.write(explanation)
 
-    # VISUALS
-    col1, col2 = st.columns(2)
+    # DYNAMIC VISUALS
+    st.subheader(" Dynamic Charts")
 
-    with col1:
-        st.write("### Revenue vs Cost")
-        st.bar_chart(df[["Revenue","Cost"]])
+    numeric_cols = df.select_dtypes(include=np.number).columns.tolist()
 
-    with col2:
-        st.write("### Profit Distribution")
+    if len(numeric_cols) >= 2:
+        st.bar_chart(df[numeric_cols[:2]])
+    elif len(numeric_cols) == 1:
+        st.line_chart(df[numeric_cols[0]])
+
+    # PIE CHART
+    if len(numeric_cols) > 0:
         fig, ax = plt.subplots()
-        ax.pie(df["Profit"], autopct='%1.1f%%')
+        ax.hist(df[numeric_cols[0]])
         st.pyplot(fig)
 
     # FORECAST
-    st.subheader("🔮 Forecasting")
+    st.subheader(" Forecast")
     preds = forecast(df)
     if preds is not None:
         st.write(preds)
 
     # INSIGHTS
-    st.subheader("🧠 AI Insights")
+    st.subheader(" Insights")
     insights = insight_agent(df)
     st.write(insights)
 
     # CRITIC
-    st.subheader("🧪 Critic Review")
+    st.subheader(" Critic")
     critique = critic_agent(insights)
     st.write(critique)
 
-    # EXPORT
-    st.subheader("📤 Export")
+    # EXPORTS
+    st.subheader(" Export Options")
+
     st.download_button("Download CSV", df.to_csv(index=False), "data.csv")
     st.download_button("Download JSON", df.to_json(), "data.json")
 
-    pdf_file = create_pdf(insights + "\n\n" + critique)
+    pdf_file = create_pdf(insights + "\n\n" + critique + "\n\n" + explanation)
     with open(pdf_file, "rb") as f:
         st.download_button("Download PDF", f, "report.pdf")
 
-    st.success("✅ Fully Agentic AI Workflow Completed")
+    st.success(" Fully Autonomous Agentic AI Completed")
