@@ -45,3 +45,6 @@ streamlit-folium
 python-docx
 ultralytics
 reportlab
+langchain
+langchain-openai
+openai
