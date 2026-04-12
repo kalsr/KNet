@@ -59,7 +59,7 @@ if run and task:
     with st.spinner("⚡ Running Agentic AI..."):
 
         response = client.chat.completions.create(
-            model="llama3-70b-8192",
+            model="llama3-8b-8192",
             messages=[
                 {"role": "system", "content": "You are an advanced Agentic AI system."},
                 {"role": "user", "content": task}
