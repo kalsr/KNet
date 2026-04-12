@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from fpdf import FPDF
 import os
-st.write("DEBUG SECRETS:", dict(st.secrets))
+
 # =============================
 # CONFIG + BLUE HEADER
 # =============================
