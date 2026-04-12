@@ -20,61 +20,91 @@ st.markdown("""
 </h1>
 """, unsafe_allow_html=True)
 
-st.markdown("<h4 style='text-align:center; color:blue;'>Groq-Powered | Developed by Randy Singh</h4>", unsafe_allow_html=True)
+st.markdown("<h4 style='text-align:center; color:blue;'>Groq Multi-Key Enabled | Kalsnet (KNet)</h4>", unsafe_allow_html=True)
 
 # =============================
-# GROQ LLM SETUP
+# LOAD GROQ KEYS (MULTI-KEY)
 # =============================
-llm = None
+from groq import Groq
 
-try:
-    from groq import Groq
+def load_groq_keys():
+    keys = []
 
-    api_key = None
+    for i in range(1,6):  # support up to 5 keys
+        key_name = f"GROQ_API_KEY_{i}"
+        if key_name in st.secrets:
+            keys.append(st.secrets[key_name])
+
+    # fallback single key
     if "GROQ_API_KEY" in st.secrets:
-        api_key = st.secrets["GROQ_API_KEY"]
-    elif "GROQ_API_KEY" in os.environ:
-        api_key = os.environ["GROQ_API_KEY"]
+        keys.append(st.secrets["GROQ_API_KEY"])
 
-    if api_key:
-        client = Groq(api_key=api_key)
-        llm = client
-        st.sidebar.success("✅ Groq Connected")
-    else:
-        st.sidebar.warning("⚠️ No Groq API Key → Running Offline Mode")
+    return keys
 
-except Exception as e:
-    st.sidebar.warning(f"Groq Load Failed: {e}")
+GROQ_KEYS = load_groq_keys()
 
 # =============================
-# LLM CALL
+# INIT CLIENTS
+# =============================
+clients = []
+for key in GROQ_KEYS:
+    try:
+        clients.append(Groq(api_key=key))
+    except:
+        pass
+
+current_client_index = 0
+
+if len(clients) > 0:
+    st.sidebar.success(f"✅ {len(clients)} Groq Keys Loaded")
+else:
+    st.sidebar.error("❌ No Groq Keys Found")
+
+# =============================
+# LLM CALL WITH FAILOVER
 # =============================
 def call_llm(prompt):
+    global current_client_index
 
-    if llm:
+    for i in range(len(clients)):
         try:
-            response = llm.chat.completions.create(
+            client = clients[(current_client_index + i) % len(clients)]
+
+            response = client.chat.completions.create(
                 model="llama3-70b-8192",
                 messages=[{"role": "user", "content": prompt}]
             )
-            return response.choices[0].message.content
-        except:
-            return "⚠️ Groq LLM error"
 
-    # 🔥 OFFLINE FALLBACK (VERY IMPORTANT)
+            current_client_index = (current_client_index + i) % len(clients)
+
+            st.sidebar.write(f"🔑 Using Key #{current_client_index+1}")
+
+            return response.choices[0].message.content
+
+        except Exception as e:
+            continue
+
+    # FALLBACK MODE
+    return offline_fallback(prompt)
+
+# =============================
+# OFFLINE FALLBACK
+# =============================
+def offline_fallback(prompt):
+
     if "plan" in prompt.lower():
-        return "Step 1: Understand task → Step 2: Generate data → Step 3: Analyze → Step 4: Visualize → Step 5: Report"
+        return "Step 1: Understand → Step 2: Generate Data → Step 3: Analyze → Step 4: Visualize → Step 5: Report"
 
     if "explain" in prompt.lower():
-        return "These columns represent key attributes relevant to the generated dataset."
+        return "Columns represent key attributes of generated dataset."
 
     if "analyze" in prompt.lower():
-        return "The dataset shows patterns, variability, and potential insights."
+        return "Dataset shows trends, patterns, and variability."
 
     if "critique" in prompt.lower():
-        return "Enhance model with more data sources, validation, and predictive analytics."
+        return "Improve by adding more data sources and advanced models."
 
-    return "Autonomous execution completed."
+    return "Autonomous execution complete."
 
 # =============================
 # AGENTS
@@ -87,8 +117,8 @@ def data_agent(task):
     try:
         prompt = f"""
         Create dataset for: {task}
-        Return JSON with:
-        columns + data (10 rows)
+        Return JSON:
+        columns + data
         """
         res = call_llm(prompt)
         data_json = json.loads(res)
@@ -106,19 +136,13 @@ def data_agent(task):
                 "Revenue": np.random.randint(1000,5000,50),
                 "Cost": np.random.randint(500,3000,50)
             })
-        elif "hr" in task.lower():
-            return pd.DataFrame({
-                "Employee": [f"Emp{i}" for i in range(50)],
-                "Salary": np.random.randint(50000,150000,50),
-                "Performance": np.random.randint(1,5,50)
-            })
         else:
             return pd.DataFrame({
                 "Value": np.random.randint(1,100,50)
             })
 
 def insight_agent(df):
-    return call_llm(f"Analyze dataset:\n{df.head().to_string()}")
+    return call_llm(f"Analyze:\n{df.head().to_string()}")
 
 def critic_agent(text):
     return call_llm(f"Critique:\n{text}")
@@ -185,7 +209,7 @@ if run:
     st.subheader("📘 Field Explanation")
     st.write(explain_columns(df))
 
-    # CHARTS
+    # VISUALS
     st.subheader("📊 Visualizations")
 
     numeric_cols = df.select_dtypes(include=np.number).columns.tolist()
@@ -216,7 +240,7 @@ if run:
     critique = critic_agent(insights)
     st.write(critique)
 
-    # EXPORTS
+    # EXPORT
     st.subheader("📤 Export")
 
     st.download_button("Download CSV", df.to_csv(index=False), "data.csv")
@@ -226,4 +250,4 @@ if run:
     with open(pdf_file, "rb") as f:
         st.download_button("Download PDF", f, "report.pdf")
 
-    st.success("✅ Agentic AI Execution Completed")
+    st.success("✅ Multi-Key Agentic AI Execution Complete")
