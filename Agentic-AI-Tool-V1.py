@@ -32,9 +32,9 @@ try:
 
     api_key = None
     if "GROQ_API_KEY" in st.secrets:
-        api_key = st.secrets["GROQ_API_KEY"]
+        api_key = st.secrets["	gsk_...5h55"]
     elif "GROQ_API_KEY" in os.environ:
-        api_key = os.environ["GROQ_API_KEY"]
+        api_key = os.environ["	gsk_...5h55"]
 
     if api_key:
         client = Groq(api_key=api_key)
