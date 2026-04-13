@@ -48,20 +48,20 @@ st.markdown("## 🤖 What is Agentic AI Platform?")
 st.info("""
 An Agentic AI Platform is an autonomous system that can reason, analyze data, and generate insights without constant human control.
 
-### 🧠 Autonomous AI
+###  Autonomous AI
 Makes decisions and interprets user input intelligently.
 
-### 📊 Analytics Engine
+###  Analytics Engine
 Processes raw structured data (cyber, finance, healthcare, etc.) into insights.
 
-### 📄 Reporting Engine
+###  Reporting Engine
 Converts analytics into dashboards, CSV, JSON, and PDF reports.
 """)
 
 # ----------------------------------------------------------
 # USE CASE SELECTION
 # ----------------------------------------------------------
-st.subheader("🎯 Select Use Case")
+st.subheader(" Select Use Case")
 
 mode = st.selectbox("Choose Mode", [
     "Cyber Security",
@@ -72,7 +72,7 @@ mode = st.selectbox("Choose Mode", [
 ])
 
 task = st.text_area("Enter Task")
-run = st.button("🚀 Run AI System")
+run = st.button(" Run AI System")
 
 # ----------------------------------------------------------
 # AI FUNCTION
@@ -183,7 +183,7 @@ if run:
     st.success("AI Response Generated")
     st.write(result)
 
-    st.subheader(f"📊 Analytics Dashboard - {mode}")
+    st.subheader(f" Analytics Dashboard - {mode}")
 
     df = generate_data(mode)
 
@@ -212,7 +212,7 @@ if run:
         "Count": summary.values
     })
 
-    st.subheader("📈 Risk Distribution Summary")
+    st.subheader(" Risk Distribution Summary")
     st.dataframe(summary_df)
 
     # ------------------------------------------------------
@@ -232,17 +232,17 @@ if run:
     # ------------------------------------------------------
     # EXPORTS
     # ------------------------------------------------------
-    st.download_button("⬇️ CSV Export", df.to_csv(index=False), "data.csv")
+    st.download_button(" CSV Export", df.to_csv(index=False), "data.csv")
 
     st.download_button(
-        "⬇️ JSON Export",
+        " JSON Export",
         safe_json(df),
         "data.json",
         mime="application/json"
     )
 
     st.download_button(
-        "⬇️ PDF Export",
+        " PDF Export",
         export_pdf(result),
         "report.pdf"
     )
@@ -251,13 +251,13 @@ if run:
 # FOOTER EXPLANATION
 # ----------------------------------------------------------
 st.markdown("---")
-st.subheader("📖 How System Works")
+st.subheader(" How System Works")
 
 st.markdown("""
-### 🧠 Agentic AI Flow
+###  Agentic AI Flow
 User input → AI reasoning → response generation
 
-### 📊 Analytics Engine
+###  Analytics Engine
 Same dataset is used for:
 - Dashboard table
 - Risk summary
@@ -265,7 +265,7 @@ Same dataset is used for:
 
 ✔ Ensures 100% consistency
 
-### 📄 Reporting Engine
+###  Reporting Engine
 Exports:
 - CSV
 - JSON (fixed safe serialization)
