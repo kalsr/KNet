@@ -63,7 +63,7 @@ def get_groq_key():
     return None
 
 
-st.sidebar.subheader("🔐 Groq API Key (Required)")
+st.sidebar.subheader(" Groq API Key (Required)")
 st.session_state.ui_key = st.sidebar.text_input(
     "Enter GROQ API Key",
     type="password"
@@ -77,12 +77,12 @@ if not api_key:
 
 client = Groq(api_key=api_key)
 
-st.sidebar.success("✅ API Key Loaded Successfully")
+st.sidebar.success(" API Key Loaded Successfully")
 
 # ----------------------------------------------------------
 # MODEL (UPDATED)
 # ----------------------------------------------------------
-GROQ_MODEL = "llama3-70b-8192"
+GROQ_MODEL = "llama-3.3-70b-versatile"
 
 # ----------------------------------------------------------
 # USE CASES (20)
@@ -111,7 +111,7 @@ use_cases = [
     "Custom Use Case"
 ]
 
-st.subheader("🎯 Select Agentic AI Use Case")
+st.subheader(" Select Agentic AI Use Case")
 
 selected_use_case = st.selectbox("Choose Use Case", use_cases)
 
