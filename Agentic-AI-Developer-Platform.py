@@ -1,5 +1,5 @@
 # ==========================================================
-# KALSNET (KNet) – AGENTIC AI PLATFORM (FIXED + ROBUST)
+# KALSNET (KNet) – FIXED GROQ KEY RESOLUTION VERSION
 # ==========================================================
 
 import streamlit as st
@@ -41,37 +41,51 @@ Developed by Randy Singh
 """, unsafe_allow_html=True)
 
 # ----------------------------------------------------------
-# SAFE GROQ KEY LOADER (FIXED)
+# 🔐 GROQ KEY FIX (ROBUST MULTI-SOURCE LOADER)
 # ----------------------------------------------------------
-def load_groq_key():
-    # 1. Streamlit secrets (PRIMARY)
+def get_groq_key():
+    # 1. Streamlit UI input (MOST RELIABLE)
+    if "ui_key" in st.session_state and st.session_state.ui_key:
+        return st.session_state.ui_key
+
+    # 2. Environment variable
+    env_key = os.getenv("GROQ_API_KEY")
+    if env_key:
+        return env_key
+
+    # 3. Streamlit secrets (optional fallback)
     try:
-        if "GROQ_API_KEY" in st.secrets:
+        if hasattr(st, "secrets") and "GROQ_API_KEY" in st.secrets:
             return st.secrets["GROQ_API_KEY"]
-    except Exception:
+    except:
         pass
 
-    # 2. Environment fallback
-    return os.getenv("GROQ_API_KEY", None)
+    return None
 
-api_key = load_groq_key()
+
+st.sidebar.subheader("🔐 Groq API Key (Required)")
+st.session_state.ui_key = st.sidebar.text_input(
+    "Enter GROQ API Key",
+    type="password"
+)
+
+api_key = get_groq_key()
 
 if not api_key:
-    st.error("❌ GROQ API Key missing. Please add it to .streamlit/secrets.toml")
-    st.code('GROQ_API_KEY = "gsk_your_key_here"')
+    st.error("❌ GROQ API Key not found. Please enter it in the sidebar.")
     st.stop()
 
 client = Groq(api_key=api_key)
 
-st.sidebar.success(" Groq API Key Loaded Successfully")
+st.sidebar.success("✅ API Key Loaded Successfully")
 
 # ----------------------------------------------------------
-# UPDATED MODEL (FIXED DEPRECATION ERROR)
+# MODEL (UPDATED)
 # ----------------------------------------------------------
-GROQ_MODEL = "llama3-70b-8192"  # valid current model (or llama3-8b-8192)
+GROQ_MODEL = "llama3-70b-8192"
 
 # ----------------------------------------------------------
-# USE CASES (20 + CUSTOM)
+# USE CASES (20)
 # ----------------------------------------------------------
 use_cases = [
     "Cyber Defense Monitoring",
@@ -97,36 +111,34 @@ use_cases = [
     "Custom Use Case"
 ]
 
-st.subheader(" Select Agentic AI Use Case")
+st.subheader("🎯 Select Agentic AI Use Case")
+
 selected_use_case = st.selectbox("Choose Use Case", use_cases)
 
-custom_use_case = ""
+custom = ""
 if selected_use_case == "Custom Use Case":
-    custom_use_case = st.text_input("Enter your custom use case")
+    custom = st.text_input("Enter Custom Use Case")
 
-mode = custom_use_case if custom_use_case else selected_use_case
+mode = custom if custom else selected_use_case
 
 # ----------------------------------------------------------
 # TASK INPUT
 # ----------------------------------------------------------
 task = st.text_area("Enter Task")
-run = st.button(" Run Agentic AI")
+run = st.button("🚀 Run Agentic AI")
 
 # ----------------------------------------------------------
-# AI ENGINE (FIXED MODEL USAGE)
+# AI ENGINE
 # ----------------------------------------------------------
 def run_ai(task):
     try:
-        response = client.chat.completions.create(
+        res = client.chat.completions.create(
             model=GROQ_MODEL,
-            messages=[
-                {"role": "system", "content": "You are a senior enterprise AI analyst."},
-                {"role": "user", "content": task}
-            ],
+            messages=[{"role": "user", "content": task}],
             temperature=0.7,
             max_tokens=800
         )
-        return response.choices[0].message.content
+        return res.choices[0].message.content
     except Exception as e:
         return f"AI Error: {str(e)}"
 
@@ -143,7 +155,7 @@ def risk(score):
     return "Critical"
 
 # ----------------------------------------------------------
-# REALISTIC DATA GENERATOR (USE CASE AWARE)
+# DATA GENERATOR (USE CASE DEPENDENT)
 # ----------------------------------------------------------
 def generate_data(mode):
     data = []
@@ -153,24 +165,24 @@ def generate_data(mode):
 
         if "Cyber" in mode:
             data.append({
-                "Entity": random.choice(["Firewall", "Endpoint", "Server", "API"]),
-                "Event": random.choice(["Login Attempt", "Malware", "DDoS", "Scan"]),
+                "Entity": random.choice(["Firewall", "Server", "Endpoint", "API"]),
+                "Event": random.choice(["Login", "Scan", "DDoS", "Malware"]),
                 "Source IP": f"192.168.{random.randint(1,255)}.{random.randint(1,255)}",
                 "Score": score
             })
 
         elif "Financial" in mode:
             data.append({
-                "Entity": "Transaction",
-                "Amount": random.randint(10, 20000),
+                "Transaction ID": random.randint(10000, 99999),
+                "Amount": random.randint(50, 20000),
                 "Merchant": random.choice(["Amazon", "Apple", "Stripe"]),
                 "Score": score
             })
 
         elif "Healthcare" in mode:
             data.append({
-                "Entity": "Patient",
-                "Heart Rate": random.randint(60,140),
+                "Patient ID": random.randint(1000, 9999),
+                "Heart Rate": random.randint(60, 140),
                 "BP": f"{random.randint(110,160)}/{random.randint(70,100)}",
                 "Score": score
             })
@@ -187,7 +199,7 @@ def generate_data(mode):
     return df
 
 # ----------------------------------------------------------
-# EXPORT SAFE JSON FIX
+# SAFE JSON FIX
 # ----------------------------------------------------------
 def safe_json(df):
     return json.dumps(df.astype(str).to_dict(orient="records"), indent=2)
@@ -201,7 +213,7 @@ def export_pdf(text):
     styles = getSampleStyleSheet()
 
     doc.build([
-        Paragraph("KNet Enterprise Report", styles["Title"]),
+        Paragraph("KNet Agentic Report", styles["Title"]),
         Spacer(1, 12),
         Paragraph(text.replace("\n", "<br/>"), styles["BodyText"])
     ])
@@ -214,16 +226,15 @@ def export_pdf(text):
 # ----------------------------------------------------------
 if run:
 
-    st.subheader(" AI Reasoning Output")
+    st.subheader(" AI Output")
     result = run_ai(task)
     st.write(result)
 
-    st.subheader(f" Analytics Dashboard - {mode}")
+    st.subheader(f" Dashboard - {mode}")
 
     df = generate_data(mode)
     st.dataframe(df, use_container_width=True)
 
-    # FIXED CONSISTENT RISK SUMMARY
     summary = df["Risk Level"].value_counts().reindex(
         ["Low Risk", "Medium Risk", "High Risk", "Critical"],
         fill_value=0
@@ -234,10 +245,9 @@ if run:
         "Count": summary.values
     })
 
-    st.subheader(" Risk Distribution Summary (MATCHED)")
+    st.subheader(" Risk Distribution")
     st.dataframe(summary_df)
 
-    # CHARTS
     fig, ax = plt.subplots()
     ax.bar(summary_df["Risk Level"], summary_df["Count"])
     st.pyplot(fig)
@@ -246,7 +256,6 @@ if run:
     ax2.pie(summary_df["Count"], labels=summary_df["Risk Level"], autopct="%1.1f%%")
     st.pyplot(fig2)
 
-    # EXPORTS
     st.download_button("CSV", df.to_csv(index=False), "data.csv")
     st.download_button("JSON", safe_json(df), "data.json")
     st.download_button("PDF", export_pdf(result), "report.pdf")
