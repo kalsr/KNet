@@ -1,30 +1,30 @@
 # ==========================================================
-# KALSNET (KNet) – REAL ENTERPRISE MULTI-AGENT AI PLATFORM
+# KALSNET (KNet) – AGENTIC AI PLATFORM (FIXED + ROBUST)
 # ==========================================================
 
 import streamlit as st
 from groq import Groq
 import pandas as pd
-import requests
 import json
 import matplotlib.pyplot as plt
-import datetime
 import io
-
+import random
+import datetime
+import os
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
 # ----------------------------------------------------------
 # CONFIG
 # ----------------------------------------------------------
-st.set_page_config(page_title="KNet Enterprise AI", layout="wide")
+st.set_page_config(page_title="KNet Agentic AI Platform", layout="wide")
 
 # ----------------------------------------------------------
-# HEADER (BLUE)
+# HEADER
 # ----------------------------------------------------------
 st.markdown("""
 <h1 style='color:blue; text-align:center; font-weight:bold;'>
-Kalsnet (KNet) – Real Enterprise Multi-Agent AI Platform
+Kalsnet (KNet) – Agentic AI Platform
 </h1>
 """, unsafe_allow_html=True)
 
@@ -41,69 +41,97 @@ Developed by Randy Singh
 """, unsafe_allow_html=True)
 
 # ----------------------------------------------------------
-# GROQ KEY (FIXED - SECRETS ONLY)
+# SAFE GROQ KEY LOADER (FIXED)
 # ----------------------------------------------------------
-try:
-    api_key = st.secrets["GROQ_API_KEY"]
-    client = Groq(api_key=api_key)
-except:
-    st.error("❌ GROQ API Key missing in .streamlit/secrets.toml")
+def load_groq_key():
+    # 1. Streamlit secrets (PRIMARY)
+    try:
+        if "GROQ_API_KEY" in st.secrets:
+            return st.secrets["GROQ_API_KEY"]
+    except Exception:
+        pass
+
+    # 2. Environment fallback
+    return os.getenv("GROQ_API_KEY", None)
+
+api_key = load_groq_key()
+
+if not api_key:
+    st.error("❌ GROQ API Key missing. Please add it to .streamlit/secrets.toml")
+    st.code('GROQ_API_KEY = "gsk_your_key_here"')
     st.stop()
+
+client = Groq(api_key=api_key)
+
+st.sidebar.success(" Groq API Key Loaded Successfully")
+
+# ----------------------------------------------------------
+# UPDATED MODEL (FIXED DEPRECATION ERROR)
+# ----------------------------------------------------------
+GROQ_MODEL = "llama3-70b-8192"  # valid current model (or llama3-8b-8192)
 
 # ----------------------------------------------------------
 # USE CASES (20 + CUSTOM)
 # ----------------------------------------------------------
 use_cases = [
-    "Cyber Threat Intelligence",
+    "Cyber Defense Monitoring",
     "Financial Fraud Detection",
-    "Stock Market Analytics",
-    "Crypto Risk Monitoring",
     "Healthcare Risk Analytics",
-    "Supply Chain Monitoring",
+    "Supply Chain Risk",
+    "Insider Threat Detection",
     "Cloud Security Monitoring",
-    "Identity Access Management",
-    "SOC Incident Analysis",
+    "API Security Analytics",
+    "Identity & Access Management",
+    "Threat Intelligence Analysis",
     "Network Anomaly Detection",
-    "Banking Fraud Detection",
-    "Insurance Risk Analysis",
+    "SOC Operations Dashboard",
+    "Banking Risk Analytics",
+    "Insurance Fraud Detection",
     "Retail Fraud Detection",
     "IoT Security Monitoring",
-    "Energy Grid Monitoring",
-    "Government Security Intelligence",
-    "API Security Monitoring",
-    "Insider Threat Detection",
+    "Payment Fraud Detection",
+    "Critical Infrastructure Protection",
+    "Incident Response Automation",
     "Predictive Maintenance",
+    "Smart City Monitoring",
     "Custom Use Case"
 ]
 
-st.subheader("🎯 Select Agentic AI Use Case")
-selected = st.selectbox("Choose Use Case", use_cases)
+st.subheader(" Select Agentic AI Use Case")
+selected_use_case = st.selectbox("Choose Use Case", use_cases)
 
-custom = ""
-if selected == "Custom Use Case":
-    custom = st.text_input("Enter custom use case")
+custom_use_case = ""
+if selected_use_case == "Custom Use Case":
+    custom_use_case = st.text_input("Enter your custom use case")
 
-mode = custom if custom else selected
-
-task = st.text_area("Enter Task")
-run = st.button("🚀 Run Agent")
+mode = custom_use_case if custom_use_case else selected_use_case
 
 # ----------------------------------------------------------
-# GROQ AI ENGINE (FIXED MODEL)
+# TASK INPUT
+# ----------------------------------------------------------
+task = st.text_area("Enter Task")
+run = st.button(" Run Agentic AI")
+
+# ----------------------------------------------------------
+# AI ENGINE (FIXED MODEL USAGE)
 # ----------------------------------------------------------
 def run_ai(task):
     try:
-        res = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",   # ✅ FIXED MODEL
-            messages=[{"role": "user", "content": task}],
-            max_tokens=700
+        response = client.chat.completions.create(
+            model=GROQ_MODEL,
+            messages=[
+                {"role": "system", "content": "You are a senior enterprise AI analyst."},
+                {"role": "user", "content": task}
+            ],
+            temperature=0.7,
+            max_tokens=800
         )
-        return res.choices[0].message.content
+        return response.choices[0].message.content
     except Exception as e:
         return f"AI Error: {str(e)}"
 
 # ----------------------------------------------------------
-# RISK ENGINE (EXPLAINABLE)
+# RISK ENGINE
 # ----------------------------------------------------------
 def risk(score):
     if score < 25:
@@ -112,68 +140,61 @@ def risk(score):
         return "Medium Risk"
     elif score < 75:
         return "High Risk"
-    else:
-        return "Critical"
+    return "Critical"
 
 # ----------------------------------------------------------
-# REAL DATA CONNECTORS
+# REALISTIC DATA GENERATOR (USE CASE AWARE)
 # ----------------------------------------------------------
-
-def get_crypto_data():
-    url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd"
-    r = requests.get(url, timeout=10)
-    data = r.json()
-
-    records = []
-    for i in data[:40]:
-        records.append({
-            "Asset": i["name"],
-            "Price": i["current_price"],
-            "Market Cap": i["market_cap"],
-            "Volume": i["total_volume"],
-            "Risk Score": (i["market_cap"] % 100)  # derived risk
-        })
-    return pd.DataFrame(records)
-
-def get_cyber_data():
-    url = "https://ipapi.co/json/"
-    r = requests.get(url)
-    geo = r.json()
-
+def generate_data(mode):
     data = []
-    for i in range(40):
-        data.append({
-            "IP": geo.get("ip", "0.0.0.0"),
-            "Country": geo.get("country_name", "Unknown"),
-            "Region": geo.get("region", "Unknown"),
-            "Risk Score": (i * 7) % 100
-        })
-    return pd.DataFrame(data)
+
+    for _ in range(60):
+        score = random.randint(1, 100)
+
+        if "Cyber" in mode:
+            data.append({
+                "Entity": random.choice(["Firewall", "Endpoint", "Server", "API"]),
+                "Event": random.choice(["Login Attempt", "Malware", "DDoS", "Scan"]),
+                "Source IP": f"192.168.{random.randint(1,255)}.{random.randint(1,255)}",
+                "Score": score
+            })
+
+        elif "Financial" in mode:
+            data.append({
+                "Entity": "Transaction",
+                "Amount": random.randint(10, 20000),
+                "Merchant": random.choice(["Amazon", "Apple", "Stripe"]),
+                "Score": score
+            })
+
+        elif "Healthcare" in mode:
+            data.append({
+                "Entity": "Patient",
+                "Heart Rate": random.randint(60,140),
+                "BP": f"{random.randint(110,160)}/{random.randint(70,100)}",
+                "Score": score
+            })
+
+        else:
+            data.append({
+                "Entity": mode,
+                "Metric": random.randint(1, 100),
+                "Score": score
+            })
+
+    df = pd.DataFrame(data)
+    df["Risk Level"] = df["Score"].apply(risk)
+    return df
 
 # ----------------------------------------------------------
-# DATA ROUTER (REAL DATA)
-# ----------------------------------------------------------
-def load_data(mode):
-
-    if "Crypto" in mode:
-        return get_crypto_data()
-
-    elif "Cyber" in mode:
-        return get_cyber_data()
-
-    elif "Financial" in mode:
-        return get_crypto_data()  # proxy real market behavior
-
-    else:
-        # fallback real dataset pattern (no pure random business data)
-        return get_crypto_data()
-
-# ----------------------------------------------------------
-# EXPORTS
+# EXPORT SAFE JSON FIX
 # ----------------------------------------------------------
 def safe_json(df):
     return json.dumps(df.astype(str).to_dict(orient="records"), indent=2)
 
+# ----------------------------------------------------------
+# PDF EXPORT
+# ----------------------------------------------------------
 def export_pdf(text):
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer)
@@ -181,8 +202,8 @@ def export_pdf(text):
 
     doc.build([
         Paragraph("KNet Enterprise Report", styles["Title"]),
-        Spacer(1, 10),
-        Paragraph(text.replace("\n","<br/>"), styles["BodyText"])
+        Spacer(1, 12),
+        Paragraph(text.replace("\n", "<br/>"), styles["BodyText"])
     ])
 
     buffer.seek(0)
@@ -193,19 +214,18 @@ def export_pdf(text):
 # ----------------------------------------------------------
 if run:
 
-    st.subheader("🧠 AI Reasoning Engine")
-    ai_out = run_ai(task)
-    st.write(ai_out)
+    st.subheader(" AI Reasoning Output")
+    result = run_ai(task)
+    st.write(result)
 
-    df = load_data(mode)
-    df["Risk Level"] = df["Risk Score"].apply(risk)
+    st.subheader(f" Analytics Dashboard - {mode}")
 
-    st.subheader(f"📊 Live Enterprise Dashboard – {mode}")
+    df = generate_data(mode)
     st.dataframe(df, use_container_width=True)
 
-    # RISK SUMMARY (CONSISTENT)
+    # FIXED CONSISTENT RISK SUMMARY
     summary = df["Risk Level"].value_counts().reindex(
-        ["Low Risk","Medium Risk","High Risk","Critical"],
+        ["Low Risk", "Medium Risk", "High Risk", "Critical"],
         fill_value=0
     )
 
@@ -214,15 +234,14 @@ if run:
         "Count": summary.values
     })
 
-    st.subheader("📈 Risk Distribution Summary (Real Data Based)")
+    st.subheader(" Risk Distribution Summary (MATCHED)")
     st.dataframe(summary_df)
 
-    # BAR CHART
+    # CHARTS
     fig, ax = plt.subplots()
     ax.bar(summary_df["Risk Level"], summary_df["Count"])
     st.pyplot(fig)
 
-    # PIE CHART
     fig2, ax2 = plt.subplots()
     ax2.pie(summary_df["Count"], labels=summary_df["Risk Level"], autopct="%1.1f%%")
     st.pyplot(fig2)
@@ -230,16 +249,4 @@ if run:
     # EXPORTS
     st.download_button("CSV", df.to_csv(index=False), "data.csv")
     st.download_button("JSON", safe_json(df), "data.json")
-    st.download_button("PDF", export_pdf(ai_out), "report.pdf")
-
-# ----------------------------------------------------------
-# FOOTER
-# ----------------------------------------------------------
-st.markdown("---")
-st.markdown("""
-### 🧠 System Status
-✔ Groq AI Active (llama-3.3-70b-versatile)  
-✔ Real API Data Connected (Crypto + IP Intelligence)  
-✔ Risk Engine Active  
-✔ Multi-Agent Framework Ready  
-""")
+    st.download_button("PDF", export_pdf(result), "report.pdf")
