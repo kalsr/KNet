@@ -45,13 +45,27 @@ Developed by Randy Singh
 # ----------------------------------------------------------
 # GROQ KEY (STRICTLY FROM SECRETS ONLY)
 # ----------------------------------------------------------
-try:
-    api_key = st.secrets["GROQ_API_KEY"]
-except Exception:
-    st.error("❌ GROQ API Key missing in .streamlit/secrets.toml")
-    st.stop()
+def load_groq_key():
+    try:
+        if "GROQ_API_KEY" in st.secrets:
+            return st.secrets["GROQ_API_KEY"]
+    except Exception as e:
+        st.warning(f"Secrets error: {e}")
 
-client = Groq(api_key=api_key)
+    return None
+
+api_key = load_groq_key()
+
+if not api_key:
+    st.error("""
+❌ GROQ API Key not found.
+
+Fix checklist:
+1. Ensure .streamlit/secrets.toml exists
+2. Ensure key is: GROQ_API_KEY = "xxxxx"
+3. Restart Streamlit
+""")
+    st.stop()
 
 # ----------------------------------------------------------
 # MODEL (CURRENT VALID)
@@ -278,7 +292,7 @@ if run:
     st.dataframe(summary_df)
 
     st.markdown("""
-### 📊 How Risk is Calculated
+###  How Risk is Calculated
 - Risk Score is generated per record (1–100)
 - Low: 0–24
 - Medium: 25–49
