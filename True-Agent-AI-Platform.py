@@ -1,5 +1,5 @@
 # ==========================================================
-# KALSNET (KNet) – TRUE AGENTIC AI PLATFORM
+# KALSNET (KNet) – TRUE AGENTIC AI PLATFORM (FIXED)
 # ==========================================================
 
 import streamlit as st
@@ -26,7 +26,7 @@ st.markdown("<h3 style='color:blue; text-align:center; font-weight:bold;'>Autono
 st.markdown("<h4 style='color:blue; text-align:center; font-weight:bold;'>Developed by Randy Singh</h4>", unsafe_allow_html=True)
 
 # ----------------------------------------------------------
-# AGENTIC AI EXPLANATION (BLUE)
+# AGENTIC AI EXPLANATION
 # ----------------------------------------------------------
 st.markdown("""
 <div style='color:blue; font-weight:bold;'>
@@ -41,17 +41,42 @@ Reporting Engine: Generates dashboards and exports (CSV, JSON, PDF).
 """, unsafe_allow_html=True)
 
 # ----------------------------------------------------------
-# GROQ KEY
+# 🔐 FIXED GROQ KEY MANAGEMENT (LIKE OLD APPS)
 # ----------------------------------------------------------
+st.sidebar.title("🔐 GROQ API Key Management")
+
+def clean_key(key):
+    return key.strip().replace("\n","").replace("\r","").replace('"',"").replace("'","")
+
+api_key = None
+key_source = None
+
+# 1. Try secrets.toml FIRST
 try:
-    api_key = st.secrets["GROQ_API_KEY"]
-    client = Groq(api_key=api_key)
+    if "GROQ_API_KEY" in st.secrets:
+        api_key = clean_key(st.secrets["GROQ_API_KEY"])
+        key_source = "secrets.toml"
 except:
-    st.error("❌ GROQ API Key missing in secrets.toml")
+    pass
+
+# 2. If not found → allow manual entry (LIKE BEFORE)
+if not api_key:
+    user_key = st.sidebar.text_input("Enter GROQ API Key:", type="password")
+    if user_key:
+        api_key = clean_key(user_key)
+        key_source = "User Input"
+
+# 3. Final validation
+if not api_key:
+    st.warning("⚠️ Enter GROQ API Key in sidebar or add to secrets.toml")
     st.stop()
 
+# 4. Initialize client
+client = Groq(api_key=api_key)
+st.sidebar.success(f"✅ GROQ Key Loaded ({key_source})")
+
 # ----------------------------------------------------------
-# USE CASES (20 AGENTS)
+# USE CASES
 # ----------------------------------------------------------
 use_cases = [
     "Cyber Defense Monitoring","Financial Fraud Detection","Healthcare Risk Analytics",
@@ -64,7 +89,7 @@ use_cases = [
     "Other (Enter Your Own)"
 ]
 
-st.subheader(" Select Agent")
+st.subheader("Select Agent")
 selected = st.selectbox("Choose Agentic AI Use Case", use_cases)
 
 custom = ""
@@ -76,11 +101,11 @@ mode = custom if custom else selected
 # ----------------------------------------------------------
 # TASK INPUT
 # ----------------------------------------------------------
-task = st.text_area(" Enter Mission / Task for Agent")
-run = st.button(" Execute Agent")
+task = st.text_area("Enter Mission / Task for Agent")
+run = st.button("Execute Agent")
 
 # ----------------------------------------------------------
-# AI BRAIN
+# AI ENGINE
 # ----------------------------------------------------------
 def run_ai(task):
     try:
@@ -150,28 +175,28 @@ def generate_data(mode):
     return df
 
 # ----------------------------------------------------------
-# AGENT ACTION ENGINE (NEW CORE)
+# AGENT LOGIC
 # ----------------------------------------------------------
 def run_agent_logic(mode, df):
 
     if "Cyber" in mode:
         threats = df[df["Risk Level"].isin(["High Risk","Critical"])]
-        return f" Detected {len(threats)} potential cyber threats. Blocking suspicious IPs."
+        return f"Detected {len(threats)} cyber threats. Blocking suspicious IPs."
 
     elif "Financial" in mode:
         fraud = df[df["Risk Level"] == "Critical"]
-        return f" Flagged {len(fraud)} fraudulent transactions. Initiating review."
+        return f"Flagged {len(fraud)} fraudulent transactions."
 
     elif "Healthcare" in mode:
         patients = df[df["Risk Level"].isin(["High Risk","Critical"])]
-        return f" {len(patients)} high-risk patients detected. Alerting medical staff."
+        return f"{len(patients)} high-risk patients detected."
 
     elif "Supply Chain" in mode:
         delays = df[df["Risk Level"].isin(["High Risk","Critical"])]
-        return f" {len(delays)} shipment risks detected. Escalating logistics."
+        return f"{len(delays)} shipment risks detected."
 
     else:
-        return " Agent executed task and analyzed operational data."
+        return "Agent executed task successfully."
 
 # ----------------------------------------------------------
 # EXPORTS
@@ -198,29 +223,24 @@ def export_pdf(text):
 # ----------------------------------------------------------
 if run:
 
-    st.subheader(" AI Reasoning Engine Output")
+    st.subheader("AI Output")
     ai_result = run_ai(task)
     st.write(ai_result)
 
-    # DATA
     df = generate_data(mode)
 
-    # AGENT ACTION
-    st.subheader(" Agent Execution Result")
-    action_result = run_agent_logic(mode, df)
-    st.success(action_result)
+    st.subheader("Agent Execution")
+    action = run_agent_logic(mode, df)
+    st.success(action)
 
-    # DASHBOARD
-    st.subheader(f" Analytics Dashboard - {mode}")
+    st.subheader(f"Analytics Dashboard - {mode}")
     st.dataframe(df)
 
-    # SHOW ROWS BY RISK
-    st.subheader(" Risk Breakdown (Rows)")
+    st.subheader("Risk Breakdown")
     for level in ["Low Risk","Medium Risk","High Risk","Critical"]:
-        st.markdown(f"### {level}")
+        st.write(level)
         st.dataframe(df[df["Risk Level"] == level])
 
-    # SUMMARY
     summary = df["Risk Level"].value_counts().reindex(
         ["Low Risk","Medium Risk","High Risk","Critical"], fill_value=0
     )
@@ -230,10 +250,9 @@ if run:
         "Count": summary.values
     })
 
-    st.subheader(" Risk Distribution Summary")
+    st.subheader("Risk Summary")
     st.dataframe(summary_df)
 
-    # CHARTS
     fig1, ax1 = plt.subplots()
     ax1.bar(summary_df["Risk Level"], summary_df["Count"])
     st.pyplot(fig1)
@@ -242,7 +261,6 @@ if run:
     ax2.pie(summary_df["Count"], labels=summary_df["Risk Level"], autopct="%1.1f%%")
     st.pyplot(fig2)
 
-    # EXPORTS
     st.download_button("CSV", df.to_csv(index=False), "data.csv")
     st.download_button("JSON", safe_json(df), "data.json")
-    st.download_button("PDF", export_pdf(ai_result + "\n" + action_result), "report.pdf")
+    st.download_button("PDF", export_pdf(ai_result + "\n" + action), "report.pdf")
