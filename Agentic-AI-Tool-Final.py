@@ -1,5 +1,6 @@
 # ==========================================================
-# KALSNET (KNet) – ENTERPRISE AGENTIC AI + CYBER RANGE SYSTEM
+# KALSNET (KNet) – AGENTIC AI + CYBER RANGE PLATFORM
+# GROQ KEY ONLY VERSION (FIXED)
 # ==========================================================
 
 import streamlit as st
@@ -16,47 +17,34 @@ from reportlab.lib.styles import getSampleStyleSheet
 # ----------------------------------------------------------
 # PAGE CONFIG
 # ----------------------------------------------------------
-st.set_page_config(page_title="KNet Cyber AI Platform", layout="wide")
+st.set_page_config(page_title="KNet AI Platform", layout="wide")
 
 # ----------------------------------------------------------
-# HEADER (ALWAYS SHOW FIRST)
+# HEADER
 # ----------------------------------------------------------
 st.markdown("<h1 style='color:blue; text-align:center;'>Kalsnet (KNet) – Agentic AI Platform</h1>", unsafe_allow_html=True)
 st.markdown("<h3 style='color:blue; text-align:center;'>Autonomous AI + Analytics + Reporting Engine</h3>", unsafe_allow_html=True)
 st.markdown("<h4 style='color:blue; text-align:center;'>Developed by Randy Singh</h4>", unsafe_allow_html=True)
 
 # ----------------------------------------------------------
-# SIDEBAR AUTH (FIXED SAFE GATE)
+# GROQ API KEY (ONLY REQUIREMENT)
 # ----------------------------------------------------------
-st.sidebar.title("🔐 Access Control (Optional)")
+st.sidebar.title("🔑 GROQ API KEY")
 
-password = st.sidebar.text_input("Enter Password:", type="password")
+api_key = st.sidebar.text_input("Enter your GROQ API Key:", type="password")
 
-access_granted = (password == "knet123")
+if not api_key:
+    st.warning("⚠️ Please enter GROQ API key to continue")
+    st.stop()
 
-if password and not access_granted:
-    st.sidebar.error("❌ Incorrect Password")
+client = Groq(api_key=api_key)
 
-if access_granted:
-    st.sidebar.success("✅ Access Granted")
-else:
-    st.sidebar.info("ℹ️ Enter password to enable execution features")
-
-# ----------------------------------------------------------
-# GROQ API (ALWAYS AVAILABLE UI)
-# ----------------------------------------------------------
-st.sidebar.markdown("---")
-api_key = st.sidebar.text_input("GROQ API Key", type="password")
-
-if api_key:
-    client = Groq(api_key=api_key)
-else:
-    client = None
+st.sidebar.success("✅ API Key Loaded")
 
 # ----------------------------------------------------------
 # USE CASES
 # ----------------------------------------------------------
-st.subheader("🎯 Select Use Case")
+st.subheader("🎯 Select Agentic AI Use Case")
 
 mode = st.selectbox("Choose Mode", [
     "Cyber Range Simulation",
@@ -68,6 +56,20 @@ mode = st.selectbox("Choose Mode", [
 
 task = st.text_area("Enter Task")
 run = st.button("🚀 Run System")
+
+# ----------------------------------------------------------
+# AI FUNCTION
+# ----------------------------------------------------------
+def run_ai(task):
+    try:
+        res = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "user", "content": task}],
+            max_tokens=600
+        )
+        return res.choices[0].message.content
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 # ----------------------------------------------------------
 # RISK ENGINE
@@ -83,56 +85,32 @@ def risk(score):
         return "Critical"
 
 # ----------------------------------------------------------
-# CYBER GENERATOR
+# CYBER EVENT GENERATOR
 # ----------------------------------------------------------
 def cyber_event():
     return {
         "Timestamp": datetime.datetime.now(),
         "Source IP": f"192.168.{random.randint(1,255)}.{random.randint(1,255)}",
+        "Destination IP": f"10.0.{random.randint(1,255)}.{random.randint(1,255)}",
         "Attack Type": random.choice(["Brute Force", "Malware", "Phishing", "Exfiltration"]),
         "Severity Score": random.randint(1,100)
     }
 
 # ----------------------------------------------------------
-# AI FUNCTION
-# ----------------------------------------------------------
-def run_ai(task):
-    if not client:
-        return "API key missing"
-
-    try:
-        res = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
-            messages=[{"role":"user","content":task}],
-            max_tokens=600
-        )
-        return res.choices[0].message.content
-    except:
-        return None
-
-# ----------------------------------------------------------
-# EXECUTION (ONLY BLOCKED HERE, NOT UI)
+# EXECUTION
 # ----------------------------------------------------------
 if run:
 
-    if not access_granted:
-        st.error("🔒 Enter correct password to run system")
-        st.stop()
-
     result = run_ai(task)
 
-    if not result:
-        st.error("AI execution failed")
-        st.stop()
-
-    st.success("AI Response")
+    st.success("✅ AI Response")
     st.write(result)
 
     st.subheader(f"📊 Analytics Dashboard - {mode}")
 
     records = []
 
-    # ---------------- CYBER RANGE ----------------
+    # ---------------- CYBER ----------------
     if mode == "Cyber Range Simulation":
         for _ in range(40):
             records.append(cyber_event())
@@ -172,13 +150,17 @@ if run:
 
     df = pd.DataFrame(records)
 
-    # pick score column safely
-    score_col = [c for c in df.columns if "Score" in c][0] if any("Score" in c for c in df.columns) else df.columns[-1]
+    # safe score detection
+    score_col = [c for c in df.columns if "Score" in c or "Amount" in c or "Metric" in c]
+    score_col = score_col[0] if score_col else df.columns[-1]
+
     df["Risk Level"] = df[score_col].apply(risk)
 
     st.dataframe(df, use_container_width=True)
 
-    # ---------------- CONSISTENT SUMMARY ----------------
+    # ------------------------------------------------------
+    # CONSISTENT RISK SUMMARY
+    # ------------------------------------------------------
     summary = df["Risk Level"].value_counts().reindex(
         ["Low Risk","Medium Risk","High Risk","Critical"], fill_value=0
     )
@@ -188,46 +170,54 @@ if run:
         "Count": summary.values
     })
 
-    st.subheader("📈 Risk Summary")
+    st.subheader("📈 Risk Distribution Summary")
     st.dataframe(summary_df)
 
-    # ---------------- CHARTS ----------------
+    # ------------------------------------------------------
+    # BAR CHART
+    # ------------------------------------------------------
     fig1, ax1 = plt.subplots()
     ax1.bar(summary_df["Risk Level"], summary_df["Count"])
     st.pyplot(fig1)
 
+    # ------------------------------------------------------
+    # PIE CHART
+    # ------------------------------------------------------
     fig2, ax2 = plt.subplots()
     ax2.pie(summary_df["Count"], labels=summary_df["Risk Level"], autopct="%1.1f%%")
     st.pyplot(fig2)
 
-    # ---------------- EXPORTS ----------------
-    st.download_button("CSV", df.to_csv(index=False), "data.csv")
-    st.download_button("JSON", json.dumps(df.to_dict(), indent=2), "data.json")
+    # ------------------------------------------------------
+    # EXPORT CSV
+    # ------------------------------------------------------
+    st.download_button("⬇️ CSV", df.to_csv(index=False), "data.csv")
 
-    def pdf_export(text):
-        buf = io.BytesIO()
-        doc = SimpleDocTemplate(buf)
+    # ------------------------------------------------------
+    # EXPORT JSON
+    # ------------------------------------------------------
+    st.download_button("⬇️ JSON", json.dumps(df.to_dict(), indent=2), "data.json")
+
+    # ------------------------------------------------------
+    # EXPORT PDF
+    # ------------------------------------------------------
+    def export_pdf(text):
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(buffer)
         style = getSampleStyleSheet()
 
         doc.build([
-            Paragraph("KNet Report", style["Title"]),
+            Paragraph("KNet AI Report", style["Title"]),
             Spacer(1, 12),
             Paragraph(text.replace("\n","<br/>"), style["BodyText"])
         ])
 
-        buf.seek(0)
-        return buf
+        buffer.seek(0)
+        return buffer
 
-    st.download_button("PDF", pdf_export(result), "report.pdf")
+    st.download_button("⬇️ PDF", export_pdf(result), "report.pdf")
 
 # ----------------------------------------------------------
 # FOOTER
 # ----------------------------------------------------------
 st.markdown("---")
-st.markdown("""
-### 📌 System Behavior
-- UI always loads
-- Password only blocks execution (not interface)
-- Analytics is mode-based
-- Risk summary always matches dataset exactly
-""")
+st.markdown("### 📌 System Info: Only GROQ API Key required. No password gating.")
