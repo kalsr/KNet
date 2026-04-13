@@ -99,7 +99,7 @@ mode = custom_use_case if custom_use_case else selected_use_case
 # TASK INPUT
 # ----------------------------------------------------------
 task = st.text_area("Enter Task for Agent")
-run = st.button("🚀 Run Agentic AI")
+run = st.button(" Run Agentic AI")
 
 # ----------------------------------------------------------
 # AI ENGINE
