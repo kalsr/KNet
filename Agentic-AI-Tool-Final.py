@@ -14,71 +14,60 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
 # ----------------------------------------------------------
-# CONFIG
+# PAGE CONFIG
 # ----------------------------------------------------------
 st.set_page_config(page_title="KNet Cyber AI Platform", layout="wide")
 
 # ----------------------------------------------------------
-# ACCESS CONTROL
-# ----------------------------------------------------------
-st.sidebar.title("🔐 Security Access")
-
-password = st.sidebar.text_input("Enter System Password:", type="password")
-
-if password != "knet123":
-    st.warning("Access Denied")
-    st.stop()
-
-# ----------------------------------------------------------
-# HEADER
+# HEADER (ALWAYS SHOW FIRST)
 # ----------------------------------------------------------
 st.markdown("<h1 style='color:blue; text-align:center;'>Kalsnet (KNet) – Agentic AI Platform</h1>", unsafe_allow_html=True)
 st.markdown("<h3 style='color:blue; text-align:center;'>Autonomous AI + Analytics + Reporting Engine</h3>", unsafe_allow_html=True)
 st.markdown("<h4 style='color:blue; text-align:center;'>Developed by Randy Singh</h4>", unsafe_allow_html=True)
 
 # ----------------------------------------------------------
-# GROQ API
+# SIDEBAR AUTH (FIXED SAFE GATE)
+# ----------------------------------------------------------
+st.sidebar.title("🔐 Access Control (Optional)")
+
+password = st.sidebar.text_input("Enter Password:", type="password")
+
+access_granted = (password == "knet123")
+
+if password and not access_granted:
+    st.sidebar.error("❌ Incorrect Password")
+
+if access_granted:
+    st.sidebar.success("✅ Access Granted")
+else:
+    st.sidebar.info("ℹ️ Enter password to enable execution features")
+
+# ----------------------------------------------------------
+# GROQ API (ALWAYS AVAILABLE UI)
 # ----------------------------------------------------------
 st.sidebar.markdown("---")
 api_key = st.sidebar.text_input("GROQ API Key", type="password")
 
-if not api_key:
-    st.stop()
-
-client = Groq(api_key=api_key)
+if api_key:
+    client = Groq(api_key=api_key)
+else:
+    client = None
 
 # ----------------------------------------------------------
-# MODE SELECTOR (NEW: CYBER RANGE)
+# USE CASES
 # ----------------------------------------------------------
-st.subheader("🎯 Select Mode")
+st.subheader("🎯 Select Use Case")
 
 mode = st.selectbox("Choose Mode", [
-    "Agentic AI Analytics",
-    "Cyber Range Simulation (NEW)",
+    "Cyber Range Simulation",
     "Financial Fraud Simulation",
     "Supply Chain Risk",
-    "Healthcare Analytics"
+    "Healthcare Analytics",
+    "Custom Analytics"
 ])
 
-# ----------------------------------------------------------
-# TASK INPUT
-# ----------------------------------------------------------
 task = st.text_area("Enter Task")
-run = st.button("🚀 Execute System")
-
-# ----------------------------------------------------------
-# AI FUNCTION
-# ----------------------------------------------------------
-def run_ai(task):
-    try:
-        res = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
-            messages=[{"role": "user", "content": task}],
-            max_tokens=800
-        )
-        return res.choices[0].message.content
-    except:
-        return None
+run = st.button("🚀 Run System")
 
 # ----------------------------------------------------------
 # RISK ENGINE
@@ -94,29 +83,46 @@ def risk(score):
         return "Critical"
 
 # ----------------------------------------------------------
-# CYBER RANGE ATTACK ENGINE (NEW)
+# CYBER GENERATOR
 # ----------------------------------------------------------
-def cyber_attack_generator():
-    attack_types = ["Brute Force", "Malware Injection", "Phishing", "Data Exfiltration", "Insider Threat"]
-
+def cyber_event():
     return {
         "Timestamp": datetime.datetime.now(),
         "Source IP": f"192.168.{random.randint(1,255)}.{random.randint(1,255)}",
-        "Target System": f"Server-{random.randint(1,20)}",
-        "Attack Type": random.choice(attack_types),
-        "Payload Size": random.randint(50, 5000),
-        "Severity Score": random.randint(1, 100)
+        "Attack Type": random.choice(["Brute Force", "Malware", "Phishing", "Exfiltration"]),
+        "Severity Score": random.randint(1,100)
     }
 
 # ----------------------------------------------------------
-# EXECUTION
+# AI FUNCTION
+# ----------------------------------------------------------
+def run_ai(task):
+    if not client:
+        return "API key missing"
+
+    try:
+        res = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[{"role":"user","content":task}],
+            max_tokens=600
+        )
+        return res.choices[0].message.content
+    except:
+        return None
+
+# ----------------------------------------------------------
+# EXECUTION (ONLY BLOCKED HERE, NOT UI)
 # ----------------------------------------------------------
 if run:
+
+    if not access_granted:
+        st.error("🔒 Enter correct password to run system")
+        st.stop()
 
     result = run_ai(task)
 
     if not result:
-        st.error("AI failed")
+        st.error("AI execution failed")
         st.stop()
 
     st.success("AI Response")
@@ -126,69 +132,53 @@ if run:
 
     records = []
 
-    # ------------------------------------------------------
-    # CYBER RANGE MODE (NEW ADVANCED SYSTEM)
-    # ------------------------------------------------------
-    if mode == "Cyber Range Simulation (NEW)":
+    # ---------------- CYBER RANGE ----------------
+    if mode == "Cyber Range Simulation":
         for _ in range(40):
-            records.append(cyber_attack_generator())
+            records.append(cyber_event())
 
-    # ------------------------------------------------------
-    # FINANCIAL
-    # ------------------------------------------------------
+    # ---------------- FINANCE ----------------
     elif mode == "Financial Fraud Simulation":
         for _ in range(40):
             records.append({
                 "Account": random.randint(1000,9999),
-                "Transaction Amount": random.randint(100,10000),
-                "Location": random.choice(["US","UK","IN","EU"]),
+                "Amount": random.randint(100,10000),
                 "Risk Score": random.randint(1,100)
             })
 
-    # ------------------------------------------------------
-    # SUPPLY CHAIN
-    # ------------------------------------------------------
+    # ---------------- SUPPLY ----------------
     elif mode == "Supply Chain Risk":
         for _ in range(40):
             records.append({
-                "Supplier": f"Vendor-{random.randint(1,60)}",
-                "Delay Days": random.randint(0,30),
-                "Status": random.choice(["On-Time","Delayed","Critical Delay"]),
+                "Supplier": f"Vendor-{random.randint(1,50)}",
+                "Delay": random.randint(0,30),
                 "Risk Score": random.randint(1,100)
             })
 
-    # ------------------------------------------------------
-    # HEALTHCARE
-    # ------------------------------------------------------
+    # ---------------- HEALTH ----------------
     elif mode == "Healthcare Analytics":
         for _ in range(40):
             records.append({
-                "Patient ID": random.randint(10000,99999),
-                "Condition": random.choice(["Stable","Risk","Critical"]),
-                "Vitals Score": random.randint(1,100)
+                "Patient": random.randint(1000,9999),
+                "Risk Score": random.randint(1,100)
             })
 
-    # ------------------------------------------------------
-    # DEFAULT AGENTIC MODE
-    # ------------------------------------------------------
+    # ---------------- CUSTOM ----------------
     else:
         for _ in range(40):
             records.append({
-                "Record": random.randint(1,1000),
                 "Metric": random.randint(1,100)
             })
 
     df = pd.DataFrame(records)
 
-    # detect score column
-    score_col = [c for c in df.columns if "Score" in c or "Payload" in c or "Metric" in c][-1]
+    # pick score column safely
+    score_col = [c for c in df.columns if "Score" in c][0] if any("Score" in c for c in df.columns) else df.columns[-1]
     df["Risk Level"] = df[score_col].apply(risk)
 
     st.dataframe(df, use_container_width=True)
 
-    # ------------------------------------------------------
-    # RISK SUMMARY (100% CONSISTENT FIX)
-    # ------------------------------------------------------
+    # ---------------- CONSISTENT SUMMARY ----------------
     summary = df["Risk Level"].value_counts().reindex(
         ["Low Risk","Medium Risk","High Risk","Critical"], fill_value=0
     )
@@ -198,68 +188,46 @@ if run:
         "Count": summary.values
     })
 
-    st.subheader("📈 Risk Distribution Summary")
+    st.subheader("📈 Risk Summary")
     st.dataframe(summary_df)
 
-    # ------------------------------------------------------
-    # CHARTS
-    # ------------------------------------------------------
+    # ---------------- CHARTS ----------------
     fig1, ax1 = plt.subplots()
     ax1.bar(summary_df["Risk Level"], summary_df["Count"])
-    ax1.set_title("Risk Distribution")
     st.pyplot(fig1)
 
     fig2, ax2 = plt.subplots()
     ax2.pie(summary_df["Count"], labels=summary_df["Risk Level"], autopct="%1.1f%%")
     st.pyplot(fig2)
 
-    # ------------------------------------------------------
-    # EXPORTS
-    # ------------------------------------------------------
-    st.download_button("CSV Export", df.to_csv(index=False), "data.csv")
-    st.download_button("JSON Export", json.dumps(df.to_dict(), indent=2), "data.json")
+    # ---------------- EXPORTS ----------------
+    st.download_button("CSV", df.to_csv(index=False), "data.csv")
+    st.download_button("JSON", json.dumps(df.to_dict(), indent=2), "data.json")
 
     def pdf_export(text):
-        buffer = io.BytesIO()
-        doc = SimpleDocTemplate(buffer)
+        buf = io.BytesIO()
+        doc = SimpleDocTemplate(buf)
         style = getSampleStyleSheet()
 
         doc.build([
-            Paragraph("KNet Cyber AI Report", style["Title"]),
+            Paragraph("KNet Report", style["Title"]),
             Spacer(1, 12),
             Paragraph(text.replace("\n","<br/>"), style["BodyText"])
         ])
 
-        buffer.seek(0)
-        return buffer
+        buf.seek(0)
+        return buf
 
-    st.download_button("PDF Export", pdf_export(result), "report.pdf")
+    st.download_button("PDF", pdf_export(result), "report.pdf")
 
 # ----------------------------------------------------------
-# EXPLANATION
+# FOOTER
 # ----------------------------------------------------------
 st.markdown("---")
-st.subheader("📖 System Overview")
-
 st.markdown("""
-### 🔴 Cyber Range Mode (NEW)
-Simulates real-world cyber attacks:
-- Brute force
-- Malware injection
-- Phishing
-- Insider threats
-- Data exfiltration
-
-### 🛡️ AI Defense Layer
-Each event is scored and classified into risk levels:
-Low → Medium → High → Critical
-
-### 📊 Analytics Engine
-All dashboards are derived from SAME dataset ensuring:
-✔ No mismatch  
-✔ Real-time consistency  
-✔ Enterprise SOC-style analytics  
-
-### 🤖 Agentic AI Layer
-Interprets user task, generates reasoning, and produces structured intelligence output.
+### 📌 System Behavior
+- UI always loads
+- Password only blocks execution (not interface)
+- Analytics is mode-based
+- Risk summary always matches dataset exactly
 """)
