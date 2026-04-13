@@ -81,7 +81,7 @@ run = st.button(" Run Enterprise AI System")
 def run_ai(task):
     try:
         res = client.chat.completions.create(
-            model="llama3-8b-8192",
+            model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": task}],
             max_tokens=600
         )
