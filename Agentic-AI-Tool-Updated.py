@@ -1,7 +1,6 @@
 
-
 # ==========================================================
-# KALSNET (KNet) – AGENTIC AI PLATFORM (CONSISTENT FINAL FIX)
+# KALSNET (KNet) – AGENTIC AI PLATFORM (STABLE FINAL BUILD)
 # ==========================================================
 
 import streamlit as st
@@ -35,29 +34,28 @@ st.sidebar.title("🔑 GROQ API KEY")
 api_key = st.sidebar.text_input("Enter API Key", type="password")
 
 if not api_key:
-    st.warning("Enter GROQ API Key to continue")
+    st.warning("Please enter GROQ API Key")
     st.stop()
 
 client = Groq(api_key=api_key)
-
 st.sidebar.success("API Key Loaded")
 
 # ----------------------------------------------------------
-# AGENTIC AI EXPLANATION (FIXED + COMPLETE)
+# AGENTIC AI EXPLANATION
 # ----------------------------------------------------------
 st.markdown("## 🤖 What is Agentic AI Platform?")
 
 st.info("""
-An **Agentic AI Platform** is an intelligent system that can autonomously perform reasoning, decision-making, analytics, and reporting without constant human intervention.
+An Agentic AI Platform is an autonomous system that can reason, analyze data, and generate insights without constant human control.
 
 ### 🧠 Autonomous AI
-This is the reasoning core that understands user input, makes decisions, and generates structured outputs.
+Makes decisions and interprets user input intelligently.
 
 ### 📊 Analytics Engine
-This processes raw data (cyber logs, financial transactions, operational metrics) and converts them into insights and risk scores.
+Processes raw structured data (cyber, finance, healthcare, etc.) into insights.
 
 ### 📄 Reporting Engine
-This converts analytics into human-readable outputs such as tables, dashboards, CSV, JSON, and PDF reports.
+Converts analytics into dashboards, CSV, JSON, and PDF reports.
 """)
 
 # ----------------------------------------------------------
@@ -65,16 +63,16 @@ This converts analytics into human-readable outputs such as tables, dashboards, 
 # ----------------------------------------------------------
 st.subheader("🎯 Select Use Case")
 
-mode = st.selectbox("Choose Scenario", [
-    "Cyber Security Monitoring",
-    "Financial Fraud Detection",
-    "Supply Chain Monitoring",
-    "Healthcare Risk Analytics",
+mode = st.selectbox("Choose Mode", [
+    "Cyber Security",
+    "Financial Fraud",
+    "Supply Chain",
+    "Healthcare",
     "Custom Analytics"
 ])
 
 task = st.text_area("Enter Task")
-run = st.button("🚀 Run Agentic AI System")
+run = st.button("🚀 Run AI System")
 
 # ----------------------------------------------------------
 # AI FUNCTION
@@ -104,7 +102,7 @@ def risk(score):
         return "Critical"
 
 # ----------------------------------------------------------
-# DATA GENERATION (CONSISTENT DESIGN)
+# DATA GENERATOR
 # ----------------------------------------------------------
 def generate_data(mode):
     records = []
@@ -112,32 +110,32 @@ def generate_data(mode):
     for _ in range(40):
         score = random.randint(1, 100)
 
-        if mode == "Cyber Security Monitoring":
+        if mode == "Cyber Security":
             records.append({
-                "Timestamp": datetime.datetime.now(),
+                "Timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "Source IP": f"192.168.{random.randint(1,255)}.{random.randint(1,255)}",
                 "Event Type": random.choice(["Login", "Malware", "Phishing", "Exfiltration"]),
                 "Risk Score": score
             })
 
-        elif mode == "Financial Fraud Detection":
+        elif mode == "Financial Fraud":
             records.append({
                 "Account ID": random.randint(1000,9999),
                 "Transaction Amount": random.randint(100,10000),
                 "Risk Score": score
             })
 
-        elif mode == "Supply Chain Monitoring":
+        elif mode == "Supply Chain":
             records.append({
                 "Supplier": f"Vendor-{random.randint(1,50)}",
                 "Delay Days": random.randint(0,30),
                 "Risk Score": score
             })
 
-        elif mode == "Healthcare Risk Analytics":
+        elif mode == "Healthcare":
             records.append({
                 "Patient ID": random.randint(10000,99999),
-                "Vitals Risk Score": score
+                "Risk Score": score
             })
 
         else:
@@ -148,11 +146,40 @@ def generate_data(mode):
     return pd.DataFrame(records)
 
 # ----------------------------------------------------------
+# SAFE JSON EXPORT (FIXED CRASH)
+# ----------------------------------------------------------
+def safe_json(df):
+    df_copy = df.copy()
+
+    # convert everything to string-safe format
+    df_copy = df_copy.astype(str)
+
+    return json.dumps(df_copy.to_dict(orient="records"), indent=2)
+
+# ----------------------------------------------------------
+# PDF EXPORT
+# ----------------------------------------------------------
+def export_pdf(text):
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer)
+    style = getSampleStyleSheet()
+
+    doc.build([
+        Paragraph("KNet AI Report", style["Title"]),
+        Spacer(1, 12),
+        Paragraph(text.replace("\n","<br/>"), style["BodyText"])
+    ])
+
+    buffer.seek(0)
+    return buffer
+
+# ----------------------------------------------------------
 # EXECUTION
 # ----------------------------------------------------------
 if run:
 
     result = run_ai(task)
+
     st.success("AI Response Generated")
     st.write(result)
 
@@ -160,17 +187,22 @@ if run:
 
     df = generate_data(mode)
 
-    # ---------------- FIXED SINGLE RISK COLUMN ----------------
-    score_col = [c for c in df.columns if "Score" in c]
-    score_col = score_col[0] if score_col else df.columns[-1]
+    # ------------------------------------------------------
+    # RISK SCORE (SINGLE SOURCE)
+    # ------------------------------------------------------
+    score_col = [c for c in df.columns if "Risk Score" in c]
 
-    df["Risk Level"] = df[score_col].apply(risk)
+    if score_col:
+        score_col = score_col[0]
+        df["Risk Level"] = df[score_col].apply(risk)
+    else:
+        df["Risk Level"] = df.iloc[:, -1].apply(risk)
 
     st.dataframe(df, use_container_width=True)
 
-    # ----------------------------------------------------------
-    # CONSISTENT RISK SUMMARY (FIXED)
-    # ----------------------------------------------------------
+    # ------------------------------------------------------
+    # RISK SUMMARY (CONSISTENT)
+    # ------------------------------------------------------
     summary = df["Risk Level"].value_counts().reindex(
         ["Low Risk","Medium Risk","High Risk","Critical"], fill_value=0
     )
@@ -180,76 +212,62 @@ if run:
         "Count": summary.values
     })
 
-    st.subheader("📈 Risk Distribution Summary (Matches Dashboard Exactly)")
+    st.subheader("📈 Risk Distribution Summary")
     st.dataframe(summary_df)
 
-    # ----------------------------------------------------------
+    # ------------------------------------------------------
     # BAR CHART
-    # ----------------------------------------------------------
+    # ------------------------------------------------------
     fig1, ax1 = plt.subplots()
     ax1.bar(summary_df["Risk Level"], summary_df["Count"])
-    ax1.set_title("Risk Distribution")
     st.pyplot(fig1)
 
-    # ----------------------------------------------------------
+    # ------------------------------------------------------
     # PIE CHART
-    # ----------------------------------------------------------
+    # ------------------------------------------------------
     fig2, ax2 = plt.subplots()
     ax2.pie(summary_df["Count"], labels=summary_df["Risk Level"], autopct="%1.1f%%")
-    ax2.set_title("Risk Breakdown")
     st.pyplot(fig2)
 
-    # ----------------------------------------------------------
+    # ------------------------------------------------------
     # EXPORTS
-    # ----------------------------------------------------------
-    st.download_button("CSV Export", df.to_csv(index=False), "data.csv")
-    st.download_button("JSON Export", json.dumps(df.to_dict(), indent=2), "data.json")
+    # ------------------------------------------------------
+    st.download_button("⬇️ CSV Export", df.to_csv(index=False), "data.csv")
 
-    def pdf_export(text):
-        buffer = io.BytesIO()
-        doc = SimpleDocTemplate(buffer)
-        style = getSampleStyleSheet()
+    st.download_button(
+        "⬇️ JSON Export",
+        safe_json(df),
+        "data.json",
+        mime="application/json"
+    )
 
-        doc.build([
-            Paragraph("KNet Agentic AI Report", style["Title"]),
-            Spacer(1, 12),
-            Paragraph(text.replace("\n","<br/>"), style["BodyText"])
-        ])
-
-        buffer.seek(0)
-        return buffer
-
-    st.download_button("PDF Export", pdf_export(result), "report.pdf")
+    st.download_button(
+        "⬇️ PDF Export",
+        export_pdf(result),
+        "report.pdf"
+    )
 
 # ----------------------------------------------------------
-# DASHBOARD EXPLANATION (GUI LEVEL)
+# FOOTER EXPLANATION
 # ----------------------------------------------------------
 st.markdown("---")
-st.subheader("📖 How the Dashboards Work")
+st.subheader("📖 How System Works")
 
 st.markdown("""
-### 🧠 Agentic AI System Flow
-1. User selects a use case (Cyber, Finance, Healthcare, etc.)
-2. System generates structured dataset for that domain
-3. Each record is assigned a **Risk Score (1–100)**
+### 🧠 Agentic AI Flow
+User input → AI reasoning → response generation
 
-### 📊 Analytics Dashboard
-- Shows raw dataset
-- Includes domain-specific fields (IP, transactions, patients, etc.)
-- Adds computed Risk Level column
+### 📊 Analytics Engine
+Same dataset is used for:
+- Dashboard table
+- Risk summary
+- Charts
 
-### 📈 Risk Distribution Summary
-- Uses EXACT SAME Risk Level column
-- Counts Low, Medium, High, Critical events
-- Guarantees consistency with dashboard
+✔ Ensures 100% consistency
 
-### ⚠️ Key Design Rule
-✔ ONE dataset  
-✔ ONE risk column  
-✔ ONE source of truth  
-
-This ensures:
-👉 No mismatch  
-👉 No duplication  
-👉 Enterprise-grade reliability  
+### 📄 Reporting Engine
+Exports:
+- CSV
+- JSON (fixed safe serialization)
+- PDF report
 """)
