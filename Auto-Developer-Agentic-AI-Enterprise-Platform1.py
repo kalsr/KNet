@@ -1,8 +1,5 @@
-
-
-
 # ==========================================================
-# KALSNET (KNet) – ENTERPRISE AGENTIC AI PLATFORM (FINAL FIX)
+# KALSNET (KNet) – ENTERPRISE AGENTIC AI PLATFORM (FINAL)
 # ==========================================================
 
 import streamlit as st
@@ -22,7 +19,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 st.set_page_config(page_title="KNet Agentic AI Platform", layout="wide")
 
 # ----------------------------------------------------------
-# HEADER (ALWAYS VISIBLE)
+# HEADER (ALWAYS SHOWS)
 # ----------------------------------------------------------
 st.markdown("""
 <h1 style='color:blue; text-align:center; font-weight:bold;'>
@@ -37,34 +34,57 @@ Developed by Randy Singh
 """, unsafe_allow_html=True)
 
 # ----------------------------------------------------------
-# ✅ STABLE GROQ CLIENT (CACHED - NO FAILURES)
+# ✅ ROBUST GROQ CLIENT (CACHED + RELIABLE)
 # ----------------------------------------------------------
 @st.cache_resource
 def init_client():
+    api_key = None
+
+    # 1. Try Streamlit secrets
     try:
-        api_key = st.secrets["GROQ_API_KEY"]  # STRICTLY from secrets
-        return Groq(api_key=api_key)
-    except Exception as e:
-        return None
+        if "GROQ_API_KEY" in st.secrets:
+            api_key = st.secrets["GROQ_API_KEY"]
+    except Exception:
+        pass
+
+    # 2. Fallback (for reliability in some deployments)
+    if not api_key:
+        api_key = os.getenv("GROQ_API_KEY")
+
+    return Groq(api_key=api_key) if api_key else None
+
 
 client = init_client()
 
 # ----------------------------------------------------------
-# 🚨 HARD STOP (NO UI INPUT, STRICT MODE)
+# DEBUG PANEL (OPTIONAL)
+# ----------------------------------------------------------
+with st.expander("🔍 Debug: GROQ Key Status", expanded=False):
+    try:
+        st.write("Secrets keys:", list(st.secrets.keys()))
+    except:
+        st.write("Secrets not accessible")
+
+    st.write("Env key exists:", bool(os.getenv("GROQ_API_KEY")))
+    st.write("Client initialized:", client is not None)
+
+# ----------------------------------------------------------
+# HARD STOP IF KEY MISSING
 # ----------------------------------------------------------
 if client is None:
     st.error("""
-❌ GROQ API Key NOT found in secrets.
+❌ GROQ API Key NOT FOUND
 
-✔ FIX (GitHub / Streamlit Cloud):
-1. Create file: .streamlit/secrets.toml
-2. Add EXACTLY:
+Fix (choose ONE):
 
-GROQ_API_KEY = "gsk_xxxxxx"
+1. Streamlit Cloud:
+   App Settings → Secrets → Add:
+   GROQ_API_KEY = "gsk_xxxxxx"
 
-3. Redeploy app (once)
+2. OR Environment Variable:
+   setx GROQ_API_KEY "gsk_xxxxxx"
 
-⚠️ No manual entry allowed in this version.
+Then RESTART once.
 """)
     st.stop()
 
@@ -117,7 +137,7 @@ task = st.text_area("Enter Task for Agent")
 run = st.button("Run Agentic AI")
 
 # ----------------------------------------------------------
-# ✅ AI ENGINE (CLIENT ALWAYS AVAILABLE)
+# AI ENGINE (FIXED)
 # ----------------------------------------------------------
 def run_ai(task):
     try:
@@ -131,7 +151,6 @@ def run_ai(task):
             max_tokens=900
         )
         return response.choices[0].message.content
-
     except Exception as e:
         return f"AI Error: {str(e)}"
 
@@ -202,6 +221,28 @@ def generate_data(mode):
     return df
 
 # ----------------------------------------------------------
+# FIELD EXPLANATIONS
+# ----------------------------------------------------------
+def explain_fields(df):
+    explanations = {}
+
+    for col in df.columns:
+        if col == "Risk Score":
+            explanations[col] = "Numerical value (1–100) derived from analytics."
+        elif col == "Risk Level":
+            explanations[col] = "Categorical classification from score."
+        elif "IP" in col:
+            explanations[col] = "Source network identifier."
+        elif "Transaction" in col:
+            explanations[col] = "Unique financial transaction ID."
+        elif "Amount" in col:
+            explanations[col] = "Transaction monetary value."
+        else:
+            explanations[col] = "Operational data field."
+
+    return explanations
+
+# ----------------------------------------------------------
 # EXPORTS
 # ----------------------------------------------------------
 def safe_json(df):
@@ -235,6 +276,12 @@ if run:
     df = generate_data(mode)
     st.dataframe(df, use_container_width=True)
 
+    # Field explanations
+    st.subheader("Field-Level Explanation")
+    for k, v in explain_fields(df).items():
+        st.write(f"**{k}:** {v}")
+
+    # Risk summary
     summary = df["Risk Level"].value_counts().reindex(
         ["Low Risk", "Medium Risk", "High Risk", "Critical"],
         fill_value=0
@@ -248,6 +295,7 @@ if run:
     st.subheader("Risk Distribution Summary")
     st.dataframe(summary_df)
 
+    # Charts
     fig, ax = plt.subplots()
     ax.bar(summary_df["Risk Level"], summary_df["Count"])
     st.pyplot(fig)
@@ -256,6 +304,7 @@ if run:
     ax2.pie(summary_df["Count"], labels=summary_df["Risk Level"], autopct="%1.1f%%")
     st.pyplot(fig2)
 
+    # Downloads
     st.download_button("CSV Export", df.to_csv(index=False), "data.csv")
     st.download_button("JSON Export", safe_json(df), "data.json")
     st.download_button("PDF Export", export_pdf(result), "report.pdf")
