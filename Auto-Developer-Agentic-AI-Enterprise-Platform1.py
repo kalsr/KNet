@@ -1,5 +1,7 @@
+
+
 # ==========================================================
-# KALSNET (KNet) – ENTERPRISE AGENTIC AI PLATFORM (FINAL)
+# KALSNET (KNet) – ENTERPRISE AGENTIC AI PLATFORM
 # ==========================================================
 
 import streamlit as st
@@ -9,15 +11,10 @@ import json
 import matplotlib.pyplot as plt
 import io
 import random
+import datetime
 import os
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
-
-# TOML loader
-try:
-    import tomllib
-except:
-    import tomli as tomllib
 
 # ----------------------------------------------------------
 # CONFIG
@@ -31,179 +28,302 @@ st.markdown("""
 <h1 style='color:blue; text-align:center; font-weight:bold;'>
 Kalsnet (KNet) – Agentic AI Platform
 </h1>
+""", unsafe_allow_html=True)
+
+st.markdown("""
 <h3 style='color:blue; text-align:center; font-weight:bold;'>
 Autonomous AI + Analytics + Reporting Engine
 </h3>
+""", unsafe_allow_html=True)
+
+st.markdown("""
 <h4 style='color:blue; text-align:center; font-weight:bold;'>
 Developed by Randy Singh
 </h4>
 """, unsafe_allow_html=True)
 
 # ----------------------------------------------------------
-# 🔐 LOAD API KEY (CLEAN + SAFE)
+# GROQ KEY (STRICTLY FROM SECRETS ONLY)
 # ----------------------------------------------------------
-def load_api_key():
-    key = None
-
-    # 1. Streamlit secrets
-    try:
-        key = st.secrets.get("GROQ_API_KEY")
-    except:
-        pass
-
-    # 2. Local TOML
-    if not key and os.path.exists(".streamlit/secrets.toml"):
+def load_groq_key():
+    # Load GROQ API Key from Streamlit secrets into session_state if not already present
+    if "GROQ_API_KEY" not in st.session_state:
         try:
-            with open(".streamlit/secrets.toml", "rb") as f:
-                data = tomllib.load(f)
-                key = data.get("GROQ_API_KEY")
-        except:
-            pass
+            if "GROQ_API_KEY" in st.secrets:
+                st.session_state.GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
+            else:
+                st.session_state.GROQ_API_KEY = None # Explicitly set to None if not found
+        except Exception as e:
+            st.warning(f"Error loading secrets: {e}")
+            st.session_state.GROQ_API_KEY = None
+    return st.session_state.GROQ_API_KEY
 
-    # 3. Env fallback
-    if not key:
-        key = os.getenv("GROQ_API_KEY")
+api_key = load_groq_key()
 
-    # 🔥 CRITICAL CLEANUP (fixes 401)
-    if key:
-        key = key.strip().replace('"', '').replace("'", "")
+if not api_key:
+    st.error("""
+❌ GROQ API Key not found.
 
-    return key
-
-# ----------------------------------------------------------
-# INIT CLIENT
-# ----------------------------------------------------------
-@st.cache_resource
-def init_client():
-    key = load_api_key()
-    if not key or not key.startswith("gsk_"):
-        return None
-    return Groq(api_key=key)
-
-client = init_client()
-
-if client is None:
-    st.error("❌ Invalid or missing GROQ API key. Verify secrets.toml.")
+Fix checklist:
+1. Ensure .streamlit/secrets.toml exists in your project root.
+2. Ensure key is: `GROQ_API_KEY = "your_actual_groq_api_key_here"`
+3. If running locally, restart Streamlit. If deployed, ensure secrets are properly configured.
+""")
     st.stop()
 
-# ----------------------------------------------------------
-# MODEL (SAFE CHOICE)
-# ----------------------------------------------------------
-GROQ_MODEL = "llama3-70b-8192"
+# Initialize Groq client here after successful API key loading
+client = Groq(api_key=api_key)
+
 
 # ----------------------------------------------------------
-# USE CASES (ALL 20)
+# MODEL (CURRENT VALID)
+# ----------------------------------------------------------
+GROQ_MODEL = "llama-3.3-70b-versatile"
+
+# ----------------------------------------------------------
+# 20 AGENTIC USE CASES
 # ----------------------------------------------------------
 use_cases = [
-    "Cyber Defense Monitoring","Financial Fraud Detection","Healthcare Risk Analytics",
-    "Supply Chain Risk","Insider Threat Detection","Cloud Security Monitoring",
-    "API Security Analytics","Identity & Access Management","Threat Intelligence Analysis",
-    "Network Anomaly Detection","SOC Operations Dashboard","Banking Risk Analytics",
-    "Insurance Fraud Detection","Retail Fraud Detection","IoT Security Monitoring",
-    "Payment Fraud Detection","Critical Infrastructure Protection",
-    "Incident Response Automation","Predictive Maintenance","Smart City Monitoring",
+    "Cyber Defense Monitoring",
+    "Financial Fraud Detection",
+    "Healthcare Risk Analytics",
+    "Supply Chain Risk",
+    "Insider Threat Detection",
+    "Cloud Security Monitoring",
+    "API Security Analytics",
+    "Identity & Access Management",
+    "Threat Intelligence Analysis",
+    "Network Anomaly Detection",
+    "SOC Operations Dashboard",
+    "Banking Risk Analytics",
+    "Insurance Fraud Detection",
+    "Retail Fraud Detection",
+    "IoT Security Monitoring",
+    "Payment Fraud Detection",
+    "Critical Infrastructure Protection",
+    "Incident Response Automation",
+    "Predictive Maintenance",
+    "Smart City Monitoring",
     "Custom Use Case"
 ]
 
-st.subheader("Select Agentic AI Use Case")
-selected = st.selectbox("Choose Use Case", use_cases)
+st.subheader(" Select Agentic AI Use Case")
 
-custom = ""
-if selected == "Custom Use Case":
-    custom = st.text_input("Enter Custom Use Case")
+selected_use_case = st.selectbox("Choose Use Case", use_cases)
 
-mode = custom if custom else selected
+custom_use_case = ""
+if selected_use_case == "Custom Use Case":
+    custom_use_case = st.text_input("Enter Custom Use Case")
 
+mode = custom_use_case if custom_use_case else selected_use_case
+
+# ----------------------------------------------------------
+# TASK INPUT
+# ----------------------------------------------------------
 task = st.text_area("Enter Task for Agent")
-run = st.button("Run Agentic AI")
+run = st.button(" Run Agentic AI")
 
 # ----------------------------------------------------------
 # AI ENGINE
 # ----------------------------------------------------------
 def run_ai(task):
     try:
-        r = client.chat.completions.create(
+        res = client.chat.completions.create(
             model=GROQ_MODEL,
             messages=[
-                {"role": "system", "content": "You are an enterprise AI analyst."},
+                {"role": "system", "content": "You are a senior enterprise AI analyst."},
                 {"role": "user", "content": task}
             ],
-            temperature=0.5,
-            max_tokens=700
+            temperature=0.6,
+            max_tokens=900
         )
-        return r.choices[0].message.content
+        return res.choices[0].message.content
     except Exception as e:
         return f"AI Error: {str(e)}"
 
 # ----------------------------------------------------------
-# DATA ENGINE
+# RISK ENGINE (SINGLE SOURCE OF TRUTH)
 # ----------------------------------------------------------
 def risk(score):
-    if score < 25: return "Low"
-    elif score < 50: return "Medium"
-    elif score < 75: return "High"
+    if score < 25:
+        return "Low Risk"
+    elif score < 50:
+        return "Medium Risk"
+    elif score < 75:
+        return "High Risk"
     return "Critical"
 
+# ----------------------------------------------------------
+# USE CASE SPECIFIC DATA ENGINE
+# ----------------------------------------------------------
 def generate_data(mode):
-    rows = []
+
+    data = []
+
     for _ in range(60):
-        score = random.randint(1,100)
-        rows.append({
-            "Use Case": mode,
-            "Metric": random.randint(1,100),
-            "Risk Score": score,
-            "Risk Level": risk(score)
-        })
-    return pd.DataFrame(rows)
+        score = random.randint(1, 100)
+
+        # ---------------- CYBER ----------------
+        if "Cyber" in mode:
+            data.append({
+                "Entity": random.choice(["Firewall", "Endpoint", "Server", "API"]),
+                "Event Type": random.choice(["Login", "DDoS", "Malware", "Scan"]),
+                "Source IP": f"192.168.{random.randint(1,255)}.{random.randint(1,255)}",
+                "Risk Score": score
+            })
+
+        # ---------------- FINANCE ----------------
+        elif "Financial" in mode or "Banking" in mode:
+            data.append({
+                "Transaction ID": random.randint(10000, 99999),
+                "Amount ($)": random.randint(50, 20000),
+                "Merchant": random.choice(["Amazon", "Stripe", "Apple"]),
+                "Country": random.choice(["US", "UK", "IN"]),
+                "Risk Score": score
+            })
+
+        # ---------------- HEALTHCARE ----------------
+        elif "Healthcare" in mode:
+            data.append({
+                "Patient ID": random.randint(1000, 9999),
+                "Heart Rate": random.randint(60, 140),
+                "Blood Pressure": f"{random.randint(110,160)}/{random.randint(70,100)}",
+                "Oxygen Level": random.randint(85,100),
+                "Risk Score": score
+            })
+
+        # ---------------- SUPPLY CHAIN ----------------
+        elif "Supply Chain" in mode:
+            data.append({
+                "Supplier": f"Vendor-{random.randint(1,50)}",
+                "Delay Days": random.randint(0,40),
+                "Region": random.choice(["NA", "EU", "APAC"]),
+                "Risk Score": score
+            })
+
+        # ---------------- DEFAULT ----------------
+        else:
+            data.append({
+                "Entity": mode,
+                "Metric Value": random.randint(1, 100),
+                "Risk Score": score
+            })
+
+    df = pd.DataFrame(data)
+    df["Risk Level"] = df["Risk Score"].apply(risk)
+    return df
+
+# ----------------------------------------------------------
+# FIELD EXPLANATIONS ENGINE
+# ----------------------------------------------------------
+def explain_fields(df):
+
+    explanations = {}
+
+    for col in df.columns:
+
+        if col == "Risk Score":
+            explanations[col] = "Numerical value (1–100) derived from anomaly detection or rule-based scoring."
+        elif col == "Risk Level":
+            explanations[col] = "Categorical classification derived from Risk Score thresholds."
+        elif "IP" in col:
+            explanations[col] = "Network address used to trace source of activity."
+        elif "Transaction" in col:
+            explanations[col] = "Unique financial transaction identifier."
+        elif "Amount" in col:
+            explanations[col] = "Monetary value of transaction used for fraud detection."
+        elif "Heart" in col:
+            explanations[col] = "Physiological health metric."
+        else:
+            explanations[col] = "Domain-specific operational field used for analytics."
+
+    return explanations
+
+# ----------------------------------------------------------
+# SAFE JSON
+# ----------------------------------------------------------
+def safe_json(df):
+    return json.dumps(df.astype(str).to_dict(orient="records"), indent=2)
 
 # ----------------------------------------------------------
 # PDF EXPORT
 # ----------------------------------------------------------
 def export_pdf(text):
-    buf = io.BytesIO()
-    doc = SimpleDocTemplate(buf)
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer)
     styles = getSampleStyleSheet()
 
-    story = [
-        Paragraph("KNet AI Report", styles["Title"]),
-        Spacer(1,12),
-        Paragraph(text.replace("\n","<br/>"), styles["BodyText"])
-    ]
-    doc.build(story)
-    buf.seek(0)
-    return buf
+    doc.build([
+        Paragraph("KNet Enterprise AI Report", styles["Title"]),
+        Spacer(1, 12),
+        Paragraph(text.replace("\n", "<br/>"), styles["BodyText"])
+    ])
+
+    buffer.seek(0)
+    return buffer
 
 # ----------------------------------------------------------
 # EXECUTION
 # ----------------------------------------------------------
 if run:
 
-    st.subheader("AI Reasoning Output")
+    st.subheader(" AI Reasoning Output")
     result = run_ai(task)
     st.write(result)
 
-    df = generate_data(mode)
+    st.subheader(f" Enterprise Analytics Dashboard - {mode}")
 
-    st.subheader("Analytics Dashboard")
+    df = generate_data(mode)
     st.dataframe(df, use_container_width=True)
 
-    summary = df["Risk Level"].value_counts()
+    # ------------------------------------------------------
+    # FIELD EXPLANATIONS
+    # ------------------------------------------------------
+    st.subheader(" Field-Level Explanation")
+    for k, v in explain_fields(df).items():
+        st.write(f"**{k}:** {v}")
 
-    col1, col2 = st.columns(2)
+    # ------------------------------------------------------
+    # RISK SUMMARY (SINGLE SOURCE OF TRUTH)
+    # ------------------------------------------------------
+    summary = df["Risk Level"].value_counts().reindex(
+        ["Low Risk", "Medium Risk", "High Risk", "Critical"],
+        fill_value=0
+    )
 
-    with col1:
-        fig, ax = plt.subplots()
-        ax.bar(summary.index, summary.values)
-        ax.set_title("Risk Distribution")
-        st.pyplot(fig)
+    summary_df = pd.DataFrame({
+        "Risk Level": summary.index,
+        "Count": summary.values
+    })
 
-    with col2:
-        fig2, ax2 = plt.subplots()
-        ax2.pie(summary.values, labels=summary.index, autopct="%1.1f%%")
-        ax2.set_title("Risk Share")
-        st.pyplot(fig2)
+    st.subheader(" Risk Distribution Summary")
+    st.dataframe(summary_df)
 
-    # DOWNLOADS
-    st.download_button("Download CSV", df.to_csv(index=False), "data.csv")
-    st.download_button("Download JSON", json.dumps(df.to_dict(), indent=2), "data.json")
-    st.download_button("Download PDF", export_pdf(result), "report.pdf")
+    st.markdown("""
+###  How Risk is Calculated
+- Risk Score is generated per record (1–100)
+- Low: 0–24
+- Medium: 25–49
+- High: 50–74
+- Critical: 75–100
+""")
+
+    # ------------------------------------------------------
+    # CHARTS
+    # ------------------------------------------------------
+    fig, ax = plt.subplots()
+    ax.bar(summary_df["Risk Level"], summary_df["Count"])
+    ax.set_title("Risk Distribution (Bar Chart)")
+    st.pyplot(fig)
+
+    fig2, ax2 = plt.subplots()
+    ax2.pie(summary_df["Count"], labels=summary_df["Risk Level"], autopct="%1.1f%%")
+    ax2.set_title("Risk Distribution (Pie Chart)")
+    st.pyplot(fig2)
+
+    # ------------------------------------------------------
+    # EXPORTS
+    # ------------------------------------------------------
+    st.download_button("CSV Export", df.to_csv(index=False), "data.csv")
+    st.download_button("JSON Export", safe_json(df), "data.json")
+    st.download_button("PDF Export", export_pdf(result), "report.pdf")
