@@ -41,7 +41,7 @@ st.markdown("""
 # Title
 # ------------------------------------------------------------
 st.markdown(
-    '<div class="title-bar"> API Simulation & Security Analytics Platform</div>',
+    '<div class="title-bar"> API Security Analytics Platform</div>',
     unsafe_allow_html=True
 )
 st.markdown(
