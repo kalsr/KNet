@@ -216,7 +216,7 @@ def html_button(label, key, color, width="200px"):
 # Threat Hunting Page
 # -------------------------
 if page=="Threat Hunting":
-    st.title("Agentic Cyber Threat Hunting - Developed By Randy Singh")
+    st.title("AI Cyber Threat Hunting - Developed By Randy Singh")
 
     # Sample log slider
     sample_n = st.sidebar.slider("Number of sample logs", 10, 100, 50, 5)
