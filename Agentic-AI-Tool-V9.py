@@ -27,7 +27,7 @@ st.markdown("<h4 style='color:blue; text-align:center; font-weight:bold;'>Develo
 # ----------------------------------------------------------
 # API KEY
 # ----------------------------------------------------------
-st.sidebar.title("🔐 GROQ API Management")
+st.sidebar.title(" GROQ API Management")
 
 user_key = st.sidebar.text_input("Enter GROQ API Key:", type="password")
 
@@ -40,7 +40,7 @@ else:
     api_key = st.secrets.get("GROQ_API_KEY", None)
 
 if not api_key:
-    st.warning("⚠️ Enter API key")
+    st.warning(" Enter API key")
     st.stop()
 
 client = Groq(api_key=api_key)
@@ -48,7 +48,7 @@ client = Groq(api_key=api_key)
 # ----------------------------------------------------------
 # USE CASE SELECTION (NEW)
 # ----------------------------------------------------------
-st.subheader("🎯 Select Agentic AI Use Case")
+st.subheader(" Select Agentic AI Use Case")
 
 use_cases = [
     "Cybersecurity Threat Detection",
@@ -80,9 +80,9 @@ final_use_case = custom_use_case if custom_use_case else selected_use_case
 # ----------------------------------------------------------
 # TASK INPUT
 # ----------------------------------------------------------
-st.subheader("🤖 Agentic AI Task Input")
+st.subheader(" Agentic AI Task Input")
 task = st.text_area("Enter your task:")
-run = st.button("🚀 Run Agentic AI")
+run = st.button(" Run Agentic AI")
 
 # ----------------------------------------------------------
 # AI FUNCTION
@@ -124,7 +124,7 @@ if run:
     st.success("AI Response Generated")
     st.write(result)
 
-    st.subheader(f"📊 Analytics Dashboard ({final_use_case})")
+    st.subheader(f" Analytics Dashboard ({final_use_case})")
 
     records = []
 
@@ -182,7 +182,7 @@ if run:
 
     summary_df.columns = ["Risk Level", "Count"]
 
-    st.subheader("📈 Risk Distribution Summary")
+    st.subheader(" Risk Distribution Summary")
     st.dataframe(summary_df)
 
     # ------------------------------------------------------
@@ -212,19 +212,19 @@ st.markdown("---")
 st.subheader("📖 Dashboard Explanation")
 
 st.markdown("""
-### 🎯 Use Case Selection
+###  Use Case Selection
 User selects a predefined use case or enters a custom one. The system dynamically adapts analytics accordingly.
 
-### 📊 Analytics Dashboard
+###  Analytics Dashboard
 Data fields change based on selected use case:
 - Cyber → IP, events, threats
 - Financial → transactions, accounts
 - Supply Chain → vendors, delays
 
-### 📈 Risk Distribution
+###  Risk Distribution
 Risk levels are computed from the SAME dataset ensuring:
 - Dashboard = Summary = Charts (100% match)
 
-### 🤖 Agentic AI
+###  Agentic AI
 Autonomously interprets task → generates insights → produces analytics.
 """)
