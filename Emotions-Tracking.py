@@ -106,7 +106,7 @@ AI Behavior Insight Analyzer<br>
 
 # --------------------------
 
-st.sidebar.header("🔑 Configuration")
+st.sidebar.header(" Configuration")
 
 api_key = st.sidebar.text_input("Enter Groq API Key", type="password")
 
@@ -118,7 +118,7 @@ api_key = st.sidebar.text_input("Enter Groq API Key", type="password")
 
 # --------------------------
 
-st.markdown("### 📥 Input Signals")
+st.markdown("###  Input Signals")
 
 
 
@@ -188,7 +188,7 @@ def analyze_with_groq(prompt, api_key):
 
 # --------------------------
 
-if st.button("🔍 Analyze Behavior"):
+if st.button(" Analyze Behavior"):
 
 
 
@@ -268,7 +268,7 @@ if st.button("🔍 Analyze Behavior"):
 
             # --------------------------
 
-            st.markdown("### 🧠 Insights")
+            st.markdown("###  Insights")
 
 
 
@@ -280,7 +280,7 @@ if st.button("🔍 Analyze Behavior"):
 
 
 
-            st.markdown("### 📖 Explanation")
+            st.markdown("###  Explanation")
 
             st.info(data["explanation"])
 
@@ -292,7 +292,7 @@ if st.button("🔍 Analyze Behavior"):
 
             # --------------------------
 
-            st.markdown("### 📊 Emotion Confidence (Simulated)")
+            st.markdown("###  Emotion Confidence (Simulated)")
 
 
 
@@ -320,7 +320,7 @@ if st.button("🔍 Analyze Behavior"):
 
 
 
-            st.download_button("📥 Download CSV",
+            st.download_button(" Download CSV",
 
                                df.to_csv(index=False),
 
@@ -328,7 +328,7 @@ if st.button("🔍 Analyze Behavior"):
 
 
 
-            st.download_button("📥 Download JSON",
+            st.download_button(" Download JSON",
 
                                json.dumps(data),
 
@@ -360,7 +360,7 @@ if st.button("🔍 Analyze Behavior"):
 
             with open(pdf_file, "rb") as f:
 
-                st.download_button("📥 Download PDF", f, file_name=pdf_file)
+                st.download_button(" Download PDF", f, file_name=pdf_file)
 
 
 
