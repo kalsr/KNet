@@ -245,7 +245,7 @@ if run:
 # EXPLANATION
 # ----------------------------------------------------------
 st.markdown("---")
-st.subheader("📖 Dashboard Explanation")
+st.subheader(" Dashboard Explanation")
 
 st.markdown("""
 ###  Use Case Selection
