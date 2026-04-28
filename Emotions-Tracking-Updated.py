@@ -30,8 +30,8 @@ api_key = st.sidebar.text_input("Enter Groq API Key", type="password")
 
 #  NEW: GROQ KEY INSTRUCTIONS
 st.sidebar.markdown("###  How to Create Groq API Key")
-st.sidebar.markdown(f"""
-Using :contentReference[oaicite:0]{index=0}:
+st.sidebar.markdown("""
+Using Groq:
 
 1. Go to: https://console.groq.com  
 2. Sign up (free)  
