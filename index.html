@@ -155,6 +155,35 @@
             <strong>Location:</strong> Washington D.C. Metro Area <br>
             <strong>Website:</strong> <a href="https://kalsr.github.io/KNet/" target="_blank">https://kalsr.github.io/KNet/</a>
         </p>
+        **********************
+       function toggleSection(sectionId) {
+    const sections = [
+        'programming-hub',
+        'knet-brochure-section',
+        'Randy-Singh-Resume-section'
+    ];
+
+    sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.style.display = 'none';
+            el.setAttribute('aria-hidden', 'true');
+        }
+    });
+
+    const target = document.getElementById(sectionId);
+    if (!target) return;
+
+    const isOpen = (target.style.display === 'block');
+
+    if (!isOpen) {
+        target.style.display = 'block';
+        target.setAttribute('aria-hidden', 'false');
+        target.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+        **********************
         
        <p style="margin-top:18px;">   
        <a href="https://kalsr.github.io/KNet_Programming_Hub/" target="_blank" class="hub-link">
