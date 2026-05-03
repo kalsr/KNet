@@ -1,3 +1,5 @@
+
+
 # ==========================================================
 # KALSNET (KNet) – AGENTIC AI LLM ORCHESTRATION PLATFORM
 # Developed by Randy Singh – Kalsnet (KNet) Consulting Group
@@ -12,11 +14,6 @@ import random
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 import matplotlib.pyplot as plt
-
-# OPTIONAL APIs (UNCOMMENT WHEN KEYS AVAILABLE)
-# from openai import OpenAI
-# from groq import Groq
-# from transformers import pipeline
 
 # -------------------------------
 # PAGE CONFIG
@@ -37,70 +34,46 @@ Developed by Randy Singh – Kalsnet (KNet) Consulting Group
 """, unsafe_allow_html=True)
 
 # -------------------------------
-# LLM METADATA (EXPLANATIONS)
+# FREE LLM LIST + PROMPTS
 # -------------------------------
-llm_info = {
-    "GPT-4": {"type": "Paid", "access": "OpenAI API Key from platform.openai.com"},
-    "GPT-3.5": {"type": "Free/Paid", "access": "Limited free, API via OpenAI"},
-    "Google-Bard": {"type": "Free", "access": "Google account via Gemini/Bard UI"},
-    "LLaMA": {"type": "Free/Open", "access": "Meta / HuggingFace / Replicate"},
-    "Groq LLM": {"type": "Free Tier", "access": "console.groq.com API key"},
-    "HuggingFace": {"type": "Free/Paid", "access": "huggingface.co token"},
+llm_prompts = {
+    "ChatGPT": "Go to https://chat.openai.com and paste your task.",
+    "Claude": "Go to https://claude.ai and enter your prompt.",
+    "Gemini": "Go to https://gemini.google.com and run your query.",
+    "DeepSeek Chat": "Go to https://chat.deepseek.com and paste your task.",
+    "Perplexity": "Go to https://www.perplexity.ai and ask your question.",
+    "Grok": "Go to https://x.ai and use Grok chat interface.",
+    "Microsoft Copilot": "Go to https://copilot.microsoft.com and enter your prompt.",
+    "Mistral Le Chat": "Go to https://chat.mistral.ai and run your query.",
+    "Qwen Chat": "Go to https://chat.qwen.ai and enter your task.",
+    "Kimi": "Go to https://kimi.moonshot.cn and paste your query."
 }
 
 # -------------------------------
 # USER INPUT
 # -------------------------------
-st.subheader(" Enter Your Task")
-user_input = st.text_area("Enter mission / AI task...", height=150)
+st.subheader("🧠 Enter Your Task")
+user_input = st.text_area("", height=150)
 
 # -------------------------------
-# MODE SELECTION (CYBER / DOD)
+# LLM SELECTION (PROFESSIONAL UI)
 # -------------------------------
-mode = st.selectbox(" Select Mission Mode", [
-    "General AI",
-    "Cyber Defense",
-    "Threat Hunting",
-    "Fraud Detection",
-    "DoD Mission Planning"
-])
+st.subheader("🚀 Select Free LLM Platform")
 
-# -------------------------------
-# AUTO MODEL SELECTION
-# -------------------------------
-def auto_select_llm(task):
-    if "cyber" in task.lower():
-        return "Groq LLM"
-    elif "analysis" in task.lower():
-        return "GPT-4"
-    elif "translate" in task.lower():
-        return "HuggingFace"
-    return "GPT-3.5"
-
-auto_llm = auto_select_llm(user_input) if user_input else None
-
-st.info(f"🤖 Auto-selected LLM: {auto_llm}")
-
-# -------------------------------
-# LLM SELECTION BUTTONS
-# -------------------------------
-st.subheader("🚀 Select LLM Platform")
-
-selected_llm = st.radio(
-    "Choose LLM:",
-    list(llm_info.keys())
+selected_llm = st.selectbox(
+    "Choose LLM",
+    list(llm_prompts.keys())
 )
 
 # -------------------------------
-# LLM INFO DISPLAY
+# DISPLAY PROMPT INSTRUCTIONS
 # -------------------------------
-info = llm_info[selected_llm]
-
 st.markdown(f"""
-### 📘 {selected_llm} Details
-- **Type:** {info['type']}
-- **Access:** {info['access']}
-""")
+<div style='background:#f4f6f9;padding:15px;border-radius:10px;border-left:6px solid #0B3D91;'>
+<b>📘 How to Use {selected_llm}:</b><br><br>
+{llm_prompts[selected_llm]}
+</div>
+""", unsafe_allow_html=True)
 
 # -------------------------------
 # MULTI-AGENT SYSTEM
@@ -115,30 +88,40 @@ def reporter_agent(result):
     return f"Report: Final output generated from -> {result}"
 
 # -------------------------------
-# RUN AI
+# RUN AI (SIMULATION)
 # -------------------------------
 response = ""
+
 if st.button("⚡ Run Agentic AI") and user_input:
 
     plan = planner_agent(user_input)
     analysis = analyzer_agent(plan)
     response = reporter_agent(analysis)
 
-    st.success(" Agentic AI Execution Complete")
+    st.success("✅ Agentic AI Execution Complete")
 
-    st.text_area(" Planner Output", plan)
-    st.text_area(" Analyzer Output", analysis)
-    st.text_area(" Final Report", response)
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.text_area("Planner Output", plan, height=150)
+    with col2:
+        st.text_area("Analyzer Output", analysis, height=150)
+    with col3:
+        st.text_area("Final Report", response, height=150)
 
 # -------------------------------
 # ANALYTICS DASHBOARD
 # -------------------------------
 if response:
-    st.subheader(" Analytics Dashboard")
+    st.subheader("📊 Analytics Dashboard")
 
     data = pd.DataFrame({
         "Stage": ["Planner", "Analyzer", "Reporter"],
-        "Confidence": [random.randint(70, 95), random.randint(75, 98), random.randint(80, 99)]
+        "Confidence": [
+            random.randint(70, 95),
+            random.randint(75, 98),
+            random.randint(80, 99)
+        ]
     })
 
     fig, ax = plt.subplots()
@@ -156,43 +139,54 @@ if response:
 
     json_data = {
         "llm": selected_llm,
-        "mode": mode,
         "input": user_input,
         "response": response,
         "timestamp": timestamp
     }
 
+    st.subheader("📥 Download Results")
+
+    col1, col2, col3 = st.columns(3)
+
     # JSON
-    st.download_button(" Download JSON",
-        json.dumps(json_data, indent=4),
-        f"output_{timestamp}.json")
+    with col1:
+        st.download_button(
+            "⬇️ JSON",
+            json.dumps(json_data, indent=4),
+            f"output_{timestamp}.json"
+        )
 
     # CSV
-    df = pd.DataFrame([json_data])
-    st.download_button(" Download CSV",
-        df.to_csv(index=False),
-        f"output_{timestamp}.csv")
+    with col2:
+        df = pd.DataFrame([json_data])
+        st.download_button(
+            "⬇️ CSV",
+            df.to_csv(index=False),
+            f"output_{timestamp}.csv"
+        )
 
     # PDF
-    buffer = io.BytesIO()
-    doc = SimpleDocTemplate(buffer)
-    styles = getSampleStyleSheet()
+    with col3:
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(buffer)
+        styles = getSampleStyleSheet()
 
-    story = [
-        Paragraph("KALSNET AGENTIC AI REPORT", styles['Title']),
-        Spacer(1, 12),
-        Paragraph(f"LLM: {selected_llm}", styles['Normal']),
-        Paragraph(f"Mode: {mode}", styles['Normal']),
-        Paragraph(f"Input: {user_input}", styles['Normal']),
-        Spacer(1, 12),
-        Paragraph(f"Response: {response}", styles['Normal'])
-    ]
+        story = [
+            Paragraph("KALSNET AGENTIC AI REPORT", styles['Title']),
+            Spacer(1, 12),
+            Paragraph(f"LLM: {selected_llm}", styles['Normal']),
+            Paragraph(f"Input: {user_input}", styles['Normal']),
+            Spacer(1, 12),
+            Paragraph(f"Response: {response}", styles['Normal'])
+        ]
 
-    doc.build(story)
+        doc.build(story)
 
-    st.download_button(" Download PDF",
-        buffer.getvalue(),
-        f"output_{timestamp}.pdf")
+        st.download_button(
+            "⬇️ PDF",
+            buffer.getvalue(),
+            f"output_{timestamp}.pdf"
+        )
 
 # -------------------------------
 # FOOTER
@@ -200,6 +194,6 @@ if response:
 st.markdown("""
 <hr>
 <p style='text-align:center; color:gray;'>
-Enterprise Agentic-AI | Multi-LLM Orchestration | Cyber/DoD Ready Platform
+Enterprise Agentic-AI | Multi-LLM Access Gateway | Free LLM Integration Layer
 </p>
 """, unsafe_allow_html=True)
