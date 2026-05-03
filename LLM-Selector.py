@@ -11,13 +11,12 @@ import io
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
-# APIs
 from openai import OpenAI
 from groq import Groq
 import anthropic
 
 # -------------------------------
-# PAGE CONFIG
+# PAGE CONFIG (UNCHANGED)
 # -------------------------------
 st.set_page_config(page_title="KNet Agentic AI Platform", layout="wide")
 
@@ -33,6 +32,21 @@ Developed by Randy Singh – Kalsnet (KNet) Consulting Group
 </h3>
 <hr>
 """, unsafe_allow_html=True)
+
+# -------------------------------
+# SESSION STATE (NEW – FLOW CONTROL)
+# -------------------------------
+if "step" not in st.session_state:
+    st.session_state.step = "select_llm"
+
+if "response" not in st.session_state:
+    st.session_state.response = ""
+
+if "input_text" not in st.session_state:
+    st.session_state.input_text = ""
+
+if "selected_llm" not in st.session_state:
+    st.session_state.selected_llm = None
 
 # -------------------------------
 # LLM CONFIG
@@ -52,171 +66,119 @@ LLMS = {
 }
 
 # -------------------------------
-# USER INPUT
+# INPUT UI FLOW
 # -------------------------------
-st.subheader("💬 Enter Your Question")
-user_input = st.text_area("Enter your query...", height=150)
 
-# -------------------------------
-# SELECT LLM
-# -------------------------------
-selected_llm = st.selectbox("🚀 Select LLM", list(LLMS.keys()))
+if st.session_state.step == "select_llm":
 
-# -------------------------------
-# INIT API CLIENTS
-# -------------------------------
-def get_clients():
-    clients = {}
+    st.subheader("💬 Select LLM")
 
-    try:
-        clients["openai"] = OpenAI(api_key=st.secrets.get("OPENAI_API_KEY"))
-    except:
-        clients["openai"] = None
+    st.session_state.selected_llm = st.selectbox(
+        "Choose your model",
+        list(LLMS.keys())
+    )
 
-    try:
-        clients["groq"] = Groq(api_key=st.secrets.get("GROQ_API_KEY"))
-    except:
-        clients["groq"] = None
-
-    try:
-        clients["claude"] = anthropic.Anthropic(api_key=st.secrets.get("CLAUDE_API_KEY"))
-    except:
-        clients["claude"] = None
-
-    try:
-        clients["mistral"] = OpenAI(
-            api_key=st.secrets.get("MISTRAL_API_KEY"),
-            base_url="https://api.mistral.ai/v1"
-        )
-    except:
-        clients["mistral"] = None
-
-    return clients
-
-clients = get_clients()
+    if st.button("➡️ Continue"):
+        st.session_state.step = "ask_question"
+        st.rerun()
 
 # -------------------------------
-# API CALL FUNCTIONS
+# ASK QUESTION STEP
 # -------------------------------
-def call_openai(prompt):
-    if not clients["openai"]:
-        return "❌ OpenAI API key missing"
+elif st.session_state.step == "ask_question":
 
-    try:
-        resp = clients["openai"].chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}]
-        )
-        return resp.choices[0].message.content
-    except Exception as e:
-        return f"OpenAI Error: {e}"
+    st.subheader(f"💬 Ask Question to {st.session_state.selected_llm}")
 
+    st.session_state.input_text = st.text_area(
+        "Enter your query...",
+        height=150
+    )
 
-def call_groq(prompt):
-    if not clients["groq"]:
-        return "❌ Groq API key missing"
+    if st.button("⚡ Get Response"):
 
-    try:
-        resp = clients["groq"].chat.completions.create(
-            model="llama3-70b-8192",
-            messages=[{"role": "user", "content": prompt}]
-        )
-        return resp.choices[0].message.content
-    except Exception as e:
-        return f"Groq Error: {e}"
+        selected = st.session_state.selected_llm
+        prompt = st.session_state.input_text
 
+        if not prompt.strip():
+            st.warning("Please enter a question")
+        else:
 
-def call_claude(prompt):
-    if not clients["claude"]:
-        return "❌ Claude API key missing"
+            if LLMS[selected]["type"] == "api":
 
-    try:
-        resp = clients["claude"].messages.create(
-            model="claude-3-haiku-20240307",
-            max_tokens=1000,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        return resp.content[0].text
-    except Exception as e:
-        return f"Claude Error: {e}"
+                if selected == "Groq (LLaMA3)":
+                    client = Groq(api_key=st.secrets["GROQ_API_KEY"])
+                    res = client.chat.completions.create(
+                        model="llama-3.1-8b-instant",
+                        messages=[{"role": "user", "content": prompt}]
+                    )
+                    st.session_state.response = res.choices[0].message.content
 
+                elif selected == "ChatGPT (OpenAI)":
+                    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+                    res = client.chat.completions.create(
+                        model="gpt-4o-mini",
+                        messages=[{"role": "user", "content": prompt}]
+                    )
+                    st.session_state.response = res.choices[0].message.content
 
-def call_mistral(prompt):
-    if not clients["mistral"]:
-        return "❌ Mistral API key missing"
+                elif selected == "Claude (Anthropic)":
+                    client = anthropic.Anthropic(api_key=st.secrets["CLAUDE_API_KEY"])
+                    res = client.messages.create(
+                        model="claude-3-haiku-20240307",
+                        max_tokens=1000,
+                        messages=[{"role": "user", "content": prompt}]
+                    )
+                    st.session_state.response = res.content[0].text
 
-    try:
-        resp = clients["mistral"].chat.completions.create(
-            model="mistral-small",
-            messages=[{"role": "user", "content": prompt}]
-        )
-        return resp.choices[0].message.content
-    except Exception as e:
-        return f"Mistral Error: {e}"
+                elif selected == "Mistral":
+                    client = OpenAI(
+                        api_key=st.secrets["MISTRAL_API_KEY"],
+                        base_url="https://api.mistral.ai/v1"
+                    )
+                    res = client.chat.completions.create(
+                        model="mistral-small",
+                        messages=[{"role": "user", "content": prompt}]
+                    )
+                    st.session_state.response = res.choices[0].message.content
 
-# -------------------------------
-# EXECUTION
-# -------------------------------
-response = ""
+            else:
+                st.session_state.response = f"Redirect LLM → {selected}"
 
-if st.button("⚡ Get Response") and user_input:
-
-    if LLMS[selected_llm]["type"] == "api":
-
-        if selected_llm == "ChatGPT (OpenAI)":
-            response = call_openai(user_input)
-
-        elif selected_llm == "Claude (Anthropic)":
-            response = call_claude(user_input)
-
-        elif selected_llm == "Groq (LLaMA3)":
-            response = call_groq(user_input)
-
-        elif selected_llm == "Mistral":
-            response = call_mistral(user_input)
-
-        st.success("✅ Response Generated")
-        st.text_area("📄 Output", response, height=250)
-
-    else:
-        url = LLMS[selected_llm]["url"]
-
-        st.warning(f"⚠️ {selected_llm} requires login")
-
-        st.markdown(f"### 👉 Open {selected_llm}")
-        st.markdown(f"[Click Here to Open {selected_llm}]({url})")
-
-        st.markdown("### 📋 Copy Your Prompt Below:")
-        st.code(user_input, language="text")
-
-        st.markdown(f"### 🔙 After using {selected_llm}, paste response below:")
-
-        response = st.text_area("Paste Response Here", height=200)
+            st.session_state.step = "show_result"
+            st.rerun()
 
 # -------------------------------
-# EXPORT SECTION (UNCHANGED)
+# RESULT + DOWNLOAD (UNCHANGED)
 # -------------------------------
-if response:
+elif st.session_state.step == "show_result":
+
+    st.success("✅ Response Generated")
+
+    st.text_area("📄 Output", st.session_state.response, height=250)
 
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
     json_data = {
-        "llm": selected_llm,
-        "input": user_input,
-        "response": response,
+        "llm": st.session_state.selected_llm,
+        "input": st.session_state.input_text,
+        "response": st.session_state.response,
         "timestamp": timestamp
     }
 
     # JSON
-    st.download_button("📥 Download JSON",
+    st.download_button(
+        "📥 Download JSON",
         json.dumps(json_data, indent=4),
-        f"output_{timestamp}.json")
+        f"output_{timestamp}.json"
+    )
 
     # CSV
     df = pd.DataFrame([json_data])
-    st.download_button("📥 Download CSV",
+    st.download_button(
+        "📥 Download CSV",
         df.to_csv(index=False),
-        f"output_{timestamp}.csv")
+        f"output_{timestamp}.csv"
+    )
 
     # PDF
     buffer = io.BytesIO()
@@ -226,20 +188,30 @@ if response:
     story = [
         Paragraph("KALSNET AGENTIC AI REPORT", styles['Title']),
         Spacer(1, 12),
-        Paragraph(f"LLM: {selected_llm}", styles['Normal']),
-        Paragraph(f"Input: {user_input}", styles['Normal']),
+        Paragraph(f"LLM: {st.session_state.selected_llm}", styles['Normal']),
+        Paragraph(f"Input: {st.session_state.input_text}", styles['Normal']),
         Spacer(1, 12),
-        Paragraph(f"Response: {response}", styles['Normal'])
+        Paragraph(f"Response: {st.session_state.response}", styles['Normal'])
     ]
 
     doc.build(story)
 
-    st.download_button("📥 Download PDF",
+    st.download_button(
+        "📥 Download PDF",
         buffer.getvalue(),
-        f"output_{timestamp}.pdf")
+        f"output_{timestamp}.pdf"
+    )
+
+    # RESET BUTTON (KEY FEATURE YOU WANTED)
+    if st.button("🔄 Use Another LLM"):
+        st.session_state.step = "select_llm"
+        st.session_state.response = ""
+        st.session_state.input_text = ""
+        st.session_state.selected_llm = None
+        st.rerun()
 
 # -------------------------------
-# FOOTER
+# FOOTER (UNCHANGED)
 # -------------------------------
 st.markdown("""
 <hr>
