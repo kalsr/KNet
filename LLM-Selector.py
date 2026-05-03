@@ -195,9 +195,22 @@ if st.button("⚡ Run LLM"):
 # ==========================================================
 # OUTPUT DISPLAY (ALWAYS WORKS)
 # ==========================================================
+# ==========================================================
+# OUTPUT DISPLAY (FIXED UI STRUCTURE)
+# ==========================================================
 if st.session_state.response:
+
     st.success("✅ Response Generated")
-    st.text_area("📄 Output", st.session_state.response, height=250)
+
+    # ================= OUTPUT LABEL (FIXED) =================
+    st.markdown("## 📄 Output:")
+
+    st.text_area(
+        label="",
+        value=st.session_state.response,
+        height=300,
+        key="output_box"
+    )
 
     # ---------------- DOWNLOADS ----------------
     ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -209,8 +222,17 @@ if st.session_state.response:
         "time": ts
     }
 
-    st.download_button("📥 JSON", json.dumps(data, indent=4), f"{ts}.json")
-    st.download_button("📥 CSV", pd.DataFrame([data]).to_csv(index=False), f"{ts}.csv")
+    st.download_button(
+        "📥 JSON",
+        json.dumps(data, indent=4),
+        file_name=f"{ts}.json"
+    )
+
+    st.download_button(
+        "📥 CSV",
+        pd.DataFrame([data]).to_csv(index=False),
+        file_name=f"{ts}.csv"
+    )
 
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer)
@@ -222,7 +244,11 @@ if st.session_state.response:
         Paragraph(str(data), styles["Normal"])
     ])
 
-    st.download_button("📥 PDF", buffer.getvalue(), f"{ts}.pdf")
+    st.download_button(
+        "📥 PDF",
+        buffer.getvalue(),
+        file_name=f"{ts}.pdf"
+    )
 
 # ==========================================================
 # RESET
