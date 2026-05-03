@@ -1,6 +1,5 @@
 # ==========================================================
-# KALSNET (KNet) – MULTI-LLM ORCHESTRATION PLATFORM
-# FULL 10 LLM ENTERPRISE VERSION
+# KALSNET (KNet) – MULTI-LLM ORCHESTRATION PLATFORM (FIXED)
 # ==========================================================
 
 import streamlit as st
@@ -17,45 +16,42 @@ from groq import Groq
 import anthropic
 
 # ==========================================================
-# PAGE CONFIG
+# CONFIG
 # ==========================================================
 st.set_page_config(page_title="KNet Multi-LLM Hub", layout="wide")
 
 # ==========================================================
-# HEADER (UNCHANGED)
+# HEADER
 # ==========================================================
 st.markdown("""
 <h1 style='text-align:center; color:#0B3D91; font-weight:bold;'>
-KALSNET (KNet) – Agentic AI LLM Orchestration Platform
+KALSNET (KNet) – Multi-LLM Orchestration Platform
 </h1>
-<h3 style='text-align:center; color:#0B3D91;'>
-Multi-LLM Enterprise Control Center
-</h3>
 <hr>
 """, unsafe_allow_html=True)
 
 # ==========================================================
 # SESSION STATE
 # ==========================================================
-for k in ["step", "llm", "prompt", "response"]:
-    if k not in st.session_state:
-        st.session_state[k] = "" if k != "step" else "select"
+if "response" not in st.session_state:
+    st.session_state.response = ""
+
+if "prompt" not in st.session_state:
+    st.session_state.prompt = ""
 
 # ==========================================================
-# 10 LLM DEFINITIONS
+# 10 LLMs (ALL INCLUDED PROPERLY)
 # ==========================================================
 LLMS = {
-    # API MODELS (REAL RESPONSE)
     "ChatGPT (OpenAI)": "api",
     "Claude (Anthropic)": "api",
     "Groq (LLaMA3)": "api",
     "Mistral": "api",
 
-    # WEB MODELS (REDIRECT)
     "Gemini": "web",
     "Perplexity": "web",
     "Grok": "web",
-    "Copilot": "web",
+    "Microsoft Copilot": "web",
     "Qwen Chat": "web",
     "Kimi": "web"
 }
@@ -64,160 +60,150 @@ WEB_LINKS = {
     "Gemini": "https://gemini.google.com",
     "Perplexity": "https://www.perplexity.ai",
     "Grok": "https://x.ai",
-    "Copilot": "https://copilot.microsoft.com",
+    "Microsoft Copilot": "https://copilot.microsoft.com",
     "Qwen Chat": "https://chat.qwen.ai",
     "Kimi": "https://kimi.moonshot.cn"
 }
 
 # ==========================================================
-# SIDEBAR – API KEY MANAGER (WITH INSTRUCTIONS)
+# SIDEBAR – API KEYS
 # ==========================================================
-st.sidebar.title("🔐 API Key Manager")
+st.sidebar.title("🔐 API Keys")
 
-def key_input(label, key, url):
-    st.sidebar.text_input(label, type="password", key=key)
-    st.sidebar.caption(f"🔗 Get key: {url}")
+st.session_state.OPENAI_KEY = st.sidebar.text_input("OpenAI Key", type="password")
+st.sidebar.caption("Get: https://platform.openai.com/api-keys")
 
-key_input("OpenAI API Key", "OPENAI_KEY", "https://platform.openai.com/api-keys")
-key_input("Groq API Key", "GROQ_KEY", "https://console.groq.com/keys")
-key_input("Claude API Key", "CLAUDE_KEY", "https://console.anthropic.com")
-key_input("Mistral API Key", "MISTRAL_KEY", "https://console.mistral.ai")
+st.session_state.GROQ_KEY = st.sidebar.text_input("Groq Key", type="password")
+st.sidebar.caption("Get: https://console.groq.com/keys")
+
+st.session_state.CLAUDE_KEY = st.sidebar.text_input("Claude Key", type="password")
+st.sidebar.caption("Get: https://console.anthropic.com")
+
+st.session_state.MISTRAL_KEY = st.sidebar.text_input("Mistral Key", type="password")
+st.sidebar.caption("Get: https://console.mistral.ai")
 
 st.sidebar.markdown("---")
-st.sidebar.info("Keys stored in session only. No persistence.")
+st.sidebar.info("Keys are used only during session (not stored)")
 
 # ==========================================================
-# SAFE CLIENT GETTERS
-# ==========================================================
-def get_key(k):
-    return st.session_state.get(k)
-
-# ==========================================================
-# API CALLS (SAFE)
+# LLM CALL FUNCTIONS (SAFE)
 # ==========================================================
 def call_openai(prompt):
-    key = get_key("OPENAI_KEY")
-    if not key:
-        return "❌ Missing OpenAI API Key"
+    if not st.session_state.OPENAI_KEY:
+        return "❌ Missing OpenAI Key"
 
-    client = OpenAI(api_key=key)
-    res = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return res.choices[0].message.content
+    try:
+        client = OpenAI(api_key=st.session_state.OPENAI_KEY)
+        res = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return res.choices[0].message.content
+    except Exception as e:
+        return f"OpenAI Error: {e}"
 
 
 def call_groq(prompt):
-    key = get_key("GROQ_KEY")
-    if not key:
-        return "❌ Missing Groq API Key"
+    if not st.session_state.GROQ_KEY:
+        return "❌ Missing Groq Key"
 
-    client = Groq(api_key=key)
-    res = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return res.choices[0].message.content
+    try:
+        client = Groq(api_key=st.session_state.GROQ_KEY)
+        res = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return res.choices[0].message.content
+    except Exception as e:
+        return f"Groq Error: {e}"
 
 
 def call_claude(prompt):
-    key = get_key("CLAUDE_KEY")
-    if not key:
-        return "❌ Missing Claude API Key"
+    if not st.session_state.CLAUDE_KEY:
+        return "❌ Missing Claude Key"
 
-    client = anthropic.Anthropic(api_key=key)
-    res = client.messages.create(
-        model="claude-3-haiku-20240307",
-        max_tokens=1000,
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return res.content[0].text
+    try:
+        client = anthropic.Anthropic(api_key=st.session_state.CLAUDE_KEY)
+        res = client.messages.create(
+            model="claude-3-haiku-20240307",
+            max_tokens=1000,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return res.content[0].text
+    except Exception as e:
+        return f"Claude Error: {e}"
 
 
 def call_mistral(prompt):
-    key = get_key("MISTRAL_KEY")
-    if not key:
-        return "❌ Missing Mistral API Key"
+    if not st.session_state.MISTRAL_KEY:
+        return "❌ Missing Mistral Key"
 
-    client = OpenAI(api_key=key, base_url="https://api.mistral.ai/v1")
-    res = client.chat.completions.create(
-        model="mistral-small",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return res.choices[0].message.content
-
-# ==========================================================
-# STEP 1 – SELECT LLM
-# ==========================================================
-if st.session_state.step == "select":
-
-    st.subheader("🚀 Select One of 10 LLMs")
-
-    st.session_state.llm = st.selectbox(
-        "Choose LLM",
-        list(LLMS.keys())
-    )
-
-    if st.button("Continue"):
-        st.session_state.step = "use"
-        st.rerun()
+    try:
+        client = OpenAI(
+            api_key=st.session_state.MISTRAL_KEY,
+            base_url="https://api.mistral.ai/v1"
+        )
+        res = client.chat.completions.create(
+            model="mistral-small",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return res.choices[0].message.content
+    except Exception as e:
+        return f"Mistral Error: {e}"
 
 # ==========================================================
-# STEP 2 – USE LLM
+# UI – LLM SELECTION
 # ==========================================================
-elif st.session_state.step == "use":
+st.subheader("🚀 Select LLM")
 
-    llm = st.session_state.llm
-    mode = LLMS[llm]
+selected_llm = st.selectbox("Choose one of 10 LLMs", list(LLMS.keys()))
 
-    st.subheader(f"💬 Using: {llm}")
+st.session_state.prompt = st.text_area("💬 Enter your question", height=150)
 
-    st.session_state.prompt = st.text_area("Enter your question", height=150)
+# ==========================================================
+# RUN BUTTON (FIXED LOGIC)
+# ==========================================================
+if st.button("⚡ Run LLM"):
 
-    if st.button("⚡ Run"):
+    if not st.session_state.prompt.strip():
+        st.warning("Enter a question first")
 
+    else:
+        mode = LLMS[selected_llm]
+
+        # ---------------- API MODE ----------------
         if mode == "api":
 
-            if llm == "ChatGPT (OpenAI)":
+            if selected_llm == "ChatGPT (OpenAI)":
                 st.session_state.response = call_openai(st.session_state.prompt)
 
-            elif llm == "Groq (LLaMA3)":
+            elif selected_llm == "Groq (LLaMA3)":
                 st.session_state.response = call_groq(st.session_state.prompt)
 
-            elif llm == "Claude (Anthropic)":
+            elif selected_llm == "Claude (Anthropic)":
                 st.session_state.response = call_claude(st.session_state.prompt)
 
-            elif llm == "Mistral":
+            elif selected_llm == "Mistral":
                 st.session_state.response = call_mistral(st.session_state.prompt)
 
+        # ---------------- WEB MODE ----------------
         else:
-            st.session_state.response = "🌐 Web LLM - Open in browser"
-
-        st.session_state.step = "result"
-        st.rerun()
+            st.session_state.response = f"🌐 Open in browser: {WEB_LINKS[selected_llm]}"
+            st.markdown(f"👉 [Open {selected_llm}]({WEB_LINKS[selected_llm]})")
+            st.code(st.session_state.prompt)
 
 # ==========================================================
-# STEP 3 – RESULT VIEW
+# OUTPUT DISPLAY (ALWAYS WORKS)
 # ==========================================================
-elif st.session_state.step == "result":
-
-    st.success("✅ Response Ready")
-
-    llm = st.session_state.llm
-
-    if LLMS[llm] == "web":
-        st.warning("This LLM runs in browser")
-        st.markdown(f"[Open {llm}]({WEB_LINKS[llm]})")
-        st.code(st.session_state.prompt)
-
+if st.session_state.response:
+    st.success("✅ Response Generated")
     st.text_area("📄 Output", st.session_state.response, height=250)
 
-    # ================= DOWNLOADS =================
+    # ---------------- DOWNLOADS ----------------
     ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
     data = {
-        "llm": llm,
+        "llm": selected_llm,
         "input": st.session_state.prompt,
         "response": st.session_state.response,
         "time": ts
@@ -238,12 +224,13 @@ elif st.session_state.step == "result":
 
     st.download_button("📥 PDF", buffer.getvalue(), f"{ts}.pdf")
 
-    if st.button("🔄 Back to LLMs"):
-        st.session_state.step = "select"
-        st.session_state.response = ""
-        st.session_state.prompt = ""
-        st.session_state.llm = ""
-        st.rerun()
+# ==========================================================
+# RESET
+# ==========================================================
+if st.button("🔄 Reset / Choose Another LLM"):
+    st.session_state.response = ""
+    st.session_state.prompt = ""
+    st.rerun()
 
 # ==========================================================
 # FOOTER
@@ -251,6 +238,6 @@ elif st.session_state.step == "result":
 st.markdown("""
 <hr>
 <p style='text-align:center; color:gray;'>
-Enterprise Multi-LLM Orchestration Platform | KNet
+Multi-LLM Orchestration Platform | KNet
 </p>
 """, unsafe_allow_html=True)
