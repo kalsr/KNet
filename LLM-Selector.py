@@ -11,7 +11,7 @@ import io
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
-# API CLIENTS (INSTALL REQUIRED LIBS)
+# APIs
 from openai import OpenAI
 from groq import Groq
 import anthropic
@@ -22,7 +22,7 @@ import anthropic
 st.set_page_config(page_title="KNet Agentic AI Platform", layout="wide")
 
 # -------------------------------
-# HEADER (KEEP SAME)
+# HEADER (UNCHANGED)
 # -------------------------------
 st.markdown("""
 <h1 style='color:#0B3D91; text-align:center; font-weight:bold;'>
@@ -42,7 +42,7 @@ LLMS = {
     "Claude (Anthropic)": {"type": "api"},
     "Groq (LLaMA3)": {"type": "api"},
     "Mistral": {"type": "api"},
-    
+
     "Gemini": {"type": "redirect", "url": "https://gemini.google.com"},
     "Perplexity": {"type": "redirect", "url": "https://www.perplexity.ai"},
     "Grok": {"type": "redirect", "url": "https://x.ai"},
@@ -52,7 +52,7 @@ LLMS = {
 }
 
 # -------------------------------
-# INPUT
+# USER INPUT
 # -------------------------------
 st.subheader("💬 Enter Your Question")
 user_input = st.text_area("Enter your query...", height=150)
@@ -63,28 +63,29 @@ user_input = st.text_area("Enter your query...", height=150)
 selected_llm = st.selectbox("🚀 Select LLM", list(LLMS.keys()))
 
 # -------------------------------
-# API CLIENT INIT (SAFE)
+# INIT API CLIENTS
 # -------------------------------
 def get_clients():
     clients = {}
+
     try:
-        clients["openai"] = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+        clients["openai"] = OpenAI(api_key=st.secrets.get("OPENAI_API_KEY"))
     except:
         clients["openai"] = None
 
     try:
-        clients["groq"] = Groq(api_key=st.secrets["GROQ_API_KEY"])
+        clients["groq"] = Groq(api_key=st.secrets.get("GROQ_API_KEY"))
     except:
         clients["groq"] = None
 
     try:
-        clients["claude"] = anthropic.Anthropic(api_key=st.secrets["CLAUDE_API_KEY"])
+        clients["claude"] = anthropic.Anthropic(api_key=st.secrets.get("CLAUDE_API_KEY"))
     except:
         clients["claude"] = None
 
     try:
         clients["mistral"] = OpenAI(
-            api_key=st.secrets["MISTRAL_API_KEY"],
+            api_key=st.secrets.get("MISTRAL_API_KEY"),
             base_url="https://api.mistral.ai/v1"
         )
     except:
@@ -95,56 +96,63 @@ def get_clients():
 clients = get_clients()
 
 # -------------------------------
-# API CALLS
+# API CALL FUNCTIONS
 # -------------------------------
 def call_openai(prompt):
-    client = clients["openai"]
-    if not client:
-        return "❌ OpenAI API Key missing"
+    if not clients["openai"]:
+        return "❌ OpenAI API key missing"
 
-    resp = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return resp.choices[0].message.content
+    try:
+        resp = clients["openai"].chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return resp.choices[0].message.content
+    except Exception as e:
+        return f"OpenAI Error: {e}"
 
 
 def call_groq(prompt):
-    client = clients["groq"]
-    if not client:
-        return "❌ Groq API Key missing"
+    if not clients["groq"]:
+        return "❌ Groq API key missing"
 
-    resp = client.chat.completions.create(
-        model="llama3-70b-8192",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return resp.choices[0].message.content
+    try:
+        resp = clients["groq"].chat.completions.create(
+            model="llama3-70b-8192",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return resp.choices[0].message.content
+    except Exception as e:
+        return f"Groq Error: {e}"
 
 
 def call_claude(prompt):
-    client = clients["claude"]
-    if not client:
-        return "❌ Claude API Key missing"
+    if not clients["claude"]:
+        return "❌ Claude API key missing"
 
-    resp = client.messages.create(
-        model="claude-3-haiku-20240307",
-        max_tokens=1000,
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return resp.content[0].text
+    try:
+        resp = clients["claude"].messages.create(
+            model="claude-3-haiku-20240307",
+            max_tokens=1000,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return resp.content[0].text
+    except Exception as e:
+        return f"Claude Error: {e}"
 
 
 def call_mistral(prompt):
-    client = clients["mistral"]
-    if not client:
-        return "❌ Mistral API Key missing"
+    if not clients["mistral"]:
+        return "❌ Mistral API key missing"
 
-    resp = client.chat.completions.create(
-        model="mistral-small",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return resp.choices[0].message.content
-
+    try:
+        resp = clients["mistral"].chat.completions.create(
+            model="mistral-small",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return resp.choices[0].message.content
+    except Exception as e:
+        return f"Mistral Error: {e}"
 
 # -------------------------------
 # EXECUTION
@@ -171,20 +179,71 @@ if st.button("⚡ Get Response") and user_input:
         st.text_area("📄 Output", response, height=250)
 
     else:
-        # REDIRECT FLOW
         url = LLMS[selected_llm]["url"]
 
-        st.warning(f"⚠️ {selected_llm} requires account/login")
+        st.warning(f"⚠️ {selected_llm} requires login")
 
-       st.markdown(f"""
-### 👉 Open {selected_llm}
-[Click Here to Open {selected_llm}]({url})
+        st.markdown(f"### 👉 Open {selected_llm}")
+        st.markdown(f"[Click Here to Open {selected_llm}]({url})")
 
-### 📋 Your Prompt (Copy & Paste)
-""")
+        st.markdown("### 📋 Copy Your Prompt Below:")
+        st.code(user_input, language="text")
 
-st.code(user_input, language="text")
+        st.markdown(f"### 🔙 After using {selected_llm}, paste response below:")
 
-st.markdown(f"""
-### 🔙 After using {selected_llm}, return here and paste response below:
-""")
+        response = st.text_area("Paste Response Here", height=200)
+
+# -------------------------------
+# EXPORT SECTION (UNCHANGED)
+# -------------------------------
+if response:
+
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    json_data = {
+        "llm": selected_llm,
+        "input": user_input,
+        "response": response,
+        "timestamp": timestamp
+    }
+
+    # JSON
+    st.download_button("📥 Download JSON",
+        json.dumps(json_data, indent=4),
+        f"output_{timestamp}.json")
+
+    # CSV
+    df = pd.DataFrame([json_data])
+    st.download_button("📥 Download CSV",
+        df.to_csv(index=False),
+        f"output_{timestamp}.csv")
+
+    # PDF
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer)
+    styles = getSampleStyleSheet()
+
+    story = [
+        Paragraph("KALSNET AGENTIC AI REPORT", styles['Title']),
+        Spacer(1, 12),
+        Paragraph(f"LLM: {selected_llm}", styles['Normal']),
+        Paragraph(f"Input: {user_input}", styles['Normal']),
+        Spacer(1, 12),
+        Paragraph(f"Response: {response}", styles['Normal'])
+    ]
+
+    doc.build(story)
+
+    st.download_button("📥 Download PDF",
+        buffer.getvalue(),
+        f"output_{timestamp}.pdf")
+
+# -------------------------------
+# FOOTER
+# -------------------------------
+st.markdown("""
+<hr>
+<p style='text-align:center; color:gray;'>
+Enterprise Agentic-AI | Multi-LLM Orchestration | Cyber/DoD Ready Platform
+</p>
+""", unsafe_allow_html=True)
