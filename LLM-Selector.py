@@ -1,8 +1,7 @@
-
-
 # ==========================================================
-# KALSNET (KNet) – AGENTIC AI LLM ORCHESTRATION PLATFORM
-# Developed by Randy Singh – Kalsnet (KNet) Consulting Group
+# KALSNET (KNet) – ENTERPRISE AGENTIC AI PLATFORM (V2)
+# Multi-LLM Orchestration | AI Decision Intelligence
+# Developed by Randy Singh
 # ==========================================================
 
 import streamlit as st
@@ -15,185 +14,175 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 import matplotlib.pyplot as plt
 
-# -------------------------------
-# PAGE CONFIG
-# -------------------------------
-st.set_page_config(page_title="KNet Agentic AI Platform", layout="wide")
+st.set_page_config(page_title="KNet Enterprise AI Platform", layout="wide")
 
 # -------------------------------
 # HEADER
 # -------------------------------
 st.markdown("""
-<h1 style='color:#0B3D91; text-align:center; font-weight:bold;'>
-KALSNET (KNet) – Agentic AI LLM Orchestration Platform
-</h1>
-<h3 style='color:#0B3D91; text-align:center; font-weight:bold;'>
-Developed by Randy Singh – Kalsnet (KNet) Consulting Group
-</h3>
+<h1 style='color:#0B3D91; text-align:center;'>KALSNET (KNet) – Enterprise Agentic AI Platform</h1>
+<h4 style='text-align:center;'>Multi-LLM Orchestration | Decision Intelligence | Cyber/DoD Ready</h4>
 <hr>
 """, unsafe_allow_html=True)
 
 # -------------------------------
-# FREE LLM LIST + PROMPTS
+# FREE LLMs
 # -------------------------------
-llm_prompts = {
-    "ChatGPT": "Go to https://chat.openai.com and paste your task.",
-    "Claude": "Go to https://claude.ai and enter your prompt.",
-    "Gemini": "Go to https://gemini.google.com and run your query.",
-    "DeepSeek Chat": "Go to https://chat.deepseek.com and paste your task.",
-    "Perplexity": "Go to https://www.perplexity.ai and ask your question.",
-    "Grok": "Go to https://x.ai and use Grok chat interface.",
-    "Microsoft Copilot": "Go to https://copilot.microsoft.com and enter your prompt.",
-    "Mistral Le Chat": "Go to https://chat.mistral.ai and run your query.",
-    "Qwen Chat": "Go to https://chat.qwen.ai and enter your task.",
-    "Kimi": "Go to https://kimi.moonshot.cn and paste your query."
-}
+LLMS = [
+    "ChatGPT", "Claude", "Gemini", "DeepSeek",
+    "Perplexity", "Grok", "Copilot", "Mistral",
+    "Qwen", "Kimi"
+]
 
 # -------------------------------
-# USER INPUT
+# MODE PROMPT ENGINEERING
 # -------------------------------
-st.subheader("🧠 Enter Your Task")
-user_input = st.text_area("", height=150)
+def build_prompt(task, mode):
+    base = f"Task: {task}\n"
 
-# -------------------------------
-# LLM SELECTION (PROFESSIONAL UI)
-# -------------------------------
-st.subheader("🚀 Select Free LLM Platform")
-
-selected_llm = st.selectbox(
-    "Choose LLM",
-    list(llm_prompts.keys())
-)
-
-# -------------------------------
-# DISPLAY PROMPT INSTRUCTIONS
-# -------------------------------
-st.markdown(f"""
-<div style='background:#f4f6f9;padding:15px;border-radius:10px;border-left:6px solid #0B3D91;'>
-<b>📘 How to Use {selected_llm}:</b><br><br>
-{llm_prompts[selected_llm]}
-</div>
-""", unsafe_allow_html=True)
+    if mode == "Cyber Defense":
+        return base + "Analyze as a cybersecurity expert. Provide threats, risks, mitigation."
+    elif mode == "Threat Hunting":
+        return base + "Identify anomalies, suspicious patterns, and indicators of compromise."
+    elif mode == "Fraud Detection":
+        return base + "Detect fraud patterns, anomalies, and risk score."
+    elif mode == "DoD Mission":
+        return base + "Provide mission planning, risk analysis, and operational strategy."
+    else:
+        return base + "Provide a clear and structured response."
 
 # -------------------------------
-# MULTI-AGENT SYSTEM
+# UI LAYOUT (TABS)
 # -------------------------------
-def planner_agent(task):
-    return f"Plan: Break task into steps for '{task}'"
+tab1, tab2, tab3 = st.tabs(["🧠 Task & LLM Selection", "⚡ Execution", "📊 Analytics"])
 
-def analyzer_agent(plan):
-    return f"Analysis: Executing -> {plan}"
+# ===============================
+# TAB 1 – INPUT
+# ===============================
+with tab1:
 
-def reporter_agent(result):
-    return f"Report: Final output generated from -> {result}"
+    st.subheader("Enter Mission Task")
 
-# -------------------------------
-# RUN AI (SIMULATION)
-# -------------------------------
-response = ""
+    user_input = st.text_area("Task", height=150)
 
-if st.button("⚡ Run Agentic AI") and user_input:
+    mode = st.selectbox("Select Mode", [
+        "General AI", "Cyber Defense", "Threat Hunting",
+        "Fraud Detection", "DoD Mission"
+    ])
 
-    plan = planner_agent(user_input)
-    analysis = analyzer_agent(plan)
-    response = reporter_agent(analysis)
+    selected_llms = st.multiselect(
+        "Select LLMs (Multi-Execution)",
+        LLMS,
+        default=["ChatGPT"]
+    )
 
-    st.success("✅ Agentic AI Execution Complete")
+# ===============================
+# TAB 2 – EXECUTION
+# ===============================
+with tab2:
 
-    col1, col2, col3 = st.columns(3)
+    response_data = []
 
-    with col1:
-        st.text_area("Planner Output", plan, height=150)
-    with col2:
-        st.text_area("Analyzer Output", analysis, height=150)
-    with col3:
-        st.text_area("Final Report", response, height=150)
+    if st.button("⚡ Run Enterprise AI") and user_input:
 
-# -------------------------------
-# ANALYTICS DASHBOARD
-# -------------------------------
-if response:
-    st.subheader("📊 Analytics Dashboard")
+        engineered_prompt = build_prompt(user_input, mode)
 
-    data = pd.DataFrame({
-        "Stage": ["Planner", "Analyzer", "Reporter"],
-        "Confidence": [
-            random.randint(70, 95),
-            random.randint(75, 98),
-            random.randint(80, 99)
-        ]
-    })
+        st.info("Prompt sent to selected LLMs")
 
-    fig, ax = plt.subplots()
-    ax.bar(data["Stage"], data["Confidence"])
-    ax.set_title("Agent Confidence Levels")
+        for llm in selected_llms:
 
-    st.pyplot(fig)
+            # SIMULATED RESPONSE (replace with API later)
+            result = f"{llm} Response to: {engineered_prompt}"
 
-# -------------------------------
-# EXPORT OPTIONS
-# -------------------------------
-if response:
+            score = random.randint(75, 98)
 
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            response_data.append({
+                "LLM": llm,
+                "Response": result,
+                "Score": score
+            })
 
-    json_data = {
-        "llm": selected_llm,
-        "input": user_input,
-        "response": response,
-        "timestamp": timestamp
-    }
+        df = pd.DataFrame(response_data)
 
-    st.subheader("📥 Download Results")
+        st.success("Execution Complete")
 
-    col1, col2, col3 = st.columns(3)
+        st.dataframe(df)
 
-    # JSON
-    with col1:
-        st.download_button(
-            "⬇️ JSON",
-            json.dumps(json_data, indent=4),
-            f"output_{timestamp}.json"
-        )
+        # Executive Summary
+        best = df.loc[df["Score"].idxmax()]
 
-    # CSV
-    with col2:
-        df = pd.DataFrame([json_data])
-        st.download_button(
-            "⬇️ CSV",
-            df.to_csv(index=False),
-            f"output_{timestamp}.csv"
-        )
+        st.markdown(f"""
+        ### 🏆 Best LLM Recommendation
+        **{best['LLM']}** performed best with score **{best['Score']}**
+        """)
 
-    # PDF
-    with col3:
-        buffer = io.BytesIO()
-        doc = SimpleDocTemplate(buffer)
-        styles = getSampleStyleSheet()
+# ===============================
+# TAB 3 – ANALYTICS
+# ===============================
+with tab3:
 
-        story = [
-            Paragraph("KALSNET AGENTIC AI REPORT", styles['Title']),
-            Spacer(1, 12),
-            Paragraph(f"LLM: {selected_llm}", styles['Normal']),
-            Paragraph(f"Input: {user_input}", styles['Normal']),
-            Spacer(1, 12),
-            Paragraph(f"Response: {response}", styles['Normal'])
-        ]
+    if 'df' in locals():
 
-        doc.build(story)
+        st.subheader("LLM Performance Comparison")
 
-        st.download_button(
-            "⬇️ PDF",
-            buffer.getvalue(),
-            f"output_{timestamp}.pdf"
-        )
+        fig, ax = plt.subplots()
+        ax.bar(df["LLM"], df["Score"])
+        ax.set_title("LLM Performance Scores")
+
+        st.pyplot(fig)
+
+        # -------------------------------
+        # EXPORTS
+        # -------------------------------
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
+        json_data = df.to_dict(orient="records")
+
+        col1, col2, col3 = st.columns(3)
+
+        # JSON
+        with col1:
+            st.download_button(
+                "⬇️ JSON",
+                json.dumps(json_data, indent=4),
+                f"enterprise_{timestamp}.json"
+            )
+
+        # CSV
+        with col2:
+            st.download_button(
+                "⬇️ CSV",
+                df.to_csv(index=False),
+                f"enterprise_{timestamp}.csv"
+            )
+
+        # PDF
+        with col3:
+            buffer = io.BytesIO()
+            doc = SimpleDocTemplate(buffer)
+            styles = getSampleStyleSheet()
+
+            story = [Paragraph("KNET ENTERPRISE AI REPORT", styles['Title']), Spacer(1,12)]
+
+            for r in json_data:
+                story.append(Paragraph(f"{r['LLM']} (Score: {r['Score']})", styles['Normal']))
+                story.append(Paragraph(r["Response"], styles['Normal']))
+                story.append(Spacer(1,12))
+
+            doc.build(story)
+
+            st.download_button(
+                "⬇️ PDF",
+                buffer.getvalue(),
+                f"enterprise_{timestamp}.pdf"
+            )
 
 # -------------------------------
 # FOOTER
 # -------------------------------
 st.markdown("""
 <hr>
-<p style='text-align:center; color:gray;'>
-Enterprise Agentic-AI | Multi-LLM Access Gateway | Free LLM Integration Layer
+<p style='text-align:center;color:gray;'>
+Enterprise AI | Multi-LLM Decision Intelligence | KALSNET (KNet)
 </p>
 """, unsafe_allow_html=True)
