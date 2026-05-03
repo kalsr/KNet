@@ -28,7 +28,7 @@ st.set_page_config(page_title="KNet Multi-LLM Hub", layout="wide")
 # ==========================================================
 st.markdown("""
 <h1 style='text-align:center; color:#0B3D91; font-weight:bold;'>
-KALSNET (KNet) – Multi-LLM Orchestration Platform
+KALSNET (KNet) – Multi-LLM Orchestration Platform - Developer Randy Singh
 </h1>
 <hr>
 """, unsafe_allow_html=True)
@@ -171,12 +171,12 @@ if st.button(" Run LLM"):
 
         # ---------------- WEB MODE ----------------
         else:
-            st.session_state.response = "🌐 Use external LLM and paste response below"
+            st.session_state.response = " Use external LLM and paste response below"
 
-            st.markdown(f"### 👉 Open {selected_llm}")
+            st.markdown(f"###  Open {selected_llm}")
             st.markdown(f"[Click here to open {selected_llm}]({WEB_LINKS[selected_llm]})")
 
-            st.markdown("### 📋 Copy your prompt:")
+            st.markdown("###  Copy your prompt:")
             st.code(st.session_state.prompt)
 
             st.markdown("### 🔙 Paste response here after using the LLM:")
