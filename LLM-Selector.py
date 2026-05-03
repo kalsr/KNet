@@ -11,13 +11,18 @@ import io
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
+# API CLIENTS (INSTALL REQUIRED LIBS)
+from openai import OpenAI
+from groq import Groq
+import anthropic
+
 # -------------------------------
 # PAGE CONFIG
 # -------------------------------
 st.set_page_config(page_title="KNet Agentic AI Platform", layout="wide")
 
 # -------------------------------
-# HEADER (UNCHANGED)
+# HEADER (KEEP SAME)
 # -------------------------------
 st.markdown("""
 <h1 style='color:#0B3D91; text-align:center; font-weight:bold;'>
@@ -30,139 +35,149 @@ Developed by Randy Singh – Kalsnet (KNet) Consulting Group
 """, unsafe_allow_html=True)
 
 # -------------------------------
-# 10 FREE LLMs
+# LLM CONFIG
 # -------------------------------
-llms = [
-    "ChatGPT",
-    "Claude",
-    "Gemini",
-    "DeepSeek Chat",
-    "Perplexity",
-    "Grok",
-    "Microsoft Copilot",
-    "Mistral Le Chat",
-    "Qwen Chat",
-    "Kimi"
-]
+LLMS = {
+    "ChatGPT (OpenAI)": {"type": "api"},
+    "Claude (Anthropic)": {"type": "api"},
+    "Groq (LLaMA3)": {"type": "api"},
+    "Mistral": {"type": "api"},
+    
+    "Gemini": {"type": "redirect", "url": "https://gemini.google.com"},
+    "Perplexity": {"type": "redirect", "url": "https://www.perplexity.ai"},
+    "Grok": {"type": "redirect", "url": "https://x.ai"},
+    "Microsoft Copilot": {"type": "redirect", "url": "https://copilot.microsoft.com"},
+    "Qwen Chat": {"type": "redirect", "url": "https://chat.qwen.ai"},
+    "Kimi": {"type": "redirect", "url": "https://kimi.moonshot.cn"}
+}
 
 # -------------------------------
-# LLM LINKS (FOR USER GUIDANCE)
+# INPUT
 # -------------------------------
-llm_links = {
-    "ChatGPT": "https://chat.openai.com",
-    "Claude": "https://claude.ai",
-    "Gemini": "https://gemini.google.com",
-    "DeepSeek Chat": "https://chat.deepseek.com",
-    "Perplexity": "https://www.perplexity.ai",
-    "Grok": "https://x.ai",
-    "Microsoft Copilot": "https://copilot.microsoft.com",
-    "Mistral Le Chat": "https://chat.mistral.ai",
-    "Qwen Chat": "https://chat.qwen.ai",
-    "Kimi": "https://kimi.moonshot.cn"
-}
+st.subheader("💬 Enter Your Question")
+user_input = st.text_area("Enter your query...", height=150)
 
 # -------------------------------
 # SELECT LLM
 # -------------------------------
-st.subheader("🚀 Select Free LLM")
-
-selected_llm = st.selectbox("Choose LLM", llms)
+selected_llm = st.selectbox("🚀 Select LLM", list(LLMS.keys()))
 
 # -------------------------------
-# DISPLAY SELECTED LLM
+# API CLIENT INIT (SAFE)
 # -------------------------------
-st.markdown(f"""
-<div style='background:#f4f6f9;padding:15px;border-radius:10px;border-left:6px solid #0B3D91;'>
-<b>Selected LLM:</b> {selected_llm}<br><br>
-👉 Access: <a href="{llm_links[selected_llm]}" target="_blank">{llm_links[selected_llm]}</a>
-</div>
-""", unsafe_allow_html=True)
+def get_clients():
+    clients = {}
+    try:
+        clients["openai"] = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+    except:
+        clients["openai"] = None
+
+    try:
+        clients["groq"] = Groq(api_key=st.secrets["GROQ_API_KEY"])
+    except:
+        clients["groq"] = None
+
+    try:
+        clients["claude"] = anthropic.Anthropic(api_key=st.secrets["CLAUDE_API_KEY"])
+    except:
+        clients["claude"] = None
+
+    try:
+        clients["mistral"] = OpenAI(
+            api_key=st.secrets["MISTRAL_API_KEY"],
+            base_url="https://api.mistral.ai/v1"
+        )
+    except:
+        clients["mistral"] = None
+
+    return clients
+
+clients = get_clients()
 
 # -------------------------------
-# ASK QUESTION
+# API CALLS
 # -------------------------------
-st.subheader(f"💬 Ask {selected_llm}")
+def call_openai(prompt):
+    client = clients["openai"]
+    if not client:
+        return "❌ OpenAI API Key missing"
 
-user_input = st.text_area("Enter your question", height=150)
+    resp = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return resp.choices[0].message.content
+
+
+def call_groq(prompt):
+    client = clients["groq"]
+    if not client:
+        return "❌ Groq API Key missing"
+
+    resp = client.chat.completions.create(
+        model="llama3-70b-8192",
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return resp.choices[0].message.content
+
+
+def call_claude(prompt):
+    client = clients["claude"]
+    if not client:
+        return "❌ Claude API Key missing"
+
+    resp = client.messages.create(
+        model="claude-3-haiku-20240307",
+        max_tokens=1000,
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return resp.content[0].text
+
+
+def call_mistral(prompt):
+    client = clients["mistral"]
+    if not client:
+        return "❌ Mistral API Key missing"
+
+    resp = client.chat.completions.create(
+        model="mistral-small",
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return resp.choices[0].message.content
+
 
 # -------------------------------
-# RESPONSE (SIMULATED – API READY)
+# EXECUTION
 # -------------------------------
 response = ""
 
 if st.button("⚡ Get Response") and user_input:
 
-    # SIMULATED RESPONSE (Replace with API later)
-    response = f"{selected_llm} response to: {user_input}"
+    if LLMS[selected_llm]["type"] == "api":
 
-    st.success("✅ Response Generated")
+        if selected_llm == "ChatGPT (OpenAI)":
+            response = call_openai(user_input)
 
-    st.text_area("LLM Response", response, height=200)
+        elif selected_llm == "Claude (Anthropic)":
+            response = call_claude(user_input)
 
-# -------------------------------
-# DOWNLOAD OPTIONS
-# -------------------------------
-if response:
+        elif selected_llm == "Groq (LLaMA3)":
+            response = call_groq(user_input)
 
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        elif selected_llm == "Mistral":
+            response = call_mistral(user_input)
 
-    data = {
-        "llm": selected_llm,
-        "question": user_input,
-        "response": response,
-        "timestamp": timestamp
-    }
+        st.success("✅ Response Generated")
+        st.text_area("📄 Output", response, height=250)
 
-    st.subheader("📥 Download Results")
+    else:
+        # REDIRECT FLOW
+        url = LLMS[selected_llm]["url"]
 
-    col1, col2, col3 = st.columns(3)
+        st.warning(f"⚠️ {selected_llm} requires account/login")
 
-    # JSON
-    with col1:
-        st.download_button(
-            "⬇️ JSON",
-            json.dumps(data, indent=4),
-            f"llm_output_{timestamp}.json"
-        )
+        st.markdown(f"""
+### 👉 Open {selected_llm}
+[Click Here to Open {selected_llm}]({url})
 
-    # CSV
-    with col2:
-        df = pd.DataFrame([data])
-        st.download_button(
-            "⬇️ CSV",
-            df.to_csv(index=False),
-            f"llm_output_{timestamp}.csv"
-        )
-
-    # PDF
-    with col3:
-        buffer = io.BytesIO()
-        doc = SimpleDocTemplate(buffer)
-        styles = getSampleStyleSheet()
-
-        story = [
-            Paragraph("KALSNET LLM REPORT", styles['Title']),
-            Spacer(1, 12),
-            Paragraph(f"LLM: {selected_llm}", styles['Normal']),
-            Paragraph(f"Question: {user_input}", styles['Normal']),
-            Spacer(1, 12),
-            Paragraph(f"Response: {response}", styles['Normal'])
-        ]
-
-        doc.build(story)
-
-        st.download_button(
-            "⬇️ PDF",
-            buffer.getvalue(),
-            f"llm_output_{timestamp}.pdf"
-        )
-
-# -------------------------------
-# FOOTER
-# -------------------------------
-st.markdown("""
-<hr>
-<p style='text-align:center; color:gray;'>
-Free LLM Access Gateway | KALSNET (KNet)
-</p>
-""", unsafe_allow_html=True)
+### 📋 Your Prompt (Copy & Paste)
