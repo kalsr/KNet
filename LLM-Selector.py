@@ -1,7 +1,6 @@
 # ==========================================================
-# KALSNET (KNet) – ENTERPRISE AGENTIC AI PLATFORM (V2)
-# Multi-LLM Orchestration | AI Decision Intelligence
-# Developed by Randy Singh
+# KALSNET (KNet) – AGENTIC AI LLM ORCHESTRATION PLATFORM
+# Developed by Randy Singh – Kalsnet (KNet) Consulting Group
 # ==========================================================
 
 import streamlit as st
@@ -9,180 +8,161 @@ import pandas as pd
 import json
 import datetime
 import io
-import random
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
-import matplotlib.pyplot as plt
-
-st.set_page_config(page_title="KNet Enterprise AI Platform", layout="wide")
 
 # -------------------------------
-# HEADER
+# PAGE CONFIG
+# -------------------------------
+st.set_page_config(page_title="KNet Agentic AI Platform", layout="wide")
+
+# -------------------------------
+# HEADER (UNCHANGED)
 # -------------------------------
 st.markdown("""
-<h1 style='color:#0B3D91; text-align:center;'>KALSNET (KNet) – Enterprise Agentic AI Platform</h1>
-<h4 style='text-align:center;'>Multi-LLM Orchestration | Decision Intelligence | Cyber/DoD Ready</h4>
+<h1 style='color:#0B3D91; text-align:center; font-weight:bold;'>
+KALSNET (KNet) – Agentic AI LLM Orchestration Platform
+</h1>
+<h3 style='color:#0B3D91; text-align:center; font-weight:bold;'>
+Developed by Randy Singh – Kalsnet (KNet) Consulting Group
+</h3>
 <hr>
 """, unsafe_allow_html=True)
 
 # -------------------------------
-# FREE LLMs
+# 10 FREE LLMs
 # -------------------------------
-LLMS = [
-    "ChatGPT", "Claude", "Gemini", "DeepSeek",
-    "Perplexity", "Grok", "Copilot", "Mistral",
-    "Qwen", "Kimi"
+llms = [
+    "ChatGPT",
+    "Claude",
+    "Gemini",
+    "DeepSeek Chat",
+    "Perplexity",
+    "Grok",
+    "Microsoft Copilot",
+    "Mistral Le Chat",
+    "Qwen Chat",
+    "Kimi"
 ]
 
 # -------------------------------
-# MODE PROMPT ENGINEERING
+# LLM LINKS (FOR USER GUIDANCE)
 # -------------------------------
-def build_prompt(task, mode):
-    base = f"Task: {task}\n"
-
-    if mode == "Cyber Defense":
-        return base + "Analyze as a cybersecurity expert. Provide threats, risks, mitigation."
-    elif mode == "Threat Hunting":
-        return base + "Identify anomalies, suspicious patterns, and indicators of compromise."
-    elif mode == "Fraud Detection":
-        return base + "Detect fraud patterns, anomalies, and risk score."
-    elif mode == "DoD Mission":
-        return base + "Provide mission planning, risk analysis, and operational strategy."
-    else:
-        return base + "Provide a clear and structured response."
+llm_links = {
+    "ChatGPT": "https://chat.openai.com",
+    "Claude": "https://claude.ai",
+    "Gemini": "https://gemini.google.com",
+    "DeepSeek Chat": "https://chat.deepseek.com",
+    "Perplexity": "https://www.perplexity.ai",
+    "Grok": "https://x.ai",
+    "Microsoft Copilot": "https://copilot.microsoft.com",
+    "Mistral Le Chat": "https://chat.mistral.ai",
+    "Qwen Chat": "https://chat.qwen.ai",
+    "Kimi": "https://kimi.moonshot.cn"
+}
 
 # -------------------------------
-# UI LAYOUT (TABS)
+# SELECT LLM
 # -------------------------------
-tab1, tab2, tab3 = st.tabs(["🧠 Task & LLM Selection", "⚡ Execution", "📊 Analytics"])
+st.subheader("🚀 Select Free LLM")
 
-# ===============================
-# TAB 1 – INPUT
-# ===============================
-with tab1:
+selected_llm = st.selectbox("Choose LLM", llms)
 
-    st.subheader("Enter Mission Task")
+# -------------------------------
+# DISPLAY SELECTED LLM
+# -------------------------------
+st.markdown(f"""
+<div style='background:#f4f6f9;padding:15px;border-radius:10px;border-left:6px solid #0B3D91;'>
+<b>Selected LLM:</b> {selected_llm}<br><br>
+👉 Access: <a href="{llm_links[selected_llm]}" target="_blank">{llm_links[selected_llm]}</a>
+</div>
+""", unsafe_allow_html=True)
 
-    user_input = st.text_area("Task", height=150)
+# -------------------------------
+# ASK QUESTION
+# -------------------------------
+st.subheader(f"💬 Ask {selected_llm}")
 
-    mode = st.selectbox("Select Mode", [
-        "General AI", "Cyber Defense", "Threat Hunting",
-        "Fraud Detection", "DoD Mission"
-    ])
+user_input = st.text_area("Enter your question", height=150)
 
-    selected_llms = st.multiselect(
-        "Select LLMs (Multi-Execution)",
-        LLMS,
-        default=["ChatGPT"]
-    )
+# -------------------------------
+# RESPONSE (SIMULATED – API READY)
+# -------------------------------
+response = ""
 
-# ===============================
-# TAB 2 – EXECUTION
-# ===============================
-with tab2:
+if st.button("⚡ Get Response") and user_input:
 
-    response_data = []
+    # SIMULATED RESPONSE (Replace with API later)
+    response = f"{selected_llm} response to: {user_input}"
 
-    if st.button("⚡ Run Enterprise AI") and user_input:
+    st.success("✅ Response Generated")
 
-        engineered_prompt = build_prompt(user_input, mode)
+    st.text_area("LLM Response", response, height=200)
 
-        st.info("Prompt sent to selected LLMs")
+# -------------------------------
+# DOWNLOAD OPTIONS
+# -------------------------------
+if response:
 
-        for llm in selected_llms:
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-            # SIMULATED RESPONSE (replace with API later)
-            result = f"{llm} Response to: {engineered_prompt}"
+    data = {
+        "llm": selected_llm,
+        "question": user_input,
+        "response": response,
+        "timestamp": timestamp
+    }
 
-            score = random.randint(75, 98)
+    st.subheader("📥 Download Results")
 
-            response_data.append({
-                "LLM": llm,
-                "Response": result,
-                "Score": score
-            })
+    col1, col2, col3 = st.columns(3)
 
-        df = pd.DataFrame(response_data)
+    # JSON
+    with col1:
+        st.download_button(
+            "⬇️ JSON",
+            json.dumps(data, indent=4),
+            f"llm_output_{timestamp}.json"
+        )
 
-        st.success("Execution Complete")
+    # CSV
+    with col2:
+        df = pd.DataFrame([data])
+        st.download_button(
+            "⬇️ CSV",
+            df.to_csv(index=False),
+            f"llm_output_{timestamp}.csv"
+        )
 
-        st.dataframe(df)
+    # PDF
+    with col3:
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(buffer)
+        styles = getSampleStyleSheet()
 
-        # Executive Summary
-        best = df.loc[df["Score"].idxmax()]
+        story = [
+            Paragraph("KALSNET LLM REPORT", styles['Title']),
+            Spacer(1, 12),
+            Paragraph(f"LLM: {selected_llm}", styles['Normal']),
+            Paragraph(f"Question: {user_input}", styles['Normal']),
+            Spacer(1, 12),
+            Paragraph(f"Response: {response}", styles['Normal'])
+        ]
 
-        st.markdown(f"""
-        ### 🏆 Best LLM Recommendation
-        **{best['LLM']}** performed best with score **{best['Score']}**
-        """)
+        doc.build(story)
 
-# ===============================
-# TAB 3 – ANALYTICS
-# ===============================
-with tab3:
-
-    if 'df' in locals():
-
-        st.subheader("LLM Performance Comparison")
-
-        fig, ax = plt.subplots()
-        ax.bar(df["LLM"], df["Score"])
-        ax.set_title("LLM Performance Scores")
-
-        st.pyplot(fig)
-
-        # -------------------------------
-        # EXPORTS
-        # -------------------------------
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-
-        json_data = df.to_dict(orient="records")
-
-        col1, col2, col3 = st.columns(3)
-
-        # JSON
-        with col1:
-            st.download_button(
-                "⬇️ JSON",
-                json.dumps(json_data, indent=4),
-                f"enterprise_{timestamp}.json"
-            )
-
-        # CSV
-        with col2:
-            st.download_button(
-                "⬇️ CSV",
-                df.to_csv(index=False),
-                f"enterprise_{timestamp}.csv"
-            )
-
-        # PDF
-        with col3:
-            buffer = io.BytesIO()
-            doc = SimpleDocTemplate(buffer)
-            styles = getSampleStyleSheet()
-
-            story = [Paragraph("KNET ENTERPRISE AI REPORT", styles['Title']), Spacer(1,12)]
-
-            for r in json_data:
-                story.append(Paragraph(f"{r['LLM']} (Score: {r['Score']})", styles['Normal']))
-                story.append(Paragraph(r["Response"], styles['Normal']))
-                story.append(Spacer(1,12))
-
-            doc.build(story)
-
-            st.download_button(
-                "⬇️ PDF",
-                buffer.getvalue(),
-                f"enterprise_{timestamp}.pdf"
-            )
+        st.download_button(
+            "⬇️ PDF",
+            buffer.getvalue(),
+            f"llm_output_{timestamp}.pdf"
+        )
 
 # -------------------------------
 # FOOTER
 # -------------------------------
 st.markdown("""
 <hr>
-<p style='text-align:center;color:gray;'>
-Enterprise AI | Multi-LLM Decision Intelligence | KALSNET (KNet)
+<p style='text-align:center; color:gray;'>
+Free LLM Access Gateway | KALSNET (KNet)
 </p>
 """, unsafe_allow_html=True)
