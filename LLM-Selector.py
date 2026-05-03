@@ -176,8 +176,15 @@ if st.button("⚡ Get Response") and user_input:
 
         st.warning(f"⚠️ {selected_llm} requires account/login")
 
-        st.markdown(f"""
+       st.markdown(f"""
 ### 👉 Open {selected_llm}
 [Click Here to Open {selected_llm}]({url})
 
 ### 📋 Your Prompt (Copy & Paste)
+""")
+
+st.code(user_input, language="text")
+
+st.markdown(f"""
+### 🔙 After using {selected_llm}, return here and paste response below:
+""")
