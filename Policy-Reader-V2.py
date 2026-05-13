@@ -344,16 +344,6 @@ else:
 # ===============================
 st.markdown("---")
 st.caption("Kalsnet (KNet) Consulting Group © 2026 | Policy Intelligence Q&A System")
-```
-
-## Requirements
-
-```bash
-pip install streamlit pandas reportlab
-```
 
 ## Run the Application
 
-```bash
-streamlit run Policy_Intelligence_QA_Enhanced.py
-```
