@@ -13,7 +13,10 @@ from datetime import datetime
 
 import pandas as pd
 import streamlit as st
-from PyPDF2 import PdfReader
+try:
+    from pypdf import PdfReader
+except ImportError:
+    PdfReader = None
 from docx import Document
 
 # PDF generation
