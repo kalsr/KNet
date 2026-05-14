@@ -34,7 +34,7 @@ st.set_page_config(
 )
 
 # =========================================================
-# CUSTOM CSS (FIXED FOOTER + READABILITY)
+# CUSTOM CSS (ONLY FOOTER + READABILITY FIXED)
 # =========================================================
 
 st.markdown("""
@@ -88,7 +88,10 @@ h1, h2, h3, h4 {
     margin-top: 10px;
 }
 
-/* ✅ FIXED FOOTER (NOW BRIGHT) */
+/* =========================================================
+   ✅ FIXED FOOTER (BRIGHT & READABLE)
+========================================================= */
+
 .footer-box {
     background-color: #ffffff !important;
     color: #111111 !important;
@@ -98,7 +101,6 @@ h1, h2, h3, h4 {
     border: 1px solid #d0d0d0;
 }
 
-/* make all footer text readable */
 .footer-box h4,
 .footer-box p,
 .footer-box li,
@@ -107,7 +109,10 @@ h1, h2, h3, h4 {
     color: #111111 !important;
 }
 
-/* ✅ FIX FILE UPLOAD VISIBILITY */
+/* =========================================================
+   ✅ FIX FILE UPLOAD VISIBILITY
+========================================================= */
+
 .stFileUploader {
     background-color: #ffffff !important;
     padding: 10px;
@@ -115,7 +120,6 @@ h1, h2, h3, h4 {
     border: 1px solid #ccc;
 }
 
-/* Uploaded text area readability */
 .stTextArea textarea {
     background-color: #ffffff !important;
     color: #111111 !important;
@@ -137,4 +141,243 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# (❗ REST OF YOUR CODE REMAINS EXACTLY THE SAME)
+# =========================================================
+# SIDEBAR
+# =========================================================
+
+st.sidebar.title("⚙️ Configuration")
+
+groq_api_key = st.sidebar.text_input("Groq API Key", type="password")
+
+st.sidebar.markdown("""
+### How to Get Groq API Key
+1. Visit https://console.groq.com
+2. Create a free account
+3. Navigate to API Keys
+4. Generate a new API key
+5. Paste the key here
+""")
+
+model_name = st.sidebar.selectbox(
+    "Select Groq Model",
+    [
+        "llama-3.3-70b-versatile",
+        "mixtral-8x7b-32768",
+        "gemma2-9b-it"
+    ]
+)
+
+policy_area = st.sidebar.selectbox(
+    "Policy Area",
+    [
+        "Cybersecurity Policy",
+        "Acceptable Use Policy",
+        "Remote Work Policy",
+        "AI Governance Policy",
+        "Incident Response Policy",
+        "Disaster Recovery Policy",
+        "Business Continuity Policy",
+        "Data Retention Policy",
+        "Privacy Policy",
+        "HR Policy",
+        "Zero Trust Policy",
+        "Vendor Management Policy"
+    ]
+)
+
+organization_type = st.sidebar.selectbox(
+    "Organization Type",
+    [
+        "Government",
+        "Enterprise",
+        "Healthcare",
+        "Financial",
+        "Educational",
+        "Small Business",
+        "Technology Company"
+    ]
+)
+
+detail_level = st.sidebar.selectbox(
+    "Policy Detail Level",
+    ["Basic", "Standard", "Advanced", "Enterprise Grade"]
+)
+
+# =========================================================
+# DROPDOWN OPTIONS
+# =========================================================
+
+COMPLIANCE_OPTIONS = [
+    "NIST CSF", "NIST SP 800-53", "NIST 800-171", "ISO 27001",
+    "ISO 27701", "HIPAA", "GDPR", "PCI DSS", "SOC 2",
+    "CMMC 2.0", "FedRAMP", "FISMA", "CJIS", "SOX", "GLBA"
+]
+
+POLICY_OBJECTIVE_OPTIONS = [
+    "Protect Confidential Information",
+    "Ensure Regulatory Compliance",
+    "Reduce Cybersecurity Risk",
+    "Define Roles and Responsibilities",
+    "Establish Governance and Oversight",
+    "Support Business Continuity",
+    "Standardize Security Controls",
+    "Strengthen Incident Response",
+    "Improve Data Privacy",
+    "Enable Zero Trust Architecture"
+]
+
+RISK_LEVEL_OPTIONS = [
+    "Very Low", "Low", "Moderate", "High", "Critical", "Severe"
+]
+
+ADDITIONAL_REQUIREMENT_OPTIONS = [
+    "Executive Approval Required",
+    "Annual Policy Review",
+    "Employee Training",
+    "Audit Logging",
+    "Encryption at Rest",
+    "Encryption in Transit",
+    "Multi-Factor Authentication",
+    "Role-Based Access Control",
+    "Third-Party Risk Assessment",
+    "Continuous Monitoring",
+    "Incident Reporting",
+    "Records Retention",
+    "Legal Review",
+    "Board Oversight"
+]
+
+# =========================================================
+# MAIN INPUTS
+# =========================================================
+
+col1, col2 = st.columns(2)
+
+with col1:
+    organization_name = st.text_input("Organization Name")
+    industry = st.text_input("Industry")
+
+    compliance_selection = st.multiselect(
+        "Compliance Requirements",
+        COMPLIANCE_OPTIONS,
+        default=["NIST SP 800-53"]
+    )
+    compliance_requirements = ", ".join(compliance_selection)
+
+with col2:
+    policy_objective = st.selectbox(
+        "Policy Objective",
+        POLICY_OBJECTIVE_OPTIONS
+    )
+
+    risk_level = st.selectbox(
+        "Risk Level",
+        RISK_LEVEL_OPTIONS,
+        index=3
+    )
+
+    additional_selection = st.multiselect(
+        "Additional Requirements",
+        ADDITIONAL_REQUIREMENT_OPTIONS,
+        default=["Annual Policy Review", "Employee Training"]
+    )
+    additional_requirements = ", ".join(additional_selection)
+
+# =========================================================
+# PROMPT
+# =========================================================
+
+def build_prompt():
+    return f"""
+Generate enterprise-grade policy document.
+
+Policy Area: {policy_area}
+Organization: {organization_name}
+Type: {organization_type}
+Industry: {industry}
+Compliance: {compliance_requirements}
+Objective: {policy_objective}
+Risk: {risk_level}
+Detail Level: {detail_level}
+Additional: {additional_requirements}
+
+Include full structured policy sections.
+"""
+
+# =========================================================
+# GENERATION
+# =========================================================
+
+if st.button("🚀 Generate Policy", use_container_width=True):
+    if not groq_api_key:
+        st.error("Please enter Groq API Key.")
+    else:
+        client = Groq(api_key=groq_api_key)
+
+        with st.spinner("Generating..."):
+            response = client.chat.completions.create(
+                model=model_name,
+                messages=[
+                    {"role": "system", "content": "You are a policy expert."},
+                    {"role": "user", "content": build_prompt()}
+                ],
+                temperature=0.3,
+                max_tokens=6000
+            )
+
+        st.session_state["generated_policy"] = response.choices[0].message.content
+
+# =========================================================
+# OUTPUT
+# =========================================================
+
+if "generated_policy" in st.session_state:
+    st.subheader("📄 Generated Policy")
+
+    edited_policy = st.text_area(
+        "Policy Editor",
+        value=st.session_state["generated_policy"],
+        height=700
+    )
+
+# =========================================================
+# FILE UPLOAD
+# =========================================================
+
+st.subheader("📤 Upload Existing Policy")
+
+uploaded_file = st.file_uploader("Upload TXT Policy File", type=["txt"])
+
+if uploaded_file is not None:
+    content = uploaded_file.read().decode("utf-8")
+    st.text_area("Uploaded Policy Content", value=content, height=300)
+
+# =========================================================
+# ✅ BRIGHT FOOTER (FIXED)
+# =========================================================
+
+st.markdown("""
+<div class="footer-box">
+
+<h4>About KNet PolicyForge AI</h4>
+
+<p>
+This enterprise-grade AI policy generation platform helps organizations
+create professional governance, cybersecurity, compliance,
+risk management, HR, and operational policies using advanced AI models.
+</p>
+
+<b>Features:</b>
+<ul>
+<li>AI-powered policy development</li>
+<li>Enterprise-grade formatting</li>
+<li>Multi-format exports</li>
+<li>Professional GUI</li>
+<li>Editable policy workspace</li>
+<li>Upload & review capability</li>
+</ul>
+
+<p><b>Developed by Randy Singh from Kalsnet (KNet) Consulting Group</b></p>
+
+</div>
+""", unsafe_allow_html=True)
