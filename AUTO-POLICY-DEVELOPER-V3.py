@@ -127,6 +127,15 @@ st.sidebar.title(" Configuration")
 
 groq_api_key = st.sidebar.text_input("Groq API Key", type="password")
 
+st.sidebar.markdown("""
+### How to Get Groq API Key
+1. Visit https://console.groq.com
+2. Create a free account
+3. Navigate to API Keys
+4. Generate a new API key
+5. Paste the key here
+""")
+
 model_name = st.sidebar.selectbox(
     "Select Groq Model",
     ["llama-3.3-70b-versatile", "mixtral-8x7b-32768", "gemma2-9b-it"]
