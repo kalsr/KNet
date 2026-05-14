@@ -27,7 +27,7 @@ from datetime import datetime
 st.set_page_config(
     page_title="KNet PolicyForge AI",
     layout="wide",
-    page_icon="🛡️"
+    page_icon=" "
 )
 
 # =========================================================
@@ -112,7 +112,7 @@ h1, h2, h3, h4 {
 
 st.markdown("""
 <div class="policy-header">
-    <div class="policy-title">🛡️ KNet PolicyForge AI</div>
+    <div class="policy-title"> KNet PolicyDeveloper AI</div>
     <div class="policy-subtitle">
         Developed by Randy Singh from Kalsnet (KNet) Consulting Group
     </div>
@@ -221,7 +221,7 @@ Additional: {additional_requirements}
 # GENERATION
 # =========================================================
 
-if st.button("🚀 Generate Policy", use_container_width=True):
+if st.button(" Generate Policy", use_container_width=True):
 
     if not groq_api_key:
         st.error("Please enter Groq API Key.")
@@ -247,7 +247,7 @@ if st.button("🚀 Generate Policy", use_container_width=True):
 
 if "generated_policy" in st.session_state:
 
-    st.subheader("📄 Generated Policy")
+    st.subheader(" Generated Policy")
 
     edited_policy = st.text_area(
         "Policy Editor",
@@ -256,7 +256,7 @@ if "generated_policy" in st.session_state:
     )
 
     # =====================================================
-    # ✅ EXPORT FUNCTIONS RESTORED
+    #  EXPORT FUNCTIONS RESTORED
     # =====================================================
 
     def generate_pdf(text):
@@ -300,31 +300,31 @@ if "generated_policy" in st.session_state:
     # DOWNLOAD BUTTONS
     # =====================================================
 
-    st.subheader("⬇️ Export Policy")
+    st.subheader(" Export Policy")
 
     c1, c2, c3, c4 = st.columns(4)
 
     with c1:
-        st.download_button("📄 PDF", generate_pdf(edited_policy), "policy.pdf", "application/pdf")
+        st.download_button(" PDF-Format", generate_pdf(edited_policy), "policy.pdf", "application/pdf")
 
     with c2:
-        st.download_button("📝 DOCX", generate_docx(edited_policy),
+        st.download_button("DOCX-Format", generate_docx(edited_policy),
                            "policy.docx",
                            "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
 
     with c3:
-        st.download_button("📊 CSV", generate_csv(edited_policy),
+        st.download_button("CSV-Format", generate_csv(edited_policy),
                            "policy.csv", "text/csv")
 
     with c4:
-        st.download_button("🧾 JSON", generate_json(edited_policy),
+        st.download_button("JSON-Format", generate_json(edited_policy),
                            "policy.json", "application/json")
 
 # =========================================================
 # FILE UPLOAD
 # =========================================================
 
-st.subheader("📤 Upload Existing Policy")
+st.subheader(" Upload Existing Policy")
 
 uploaded_file = st.file_uploader("Upload TXT Policy File", type=["txt"])
 
