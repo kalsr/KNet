@@ -1,6 +1,3 @@
-
-
-
 # =========================================================
 # KNet PolicyForge AI
 # Developed by Randy Singh from Kalsnet (KNet) Consulting Group
@@ -88,10 +85,7 @@ h1, h2, h3, h4 {
     margin-top: 10px;
 }
 
-/* =========================================================
-   ✅ FIXED FOOTER (BRIGHT & READABLE)
-========================================================= */
-
+/* FOOTER (BRIGHT FIX) */
 .footer-box {
     background-color: #ffffff !important;
     color: #111111 !important;
@@ -106,22 +100,6 @@ h1, h2, h3, h4 {
 .footer-box li,
 .footer-box ul,
 .footer-box b {
-    color: #111111 !important;
-}
-
-/* =========================================================
-   ✅ FIX FILE UPLOAD VISIBILITY
-========================================================= */
-
-.stFileUploader {
-    background-color: #ffffff !important;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-}
-
-.stTextArea textarea {
-    background-color: #ffffff !important;
     color: #111111 !important;
 }
 
@@ -149,102 +127,47 @@ st.sidebar.title("⚙️ Configuration")
 
 groq_api_key = st.sidebar.text_input("Groq API Key", type="password")
 
-st.sidebar.markdown("""
-### How to Get Groq API Key
-1. Visit https://console.groq.com
-2. Create a free account
-3. Navigate to API Keys
-4. Generate a new API key
-5. Paste the key here
-""")
-
 model_name = st.sidebar.selectbox(
     "Select Groq Model",
-    [
-        "llama-3.3-70b-versatile",
-        "mixtral-8x7b-32768",
-        "gemma2-9b-it"
-    ]
+    ["llama-3.3-70b-versatile", "mixtral-8x7b-32768", "gemma2-9b-it"]
 )
 
 policy_area = st.sidebar.selectbox(
     "Policy Area",
     [
-        "Cybersecurity Policy",
-        "Acceptable Use Policy",
-        "Remote Work Policy",
-        "AI Governance Policy",
-        "Incident Response Policy",
-        "Disaster Recovery Policy",
-        "Business Continuity Policy",
-        "Data Retention Policy",
-        "Privacy Policy",
-        "HR Policy",
-        "Zero Trust Policy",
-        "Vendor Management Policy"
+        "Cybersecurity Policy","Acceptable Use Policy","Remote Work Policy",
+        "AI Governance Policy","Incident Response Policy","Disaster Recovery Policy",
+        "Business Continuity Policy","Data Retention Policy","Privacy Policy",
+        "HR Policy","Zero Trust Policy","Vendor Management Policy"
     ]
 )
 
 organization_type = st.sidebar.selectbox(
     "Organization Type",
-    [
-        "Government",
-        "Enterprise",
-        "Healthcare",
-        "Financial",
-        "Educational",
-        "Small Business",
-        "Technology Company"
-    ]
+    ["Government","Enterprise","Healthcare","Financial","Educational","Small Business","Technology Company"]
 )
 
 detail_level = st.sidebar.selectbox(
     "Policy Detail Level",
-    ["Basic", "Standard", "Advanced", "Enterprise Grade"]
+    ["Basic","Standard","Advanced","Enterprise Grade"]
 )
 
 # =========================================================
-# DROPDOWN OPTIONS
+# DROPDOWNS
 # =========================================================
 
-COMPLIANCE_OPTIONS = [
-    "NIST CSF", "NIST SP 800-53", "NIST 800-171", "ISO 27001",
-    "ISO 27701", "HIPAA", "GDPR", "PCI DSS", "SOC 2",
-    "CMMC 2.0", "FedRAMP", "FISMA", "CJIS", "SOX", "GLBA"
-]
+COMPLIANCE_OPTIONS = ["NIST CSF","NIST SP 800-53","ISO 27001","HIPAA","GDPR","SOC 2"]
 
 POLICY_OBJECTIVE_OPTIONS = [
     "Protect Confidential Information",
     "Ensure Regulatory Compliance",
-    "Reduce Cybersecurity Risk",
-    "Define Roles and Responsibilities",
-    "Establish Governance and Oversight",
-    "Support Business Continuity",
-    "Standardize Security Controls",
-    "Strengthen Incident Response",
-    "Improve Data Privacy",
-    "Enable Zero Trust Architecture"
+    "Reduce Cybersecurity Risk"
 ]
 
-RISK_LEVEL_OPTIONS = [
-    "Very Low", "Low", "Moderate", "High", "Critical", "Severe"
-]
+RISK_LEVEL_OPTIONS = ["Very Low","Low","Moderate","High","Critical"]
 
 ADDITIONAL_REQUIREMENT_OPTIONS = [
-    "Executive Approval Required",
-    "Annual Policy Review",
-    "Employee Training",
-    "Audit Logging",
-    "Encryption at Rest",
-    "Encryption in Transit",
-    "Multi-Factor Authentication",
-    "Role-Based Access Control",
-    "Third-Party Risk Assessment",
-    "Continuous Monitoring",
-    "Incident Reporting",
-    "Records Retention",
-    "Legal Review",
-    "Board Oversight"
+    "Audit Logging","Encryption at Rest","MFA","Role-Based Access Control"
 ]
 
 # =========================================================
@@ -265,21 +188,13 @@ with col1:
     compliance_requirements = ", ".join(compliance_selection)
 
 with col2:
-    policy_objective = st.selectbox(
-        "Policy Objective",
-        POLICY_OBJECTIVE_OPTIONS
-    )
-
-    risk_level = st.selectbox(
-        "Risk Level",
-        RISK_LEVEL_OPTIONS,
-        index=3
-    )
+    policy_objective = st.selectbox("Policy Objective", POLICY_OBJECTIVE_OPTIONS)
+    risk_level = st.selectbox("Risk Level", RISK_LEVEL_OPTIONS, index=3)
 
     additional_selection = st.multiselect(
         "Additional Requirements",
         ADDITIONAL_REQUIREMENT_OPTIONS,
-        default=["Annual Policy Review", "Employee Training"]
+        default=["Audit Logging"]
     )
     additional_requirements = ", ".join(additional_selection)
 
@@ -300,8 +215,6 @@ Objective: {policy_objective}
 Risk: {risk_level}
 Detail Level: {detail_level}
 Additional: {additional_requirements}
-
-Include full structured policy sections.
 """
 
 # =========================================================
@@ -309,6 +222,7 @@ Include full structured policy sections.
 # =========================================================
 
 if st.button("🚀 Generate Policy", use_container_width=True):
+
     if not groq_api_key:
         st.error("Please enter Groq API Key.")
     else:
@@ -332,6 +246,7 @@ if st.button("🚀 Generate Policy", use_container_width=True):
 # =========================================================
 
 if "generated_policy" in st.session_state:
+
     st.subheader("📄 Generated Policy")
 
     edited_policy = st.text_area(
@@ -339,6 +254,71 @@ if "generated_policy" in st.session_state:
         value=st.session_state["generated_policy"],
         height=700
     )
+
+    # =====================================================
+    # ✅ EXPORT FUNCTIONS RESTORED
+    # =====================================================
+
+    def generate_pdf(text):
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer)
+        styles = getSampleStyleSheet()
+        story = []
+
+        for line in text.split("\n"):
+            if line.strip():
+                story.append(Paragraph(line, styles["BodyText"]))
+                story.append(Spacer(1, 6))
+
+        doc.build(story)
+        buffer.seek(0)
+        return buffer
+
+    def generate_docx(text):
+        doc = Document()
+        doc.add_heading("Generated Policy", 1)
+        doc.add_paragraph(text)
+
+        buffer = BytesIO()
+        doc.save(buffer)
+        buffer.seek(0)
+        return buffer
+
+    def generate_csv(text):
+        df = pd.DataFrame([{"Policy_Content": line} for line in text.split("\n")])
+        return df.to_csv(index=False).encode("utf-8")
+
+    def generate_json(text):
+        return json.dumps({
+            "generated_date": str(datetime.now()),
+            "policy_area": policy_area,
+            "organization": organization_name,
+            "content": text
+        }, indent=4)
+
+    # =====================================================
+    # DOWNLOAD BUTTONS
+    # =====================================================
+
+    st.subheader("⬇️ Export Policy")
+
+    c1, c2, c3, c4 = st.columns(4)
+
+    with c1:
+        st.download_button("📄 PDF", generate_pdf(edited_policy), "policy.pdf", "application/pdf")
+
+    with c2:
+        st.download_button("📝 DOCX", generate_docx(edited_policy),
+                           "policy.docx",
+                           "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+
+    with c3:
+        st.download_button("📊 CSV", generate_csv(edited_policy),
+                           "policy.csv", "text/csv")
+
+    with c4:
+        st.download_button("🧾 JSON", generate_json(edited_policy),
+                           "policy.json", "application/json")
 
 # =========================================================
 # FILE UPLOAD
@@ -353,7 +333,7 @@ if uploaded_file is not None:
     st.text_area("Uploaded Policy Content", value=content, height=300)
 
 # =========================================================
-# ✅ BRIGHT FOOTER (FIXED)
+# FOOTER (BRIGHT FIX ALREADY APPLIED)
 # =========================================================
 
 st.markdown("""
@@ -363,21 +343,10 @@ st.markdown("""
 
 <p>
 This enterprise-grade AI policy generation platform helps organizations
-create professional governance, cybersecurity, compliance,
-risk management, HR, and operational policies using advanced AI models.
+create governance, compliance, and risk policies.
 </p>
 
-<b>Features:</b>
-<ul>
-<li>AI-powered policy development</li>
-<li>Enterprise-grade formatting</li>
-<li>Multi-format exports</li>
-<li>Professional GUI</li>
-<li>Editable policy workspace</li>
-<li>Upload & review capability</li>
-</ul>
-
-<p><b>Developed by Randy Singh from Kalsnet (KNet) Consulting Group</b></p>
+<b>Developed by Randy Singh from Kalsnet (KNet) Consulting Group</b>
 
 </div>
 """, unsafe_allow_html=True)
