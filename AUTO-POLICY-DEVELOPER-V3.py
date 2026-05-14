@@ -123,7 +123,7 @@ st.markdown("""
 # SIDEBAR
 # =========================================================
 
-st.sidebar.title("⚙️ Configuration")
+st.sidebar.title(" Configuration")
 
 groq_api_key = st.sidebar.text_input("Groq API Key", type="password")
 
