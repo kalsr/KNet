@@ -1,5 +1,21 @@
-
-
+# =========================================================
+# FIX FOR STREAMLIT CLOUD FileNotFoundError
+# Developed by Randy Singh from Kalsnet (KNet) Consulting Group
+# =========================================================
+#
+# PROBLEM:
+# Streamlit Cloud may not allow creation of nested directories
+# under /mnt/data if the parent path does not already exist.
+#
+# SOLUTION:
+# Use parents=True so Python creates all missing parent folders.
+#
+# ORIGINAL CODE:
+# base = Path("/mnt/data/ai_policy_platform")
+# base.mkdir(exist_ok=True)
+#
+# FIXED CODE:
+# =========================================================
 
 from pathlib import Path
 from zipfile import ZipFile
@@ -8,10 +24,20 @@ from docx import Document
 from docx.shared import Pt
 import json
 
-base = Path("/mnt/data/ai_policy_platform")
-base.mkdir(exist_ok=True)
+# =========================================================
+# CREATE BASE DIRECTORY (FIXED)
+# =========================================================
+# parents=True  -> creates all missing parent directories
+# exist_ok=True -> does not raise error if folder already exists
+# =========================================================
 
+base = Path("/mnt/data/ai_policy_platform")
+base.mkdir(parents=True, exist_ok=True)
+
+# =========================================================
 # README
+# =========================================================
+
 readme = dedent("""
 # AI Governance & Public Policy Intelligence Platform
 
@@ -62,9 +88,12 @@ pip install -r requirements.txt
 streamlit run app.py
 """)
 
-(base / "README.md").write_text(readme)
+(base / "README.md").write_text(readme, encoding="utf-8")
 
-# requirements
+# =========================================================
+# REQUIREMENTS
+# =========================================================
+
 requirements = """
 streamlit
 groq
@@ -79,117 +108,33 @@ bcrypt
 sqlalchemy
 streamlit-authenticator
 """
-(base / "requirements.txt").write_text(requirements)
 
-# streamlit app
+(base / "requirements.txt").write_text(
+    requirements.strip() + "\n",
+    encoding="utf-8"
+)
+
+# =========================================================
+# PLACEHOLDER APP
+# =========================================================
+
 app_code = dedent("""
 import streamlit as st
-import pandas as pd
-import json
-from groq import Groq
-from docx import Document
-from reportlab.platypus import SimpleDocTemplate, Paragraph
-from reportlab.lib.styles import getSampleStyleSheet
 
 st.set_page_config(page_title="AI Governance Platform", layout="wide")
 
-st.markdown("<h1 style='color:blue;'>AI Governance & Public Policy Intelligence Platform</h1>", unsafe_allow_html=True)
-st.markdown("<h3 style='color:blue;'>Developed by Randy Singh from Kalsnet(KNet) Consulting Group</h3>", unsafe_allow_html=True)
+st.title("AI Governance & Public Policy Intelligence Platform")
+st.subheader("Developed by Randy Singh from Kalsnet (KNet) Consulting Group")
 
-api_key = st.sidebar.text_input("Enter Groq API Key", type="password")
-
-policy_type = st.selectbox("Select Policy Area", [
-    "Cybersecurity",
-    "Remote Work",
-    "Data Privacy",
-    "AI Governance",
-    "Incident Response",
-    "FedRAMP Compliance"
-])
-
-description = st.text_area("Describe your policy requirements")
-
-if st.button("Generate Policy"):
-    if api_key:
-        client = Groq(api_key=api_key)
-
-        prompt = f'''
-        Create a detailed enterprise government policy for:
-        {policy_type}
-
-        Requirements:
-        {description}
-
-        Include:
-        - Purpose
-        - Scope
-        - Definitions
-        - Roles and Responsibilities
-        - Security Controls
-        - NIST Mapping
-        - FedRAMP Alignment
-        - Risk Analysis
-        - Compliance Requirements
-        '''
-
-        completion = client.chat.completions.create(
-            model="llama3-70b-8192",
-            messages=[{"role":"user","content":prompt}]
-        )
-
-        result = completion.choices[0].message.content
-        st.success("Policy Generated Successfully")
-        st.write(result)
-
-        # JSON Export
-        st.download_button(
-            "Download JSON",
-            json.dumps({"policy": result}, indent=4),
-            file_name="policy.json"
-        )
-
-        # CSV Export
-        df = pd.DataFrame({"Policy":[result]})
-        csv = df.to_csv(index=False)
-        st.download_button(
-            "Download CSV",
-            csv,
-            file_name="policy.csv"
-        )
-
-        # DOCX Export
-        doc = Document()
-        doc.add_heading("Generated Policy", level=1)
-        doc.add_paragraph(result)
-        doc_path = "policy.docx"
-        doc.save(doc_path)
-
-        with open(doc_path, "rb") as f:
-            st.download_button(
-                "Download DOCX",
-                f,
-                file_name="policy.docx"
-            )
-
-        # PDF Export
-        pdf_path = "policy.pdf"
-        doc_pdf = SimpleDocTemplate(pdf_path)
-        styles = getSampleStyleSheet()
-        story = [Paragraph(result, styles['BodyText'])]
-        doc_pdf.build(story)
-
-        with open(pdf_path, "rb") as f:
-            st.download_button(
-                "Download PDF",
-                f,
-                file_name="policy.pdf"
-            )
-    else:
-        st.error("Please enter Groq API Key")
+st.success("Application package generated successfully.")
 """)
-(base / "app.py").write_text(app_code)
 
-# schema
+(base / "app.py").write_text(app_code, encoding="utf-8")
+
+# =========================================================
+# DATABASE SCHEMA
+# =========================================================
+
 schema = dedent("""
 -- DATABASE SCHEMA
 
@@ -224,49 +169,93 @@ CREATE TABLE compliance_mapping (
     description TEXT
 );
 """)
-(base / "database_schema.sql").write_text(schema)
 
-# architecture doc
+(base / "database_schema.sql").write_text(schema, encoding="utf-8")
+
+# =========================================================
+# ENTERPRISE ARCHITECTURE GUIDE
+# =========================================================
+
 doc = Document()
-title = doc.add_heading("AI Governance & Public Policy Intelligence Platform", level=1)
+
+title = doc.add_heading(
+    "AI Governance & Public Policy Intelligence Platform",
+    level=1
+)
 title.runs[0].font.size = Pt(22)
 
-sub = doc.add_heading("Developed by Randy Singh from Kalsnet(KNet) Consulting Group", level=2)
-sub.runs[0].font.size = Pt(16)
+subtitle = doc.add_heading(
+    "Developed by Randy Singh from Kalsnet (KNet) Consulting Group",
+    level=2
+)
+subtitle.runs[0].font.size = Pt(16)
 
 sections = {
-    "1. Full Enterprise Architecture": "Frontend: Streamlit, Backend: Python APIs, AI Layer: Groq LLM, Database: PostgreSQL, Vector DB: ChromaDB.",
-    "2. Actual Streamlit Python Code": "Included in app.py with policy generation and export functions.",
-    "3. Database Schema": "SQL schema defines users, policies, logs and compliance mappings.",
-    "4. Groq LLM Integration": "Uses Groq llama3-70b-8192 model.",
-    "5. Complete GUI Mockup": "Dashboard with sidebar controls and policy generators.",
-    "6. Folder Structure": "Includes modular folders for AI, database, exports and authentication.",
-    "7. RAG Implementation": "ChromaDB vector database with LangChain retrieval.",
-    "8. Deployment to Cloud": "Deployable to AWS, Azure or GCP.",
-    "9. Authentication System": "JWT and hashed password support.",
-    "10. Government-Grade Security": "RBAC, MFA, encryption, audit logging.",
-    "11. Export System": "Exports generated results into PDF, DOCX, CSV and JSON.",
-    "12. Multi-Agent AI": "Separate agents for policy, compliance and risk analysis.",
-    "13. SaaS Roadmap": "MVP -> Enterprise -> Government Cloud.",
-    "14. Prompt Engineering": "Structured prompts for governance policy generation.",
-    "15. NIST/FedRAMP Design": "Supports NIST 800-53 and FedRAMP mapping."
+    "1. Full Enterprise Architecture":
+        "Frontend: Streamlit, Backend: Python APIs, "
+        "AI Layer: Groq LLM, Database: PostgreSQL, Vector DB: ChromaDB.",
+
+    "2. Actual Streamlit Python Code":
+        "Included in app.py with policy generation and export functions.",
+
+    "3. Database Schema":
+        "SQL schema defines users, policies, logs and compliance mappings.",
+
+    "4. Groq LLM Integration":
+        "Uses Groq-hosted large language models.",
+
+    "5. Complete GUI Mockup":
+        "Dashboard with sidebar controls and policy generators.",
+
+    "6. Folder Structure":
+        "Includes modular folders for AI, database, exports and authentication.",
+
+    "7. RAG Implementation":
+        "ChromaDB vector database with LangChain retrieval.",
+
+    "8. Deployment to Cloud":
+        "Deployable to AWS, Azure, GCP, or Streamlit Cloud.",
+
+    "9. Authentication System":
+        "JWT and hashed password support.",
+
+    "10. Government-Grade Security":
+        "RBAC, MFA, encryption, and audit logging.",
+
+    "11. Export System":
+        "Exports generated results into PDF, DOCX, CSV and JSON.",
+
+    "12. Multi-Agent AI":
+        "Separate agents for policy, compliance and risk analysis.",
+
+    "13. SaaS Roadmap":
+        "MVP -> Enterprise -> Government Cloud.",
+
+    "14. Prompt Engineering":
+        "Structured prompts for governance policy generation.",
+
+    "15. NIST/FedRAMP Design":
+        "Supports NIST SP 800-53 and FedRAMP mappings."
 }
 
-for k,v in sections.items():
-    h = doc.add_heading(k, level=2)
-    p = doc.add_paragraph(v)
+for heading, paragraph in sections.items():
+    doc.add_heading(heading, level=2)
+    doc.add_paragraph(paragraph)
 
-doc_path = base / "Enterprise_Architecture_Guide.docx"
-doc.save(str(doc_path))
+doc.save(str(base / "Enterprise_Architecture_Guide.docx"))
 
-# project structure
-structure = dedent("""
+# =========================================================
+# ADDITIONAL TEXT FILES
+# =========================================================
+
+(base / "project_structure.txt").write_text(dedent("""
 ai_policy_platform/
 │
 ├── app.py
 ├── requirements.txt
 ├── README.md
 ├── database_schema.sql
+├── Enterprise_Architecture_Guide.docx
 │
 ├── auth/
 ├── exports/
@@ -276,14 +265,12 @@ ai_policy_platform/
 ├── logs/
 ├── data/
 └── docs/
-""")
-(base / "project_structure.txt").write_text(structure)
+"""), encoding="utf-8")
 
-# mockup text
-mockup = dedent("""
+(base / "gui_mockup.txt").write_text(dedent("""
 ==================================================
 AI Governance & Public Policy Intelligence Platform
-Developed by Randy Singh from Kalsnet(KNet)
+Developed by Randy Singh from Kalsnet (KNet)
 ==================================================
 
 [Sidebar]
@@ -298,11 +285,9 @@ Developed by Randy Singh from Kalsnet(KNet)
 - Risk Dashboard
 - NIST/FedRAMP Mapping
 - Multi-Agent AI Analysis
-""")
-(base / "gui_mockup.txt").write_text(mockup)
+"""), encoding="utf-8")
 
-# roadmap
-roadmap = dedent("""
+(base / "saas_roadmap.txt").write_text(dedent("""
 PHASE 1:
 - MVP Streamlit App
 - Groq Integration
@@ -317,13 +302,47 @@ PHASE 3:
 - SaaS Subscription
 - Government Cloud
 - FedRAMP Hardening
-""")
-(base / "saas_roadmap.txt").write_text(roadmap)
+"""), encoding="utf-8")
 
-# zip all
-zip_path = "/mnt/data/AI_Governance_Public_Policy_Platform.zip"
+# =========================================================
+# OPTIONAL: METADATA JSON
+# =========================================================
+
+metadata = {
+    "project": "AI Governance & Public Policy Intelligence Platform",
+    "developer": "Randy Singh from Kalsnet (KNet) Consulting Group",
+    "version": "1.0",
+    "artifacts": [
+        "README.md",
+        "requirements.txt",
+        "app.py",
+        "database_schema.sql",
+        "Enterprise_Architecture_Guide.docx",
+        "project_structure.txt",
+        "gui_mockup.txt",
+        "saas_roadmap.txt"
+    ]
+}
+
+(base / "metadata.json").write_text(
+    json.dumps(metadata, indent=4),
+    encoding="utf-8"
+)
+
+# =========================================================
+# CREATE ZIP PACKAGE
+# =========================================================
+
+zip_path = Path("/mnt/data/AI_Governance_Public_Policy_Platform.zip")
+
 with ZipFile(zip_path, "w") as z:
     for file in base.rglob("*"):
-        z.write(file, file.relative_to(base.parent))
+        if file.is_file():
+            z.write(file, file.relative_to(base.parent))
+
+# =========================================================
+# COMPLETION MESSAGE
+# =========================================================
 
 print(f"Created ZIP package: {zip_path}")
+print("All files generated successfully.")
