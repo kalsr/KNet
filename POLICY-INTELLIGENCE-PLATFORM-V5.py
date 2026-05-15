@@ -187,7 +187,7 @@ if menu == "Dashboard":
 
     st.success("System Active — Ready for Policy Generation")
 
-    with st.expander("🔍 KPI Data Source Debug Panel"):
+    with st.expander(" KPI Data Source Debug Panel"):
         for k, v in metrics.items():
             st.write(f"**{k}** → {v['value']} (Source: {v['source']})")
 
@@ -197,7 +197,7 @@ if menu == "Dashboard":
 
 if menu == "Policy Generator":
 
-    st.subheader("📄 Policy Generator")
+    st.subheader(" Policy Generator")
 
     org = st.text_input("Organization Name")
     industry = st.selectbox("Industry", ["Government","Defense","Healthcare","Finance"])
@@ -278,10 +278,10 @@ if menu == "Reports":
 
         st.markdown("### Export Report")
 
-        st.download_button("⬇ PDF", export_pdf(report), "report.pdf")
-        st.download_button("⬇ Word", export_word(report), "report.docx")
-        st.download_button("⬇ CSV", export_csv(report), "report.csv")
-        st.download_button("⬇ JSON", export_json(report), "report.json")
+        st.download_button(" PDF", export_pdf(report), "report.pdf")
+        st.download_button(" Word", export_word(report), "report.docx")
+        st.download_button(" CSV", export_csv(report), "report.csv")
+        st.download_button(" JSON", export_json(report), "report.json")
 
     else:
         st.info("No policy generated yet")
