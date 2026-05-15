@@ -17,7 +17,7 @@ import json
 st.set_page_config(
     page_title="AI Governance Platform",
     layout="wide",
-    page_icon="🏛️"
+    page_icon=""
 )
 
 # =========================================================
@@ -104,12 +104,12 @@ menu = st.sidebar.radio(
 # GROQ CONFIG
 # =========================================================
 
-st.sidebar.header("⚙️ AI Configuration")
+st.sidebar.header(" AI Configuration")
 
 api_key = st.sidebar.text_input("Groq API Key", type="password")
 
 st.sidebar.markdown("""
-### 🔑 Get API Key
+###  Get API Key
 - https://console.groq.com  
 - Create account  
 - Generate API key  
@@ -194,7 +194,7 @@ if menu == "Policy Generator":
 
     req = st.text_area("Custom Requirement")
 
-    if st.button("🚀 Generate Policy", use_container_width=True):
+    if st.button(" Generate Policy", use_container_width=True):
 
         if not api_key:
             st.error("Enter Groq API Key")
@@ -229,13 +229,13 @@ Custom Requirement:
             st.session_state["result"] = response.choices[0].message.content
 
     if "result" in st.session_state:
-        st.markdown("### 📘 Generated Policy")
+        st.markdown("###  Generated Policy")
 
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.write(st.session_state["result"])
         st.markdown("</div>", unsafe_allow_html=True)
 
-        if st.button("🔄 Reset"):
+        if st.button(" Reset"):
             st.session_state.clear()
             st.rerun()
 
@@ -245,7 +245,7 @@ Custom Requirement:
 
 if menu == "Compliance Auditor":
 
-    st.subheader("🛡️ Compliance Auditor")
+    st.subheader(" Compliance Auditor")
 
     text = st.text_area("Paste Policy for Audit")
 
@@ -266,7 +266,7 @@ if menu == "Compliance Auditor":
 
 if menu == "Reports":
 
-    st.subheader("📊 Reports Dashboard")
+    st.subheader(" Reports Dashboard")
 
     if "result" in st.session_state:
         st.write("Latest Policy Report:")
@@ -280,7 +280,7 @@ if menu == "Reports":
 
 if menu == "Settings":
 
-    st.subheader("⚙️ System Settings")
+    st.subheader(" System Settings")
 
     st.write("Model Selected:", model)
     st.write("API Key Status:", "Configured" if api_key else "Not Configured")
