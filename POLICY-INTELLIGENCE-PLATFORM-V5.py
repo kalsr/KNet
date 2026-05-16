@@ -108,6 +108,14 @@ st.sidebar.header(" AI Configuration")
 
 api_key = st.sidebar.text_input("Groq API Key", type="password")
 
+st.sidebar.markdown("""
+###  Get API Key
+- https://console.groq.com  
+- Create account  
+- Generate API key  
+- Paste here  
+""")
+
 model = st.sidebar.selectbox(
     "Model",
     ["llama-3.3-70b-versatile", "mixtral-8x7b-32768"]
