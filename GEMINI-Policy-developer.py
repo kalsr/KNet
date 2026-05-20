@@ -13,7 +13,7 @@ import PyPDF2
 # ==========================================
 st.set_page_config(
     page_title="Auntie - Policy Developer",
-    page_icon="📋",
+    page_icon="",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -110,7 +110,7 @@ with st.sidebar:
     st.markdown("---")
 
     # Instructions on getting a free key
-    st.markdown("### 🔑 How to get a Free Groq Key")
+    st.markdown("###  How to get a Free Groq Key")
     st.markdown(
         """
     1. **Visit Groq Cloud:** Go to [console.groq.com](https://console.groq.com/).
@@ -195,11 +195,11 @@ with col2:
 # 6. PROCESSING & GENERATION
 # ==========================================
 st.markdown("---")
-if st.button("🚀 Draft Corporate Policy Document", type="primary"):
+if st.button(" Draft Corporate Policy Document", type="primary"):
     if not groq_api_key:
-        st.warning("⚠️ Please provide a valid Groq API key in the sidebar.")
+        st.warning(" Please provide a valid Groq API key in the sidebar.")
     elif not policy_name:
-        st.warning("⚠️ Please specify a Policy Title before generating.")
+        st.warning(" Please specify a Policy Title before generating.")
     else:
         with st.spinner("Analyzing parameters and drafting policy document..."):
             try:
@@ -209,8 +209,8 @@ if st.button("🚀 Draft Corporate Policy Document", type="primary"):
                 # Assemble prompt
                 system_prompt = (
                     "You are 'Auntie', an elite legal, corporate compliance, and HR advisor "
-                    "developed by Randy Singh Kalsnet at KNet Consulting Group. Your goal is to draft highly professional, "
-                    "structured, rigorous, and legally sound organizational policies."
+                    "developed by Randy Singh Kalsnet at KNet Consulting Group. Our goal is to draft highly professional, "
+                    "Structured, Rigorous, and Legally Sound Organizational Policies."
                 )
 
                 user_prompt = f"Please draft a comprehensive corporate policy document for: '{policy_name}'.\n\n"
@@ -241,7 +241,7 @@ if st.button("🚀 Draft Corporate Policy Document", type="primary"):
 
                 # Downloader Utility for user convenience
                 st.download_button(
-                    label="📥 Download Draft as Text File",
+                    label=" Download Draft as Text File",
                     data=generated_policy,
                     file_name=f"{policy_name.replace(' ', '_')}_draft.txt",
                     mime="text/plain",
