@@ -322,22 +322,21 @@ and mitigation guidance.
 # GEMINI ENGINE
 # =========================
 
+# =========================
+# GEMINI ENGINE (FIXED)
+# =========================
+
 def run_gemini(prompt):
 
-    # Check if package installed
+    # Check package
     if not GEMINI_AVAILABLE:
         return """
 ERROR:
-google-generativeai package is not installed.
+google-generativeai package not installed.
 
-FIX:
-
-1. Create requirements.txt file
-2. Add:
+Add to requirements.txt:
 
 google-generativeai
-
-3. Re-deploy Streamlit app
 """
 
     # Check API key
@@ -346,14 +345,20 @@ google-generativeai
 
     try:
 
+        # Configure Gemini
         genai.configure(api_key=gemini_key)
 
+        # UPDATED SUPPORTED MODEL
         model = genai.GenerativeModel(
-            "gemini-1.5-pro"
+            "gemini-1.5-flash"
         )
 
-        response = model.generate_content(prompt)
+        # Generate response
+        response = model.generate_content(
+            prompt
+        )
 
+        # Return AI text
         return response.text
 
     except Exception as e:
