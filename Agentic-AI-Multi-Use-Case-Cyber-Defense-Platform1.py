@@ -326,9 +326,13 @@ and mitigation guidance.
 # GEMINI ENGINE (FIXED)
 # =========================
 
+# =========================
+# GEMINI ENGINE (FINAL FIX)
+# =========================
+
 def run_gemini(prompt):
 
-    # Check package
+    # Package check
     if not GEMINI_AVAILABLE:
         return """
 ERROR:
@@ -336,21 +340,23 @@ google-generativeai package not installed.
 
 Add to requirements.txt:
 
-google-generativeai
+google-generativeai>=0.8.0
 """
 
-    # Check API key
+    # API key check
     if not gemini_key:
         return "ERROR: Please provide Gemini API Key."
 
     try:
 
-        # Configure Gemini
-        genai.configure(api_key=gemini_key)
+        # Configure API
+        genai.configure(
+            api_key=gemini_key
+        )
 
-        # UPDATED SUPPORTED MODEL
+        # CURRENT SUPPORTED MODEL
         model = genai.GenerativeModel(
-            "gemini-1.5-flash"
+            "gemini-2.0-flash"
         )
 
         # Generate response
@@ -358,8 +364,11 @@ google-generativeai
             prompt
         )
 
-        # Return AI text
-        return response.text
+        # Safe response extraction
+        if hasattr(response, "text"):
+            return response.text
+
+        return str(response)
 
     except Exception as e:
 
