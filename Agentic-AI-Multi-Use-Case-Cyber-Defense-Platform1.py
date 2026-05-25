@@ -78,7 +78,7 @@ groq_key = st.sidebar.text_input(
 # API KEY INSTRUCTIONS
 # ======================================
 
-st.sidebar.markdown("## 🔑 Step-by-Step API Key Setup")
+st.sidebar.markdown("##  Step-by-Step API Key Setup")
 
 with st.sidebar.expander("How to Get FREE Gemini API Key"):
 
@@ -93,7 +93,7 @@ with st.sidebar.expander("How to Get FREE Gemini API Key"):
     6. Copy generated API key
     7. Paste the key into the Gemini API field above
 
-    ✅ Gemini provides free-tier access for testing and development.
+     Gemini provides free-tier access for testing and development.
     """)
 
 with st.sidebar.expander("How to Get FREE Groq API Key"):
@@ -109,7 +109,7 @@ with st.sidebar.expander("How to Get FREE Groq API Key"):
     6. Copy generated API key
     7. Paste into Groq API field above
 
-    ✅ Groq offers extremely fast LPU inference for AI workloads.
+     Groq offers extremely fast LPU inference for AI workloads.
     """)
 
 # =========================
@@ -254,14 +254,14 @@ def load_file(file):
 
 col1, col2 = st.sidebar.columns(2)
 
-if col1.button("🔄 Generate"):
+if col1.button(" Generate"):
 
     st.session_state.data = generate_data(
         data_size,
         use_case
     )
 
-if col2.button("🧹 Reset"):
+if col2.button(" Reset"):
 
     st.session_state.data = pd.DataFrame()
 
@@ -608,7 +608,7 @@ def export_pdf(text):
 # MAIN DASHBOARD
 # =========================
 
-st.subheader("📊 Cyber Defense Dashboard")
+st.subheader(" Cyber Defense Dashboard")
 
 if df.empty:
 
@@ -641,7 +641,7 @@ else:
 # =========================
 
 st.subheader(
-    f"🧠 AI Analysis: {use_case}"
+    f" AI Analysis: {use_case}"
 )
 
 analysis_result = analyze_data(df, use_case)
@@ -656,7 +656,7 @@ st.text_area(
 # EXPORT PANEL
 # =========================
 
-st.subheader("📦 Export Results")
+st.subheader(" Export Results")
 
 col1, col2, col3, col4 = st.columns(4)
 
