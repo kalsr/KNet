@@ -13,7 +13,11 @@ import plotly.express as px
 
 # REAL LLM IMPORTS
 from groq import Groq
-import google.generativeai as genai
+try:
+    import google.generativeai as genai
+    GEMINI_AVAILABLE = True
+except:
+    GEMINI_AVAILABLE = False
 
 # Export libs
 from io import BytesIO
@@ -314,8 +318,29 @@ and mitigation guidance.
 # GEMINI ENGINE
 # =========================
 
+# =========================
+# GEMINI ENGINE
+# =========================
+
 def run_gemini(prompt):
 
+    # Check if package installed
+    if not GEMINI_AVAILABLE:
+        return """
+ERROR:
+google-generativeai package is not installed.
+
+FIX:
+
+1. Create requirements.txt file
+2. Add:
+
+google-generativeai
+
+3. Re-deploy Streamlit app
+"""
+
+    # Check API key
     if not gemini_key:
         return "ERROR: Please provide Gemini API Key."
 
