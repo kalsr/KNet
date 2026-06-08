@@ -86,8 +86,8 @@ page = st.sidebar.selectbox(
     "Navigation",
     [
         "Dashboard",
-        "Upload Data",
-        "Synthetic Data",
+        "Upload Real Data",
+        "Synthetic Test Data",
         "Analytics",
         "Export Results",
         "Field Explanations",
