@@ -5,19 +5,24 @@
 
 
 import streamlit as st
-
 import pandas as pd
-
 import numpy as np
-
 import random
-
 import json
-
 from datetime import datetime
-
 import plotly.express as px
 
+# NEW IMPORTS
+from io import BytesIO
+from docx import Document
+
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer
+)
+
+from reportlab.lib.styles import getSampleStyleSheet
 
 
 # -------------------------
@@ -42,27 +47,34 @@ st.set_page_config(
 
 # -------------------------
 
-st.title("KNet SkyGuard AI™")
+st.markdown("""
+<div style='text-align:center;'>
 
-st.subheader(
+<h1 style='color:#0056D2;
+font-weight:bold;
+font-size:42px;'>
 
-    "AI Drone Inspection & Risk Assessment Platform"
+KNet SkyGuard AI™
 
-)
+</h1>
 
+<h2 style='color:#0056D2;
+font-weight:bold;'>
 
+AI Drone Inspection & Risk Assessment Platform
 
-st.caption(
+</h2>
 
-    "Developed by Randy Singh – "
+<h3 style='color:#0056D2;
+font-weight:bold;'>
 
-    "Kalsnet (KNet) Consulting Group"
+Developed by Randy Singh – Kalsnet (KNet) Consulting Group
 
-)
+</h3>
 
-
-
-st.markdown("---")
+</div>
+""",
+unsafe_allow_html=True)
 
 
 
@@ -127,7 +139,126 @@ def calculate_risk(
     confidence
 
 ):
+# -------------------------
+# REPORT GENERATORS
+# -------------------------
 
+def create_word_report(df):
+
+    doc = Document()
+
+    doc.add_heading(
+        "Kalsnet (KNet) Analysis Report",
+        level=1
+    )
+
+    doc.add_paragraph(
+        f"Generated: {datetime.now()}"
+    )
+
+    doc.add_paragraph(
+        f"Total Inspections: {len(df)}"
+    )
+
+    if not df.empty:
+
+        doc.add_paragraph(
+            f"Average Risk Score: "
+            f"{round(df['Risk Score'].mean(),2)}"
+        )
+
+        doc.add_paragraph(
+            "\nInspection Data:\n"
+        )
+
+        doc.add_paragraph(
+            df.to_string()
+        )
+
+    output = BytesIO()
+
+    doc.save(output)
+
+    output.seek(0)
+
+    return output
+
+
+def create_pdf_report(df):
+
+    output = BytesIO()
+
+    pdf = SimpleDocTemplate(output)
+
+    styles = getSampleStyleSheet()
+
+    content = []
+
+    content.append(
+
+        Paragraph(
+
+            "<font color='blue'>"
+            "<b>Kalsnet (KNet) "
+            "Analysis Report</b>"
+            "</font>",
+
+            styles["Title"]
+
+        )
+    )
+
+    content.append(
+        Spacer(1,12)
+    )
+
+    content.append(
+
+        Paragraph(
+
+            f"Generated: "
+            f"{datetime.now()}",
+
+            styles["Normal"]
+
+        )
+    )
+
+    content.append(
+        Spacer(1,12)
+    )
+
+    content.append(
+
+        Paragraph(
+
+            f"Total Inspections: "
+            f"{len(df)}",
+
+            styles["Normal"]
+
+        )
+    )
+
+    if not df.empty:
+
+        content.append(
+
+            Paragraph(
+
+                f"Average Risk Score: "
+                f"{round(df['Risk Score'].mean(),2)}",
+
+                styles["Normal"]
+
+            )
+        )
+
+    pdf.build(content)
+
+    output.seek(0)
+
+    return output
     score = (
 
         severity * 0.40 +
@@ -666,38 +797,80 @@ elif page == "Export Results":
 
 
 
+    elif page == "Export Results":
+
     st.header(
-
         "Export Results"
-
     )
-
-
 
     df = st.session_state.df
 
+    if df.empty:
 
+        st.warning(
+            "No data available for export."
+        )
 
-    if not df.empty:
+    else:
 
+        st.success(
+            f"{len(df)} records ready "
+            "for export."
+        )
 
+        # PDF
+
+        pdf_file = create_pdf_report(df)
 
         st.download_button(
 
-            "Download JSON",
+            label="📄 Download PDF Report",
+
+            data=pdf_file,
+
+            file_name=
+            "KNet_Analysis_Report.pdf",
+
+            mime="application/pdf"
+        )
+
+        # WORD
+
+        word_file = create_word_report(df)
+
+        st.download_button(
+
+            label="📝 Download Word Report",
+
+            data=word_file,
+
+            file_name=
+            "KNet_Analysis_Report.docx",
+
+            mime=
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+
+        # JSON
+
+        st.download_button(
+
+            label="📊 Download JSON",
 
             data=df.to_json(
-
                 orient="records",
-
                 indent=2
-
             ),
 
             file_name=
+            "KNet_Analysis_Report.json",
 
-            "skyguard_results.json"
+            mime="application/json"
+        )
 
+        st.dataframe(
+            df.head(25),
+            use_container_width=True
         )
 
 
