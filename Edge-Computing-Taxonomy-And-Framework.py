@@ -141,6 +141,54 @@ if main_category.startswith("1"):
             """
         )
 
+        st.markdown("#### Data Movement Diagram – Push from Cloud Services")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                Cloud [shape=box, style=filled, color=lightblue];
+                Edge [shape=box, style=filled, color=lightgrey];
+                Things [shape=box, style=filled, color=lightyellow];
+
+                Cloud -> Edge [label="Bulk data / models"];
+                Edge -> Things [label="Filtered data / commands"];
+                Things -> Edge [label="Raw telemetry"];
+                Edge -> Cloud [label="Aggregated metrics"];
+            }
+            """
+        )
+
+        st.markdown("#### Control Plane Diagram – Push from Cloud Services")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                CloudCtrl [label="Cloud Control", shape=box, style=filled, color=lightblue];
+                EdgeCtrl [label="Edge Orchestrator", shape=box, style=filled, color=lightgrey];
+                ThingsCtrl [label="Device Agents", shape=box, style=filled, color=lightyellow];
+
+                CloudCtrl -> EdgeCtrl [label="Policies / configs"];
+                EdgeCtrl -> ThingsCtrl [label="Commands / updates"];
+                ThingsCtrl -> EdgeCtrl [label="Status / health"];
+                EdgeCtrl -> CloudCtrl [label="Reports / logs"];
+            }
+            """
+        )
+
+        st.markdown("#### Edge–Cloud Interaction Diagram – Push from Cloud Services")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                Cloud [shape=box, style=filled, color=lightblue];
+                Edge [shape=box, style=filled, color=lightgrey];
+
+                Cloud -> Edge [label="Tasks, models, policies"];
+                Edge -> Cloud [label="Aggregated results, feedback"];
+            }
+            """
+        )
+
     # ----------------- PULL FROM IOT -----------------
     elif sub.startswith("2"):
         st.markdown("### Pull from IoT")
@@ -199,6 +247,53 @@ if main_category.startswith("1"):
             """
         )
 
+        st.markdown("#### Data Movement Diagram – Pull from IoT")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                Things [shape=box, style=filled, color=lightyellow];
+                Edge [shape=box, style=filled, color=lightgrey];
+                Cloud [shape=box, style=filled, color=lightblue];
+
+                Things -> Edge [label="Continuous sensor streams"];
+                Edge -> Cloud [label="Aggregated / compressed data"];
+                Cloud -> Edge [label="Models / thresholds"];
+            }
+            """
+        )
+
+        st.markdown("#### Control Plane Diagram – Pull from IoT")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                CloudCtrl [label="Cloud Control", shape=box, style=filled, color=lightblue];
+                EdgeCtrl [label="Edge Controller", shape=box, style=filled, color=lightgrey];
+                ThingsCtrl [label="Device Agents", shape=box, style=filled, color=lightyellow];
+
+                CloudCtrl -> EdgeCtrl [label="Rules / policies"];
+                EdgeCtrl -> ThingsCtrl [label="Sampling rates / modes"];
+                ThingsCtrl -> EdgeCtrl [label="Status / alarms"];
+                EdgeCtrl -> CloudCtrl [label="Aggregated health / KPIs"];
+            }
+            """
+        )
+
+        st.markdown("#### Edge–Cloud Interaction Diagram – Pull from IoT")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                Cloud [shape=box, style=filled, color=lightblue];
+                Edge [shape=box, style=filled, color=lightgrey];
+
+                Edge -> Cloud [label="Aggregated sensor data"];
+                Cloud -> Edge [label="Updated models / policies"];
+            }
+            """
+        )
+
     # ----------------- CHANGE FROM DATA CONSUMER TO PRODUCER -----------------
     else:
         st.markdown("### Change from Data Consumer to Producer")
@@ -252,6 +347,54 @@ if main_category.startswith("1"):
                 step5 [label="5. Edge sends insights to Device and Cloud", shape=box];
 
                 step1 -> step2 -> step3 -> step4 -> step5;
+            }
+            """
+        )
+
+        st.markdown("#### Data Movement Diagram – Edge Role Evolution")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                Device [shape=box, style=filled, color=lightyellow];
+                Edge [shape=box, style=filled, color=lightgrey];
+                Cloud [shape=box, style=filled, color=lightblue];
+
+                Device -> Edge [label="High-volume sensor / media data"];
+                Edge -> Cloud [label="Summaries / anonymized data"];
+                Cloud -> Edge [label="Models / personalization"];
+                Edge -> Device [label="Real-time feedback"];
+            }
+            """
+        )
+
+        st.markdown("#### Control Plane Diagram – Edge Role Evolution")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                CloudCtrl [label="Cloud Personalization Engine", shape=box, style=filled, color=lightblue];
+                EdgeCtrl [label="Edge Privacy / Policy Engine", shape=box, style=filled, color=lightgrey];
+                DeviceCtrl [label="Device App / Agent", shape=box, style=filled, color=lightyellow];
+
+                CloudCtrl -> EdgeCtrl [label="Global policies"];
+                EdgeCtrl -> DeviceCtrl [label="Local rules / consent"];
+                DeviceCtrl -> EdgeCtrl [label="User preferences"];
+                EdgeCtrl -> CloudCtrl [label="Compliance / audit logs"];
+            }
+            """
+        )
+
+        st.markdown("#### Edge–Cloud Interaction Diagram – Edge Role Evolution")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                Cloud [shape=box, style=filled, color=lightblue];
+                Edge [shape=box, style=filled, color=lightgrey];
+
+                Edge -> Cloud [label="Anonymized / aggregated user data"];
+                Cloud -> Edge [label="Updated personalization models"];
             }
             """
         )
@@ -342,6 +485,51 @@ elif main_category.startswith("2"):
             """
         )
 
+        st.markdown("#### Data Movement Diagram – Cloud Offloading")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                User [shape=box, style=filled, color=lightyellow];
+                Edge [shape=box, style=filled, color=lightgrey];
+                Cloud [shape=box, style=filled, color=lightblue];
+
+                User -> Edge [label="Requests / small data"];
+                Edge -> Cloud [label="Batch / heavy data"];
+                Cloud -> Edge [label="Models / large artifacts"];
+                Edge -> User [label="Responses / results"];
+            }
+            """
+        )
+
+        st.markdown("#### Control Plane Diagram – Cloud Offloading")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                CloudCtrl [label="Cloud Orchestrator", shape=box, style=filled, color=lightblue];
+                EdgeCtrl [label="Edge Scheduler", shape=box, style=filled, color=lightgrey];
+
+                CloudCtrl -> EdgeCtrl [label="Offload policies"];
+                EdgeCtrl -> CloudCtrl [label="Load / capacity reports"];
+            }
+            """
+        )
+
+        st.markdown("#### Edge–Cloud Interaction Diagram – Cloud Offloading")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                Cloud [shape=box, style=filled, color=lightblue];
+                Edge [shape=box, style=filled, color=lightgrey];
+
+                Edge -> Cloud [label="Offloaded workloads"];
+                Cloud -> Edge [label="Processed results / models"];
+            }
+            """
+        )
+
     # ----------------- VIDEO ANALYTICS -----------------
     elif sub.startswith("2"):
         st.markdown("### Use Case 2: Video Analytics")
@@ -398,6 +586,51 @@ elif main_category.startswith("2"):
                 step5 [label="5. Edge sends summaries to Cloud", shape=box];
 
                 step1 -> step2 -> step3 -> step4 -> step5;
+            }
+            """
+        )
+
+        st.markdown("#### Data Movement Diagram – Video Analytics")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                Camera [shape=box, style=filled, color=lightyellow];
+                Edge [shape=box, style=filled, color=lightgrey];
+                Cloud [shape=box, style=filled, color=lightblue];
+
+                Camera -> Edge [label="High-bandwidth video"];
+                Edge -> Cloud [label="Low-bandwidth events / metadata"];
+            }
+            """
+        )
+
+        st.markdown("#### Control Plane Diagram – Video Analytics")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                CloudCtrl [label="Cloud Analytics Config", shape=box, style=filled, color=lightblue];
+                EdgeCtrl [label="Edge Analytics Engine", shape=box, style=filled, color=lightgrey];
+                CameraCtrl [label="Camera Settings", shape=box, style=filled, color=lightyellow];
+
+                CloudCtrl -> EdgeCtrl [label="Models / thresholds"];
+                EdgeCtrl -> CameraCtrl [label="FPS / resolution / zones"];
+                EdgeCtrl -> CloudCtrl [label="Performance / accuracy stats"];
+            }
+            """
+        )
+
+        st.markdown("#### Edge–Cloud Interaction Diagram – Video Analytics")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                Cloud [shape=box, style=filled, color=lightblue];
+                Edge [shape=box, style=filled, color=lightgrey];
+
+                Edge -> Cloud [label="Alerts / summaries"];
+                Cloud -> Edge [label="Updated models / rules"];
             }
             """
         )
@@ -459,6 +692,52 @@ elif main_category.startswith("2"):
                 step5 [label="5. Edge sends aggregates to Cloud", shape=box];
 
                 step1 -> step2 -> step3 -> step4 -> step5;
+            }
+            """
+        )
+
+        st.markdown("#### Data Movement Diagram – Smart Home")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                Sensors [shape=box, style=filled, color=lightyellow];
+                EdgeGateway [shape=box, style=filled, color=lightgrey];
+                Cloud [shape=box, style=filled, color=lightblue];
+
+                Sensors -> EdgeGateway [label="Local telemetry"];
+                EdgeGateway -> Cloud [label="Aggregated / periodic data"];
+                Cloud -> EdgeGateway [label="Global updates / services"];
+            }
+            """
+        )
+
+        st.markdown("#### Control Plane Diagram – Smart Home")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                CloudCtrl [label="Cloud Smart Home Service", shape=box, style=filled, color=lightblue];
+                EdgeCtrl [label="Home Edge Gateway", shape=box, style=filled, color=lightgrey];
+                UserCtrl [label="User App", shape=box, style=filled, color=lightyellow];
+
+                CloudCtrl -> EdgeCtrl [label="Feature configs / firmware"];
+                UserCtrl -> EdgeCtrl [label="Preferences / scenes"];
+                EdgeCtrl -> CloudCtrl [label="Status / diagnostics"];
+            }
+            """
+        )
+
+        st.markdown("#### Edge–Cloud Interaction Diagram – Smart Home")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                Cloud [shape=box, style=filled, color=lightblue];
+                Edge [shape=box, style=filled, color=lightgrey];
+
+                Edge -> Cloud [label="Home metrics / logs"];
+                Cloud -> Edge [label="New capabilities / updates"];
             }
             """
         )
@@ -526,6 +805,53 @@ elif main_category.startswith("2"):
             """
         )
 
+        st.markdown("#### Data Movement Diagram – Smart City")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                CitySensors [shape=box, style=filled, color=lightyellow];
+                DistrictEdge [shape=box, style=filled, color=lightgrey];
+                CityEdge [shape=box, style=filled, color=lightgrey];
+                Cloud [shape=box, style=filled, color=lightblue];
+
+                CitySensors -> DistrictEdge [label="Local sensor data"];
+                DistrictEdge -> CityEdge [label="Aggregated regional data"];
+                CityEdge -> Cloud [label="City-wide metrics"];
+            }
+            """
+        )
+
+        st.markdown("#### Control Plane Diagram – Smart City")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                CloudCtrl [label="National / Central Control", shape=box, style=filled, color=lightblue];
+                CityCtrl [label="City Ops Center", shape=box, style=filled, color=lightgreen];
+                EdgeCtrl [label="District Edge Controllers", shape=box, style=filled, color=lightgrey];
+
+                CloudCtrl -> CityCtrl [label="Policies / regulations"];
+                CityCtrl -> EdgeCtrl [label="Operational rules"];
+                EdgeCtrl -> CityCtrl [label="Status / incidents"];
+            }
+            """
+        )
+
+        st.markdown("#### Edge–Cloud Interaction Diagram – Smart City")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                Cloud [shape=box, style=filled, color=lightblue];
+                CityEdge [shape=box, style=filled, color=lightgrey];
+
+                CityEdge -> Cloud [label="City metrics / KPIs"];
+                Cloud -> CityEdge [label="Benchmarking / optimization models"];
+            }
+            """
+        )
+
     # ----------------- COLLABORATIVE EDGE -----------------
     elif sub.startswith("5"):
         st.markdown("### Use Case 5: Collaborative Edge")
@@ -567,6 +893,52 @@ elif main_category.startswith("2"):
                 step5 [label="5. Cloud distributes global policies back", shape=box];
 
                 step1 -> step2 -> step3 -> step4 -> step5;
+            }
+            """
+        )
+
+        st.markdown("#### Data Movement Diagram – Collaborative Edge")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                Edge1 [shape=box, style=filled, color=lightgrey];
+                Edge2 [shape=box, style=filled, color=lightgrey];
+                Edge3 [shape=box, style=filled, color=lightgrey];
+
+                Edge1 -> Edge2 [label="Shared datasets"];
+                Edge2 -> Edge3 [label="Model parameters"];
+                Edge3 -> Edge1 [label="Aggregated insights"];
+            }
+            """
+        )
+
+        st.markdown("#### Control Plane Diagram – Collaborative Edge")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                CloudCtrl [label="Global Coordinator", shape=box, style=filled, color=lightblue];
+                EdgeCtrl1 [label="Edge Controller 1", shape=box, style=filled, color=lightgrey];
+                EdgeCtrl2 [label="Edge Controller 2", shape=box, style=filled, color=lightgrey];
+
+                CloudCtrl -> EdgeCtrl1 [label="Policies / roles"];
+                CloudCtrl -> EdgeCtrl2 [label="Policies / roles"];
+                EdgeCtrl1 -> EdgeCtrl2 [label="Coordination / negotiation"];
+            }
+            """
+        )
+
+        st.markdown("#### Edge–Cloud Interaction Diagram – Collaborative Edge")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                Cloud [shape=box, style=filled, color=lightblue];
+                EdgeCluster [shape=box, style=filled, color=lightgrey, label="Edge Cluster"];
+
+                EdgeCluster -> Cloud [label="Cluster-wide results"];
+                Cloud -> EdgeCluster [label="Global optimization / policies"];
             }
             """
         )
@@ -617,6 +989,53 @@ elif main_category.startswith("2"):
                 step5 [label="5. Cloud refines models and sends back", shape=box];
 
                 step1 -> step2 -> step3 -> step4 -> step5;
+            }
+            """
+        )
+
+        st.markdown("#### Data Movement Diagram – Industrial IoT")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                Machines [shape=box, style=filled, color=lightyellow];
+                EdgeNode [shape=box, style=filled, color=lightgrey];
+                Cloud [shape=box, style=filled, color=lightblue];
+
+                Machines -> EdgeNode [label="High-frequency sensor data"];
+                EdgeNode -> Cloud [label="Aggregated KPIs / events"];
+                Cloud -> EdgeNode [label="Updated models / thresholds"];
+            }
+            """
+        )
+
+        st.markdown("#### Control Plane Diagram – Industrial IoT")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                CloudCtrl [label="Fleet Management", shape=box, style=filled, color=lightblue];
+                EdgeCtrl [label="Plant Edge Controller", shape=box, style=filled, color=lightgrey];
+                MachineCtrl [label="Machine PLC / Agent", shape=box, style=filled, color=lightyellow];
+
+                CloudCtrl -> EdgeCtrl [label="Global policies / schedules"];
+                EdgeCtrl -> MachineCtrl [label="Local control / overrides"];
+                MachineCtrl -> EdgeCtrl [label="Status / alarms"];
+                EdgeCtrl -> CloudCtrl [label="Plant KPIs / incidents"];
+            }
+            """
+        )
+
+        st.markdown("#### Edge–Cloud Interaction Diagram – Industrial IoT")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                Cloud [shape=box, style=filled, color=lightblue];
+                Edge [shape=box, style=filled, color=lightgrey];
+
+                Edge -> Cloud [label="Plant metrics / events"];
+                Cloud -> Edge [label="Optimization strategies / models"];
             }
             """
         )
