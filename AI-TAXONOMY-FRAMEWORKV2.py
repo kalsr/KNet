@@ -169,7 +169,7 @@ DL --> NeuralNetworks
 
 def export_system():
 
-```
+
 st.subheader("📄 Export Reports")
 
 data = {
@@ -215,7 +215,7 @@ if st.button("Generate Word"):
     doc.add_paragraph("AI Platform Report Generated")
     doc.save("report.docx")
     st.success("Word Document Generated")
-```
+
 
 # =====================================================
 
