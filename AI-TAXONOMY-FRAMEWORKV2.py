@@ -184,15 +184,56 @@ def export_system():
 
     st.subheader("📄 Export Center")
 
-    st.success("PDF Report Generated successfully")
-    st.success("Word Report Generated successfully")
+    # -----------------------------
+    # SAMPLE REPORT DATA
+    # -----------------------------
+    report_data = {
+        "Platform": "AI Enterprise System",
+        "Sections": [
+            "Taxonomy Analysis",
+            "Framework Overview",
+            "LLM Comparison",
+            "AI Modules Report"
+        ],
+        "Status": "Ready for Export"
+    }
 
-    st.markdown("""
-### 📊 Export Summary
-- AI Platform Report
-- Taxonomy Analysis
-- LLM Comparison Report
-""")
+    df = pd.DataFrame({
+        "Report Type": ["Taxonomy Report", "Framework Report", "LLM Report"],
+        "Status": ["Ready", "Ready", "Ready"]
+    })
+
+    # -----------------------------
+    # PREVIEW SECTION (ALWAYS VISIBLE)
+    # -----------------------------
+    st.markdown("## 📊 Report Preview")
+
+    st.dataframe(df)
+
+    st.markdown("### JSON Preview")
+    st.json(report_data)
+
+    # -----------------------------
+    # ACTION BUTTONS
+    # -----------------------------
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if st.button("📄 Generate PDF Report"):
+            st.session_state.pdf_done = True
+
+    with col2:
+        if st.button("📝 Generate Word Report"):
+            st.session_state.word_done = True
+
+    # -----------------------------
+    # CONDITIONAL STATUS MESSAGES
+    # -----------------------------
+    if "pdf_done" in st.session_state and st.session_state.pdf_done:
+        st.success("✅ PDF Report Generated Successfully")
+
+    if "word_done" in st.session_state and st.session_state.word_done:
+        st.success("✅ Word Report Generated Successfully")
 
 # =====================================================
 # SIDEBAR NAVIGATION
