@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 import json
-
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
 # =====================================================
 # PAGE CONFIG
 # =====================================================
@@ -180,23 +181,19 @@ def external_view(url):
 # =====================================================
 # EXPORT SYSTEM
 # =====================================================
-import os
 from io import BytesIO
 
 def export_system():
 
-    st.subheader("📄 Export Center (Download Ready)")
+    st.subheader("📄 Export Center (Fixed + Working)")
 
-    # -----------------------------
-    # REPORT DATA
-    # -----------------------------
     report_data = {
         "Platform": "AI Enterprise System",
         "Modules": ["Taxonomy", "Framework", "LLMs", "RAG"]
     }
 
     df = pd.DataFrame({
-        "Report": ["Taxonomy Report", "Framework Report", "LLM Report"],
+        "Report Type": ["Taxonomy", "Framework", "LLM Analysis"],
         "Status": ["Completed", "Completed", "Completed"]
     })
 
@@ -205,55 +202,66 @@ def export_system():
     st.json(report_data)
 
     # =====================================================
-    # FILE STORAGE PATHS
-    # =====================================================
-    pdf_path = "/mnt/data/ai_report.pdf"
-    word_path = "/mnt/data/ai_report.docx"
-    json_path = "/mnt/data/ai_report.json"
-
-    # =====================================================
-    # GENERATE PDF
+    # PDF EXPORT (IN MEMORY - SAFE FOR STREAMLIT)
     # =====================================================
     if st.button("📄 Generate PDF"):
-        doc = SimpleDocTemplate(pdf_path)
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer)
         styles = getSampleStyleSheet()
-        content = [Paragraph("AI Enterprise Report Generated", styles["Title"])]
-        doc.build(content)
-        st.session_state.pdf_ready = True
 
-    if "pdf_ready" in st.session_state:
-        st.success("PDF Generated Successfully")
-        st.markdown(f"🔗 [Open PDF Report](sandbox:{pdf_path})")
+        content = [
+            Paragraph("AI Enterprise Report", styles["Title"]),
+            Paragraph("Generated successfully from AI Platform", styles["Normal"])
+        ]
+
+        doc.build(content)
+
+        buffer.seek(0)
+
+        st.download_button(
+            "⬇ Download PDF Report",
+            buffer,
+            file_name="ai_report.pdf",
+            mime="application/pdf"
+        )
+
+        st.success("PDF Report Generated Successfully")
 
     # =====================================================
-    # GENERATE WORD
+    # WORD EXPORT
     # =====================================================
     if st.button("📝 Generate Word"):
         doc = Document()
         doc.add_heading("AI Enterprise Report", 0)
-        doc.add_paragraph("Generated AI Taxonomy + LLM Report")
-        doc.save(word_path)
-        st.session_state.word_ready = True
+        doc.add_paragraph("AI Taxonomy + Framework + LLM Report")
 
-    if "word_ready" in st.session_state:
-        st.success("Word Generated Successfully")
-        st.markdown(f"🔗 [Open Word Report](sandbox:{word_path})")
+        word_buffer = BytesIO()
+        doc.save(word_buffer)
+        word_buffer.seek(0)
+
+        st.download_button(
+            "⬇ Download Word Report",
+            word_buffer,
+            file_name="ai_report.docx",
+            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+
+        st.success("Word Report Generated Successfully")
 
     # =====================================================
     # JSON EXPORT
     # =====================================================
-    with open(json_path, "w") as f:
-        json.dump(report_data, f, indent=4)
-
-    st.markdown("### 📦 JSON Export Available")
-    st.markdown(f"🔗 [Open JSON Report](sandbox:{json_path})")
+    json_str = json.dumps(report_data, indent=4)
 
     st.download_button(
-        "⬇ Download JSON Directly",
-        json.dumps(report_data),
-        "ai_report.json",
-        "application/json"
+        "⬇ Download JSON Report",
+        json_str,
+        file_name="ai_report.json",
+        mime="application/json"
     )
+
+    st.markdown("### 📊 JSON Preview")
+    st.json(report_data)
 
 # =====================================================
 # SIDEBAR NAVIGATION
