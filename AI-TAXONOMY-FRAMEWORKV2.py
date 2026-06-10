@@ -168,53 +168,51 @@ DL --> NeuralNetworks
 # =====================================================
 
 def export_system():
+    st.subheader("📄 Export Reports")
 
+    data = {
+        "AI": "Enterprise Platform",
+        "Modules": ["Chatbot", "Taxonomy", "Reports"]
+    }
 
-st.subheader(" Export Reports")
+    st.json(data)
 
-data = {
-    "AI": "Enterprise Platform",
-    "Modules": ["Chatbot", "Taxonomy", "Reports"]
-}
+    # CSV export
+    df = pd.DataFrame({
+        "Module": ["Chatbot", "Taxonomy", "Reports"],
+        "Status": ["Active", "Active", "Active"]
+    })
 
-st.json(data)
+    st.download_button(
+        "⬇ Download CSV",
+        df.to_csv(index=False),
+        "report.csv",
+        "text/csv"
+    )
 
-# CSV
-df = pd.DataFrame({
-    "Module": ["Chatbot", "Taxonomy", "Reports"],
-    "Status": ["Active", "Active", "Active"]
-})
+    # JSON export
+    st.download_button(
+        "⬇ Download JSON",
+        json.dumps(data),
+        "report.json",
+        "application/json"
+    )
 
-st.download_button(
-    "⬇ Download CSV",
-    df.to_csv(index=False),
-    "report.csv",
-    "text/csv"
-)
+    # PDF generation
+    if st.button("Generate PDF"):
+        file = "report.pdf"
+        doc = SimpleDocTemplate(file)
+        styles = getSampleStyleSheet()
+        doc.build([Paragraph("Enterprise AI Report", styles["Title"])])
+        st.success("PDF Generated")
 
-# JSON
-st.download_button(
-    "⬇ Download JSON",
-    json.dumps(data),
-    "report.json",
-    "application/json"
-)
-
-# PDF
-if st.button("Generate PDF"):
-    file = "report.pdf"
-    doc = SimpleDocTemplate(file)
-    styles = getSampleStyleSheet()
-    doc.build([Paragraph("Enterprise AI Report", styles["Title"])])
-    st.success("PDF Generated")
-
-# Word
-if st.button("Generate Word"):
-    doc = Document()
-    doc.add_heading("Enterprise AI Report", 0)
-    doc.add_paragraph("AI Platform Report Generated")
-    doc.save("report.docx")
-    st.success("Word Document Generated")
+    # Word generation
+    if st.button("Generate Word"):
+        doc = Document()
+        doc.add_heading("Enterprise AI Report", 0)
+        doc.add_paragraph("AI Platform Report Generated")
+        doc.save("report.docx")
+        st.success("Word Document Generated")
 
 
 # =====================================================
