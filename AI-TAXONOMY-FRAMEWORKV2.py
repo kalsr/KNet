@@ -170,7 +170,7 @@ DL --> NeuralNetworks
 def export_system():
 
 
-st.subheader("📄 Export Reports")
+st.subheader(" Export Reports")
 
 data = {
     "AI": "Enterprise Platform",
