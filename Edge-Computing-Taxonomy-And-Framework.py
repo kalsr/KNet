@@ -108,7 +108,7 @@ if main_category.startswith("1"):
             "and smaller network pressure."
         )
 
-        st.markdown("#### Simple Flow (Push from Cloud Services)")
+        st.markdown("#### Flow Diagram – Push from Cloud Services")
         st.graphviz_chart(
             """
             digraph {
@@ -149,7 +149,7 @@ if main_category.startswith("1"):
             "is usually very energy hungry, so offloading some computing tasks to the edge could be more energy efficient."
         )
 
-        st.markdown("#### Data Flow Diagram (Pull from IoT)")
+        st.markdown("#### Flow Diagram – Pull from IoT")
         st.graphviz_chart(
             """
             digraph {
@@ -190,7 +190,7 @@ if main_category.startswith("1"):
             "processing the data at the edge could protect user privacy better than uploading raw data to cloud."
         )
 
-        st.markdown("#### Edge Role Evolution Diagram")
+        st.markdown("#### Flow Diagram – Edge Role Evolution")
         st.graphviz_chart(
             """
             digraph {
@@ -209,7 +209,7 @@ if main_category.startswith("1"):
         )
 
 # ------------------------------------------------------------------------------------
-# USE CASES (CLOUD OFFLOADING, VIDEO ANALYTICS, SMART HOME, SMART CITY, COLLABORATIVE EDGE, EXTRA)
+# USE CASES (CLOUD OFFLOADING, VIDEO ANALYTICS, SMART HOME, SMART CITY, COLLABORATIVE EDGE, IIoT)
 # ------------------------------------------------------------------------------------
 elif main_category.startswith("2"):
     st.markdown("## Edge-Computing Use Cases")
@@ -261,7 +261,7 @@ elif main_category.startswith("2"):
             "application could be improved significantly."
         )
 
-        st.markdown("#### Cloud Offloading Flow")
+        st.markdown("#### Flow Diagram – Cloud Offloading")
         st.graphviz_chart(
             """
             digraph {
@@ -304,7 +304,7 @@ elif main_category.startswith("2"):
             "much faster compared with solitary cloud computing."
         )
 
-        st.markdown("#### Video Analytics Flow")
+        st.markdown("#### Flow Diagram – Video Analytics")
         st.graphviz_chart(
             """
             digraph {
@@ -348,7 +348,7 @@ elif main_category.startswith("2"):
             "Internet bandwidth, and the service can also be deployed on the edgeOS for better management and delivery."
         )
 
-        st.markdown("#### Smart Home Architecture")
+        st.markdown("#### Flow Diagram – Smart Home")
         st.graphviz_chart(
             """
             digraph {
@@ -395,7 +395,7 @@ elif main_category.startswith("2"):
             "edge computing exceeds cloud computing due to location awareness."
         )
 
-        st.markdown("#### Smart City Edge Layers")
+        st.markdown("#### Flow Diagram – Smart City Edge Layers")
         st.graphviz_chart(
             """
             digraph {
@@ -425,7 +425,7 @@ elif main_category.startswith("2"):
             "It enables resilience, better resource utilization, and cross-domain analytics without centralizing all data."
         )
 
-        st.markdown("#### Collaborative Edge Concept Diagram")
+        st.markdown("#### Flow Diagram – Collaborative Edge")
         st.graphviz_chart(
             """
             digraph {
@@ -459,7 +459,7 @@ elif main_category.startswith("2"):
             "fleet-wide learning."
         )
 
-        st.markdown("#### Industrial IoT Edge Flow")
+        st.markdown("#### Flow Diagram – Industrial IoT")
         st.graphviz_chart(
             """
             digraph {
@@ -478,7 +478,7 @@ elif main_category.startswith("2"):
         )
 
 # ------------------------------------------------------------------------------------
-# FRAMEWORK CHALLENGES (PLACEHOLDER – CAN BE EXTENDED)
+# FRAMEWORK CHALLENGES
 # ------------------------------------------------------------------------------------
 else:
     st.markdown("## Edge-Computing Framework Challenges")
@@ -504,7 +504,7 @@ else:
         "You can extend this area with more detailed text, diagrams, and metrics specific to your framework."
     )
 
-    st.markdown("#### Example Challenge Flow")
+    st.markdown("#### Flow Diagram – Challenge Lifecycle")
     st.graphviz_chart(
         """
         digraph {
