@@ -180,60 +180,80 @@ def external_view(url):
 # =====================================================
 # EXPORT SYSTEM
 # =====================================================
+import os
+from io import BytesIO
+
 def export_system():
 
-    st.subheader("📄 Export Center")
+    st.subheader("📄 Export Center (Download Ready)")
 
     # -----------------------------
-    # SAMPLE REPORT DATA
+    # REPORT DATA
     # -----------------------------
     report_data = {
         "Platform": "AI Enterprise System",
-        "Sections": [
-            "Taxonomy Analysis",
-            "Framework Overview",
-            "LLM Comparison",
-            "AI Modules Report"
-        ],
-        "Status": "Ready for Export"
+        "Modules": ["Taxonomy", "Framework", "LLMs", "RAG"]
     }
 
     df = pd.DataFrame({
-        "Report Type": ["Taxonomy Report", "Framework Report", "LLM Report"],
-        "Status": ["Ready", "Ready", "Ready"]
+        "Report": ["Taxonomy Report", "Framework Report", "LLM Report"],
+        "Status": ["Completed", "Completed", "Completed"]
     })
 
-    # -----------------------------
-    # PREVIEW SECTION (ALWAYS VISIBLE)
-    # -----------------------------
     st.markdown("## 📊 Report Preview")
-
     st.dataframe(df)
-
-    st.markdown("### JSON Preview")
     st.json(report_data)
 
-    # -----------------------------
-    # ACTION BUTTONS
-    # -----------------------------
-    col1, col2 = st.columns(2)
+    # =====================================================
+    # FILE STORAGE PATHS
+    # =====================================================
+    pdf_path = "/mnt/data/ai_report.pdf"
+    word_path = "/mnt/data/ai_report.docx"
+    json_path = "/mnt/data/ai_report.json"
 
-    with col1:
-        if st.button("📄 Generate PDF Report"):
-            st.session_state.pdf_done = True
+    # =====================================================
+    # GENERATE PDF
+    # =====================================================
+    if st.button("📄 Generate PDF"):
+        doc = SimpleDocTemplate(pdf_path)
+        styles = getSampleStyleSheet()
+        content = [Paragraph("AI Enterprise Report Generated", styles["Title"])]
+        doc.build(content)
+        st.session_state.pdf_ready = True
 
-    with col2:
-        if st.button("📝 Generate Word Report"):
-            st.session_state.word_done = True
+    if "pdf_ready" in st.session_state:
+        st.success("PDF Generated Successfully")
+        st.markdown(f"🔗 [Open PDF Report](sandbox:{pdf_path})")
 
-    # -----------------------------
-    # CONDITIONAL STATUS MESSAGES
-    # -----------------------------
-    if "pdf_done" in st.session_state and st.session_state.pdf_done:
-        st.success("✅ PDF Report Generated Successfully")
+    # =====================================================
+    # GENERATE WORD
+    # =====================================================
+    if st.button("📝 Generate Word"):
+        doc = Document()
+        doc.add_heading("AI Enterprise Report", 0)
+        doc.add_paragraph("Generated AI Taxonomy + LLM Report")
+        doc.save(word_path)
+        st.session_state.word_ready = True
 
-    if "word_done" in st.session_state and st.session_state.word_done:
-        st.success("✅ Word Report Generated Successfully")
+    if "word_ready" in st.session_state:
+        st.success("Word Generated Successfully")
+        st.markdown(f"🔗 [Open Word Report](sandbox:{word_path})")
+
+    # =====================================================
+    # JSON EXPORT
+    # =====================================================
+    with open(json_path, "w") as f:
+        json.dump(report_data, f, indent=4)
+
+    st.markdown("### 📦 JSON Export Available")
+    st.markdown(f"🔗 [Open JSON Report](sandbox:{json_path})")
+
+    st.download_button(
+        "⬇ Download JSON Directly",
+        json.dumps(report_data),
+        "ai_report.json",
+        "application/json"
+    )
 
 # =====================================================
 # SIDEBAR NAVIGATION
