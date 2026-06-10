@@ -108,7 +108,7 @@ if main_category.startswith("1"):
             "and smaller network pressure."
         )
 
-        st.markdown("#### Flow Diagram – Push from Cloud Services")
+        st.markdown("#### Concept Diagram – Push from Cloud Services")
         st.graphviz_chart(
             """
             digraph {
@@ -117,10 +117,26 @@ if main_category.startswith("1"):
                 Edge [shape=box, style=filled, color=lightgrey];
                 Things [shape=box, style=filled, color=lightyellow];
 
-                Cloud -> Edge [label="Push tasks / data"];
-                Edge -> Things [label="Deliver services"];
-                Things -> Edge [label="Telemetry / feedback"];
-                Edge -> Cloud [label="Aggregated data / updates"];
+                Cloud -> Edge [label="Tasks / data"];
+                Edge -> Things [label="Services"];
+                Things -> Edge [label="Telemetry"];
+                Edge -> Cloud [label="Aggregated data"];
+            }
+            """
+        )
+
+        st.markdown("#### Flow Diagram – Push from Cloud Services")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=TB;
+                step1 [label="1. Cloud generates tasks", shape=box];
+                step2 [label="2. Tasks pushed to Edge", shape=box];
+                step3 [label="3. Edge executes tasks near Things", shape=box];
+                step4 [label="4. Edge aggregates results", shape=box];
+                step5 [label="5. Edge sends summaries to Cloud", shape=box];
+
+                step1 -> step2 -> step3 -> step4 -> step5;
             }
             """
         )
@@ -149,7 +165,7 @@ if main_category.startswith("1"):
             "is usually very energy hungry, so offloading some computing tasks to the edge could be more energy efficient."
         )
 
-        st.markdown("#### Flow Diagram – Pull from IoT")
+        st.markdown("#### Concept Diagram – Pull from IoT")
         st.graphviz_chart(
             """
             digraph {
@@ -159,10 +175,26 @@ if main_category.startswith("1"):
                 LocalApps [shape=box, style=filled, color=lightgreen, label="Local Apps / Services"];
                 Cloud [shape=box, style=filled, color=lightblue];
 
-                Things -> Edge [label="Sensor data / events"];
-                Edge -> LocalApps [label="Processed insights / control"];
-                Edge -> Cloud [label="Summaries / aggregates"];
+                Things -> Edge [label="Sensor data"];
+                Edge -> LocalApps [label="Insights / control"];
+                Edge -> Cloud [label="Summaries"];
                 Cloud -> Edge [label="Policies / models"];
+            }
+            """
+        )
+
+        st.markdown("#### Flow Diagram – Pull from IoT")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=TB;
+                step1 [label="1. Things generate raw data", shape=box];
+                step2 [label="2. Edge pulls data from Things", shape=box];
+                step3 [label="3. Edge processes and filters data", shape=box];
+                step4 [label="4. Local apps consume processed data", shape=box];
+                step5 [label="5. Edge sends aggregates to Cloud", shape=box];
+
+                step1 -> step2 -> step3 -> step4 -> step5;
             }
             """
         )
@@ -190,7 +222,7 @@ if main_category.startswith("1"):
             "processing the data at the edge could protect user privacy better than uploading raw data to cloud."
         )
 
-        st.markdown("#### Flow Diagram – Edge Role Evolution")
+        st.markdown("#### Concept Diagram – Edge Role Evolution")
         st.graphviz_chart(
             """
             digraph {
@@ -200,10 +232,26 @@ if main_category.startswith("1"):
                 Edge [shape=box, style=filled, color=lightgrey];
 
                 Cloud -> Device [label="Content / services"];
-                Device -> Cloud [label="User data (traditional)"];
+                Device -> Cloud [label="User data"];
                 Device -> Edge [label="Raw sensor / video / health data"];
                 Edge -> Cloud [label="Filtered / anonymized data"];
-                Edge -> Device [label="Real-time feedback / insights"];
+                Edge -> Device [label="Real-time insights"];
+            }
+            """
+        )
+
+        st.markdown("#### Flow Diagram – Edge Role Evolution")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=TB;
+                step1 [label="1. Device consumes cloud content", shape=box];
+                step2 [label="2. Device starts producing rich data", shape=box];
+                step3 [label="3. Raw data sent to Edge", shape=box];
+                step4 [label="4. Edge processes / anonymizes data", shape=box];
+                step5 [label="5. Edge sends insights to Device and Cloud", shape=box];
+
+                step1 -> step2 -> step3 -> step4 -> step5;
             }
             """
         )
@@ -261,7 +309,7 @@ elif main_category.startswith("2"):
             "application could be improved significantly."
         )
 
-        st.markdown("#### Flow Diagram – Cloud Offloading")
+        st.markdown("#### Concept Diagram – Cloud Offloading")
         st.graphviz_chart(
             """
             digraph {
@@ -271,9 +319,25 @@ elif main_category.startswith("2"):
                 Cloud [shape=box, style=filled, color=lightblue];
 
                 User -> Edge [label="Requests / data"];
-                Edge -> Cloud [label="Background sync / heavy compute"];
+                Edge -> Cloud [label="Offloaded heavy tasks"];
                 Cloud -> Edge [label="Models / updates"];
                 Edge -> User [label="Low-latency responses"];
+            }
+            """
+        )
+
+        st.markdown("#### Flow Diagram – Cloud Offloading")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=TB;
+                step1 [label="1. User sends request", shape=box];
+                step2 [label="2. Edge handles time-sensitive part", shape=box];
+                step3 [label="3. Edge offloads heavy tasks to Cloud", shape=box];
+                step4 [label="4. Cloud processes and returns models", shape=box];
+                step5 [label="5. Edge responds quickly to User", shape=box];
+
+                step1 -> step2 -> step3 -> step4 -> step5;
             }
             """
         )
@@ -304,7 +368,7 @@ elif main_category.startswith("2"):
             "much faster compared with solitary cloud computing."
         )
 
-        st.markdown("#### Flow Diagram – Video Analytics")
+        st.markdown("#### Concept Diagram – Video Analytics")
         st.graphviz_chart(
             """
             digraph {
@@ -314,10 +378,26 @@ elif main_category.startswith("2"):
                 LocalAI [shape=box, style=filled, color=lightgreen];
                 Cloud [shape=box, style=filled, color=lightblue];
 
-                Camera -> Edge [label="Raw video stream"];
+                Camera -> Edge [label="Raw video"];
                 Edge -> LocalAI [label="Frames / features"];
                 LocalAI -> Edge [label="Detections / events"];
                 Edge -> Cloud [label="Summaries / alerts"];
+            }
+            """
+        )
+
+        st.markdown("#### Flow Diagram – Video Analytics")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=TB;
+                step1 [label="1. Camera captures video", shape=box];
+                step2 [label="2. Edge receives stream", shape=box];
+                step3 [label="3. Edge / Local AI analyze frames", shape=box];
+                step4 [label="4. Edge generates events / alerts", shape=box];
+                step5 [label="5. Edge sends summaries to Cloud", shape=box];
+
+                step1 -> step2 -> step3 -> step4 -> step5;
             }
             """
         )
@@ -348,7 +428,7 @@ elif main_category.startswith("2"):
             "Internet bandwidth, and the service can also be deployed on the edgeOS for better management and delivery."
         )
 
-        st.markdown("#### Flow Diagram – Smart Home")
+        st.markdown("#### Concept Diagram – Smart Home")
         st.graphviz_chart(
             """
             digraph {
@@ -363,6 +443,22 @@ elif main_category.startswith("2"):
                 EdgeGateway -> LocalServices [label="Rules / automation"];
                 EdgeGateway -> Cloud [label="Aggregated data"];
                 UserApp -> EdgeGateway [label="Control / monitoring"];
+            }
+            """
+        )
+
+        st.markdown("#### Flow Diagram – Smart Home")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=TB;
+                step1 [label="1. Sensors collect home data", shape=box];
+                step2 [label="2. Edge gateway receives data", shape=box];
+                step3 [label="3. Edge applies rules / automation", shape=box];
+                step4 [label="4. User app interacts with Edge", shape=box];
+                step5 [label="5. Edge sends aggregates to Cloud", shape=box];
+
+                step1 -> step2 -> step3 -> step4 -> step5;
             }
             """
         )
@@ -395,7 +491,7 @@ elif main_category.startswith("2"):
             "edge computing exceeds cloud computing due to location awareness."
         )
 
-        st.markdown("#### Flow Diagram – Smart City Edge Layers")
+        st.markdown("#### Concept Diagram – Smart City Edge Layers")
         st.graphviz_chart(
             """
             digraph {
@@ -414,6 +510,22 @@ elif main_category.startswith("2"):
             """
         )
 
+        st.markdown("#### Flow Diagram – Smart City")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=TB;
+                step1 [label="1. City sensors collect data", shape=box];
+                step2 [label="2. District edge nodes process locally", shape=box];
+                step3 [label="3. City edge aggregates and optimizes", shape=box];
+                step4 [label="4. Cloud stores and analyzes long-term", shape=box];
+                step5 [label="5. Ops center uses insights for decisions", shape=box];
+
+                step1 -> step2 -> step3 -> step4 -> step5;
+            }
+            """
+        )
+
     # ----------------- COLLABORATIVE EDGE -----------------
     elif sub.startswith("5"):
         st.markdown("### Use Case 5: Collaborative Edge")
@@ -425,7 +537,7 @@ elif main_category.startswith("2"):
             "It enables resilience, better resource utilization, and cross-domain analytics without centralizing all data."
         )
 
-        st.markdown("#### Flow Diagram – Collaborative Edge")
+        st.markdown("#### Concept Diagram – Collaborative Edge")
         st.graphviz_chart(
             """
             digraph {
@@ -439,6 +551,22 @@ elif main_category.startswith("2"):
                 Edge2 -> Edge3 [label="Models / insights"];
                 Edge3 -> Cloud [label="Aggregated results"];
                 Cloud -> Edge1 [label="Global policies"];
+            }
+            """
+        )
+
+        st.markdown("#### Flow Diagram – Collaborative Edge")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=TB;
+                step1 [label="1. Edge nodes receive local workloads", shape=box];
+                step2 [label="2. Edges share tasks / data among peers", shape=box];
+                step3 [label="3. Collaborative processing across edges", shape=box];
+                step4 [label="4. Aggregated results sent to Cloud", shape=box];
+                step5 [label="5. Cloud distributes global policies back", shape=box];
+
+                step1 -> step2 -> step3 -> step4 -> step5;
             }
             """
         )
@@ -459,7 +587,7 @@ elif main_category.startswith("2"):
             "fleet-wide learning."
         )
 
-        st.markdown("#### Flow Diagram – Industrial IoT")
+        st.markdown("#### Concept Diagram – Industrial IoT")
         st.graphviz_chart(
             """
             digraph {
@@ -469,10 +597,26 @@ elif main_category.startswith("2"):
                 PlantControl [shape=box, style=filled, color=lightgreen];
                 Cloud [shape=box, style=filled, color=lightblue];
 
-                Machines -> EdgeNode [label="Vibration / temperature / status"];
+                Machines -> EdgeNode [label="Sensor data"];
                 EdgeNode -> PlantControl [label="Alerts / recommendations"];
                 EdgeNode -> Cloud [label="Aggregated metrics"];
                 Cloud -> PlantControl [label="Global optimization / models"];
+            }
+            """
+        )
+
+        st.markdown("#### Flow Diagram – Industrial IoT")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=TB;
+                step1 [label="1. Machines emit sensor data", shape=box];
+                step2 [label="2. Edge node ingests and analyzes", shape=box];
+                step3 [label="3. Edge triggers local actions / alerts", shape=box];
+                step4 [label="4. Edge sends metrics to Cloud", shape=box];
+                step5 [label="5. Cloud refines models and sends back", shape=box];
+
+                step1 -> step2 -> step3 -> step4 -> step5;
             }
             """
         )
@@ -508,7 +652,7 @@ else:
     st.graphviz_chart(
         """
         digraph {
-            rankdir=LR;
+            rankdir=TB;
             Requirement -> Design;
             Design -> EdgeNodes;
             EdgeNodes -> Monitoring;
