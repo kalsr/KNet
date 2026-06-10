@@ -187,7 +187,7 @@ from docx import Document  #  FIXED IMPORT REQUIRED
 
 def export_system():
 
-    st.subheader("📄 Export Center (Fully Fixed)")
+    st.subheader(" Export CenteR ") 
 
     # =====================================================
     # REPORT DATA
@@ -214,7 +214,7 @@ def export_system():
     st.markdown("##  Report Preview Table")
     st.dataframe(df)
 
-    st.markdown("##  JSON Preview (NOW FIXED)")
+    st.markdown("##  JSON Preview ")
     st.json(report_data)
 
     # =====================================================
