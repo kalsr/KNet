@@ -1,7 +1,3 @@
-
-
-
-
 import streamlit as st
 import json
 from io import BytesIO
@@ -88,6 +84,7 @@ if main_category.startswith("1"):
         ],
     )
 
+    # ----------------- PUSH FROM CLOUD SERVICES -----------------
     if sub.startswith("1"):
         st.markdown("### Push from Cloud Services")
         add_line(
@@ -115,14 +112,20 @@ if main_category.startswith("1"):
         st.graphviz_chart(
             """
             digraph {
-                Cloud -> Edge [label="Push tasks/data"];
+                rankdir=LR;
+                Cloud [shape=box, style=filled, color=lightblue];
+                Edge [shape=box, style=filled, color=lightgrey];
+                Things [shape=box, style=filled, color=lightyellow];
+
+                Cloud -> Edge [label="Push tasks / data"];
                 Edge -> Things [label="Deliver services"];
-                Things -> Edge [label="Telemetry"];
-                Edge -> Cloud [label="Aggregated data"];
+                Things -> Edge [label="Telemetry / feedback"];
+                Edge -> Cloud [label="Aggregated data / updates"];
             }
             """
         )
 
+    # ----------------- PULL FROM IOT -----------------
     elif sub.startswith("2"):
         st.markdown("### Pull from IoT")
         add_line(
@@ -150,13 +153,21 @@ if main_category.startswith("1"):
         st.graphviz_chart(
             """
             digraph {
-                Things -> Edge [label="Sensor data"];
-                Edge -> LocalApps [label="Processed insights"];
+                rankdir=LR;
+                Things [shape=box, style=filled, color=lightyellow, label="IoT Things"];
+                Edge [shape=box, style=filled, color=lightgrey, label="Edge Node / Gateway"];
+                LocalApps [shape=box, style=filled, color=lightgreen, label="Local Apps / Services"];
+                Cloud [shape=box, style=filled, color=lightblue];
+
+                Things -> Edge [label="Sensor data / events"];
+                Edge -> LocalApps [label="Processed insights / control"];
                 Edge -> Cloud [label="Summaries / aggregates"];
+                Cloud -> Edge [label="Policies / models"];
             }
             """
         )
 
+    # ----------------- CHANGE FROM DATA CONSUMER TO PRODUCER -----------------
     else:
         st.markdown("### Change from Data Consumer to Producer")
         add_line(
@@ -183,16 +194,22 @@ if main_category.startswith("1"):
         st.graphviz_chart(
             """
             digraph {
-                Cloud -> Device [label="Content"];
-                Device -> Cloud [label="User data"];
-                Device -> Edge [label="Raw sensor/video"];
+                rankdir=LR;
+                Cloud [shape=box, style=filled, color=lightblue];
+                Device [shape=box, style=filled, color=lightyellow, label="Mobile / Wearable Device"];
+                Edge [shape=box, style=filled, color=lightgrey];
+
+                Cloud -> Device [label="Content / services"];
+                Device -> Cloud [label="User data (traditional)"];
+                Device -> Edge [label="Raw sensor / video / health data"];
                 Edge -> Cloud [label="Filtered / anonymized data"];
+                Edge -> Device [label="Real-time feedback / insights"];
             }
             """
         )
 
 # ------------------------------------------------------------------------------------
-# USE CASES (CLOUD OFFLOADING, VIDEO ANALYTICS, SMART HOME, SMART CITY, COLLABORATIVE EDGE)
+# USE CASES (CLOUD OFFLOADING, VIDEO ANALYTICS, SMART HOME, SMART CITY, COLLABORATIVE EDGE, EXTRA)
 # ------------------------------------------------------------------------------------
 elif main_category.startswith("2"):
     st.markdown("## Edge-Computing Use Cases")
@@ -205,9 +222,11 @@ elif main_category.startswith("2"):
             "3. Smart Home",
             "4. Smart City",
             "5. Collaborative Edge",
+            "6. Industrial IoT (Expanded)",
         ],
     )
 
+    # ----------------- CLOUD OFFLOADING -----------------
     if sub.startswith("1"):
         st.markdown("### Use Case 1: Cloud Offloading")
         add_line(
@@ -246,14 +265,20 @@ elif main_category.startswith("2"):
         st.graphviz_chart(
             """
             digraph {
-                User -> Edge [label="Requests"];
-                Edge -> Cloud [label="Background sync"];
-                Cloud -> Edge [label="Heavy compute"];
+                rankdir=LR;
+                User [shape=box, style=filled, color=lightyellow];
+                Edge [shape=box, style=filled, color=lightgrey];
+                Cloud [shape=box, style=filled, color=lightblue];
+
+                User -> Edge [label="Requests / data"];
+                Edge -> Cloud [label="Background sync / heavy compute"];
+                Cloud -> Edge [label="Models / updates"];
                 Edge -> User [label="Low-latency responses"];
             }
             """
         )
 
+    # ----------------- VIDEO ANALYTICS -----------------
     elif sub.startswith("2"):
         st.markdown("### Use Case 2: Video Analytics")
         add_line(
@@ -283,13 +308,21 @@ elif main_category.startswith("2"):
         st.graphviz_chart(
             """
             digraph {
-                Camera -> Edge [label="Raw video"];
-                Edge -> LocalAI [label="Detection / analytics"];
-                LocalAI -> Cloud [label="Events / summaries"];
+                rankdir=LR;
+                Camera [shape=box, style=filled, color=lightyellow];
+                Edge [shape=box, style=filled, color=lightgrey];
+                LocalAI [shape=box, style=filled, color=lightgreen];
+                Cloud [shape=box, style=filled, color=lightblue];
+
+                Camera -> Edge [label="Raw video stream"];
+                Edge -> LocalAI [label="Frames / features"];
+                LocalAI -> Edge [label="Detections / events"];
+                Edge -> Cloud [label="Summaries / alerts"];
             }
             """
         )
 
+    # ----------------- SMART HOME -----------------
     elif sub.startswith("3"):
         st.markdown("### Use Case 3: Smart Home")
         add_line(
@@ -319,14 +352,22 @@ elif main_category.startswith("2"):
         st.graphviz_chart(
             """
             digraph {
-                Sensors -> EdgeGateway;
-                EdgeGateway -> LocalServices;
+                rankdir=LR;
+                Sensors [shape=box, style=filled, color=lightyellow];
+                EdgeGateway [shape=box, style=filled, color=lightgrey];
+                LocalServices [shape=box, style=filled, color=lightgreen];
+                Cloud [shape=box, style=filled, color=lightblue];
+                UserApp [shape=box, style=filled, color=lightyellow];
+
+                Sensors -> EdgeGateway [label="Telemetry"];
+                EdgeGateway -> LocalServices [label="Rules / automation"];
                 EdgeGateway -> Cloud [label="Aggregated data"];
                 UserApp -> EdgeGateway [label="Control / monitoring"];
             }
             """
         )
 
+    # ----------------- SMART CITY -----------------
     elif sub.startswith("4"):
         st.markdown("### Use Case 4: Smart City")
         add_line(
@@ -358,15 +399,23 @@ elif main_category.startswith("2"):
         st.graphviz_chart(
             """
             digraph {
+                rankdir=LR;
+                CitySensors [shape=box, style=filled, color=lightyellow];
+                DistrictEdge [shape=box, style=filled, color=lightgrey];
+                CityEdge [shape=box, style=filled, color=lightgrey];
+                Cloud [shape=box, style=filled, color=lightblue];
+                OpsCenter [shape=box, style=filled, color=lightgreen, label="City Ops Center"];
+
                 CitySensors -> DistrictEdge;
                 DistrictEdge -> CityEdge;
                 CityEdge -> Cloud;
-                Cloud -> CityOpsCenter;
+                Cloud -> OpsCenter;
             }
             """
         )
 
-    else:
+    # ----------------- COLLABORATIVE EDGE -----------------
+    elif sub.startswith("5"):
         st.markdown("### Use Case 5: Collaborative Edge")
         add_line(
             "Collaborative edge refers to multiple edge nodes working together to share load, data, and intelligence "
@@ -380,10 +429,50 @@ elif main_category.startswith("2"):
         st.graphviz_chart(
             """
             digraph {
+                rankdir=LR;
+                Edge1 [shape=box, style=filled, color=lightgrey];
+                Edge2 [shape=box, style=filled, color=lightgrey];
+                Edge3 [shape=box, style=filled, color=lightgrey];
+                Cloud [shape=box, style=filled, color=lightblue];
+
                 Edge1 -> Edge2 [label="Data / tasks"];
                 Edge2 -> Edge3 [label="Models / insights"];
                 Edge3 -> Cloud [label="Aggregated results"];
                 Cloud -> Edge1 [label="Global policies"];
+            }
+            """
+        )
+
+    # ----------------- INDUSTRIAL IOT (EXPANDED USE CASE) -----------------
+    else:
+        st.markdown("### Use Case 6: Industrial IoT (Expanded)")
+        add_line(
+            "Industrial IoT (IIoT) uses edge computing to process sensor data from machines, robots, and production lines "
+            "in real time."
+        )
+        add_line(
+            "Edge nodes perform anomaly detection, predictive maintenance, and safety monitoring close to the equipment, "
+            "reducing latency and bandwidth usage."
+        )
+        add_line(
+            "Aggregated insights and historical data are sent to the cloud for long-term analytics, optimization, and "
+            "fleet-wide learning."
+        )
+
+        st.markdown("#### Industrial IoT Edge Flow")
+        st.graphviz_chart(
+            """
+            digraph {
+                rankdir=LR;
+                Machines [shape=box, style=filled, color=lightyellow];
+                EdgeNode [shape=box, style=filled, color=lightgrey];
+                PlantControl [shape=box, style=filled, color=lightgreen];
+                Cloud [shape=box, style=filled, color=lightblue];
+
+                Machines -> EdgeNode [label="Vibration / temperature / status"];
+                EdgeNode -> PlantControl [label="Alerts / recommendations"];
+                EdgeNode -> Cloud [label="Aggregated metrics"];
+                Cloud -> PlantControl [label="Global optimization / models"];
             }
             """
         )
@@ -419,6 +508,7 @@ else:
     st.graphviz_chart(
         """
         digraph {
+            rankdir=LR;
             Requirement -> Design;
             Design -> EdgeNodes;
             EdgeNodes -> Monitoring;
@@ -435,7 +525,6 @@ st.markdown("### Export Current View")
 
 export_col1, export_col2, export_col3 = st.columns(3)
 
-# Build plain text from current section
 export_text = "\n".join(current_text_lines) if current_text_lines else "No content selected."
 
 # JSON export
@@ -458,7 +547,7 @@ with export_col2:
         mime="application/msword",
     )
 
-# "PDF" export – minimal PDF-like text file (for real PDF, integrate reportlab/fpdf)
+# "PDF" export – text-based buffer (for real PDF, integrate reportlab/fpdf)
 with export_col1:
     pdf_buffer = BytesIO()
     pdf_buffer.write(export_text.encode("utf-8"))
