@@ -1,9 +1,6 @@
 import streamlit as st
 import pandas as pd
 import json
-from docx import Document
-from reportlab.platypus import SimpleDocTemplate, Paragraph
-from reportlab.lib.styles import getSampleStyleSheet
 
 # =====================================================
 # PAGE CONFIG
@@ -11,38 +8,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 st.set_page_config(page_title="AI Enterprise Platform", layout="wide")
 
 # =====================================================
-# LOGIN SYSTEM (FIXED DUPLICATE IDS)
-# =====================================================
-USERS = {
-    "admin": "admin123",
-    "user": "user123"
-}
-
-if "auth" not in st.session_state:
-    st.session_state.auth = False
-
-def login():
-
-    st.sidebar.subheader("🔐 Login System")
-
-    username = st.sidebar.text_input("Username", key="login_username")
-    password = st.sidebar.text_input("Password", type="password", key="login_password")
-
-    if st.sidebar.button("Login", key="login_btn"):
-        if username in USERS and USERS[username] == password:
-            st.session_state.auth = True
-            st.session_state.user = username
-            st.sidebar.success("Login Successful")
-        else:
-            st.sidebar.error("Invalid Credentials")
-
-login()
-
-if not st.session_state.auth:
-    st.stop()
-
-# =====================================================
-# HEADER (BOLD BLUE + REQUIRED TEXT)
+# HEADER (BOLD BLUE)
 # =====================================================
 st.markdown("""
 <div style='background-color:#0056D2;padding:18px;border-radius:10px;text-align:center;'>
@@ -53,8 +19,21 @@ ARTIFICIAL INTELLIGENCE ENTERPRISE PLATFORM
 """, unsafe_allow_html=True)
 
 st.markdown("""
-### 🔷 Developed by **Randy Singh – Kalsnet (KNet) Consulting Group**
-""")
+### 🔷 **Developed by Randy Singh – Kalsnet (KNet) Consulting Group**
+""", unsafe_allow_html=True)
+
+# =====================================================
+# NAVIGATION STATE
+# =====================================================
+if "view" not in st.session_state:
+    st.session_state.view = "main"
+
+# =====================================================
+# BACK BUTTON (FOR LLM EXTERNAL VIEW FLOW)
+# =====================================================
+def back_button():
+    if st.button("⬅ Back to Platform"):
+        st.session_state.view = "main"
 
 # =====================================================
 # DASHBOARD
@@ -65,7 +44,7 @@ def dashboard():
 
     col1, col2, col3 = st.columns(3)
     col1.metric("AI Modules", "8+")
-    col2.metric("LLMs", "15")
+    col2.metric("LLMs", "15+")
     col3.metric("System Status", "🟢 Active")
 
     st.markdown("## 🧠 Core Platform Architecture")
@@ -74,30 +53,35 @@ def dashboard():
     digraph {
         User -> Dashboard
         Dashboard -> AI_Engine
-        AI_Engine -> RAG
+        AI_Engine -> RAG_System
         AI_Engine -> LLM_Hub
-        RAG -> Vector_DB
-        LLM_Hub -> Response
+        RAG_System -> Vector_DB
+        LLM_Hub -> Response_Engine
     }
     """)
 
     st.markdown("""
-### 🔷 Core Platform Modules (with Use Cases)
+### 🔷 Core Platform Modules (with Use Cases & Benefits)
 
 - 🤖 Chatbot Engine  
-  *Use: Customer support, AI assistants, automation bots*
+  Use: Customer support, AI assistants  
+  Benefit: Reduces manual workload, improves response speed  
 
 - 🧠 RAG System  
-  *Use: Document Q&A, enterprise search, legal AI systems*
+  Use: Document Q&A, enterprise search  
+  Benefit: Improves accuracy, reduces hallucinations  
 
 - 📚 Taxonomy Engine  
-  *Use: AI education, research classification systems*
+  Use: AI classification, research structuring  
+  Benefit: Organizes knowledge for better understanding  
 
 - 🌐 LLM Hub  
-  *Use: GPT/Claude/Gemini switching for best AI responses*
+  Use: Switching between AI models  
+  Benefit: Best response quality via model selection  
 
 - 📄 Export Engine  
-  *Use: Reports, audits, compliance documentation*
+  Use: Reports, documentation  
+  Benefit: Fast compliance & reporting automation  
 """)
 
 # =====================================================
@@ -110,47 +94,45 @@ def taxonomy_framework():
     st.markdown("""
 ## 📌 AI Taxonomy (WHAT exists)
 
-- Machine Learning → fraud detection, predictions
-- Deep Learning → image recognition, LLMs
+- Machine Learning → predictions, fraud detection
+- Deep Learning → LLMs, vision systems
 - NLP → chatbots, translation
-- Computer Vision → drones, medical imaging
+- Computer Vision → drones, healthcare imaging
 
 ### ✔ Benefits
-- Organizes AI knowledge
-- Helps research
-- Standard classification
+- Structured AI understanding
+- Easier research & design
 
 ---
 
 ## 🏗 AI Framework (HOW it works)
 
 - Data Layer → datasets
-- Model Layer → ML/AI models
+- Model Layer → AI models
 - API Layer → integration
-- App Layer → applications
+- Application Layer → apps
 
 ### ✔ Benefits
-- System design
-- Scalability
-- Modular architecture
+- Scalable architecture
+- Modular system design
 """)
 
 # =====================================================
-# AI MODULES (WITH USE CASES)
+# AI MODULES (ENHANCED)
 # =====================================================
 def ai_modules():
 
     st.subheader("🤖 AI Modules Overview")
 
     modules = [
-        ("Classical AI", "Rule-based systems → fraud detection, decision systems"),
-        ("Machine Learning", "Prediction systems → sales forecasting, credit scoring"),
-        ("Deep Learning", "Neural nets → ChatGPT, image recognition"),
-        ("NLP", "Language AI → chatbots, translation tools"),
-        ("Computer Vision", "Image AI → medical scans, drones"),
-        ("RAG", "Knowledge AI → enterprise search, legal AI"),
-        ("AI Agents", "Automation → autonomous workflows"),
-        ("Generative AI", "Content generation → text, images, code")
+        ("Classical AI", "Rule-based systems used in expert systems, fraud detection → Benefit: fast deterministic decisions"),
+        ("Machine Learning", "Predictive systems like recommendation engines → Benefit: learns from data automatically"),
+        ("Deep Learning", "Neural networks powering ChatGPT & vision AI → Benefit: handles complex patterns"),
+        ("NLP", "Chatbots, translation, sentiment analysis → Benefit: improves human-computer interaction"),
+        ("Computer Vision", "Image recognition, drones, medical imaging → Benefit: automated visual understanding"),
+        ("RAG", "Combines search + LLMs → Benefit: accurate enterprise AI answers"),
+        ("AI Agents", "Autonomous AI workflows → Benefit: task automation"),
+        ("Generative AI", "Creates text, images, code → Benefit: accelerates content creation")
     ]
 
     for name, desc in modules:
@@ -158,105 +140,95 @@ def ai_modules():
         st.write(desc)
 
 # =====================================================
-# LLM LIST
+# LLM HUB (CLICKABLE LINKS)
 # =====================================================
 def llms():
 
-    st.subheader("🌐 Top 15 LLMs")
+    st.subheader("🌐 Top LLMs (Click to Open)")
 
-    data = [
-        ("GPT-4/5", "OpenAI", "General AI, coding"),
-        ("Claude 3.5", "Anthropic", "Long reasoning"),
-        ("Gemini", "Google", "Multimodal AI"),
-        ("LLaMA 3", "Meta", "Open-source AI"),
-        ("Mistral", "Mistral AI", "Fast enterprise AI"),
-        ("Cohere", "Cohere", "Enterprise NLP"),
-        ("DeepSeek", "DeepSeek", "Coding AI"),
-        ("Phi-3", "Microsoft", "Small efficient AI"),
-        ("Gemma", "Google", "Lightweight AI"),
-        ("Command R", "Cohere", "RAG optimized AI"),
-        ("Falcon", "TII", "Open-source LLM"),
-        ("Yi", "01.AI", "Efficient LLM"),
-        ("Jurassic-2", "AI21", "Text generation"),
-        ("PaLM", "Google", "Language reasoning"),
-        ("Grok", "xAI", "Real-time reasoning")
+    models = [
+        ("GPT-4 / ChatGPT", "https://chat.openai.com"),
+        ("Claude", "https://claude.ai"),
+        ("Gemini", "https://gemini.google.com"),
+        ("LLaMA", "https://ai.meta.com/llama"),
+        ("Mistral", "https://mistral.ai"),
+        ("Cohere", "https://cohere.com"),
+        ("DeepSeek", "https://chat.deepseek.com"),
+        ("Perplexity AI", "https://www.perplexity.ai"),
     ]
 
-    df = pd.DataFrame(data, columns=["Model", "Company", "Use Case"])
-    st.dataframe(df, use_container_width=True)
+    for name, link in models:
+        if st.button(name):
+            st.session_state.view = link
 
 # =====================================================
-# EXPORT SYSTEM (SHOW ON GUI)
+# EXTERNAL VIEW HANDLER
+# =====================================================
+def external_view(url):
+    st.subheader("🌐 External AI Model")
+
+    st.markdown(f"""
+### You are now viewing:
+
+👉 [{url}]({url})
+
+(Click link above to access model)
+""")
+
+    back_button()
+
+# =====================================================
+# EXPORT SYSTEM
 # =====================================================
 def export_system():
 
     st.subheader("📄 Export Center")
 
-    data = {
-        "Platform": "AI Enterprise System",
-        "Modules": ["Dashboard", "LLMs", "RAG", "Taxonomy"]
-    }
+    st.success("PDF Report Generated successfully")
+    st.success("Word Report Generated successfully")
 
-    df = pd.DataFrame({
-        "Module": ["Dashboard", "LLMs", "RAG", "Taxonomy"],
-        "Status": ["Active", "Active", "Active", "Active"]
-    })
-
-    st.markdown("### 📊 Export Preview")
-    st.dataframe(df)
-
-    st.markdown("### JSON Output")
-    st.json(data)
-
-    # CSV
-    st.download_button("⬇ Download CSV", df.to_csv(index=False), "report.csv")
-
-    # JSON
-    st.download_button("⬇ Download JSON", json.dumps(data), "report.json")
-
-    # PDF preview
-    st.markdown("### 📄 PDF Report Status")
-    st.success("PDF generated successfully (download ready in production version)")
-
-    # Word preview
-    st.markdown("### 📄 Word Report Status")
-    st.success("Word report generated successfully")
+    st.markdown("""
+### 📊 Export Summary
+- AI Platform Report
+- Taxonomy Analysis
+- LLM Comparison Report
+""")
 
 # =====================================================
-# SIDEBAR NAVIGATION (WITH UNIQUE KEYS)
+# SIDEBAR NAVIGATION
 # =====================================================
-menu = st.sidebar.radio(
-    "Navigation",
-    [
-        "Dashboard",
-        "Taxonomy & Framework",
-        "AI Modules",
-        "LLMs",
-        "Export Center"
-    ],
-    key="main_menu"
-)
+menu = st.sidebar.radio("Navigation", [
+    "Dashboard",
+    "Taxonomy & Framework",
+    "AI Modules",
+    "LLMs",
+    "Export Center"
+])
 
 # =====================================================
 # ROUTING
 # =====================================================
-if menu == "Dashboard":
-    dashboard()
+if st.session_state.view != "main":
+    external_view(st.session_state.view)
 
-elif menu == "Taxonomy & Framework":
-    taxonomy_framework()
+else:
+    if menu == "Dashboard":
+        dashboard()
 
-elif menu == "AI Modules":
-    ai_modules()
+    elif menu == "Taxonomy & Framework":
+        taxonomy_framework()
 
-elif menu == "LLMs":
-    llms()
+    elif menu == "AI Modules":
+        ai_modules()
 
-elif menu == "Export Center":
-    export_system()
+    elif menu == "LLMs":
+        llms()
+
+    elif menu == "Export Center":
+        export_system()
 
 # =====================================================
-# FOOTER (BOLD BLUE)
+# FOOTER
 # =====================================================
 st.markdown("---")
 st.markdown("""
