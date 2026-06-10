@@ -3,6 +3,7 @@ import pandas as pd
 import json
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
+from docx import Document
 # =====================================================
 # PAGE CONFIG
 # =====================================================
@@ -182,40 +183,59 @@ def external_view(url):
 # EXPORT SYSTEM
 # =====================================================
 from io import BytesIO
+from docx import Document  # ✅ FIXED IMPORT REQUIRED
 
 def export_system():
 
-    st.subheader("📄 Export Center (Fixed + Working)")
+    st.subheader("📄 Export Center (Fully Fixed)")
 
+    # =====================================================
+    # REPORT DATA
+    # =====================================================
     report_data = {
         "Platform": "AI Enterprise System",
-        "Modules": ["Taxonomy", "Framework", "LLMs", "RAG"]
+        "Sections": {
+            "Taxonomy": "Machine Learning, Deep Learning, NLP, CV",
+            "Framework": "Data Layer, Model Layer, API Layer",
+            "LLMs": "GPT, Claude, Gemini, LLaMA, Mistral",
+            "RAG": "Retrieval + Generation architecture"
+        },
+        "Status": "Completed"
     }
 
     df = pd.DataFrame({
-        "Report Type": ["Taxonomy", "Framework", "LLM Analysis"],
-        "Status": ["Completed", "Completed", "Completed"]
+        "Report Type": ["Taxonomy", "Framework", "LLM Analysis", "RAG System"],
+        "Status": ["Completed", "Completed", "Completed", "Completed"]
     })
 
-    st.markdown("## 📊 Report Preview")
+    # =====================================================
+    # PREVIEW SECTION
+    # =====================================================
+    st.markdown("## 📊 Report Preview Table")
     st.dataframe(df)
+
+    st.markdown("## 📦 JSON Preview (NOW FIXED)")
     st.json(report_data)
 
     # =====================================================
-    # PDF EXPORT (IN MEMORY - SAFE FOR STREAMLIT)
+    # PDF EXPORT (MULTI-LINE REPORT)
     # =====================================================
-    if st.button("📄 Generate PDF"):
+    if st.button("📄 Generate PDF Report"):
+
         buffer = BytesIO()
         doc = SimpleDocTemplate(buffer)
         styles = getSampleStyleSheet()
 
         content = [
             Paragraph("AI Enterprise Report", styles["Title"]),
-            Paragraph("Generated successfully from AI Platform", styles["Normal"])
+            Paragraph(" ", styles["Normal"]),
+            Paragraph("Taxonomy: Machine Learning, Deep Learning, NLP, CV", styles["Normal"]),
+            Paragraph("Framework: Data Layer → Model Layer → API Layer", styles["Normal"]),
+            Paragraph("LLMs: GPT, Claude, Gemini, LLaMA, Mistral", styles["Normal"]),
+            Paragraph("RAG: Retrieval Augmented Generation System", styles["Normal"]),
         ]
 
         doc.build(content)
-
         buffer.seek(0)
 
         st.download_button(
@@ -228,12 +248,24 @@ def export_system():
         st.success("PDF Report Generated Successfully")
 
     # =====================================================
-    # WORD EXPORT
+    # WORD EXPORT (FIXED)
     # =====================================================
-    if st.button("📝 Generate Word"):
+    if st.button("📝 Generate Word Report"):
+
         doc = Document()
         doc.add_heading("AI Enterprise Report", 0)
-        doc.add_paragraph("AI Taxonomy + Framework + LLM Report")
+
+        doc.add_heading("Taxonomy", level=1)
+        doc.add_paragraph("Machine Learning, Deep Learning, NLP, Computer Vision")
+
+        doc.add_heading("Framework", level=1)
+        doc.add_paragraph("Data Layer, Model Layer, API Layer, Application Layer")
+
+        doc.add_heading("LLMs", level=1)
+        doc.add_paragraph("GPT, Claude, Gemini, LLaMA, Mistral, DeepSeek")
+
+        doc.add_heading("RAG System", level=1)
+        doc.add_paragraph("Retrieval Augmented Generation improves AI accuracy")
 
         word_buffer = BytesIO()
         doc.save(word_buffer)
@@ -249,19 +281,17 @@ def export_system():
         st.success("Word Report Generated Successfully")
 
     # =====================================================
-    # JSON EXPORT
+    # JSON EXPORT (ALWAYS VISIBLE)
     # =====================================================
-    json_str = json.dumps(report_data, indent=4)
+    st.markdown("## 📦 JSON Export (Always Visible)")
+    st.json(report_data)
 
     st.download_button(
         "⬇ Download JSON Report",
-        json_str,
+        json.dumps(report_data, indent=4),
         file_name="ai_report.json",
         mime="application/json"
     )
-
-    st.markdown("### 📊 JSON Preview")
-    st.json(report_data)
 
 # =====================================================
 # SIDEBAR NAVIGATION
