@@ -15,13 +15,13 @@ st.set_page_config(page_title="AI Enterprise Platform", layout="wide")
 st.markdown("""
 <div style='background-color:#0056D2;padding:18px;border-radius:10px;text-align:center;'>
 <h1 style='color:white;font-weight:bold;margin:0;'>
-ARTIFICIAL INTELLIGENCE ENTERPRISE PLATFORM
+ARTIFICIAL INTELLIGENCE ENTERPRISE PLATFORM - FRAMEWORK
 </h1>
 </div>
 """, unsafe_allow_html=True)
 
 st.markdown("""
-### 🔷 **Developed by Randy Singh – Kalsnet (KNet) Consulting Group**
+###  **Developed by Randy Singh – Kalsnet (KNet) Consulting Group**
 """, unsafe_allow_html=True)
 
 # =====================================================
@@ -42,14 +42,14 @@ def back_button():
 # =====================================================
 def dashboard():
 
-    st.subheader("📊 Executive Dashboard")
+    st.subheader(" Executive Dashboard")
 
     col1, col2, col3 = st.columns(3)
     col1.metric("AI Modules", "8+")
     col2.metric("LLMs", "15+")
-    col3.metric("System Status", "🟢 Active")
+    col3.metric("System Status", " Active")
 
-    st.markdown("## 🧠 Core Platform Architecture")
+    st.markdown("##  Core Platform Architecture")
 
     st.graphviz_chart("""
     digraph {
@@ -63,25 +63,25 @@ def dashboard():
     """)
 
     st.markdown("""
-### 🔷 Core Platform Modules (with Use Cases & Benefits)
+###  Core Platform Modules (with Use Cases & Benefits)
 
-- 🤖 Chatbot Engine  
+-  Chatbot Engine  
   Use: Customer support, AI assistants  
   Benefit: Reduces manual workload, improves response speed  
 
-- 🧠 RAG System  
+-  RAG System  
   Use: Document Q&A, enterprise search  
   Benefit: Improves accuracy, reduces hallucinations  
 
-- 📚 Taxonomy Engine  
+-  Taxonomy Engine  
   Use: AI classification, research structuring  
   Benefit: Organizes knowledge for better understanding  
 
-- 🌐 LLM Hub  
+-  LLM Hub  
   Use: Switching between AI models  
   Benefit: Best response quality via model selection  
 
-- 📄 Export Engine  
+-  Export Engine  
   Use: Reports, documentation  
   Benefit: Fast compliance & reporting automation  
 """)
@@ -91,10 +91,10 @@ def dashboard():
 # =====================================================
 def taxonomy_framework():
 
-    st.subheader("🧠 AI Taxonomy vs Framework")
+    st.subheader(" AI Taxonomy vs Framework")
 
     st.markdown("""
-## 📌 AI Taxonomy (WHAT exists)
+##  AI Taxonomy (WHAT exists)
 
 - Machine Learning → predictions, fraud detection
 - Deep Learning → LLMs, vision systems
@@ -107,7 +107,7 @@ def taxonomy_framework():
 
 ---
 
-## 🏗 AI Framework (HOW it works)
+##  AI Framework (HOW it works)
 
 - Data Layer → datasets
 - Model Layer → AI models
@@ -124,7 +124,7 @@ def taxonomy_framework():
 # =====================================================
 def ai_modules():
 
-    st.subheader("🤖 AI Modules Overview")
+    st.subheader(" AI Modules Overview")
 
     modules = [
         ("Classical AI", "Rule-based systems used in expert systems, fraud detection → Benefit: fast deterministic decisions"),
@@ -146,7 +146,7 @@ def ai_modules():
 # =====================================================
 def llms():
 
-    st.subheader("🌐 Top LLMs (Click to Open)")
+    st.subheader(" Top LLMs (Click to Open)")
 
     models = [
         ("GPT-4 / ChatGPT", "https://chat.openai.com"),
@@ -167,7 +167,7 @@ def llms():
 # EXTERNAL VIEW HANDLER
 # =====================================================
 def external_view(url):
-    st.subheader("🌐 External AI Model")
+    st.subheader(" External AI Model")
 
     st.markdown(f"""
 ### You are now viewing:
@@ -183,7 +183,7 @@ def external_view(url):
 # EXPORT SYSTEM
 # =====================================================
 from io import BytesIO
-from docx import Document  # ✅ FIXED IMPORT REQUIRED
+from docx import Document  #  FIXED IMPORT REQUIRED
 
 def export_system():
 
@@ -211,16 +211,16 @@ def export_system():
     # =====================================================
     # PREVIEW SECTION
     # =====================================================
-    st.markdown("## 📊 Report Preview Table")
+    st.markdown("##  Report Preview Table")
     st.dataframe(df)
 
-    st.markdown("## 📦 JSON Preview (NOW FIXED)")
+    st.markdown("##  JSON Preview (NOW FIXED)")
     st.json(report_data)
 
     # =====================================================
     # PDF EXPORT (MULTI-LINE REPORT)
     # =====================================================
-    if st.button("📄 Generate PDF Report"):
+    if st.button(" Generate PDF Report"):
 
         buffer = BytesIO()
         doc = SimpleDocTemplate(buffer)
@@ -250,7 +250,7 @@ def export_system():
     # =====================================================
     # WORD EXPORT (FIXED)
     # =====================================================
-    if st.button("📝 Generate Word Report"):
+    if st.button(" Generate Word Report"):
 
         doc = Document()
         doc.add_heading("AI Enterprise Report", 0)
@@ -283,7 +283,7 @@ def export_system():
     # =====================================================
     # JSON EXPORT (ALWAYS VISIBLE)
     # =====================================================
-    st.markdown("## 📦 JSON Export (Always Visible)")
+    st.markdown("##  JSON Export (Always Visible)")
     st.json(report_data)
 
     st.download_button(
