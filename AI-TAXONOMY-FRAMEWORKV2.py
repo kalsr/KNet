@@ -236,20 +236,20 @@ menu = st.sidebar.radio("Navigation", [
 # =====================================================
 
 if menu == "Dashboard":
-st.title("📊 Dashboard")
-st.write("Enterprise AI Platform Overview")
+    st.title("📊 Dashboard")
+    st.write("Enterprise AI Platform Overview")
 
 elif menu == "Chatbot":
-chatbot()
+    chatbot()
 
 elif menu == "AI Taxonomy":
-taxonomy()
+    taxonomy()
 
 elif menu == "Mermaid Diagrams":
-mermaid()
+    mermaid()
 
 elif menu == "Export System":
-export_system()
+    export_system()
 
 # =====================================================
 
