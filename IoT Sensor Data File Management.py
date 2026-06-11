@@ -1,6 +1,3 @@
-# IoT Sensor Data File Management Platform
-
-
 import streamlit as st
 from io import BytesIO
 import json
@@ -39,23 +36,20 @@ st.markdown(
     This application manages **IoT sensor data files** used for machine learning and data mining with tools such as WEKA.  
     It provides capabilities to create new IoT files, create files in directories, read existing sensor data files, 
     delete duplicate files, determine file size for storage planning, copy files for record keeping, check last modified dates, 
-    and append new records to existing files. Visual diagrams, synthetic file metadata, and exportable reports (PDF, Word, JSON) 
-    make it suitable for training, documentation, and real‑world IoT data management workflows.
+    and append new records to existing files. It now includes a **safe directory browser** and **file uploader** so you can work 
+    with local and uploaded datasets without path issues.
     """
 )
 
 st.markdown("---")
 
 # ---------------------------------------------------------
-# Operation definitions
+# Operations metadata
 # ---------------------------------------------------------
 operations = {
     "Create new IoT file": {
         "id": 1,
-        "description": (
-            "Create a new IoT sensor data file and write a specified number of records into it. "
-            "Useful for generating training datasets or test files for ML pipelines."
-        ),
+        "description": "Create a new IoT sensor data file and write a specified number of records into it.",
         "mermaid": """
 flowchart TD
     User[User] --> UI[Create File Form]
@@ -73,10 +67,7 @@ digraph {
     },
     "Create IoT file in a directory": {
         "id": 2,
-        "description": (
-            "Create an IoT file inside a specified directory, ensuring folder structure exists. "
-            "Supports organizing sensor data by project, device, or environment."
-        ),
+        "description": "Create an IoT file inside a specified directory, ensuring folder structure exists.",
         "mermaid": """
 flowchart TD
     User[User] --> DirInput[Directory + File Name]
@@ -96,10 +87,7 @@ digraph {
     },
     "Read existing IoT sensor data file": {
         "id": 3,
-        "description": (
-            "Open and read an existing IoT sensor data file to inspect its contents. "
-            "Useful for validating datasets before feeding them into ML or analytics tools."
-        ),
+        "description": "Open and read an existing IoT sensor data file to inspect its contents.",
         "mermaid": """
 flowchart TD
     User[User] --> SelectFile[Select IoT File]
@@ -119,10 +107,7 @@ digraph {
     },
     "Delete duplicate IoT file": {
         "id": 4,
-        "description": (
-            "Delete unnecessary or duplicate IoT sensor data files to reduce clutter and storage usage. "
-            "Supports hygiene of data repositories and compliance with retention policies."
-        ),
+        "description": "Delete unnecessary or duplicate IoT sensor data files to reduce clutter and storage usage.",
         "mermaid": """
 flowchart TD
     User[User] --> SelectDup[Select Duplicate File]
@@ -140,10 +125,7 @@ digraph {
     },
     "Determine IoT data file size": {
         "id": 5,
-        "description": (
-            "Calculate the size of an IoT sensor data file in bytes, KB, MB, and higher units. "
-            "Helps with storage planning and capacity management for large datasets."
-        ),
+        "description": "Calculate the size of an IoT sensor data file in bytes, KB, MB, and higher units.",
         "mermaid": """
 flowchart TD
     User[User] --> SelectFile[Select File]
@@ -163,10 +145,7 @@ digraph {
     },
     "Copy IoT data file to another file": {
         "id": 6,
-        "description": (
-            "Copy an IoT sensor data file to a new file name for backup, record keeping, or experimentation. "
-            "Supports versioning and safe duplication of datasets."
-        ),
+        "description": "Copy an IoT sensor data file to a new file name for backup or experimentation.",
         "mermaid": """
 flowchart TD
     User[User] --> Src[Select Source File]
@@ -190,10 +169,7 @@ digraph {
     },
     "Check when IoT file was last modified": {
         "id": 7,
-        "description": (
-            "Retrieve the last modified timestamp of an IoT sensor data file. "
-            "Useful for audit trails, data freshness checks, and lifecycle management."
-        ),
+        "description": "Retrieve the last modified timestamp of an IoT sensor data file.",
         "mermaid": """
 flowchart TD
     User[User] --> SelectFile[Select File]
@@ -213,10 +189,7 @@ digraph {
     },
     "Add new records to existing IoT data file": {
         "id": 8,
-        "description": (
-            "Append new sensor records to an existing IoT data file. "
-            "Supports incremental data collection and continuous logging."
-        ),
+        "description": "Append new sensor records to an existing IoT data file.",
         "mermaid": """
 flowchart TD
     User[User] --> SelectFile[Select Existing File]
@@ -239,12 +212,12 @@ digraph {
 }
 
 # ---------------------------------------------------------
-# Sidebar: operation selection + synthetic data
+# Synthetic data
 # ---------------------------------------------------------
 if "record_count" not in st.session_state:
     st.session_state.record_count = 0
 
-st.sidebar.header("IoT File Operations & Synthetic Data")
+st.sidebar.header("Operations & Synthetic Data")
 
 operation_name = st.sidebar.selectbox(
     "Select file management operation",
@@ -266,12 +239,8 @@ if reset:
     record_count = 0
 
 st.session_state.record_count = record_count
-
 st.sidebar.markdown(f"**Current synthetic records:** {st.session_state.record_count}")
 
-# ---------------------------------------------------------
-# Synthetic data generation (file metadata)
-# ---------------------------------------------------------
 def generate_synthetic_data(n):
     filenames = [
         "diabetes.arff",
@@ -283,7 +252,7 @@ def generate_synthetic_data(n):
         "Household_Power_Consumption.txt",
         "Smart_Cars.csv",
         "TimeBasedFeatures-Dataset-120s-NO-VPN.arff",
-        "Corona_Virus_Global_Data.csv",
+        "Corona_Virus_World_Wide_Data.txt",
     ]
     data = []
     for i in range(n):
@@ -302,15 +271,42 @@ def generate_synthetic_data(n):
 
 synthetic_data = generate_synthetic_data(record_count)
 
+selected_op = operations[operation_name]
+
+# ---------------------------------------------------------
+# Directory browser + file uploader
+# ---------------------------------------------------------
+st.sidebar.markdown("---")
+st.sidebar.subheader("Local Directory Browser (App Folder)")
+
+base_dir = st.sidebar.text_input(
+    "Base directory (relative to app)",
+    value=".",
+    help="For example: . , ./data , ./iot_files"
+)
+
+files_list = []
+if os.path.isdir(base_dir):
+    files_list = sorted(
+        [f for f in os.listdir(base_dir) if os.path.isfile(os.path.join(base_dir, f))]
+    )
+    st.sidebar.write(f"Found {len(files_list)} files:")
+    for f in files_list[:20]:
+        st.sidebar.write(f"- {f}")
+else:
+    st.sidebar.warning("Base directory does not exist (relative to app).")
+
+st.sidebar.markdown("---")
+st.sidebar.subheader("Upload IoT Sensor Data File")
+
+uploaded_file = st.sidebar.file_uploader("Upload a file (for reading/inspection)")
+
 # ---------------------------------------------------------
 # Main layout
 # ---------------------------------------------------------
-selected_op = operations[operation_name]
-
 col_left, col_right = st.columns([1, 1])
 
 with col_left:
-    # Colored operation header
     st.markdown(
         f"""
         <div style="background-color:#008080;padding:10px;border-radius:5px;margin-bottom:10px;">
@@ -326,7 +322,6 @@ with col_left:
 
     # Operation-specific UI
     if selected_op["id"] == 1:
-        st.markdown("**Create New IoT File**")
         new_file_name = st.text_input("Enter new IoT file name (e.g., `new_sensor_data.txt`)")
         num_records = st.number_input("Number of records to write", min_value=0, step=1, value=0)
         records = []
@@ -343,8 +338,7 @@ with col_left:
             st.success(f"File `{new_file_name}` created with {len(records)} records.")
 
     elif selected_op["id"] == 2:
-        st.markdown("**Create IoT File in a Directory**")
-        dir_path = st.text_input("Directory path (e.g., `./iot_data`)")
+        dir_path = st.text_input("Directory path (relative to app, e.g., `./iot_data`)")
         file_name = st.text_input("File name (e.g., `sensor_log.txt`)")
         create_dir_btn = st.button("Create file in directory")
         if create_dir_btn and dir_path and file_name:
@@ -358,19 +352,29 @@ with col_left:
 
     elif selected_op["id"] == 3:
         st.markdown("**Read Existing IoT Sensor Data File**")
-        file_to_read = st.text_input("Enter path to existing IoT file")
-        read_btn = st.button("Read file")
-        if read_btn and file_to_read:
-            if os.path.exists(file_to_read):
-                with open(file_to_read, "r", encoding="utf-8", errors="ignore") as f:
+
+        st.markdown("You can either:")
+        st.markdown("- Select a file from the **local directory** (relative to app), or")
+        st.markdown("- Use the **uploaded file** from the sidebar.")
+
+        local_file = st.text_input("Local file path (relative to app, e.g., `Corona_Virus_World_Wide_Data.txt`)")
+        read_local_btn = st.button("Read local file")
+
+        if read_local_btn and local_file:
+            if os.path.exists(local_file):
+                with open(local_file, "r", encoding="utf-8", errors="ignore") as f:
                     content = f.read()
-                st.text_area("File contents", content, height=300)
+                st.text_area("Local file contents", content, height=300)
             else:
-                st.error("File does not exist.")
+                st.error("Local file does not exist in the app directory.")
+
+        if uploaded_file is not None:
+            st.markdown("**Uploaded file contents:**")
+            content = uploaded_file.read().decode("utf-8", errors="ignore")
+            st.text_area("Uploaded file contents", content, height=300)
 
     elif selected_op["id"] == 4:
-        st.markdown("**Delete Duplicate IoT File**")
-        file_to_delete = st.text_input("Enter path to file to delete")
+        file_to_delete = st.text_input("Enter path to file to delete (relative to app)")
         del_btn = st.button("Delete file")
         if del_btn and file_to_delete:
             if os.path.exists(file_to_delete):
@@ -380,8 +384,7 @@ with col_left:
                 st.error("File does not exist.")
 
     elif selected_op["id"] == 5:
-        st.markdown("**Determine IoT Data File Size**")
-        file_to_size = st.text_input("Enter path to file")
+        file_to_size = st.text_input("Enter path to file (relative to app)")
         size_btn = st.button("Calculate size")
         if size_btn and file_to_size:
             if os.path.exists(file_to_size):
@@ -397,9 +400,8 @@ with col_left:
                 st.error("File does not exist.")
 
     elif selected_op["id"] == 6:
-        st.markdown("**Copy IoT Data File to Another File**")
-        src_file = st.text_input("Source file path")
-        dst_file = st.text_input("Destination file path")
+        src_file = st.text_input("Source file path (relative to app)")
+        dst_file = st.text_input("Destination file path (relative to app)")
         copy_btn = st.button("Copy file")
         if copy_btn and src_file and dst_file:
             if os.path.exists(src_file):
@@ -409,8 +411,7 @@ with col_left:
                 st.error("Source file does not exist.")
 
     elif selected_op["id"] == 7:
-        st.markdown("**Check When IoT File Was Last Modified**")
-        file_to_check = st.text_input("Enter path to file")
+        file_to_check = st.text_input("Enter path to file (relative to app)")
         check_btn = st.button("Check last modified date")
         if check_btn and file_to_check:
             if os.path.exists(file_to_check):
@@ -421,8 +422,7 @@ with col_left:
                 st.error("File does not exist.")
 
     elif selected_op["id"] == 8:
-        st.markdown("**Add New Records to Existing IoT Data File**")
-        file_to_append = st.text_input("Enter path to existing file")
+        file_to_append = st.text_input("Enter path to existing file (relative to app)")
         num_append = st.number_input("Number of records to append", min_value=0, step=1, value=0)
         append_records = []
         if num_append > 0:
