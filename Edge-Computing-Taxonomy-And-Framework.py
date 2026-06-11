@@ -13,9 +13,9 @@ st.set_page_config(page_title="IOT Edge-Computing Taxonomy & Framework", layout=
 # ------------------------------------------------------------------------------------
 st.markdown(
     """
-    <h1 style="color:#0047AB;"><b>IOT EDGE-COMPUTING TAXONOMY & FRAMEWORK APPLICATION</b></h1>
-    <h3 style="color:#0047AB;"><b>Developed by Randy Singh, Kalsnt (KNet) Consulting Group</b></h3>
-    """,
+<h1 style="color:#0047AB;"><b>IOT EDGE-COMPUTING TAXONOMY & FRAMEWORK APPLICATION</b></h1>
+<h3 style="color:#0047AB;"><b>Developed by Randy Singh, Kalsnt (KNet) Consulting Group</b></h3>
+""",
     unsafe_allow_html=True,
 )
 
@@ -70,9 +70,6 @@ def add_line(text: str):
     current_text_lines.append(text)
 
 
-# ------------------------------------------------------------------------------------
-# 6-TAB FRAMEWORK VIEW HELPER
-# ------------------------------------------------------------------------------------
 def framework_tabs():
     return st.tabs(
         [
@@ -130,99 +127,99 @@ if main_category.startswith("1"):
         with concept_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Cloud [shape=box, style=filled, color=lightblue];
-                    Edge [shape=box, style=filled, color=lightgrey];
-                    Things [shape=box, style=filled, color=lightyellow];
+digraph G {
+    rankdir=LR;
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
+    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
+    Things [shape=box, style=filled, color=lightyellow, label="IoT Things"];
 
-                    Cloud -> Edge [label="Tasks / data"];
-                    Edge -> Things [label="Services"];
-                    Things -> Edge [label="Telemetry"];
-                    Edge -> Cloud [label="Aggregated data"];
-                }
-                """
+    Cloud -> Edge [label="Tasks / Data"];
+    Edge -> Things [label="Services"];
+    Things -> Edge [label="Telemetry"];
+    Edge -> Cloud [label="Aggregated Data"];
+}
+"""
             )
 
         with flow_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=TB;
-                    step1 [label="1. Cloud generates tasks", shape=box];
-                    step2 [label="2. Tasks pushed to Edge", shape=box];
-                    step3 [label="3. Edge executes tasks near Things", shape=box];
-                    step4 [label="4. Edge aggregates results", shape=box];
-                    step5 [label="5. Edge sends summaries to Cloud", shape=box];
+digraph G {
+    rankdir=TB;
+    step1 [label="1. Cloud generates tasks", shape=box];
+    step2 [label="2. Tasks pushed to Edge", shape=box];
+    step3 [label="3. Edge executes tasks near Things", shape=box];
+    step4 [label="4. Edge aggregates results", shape=box];
+    step5 [label="5. Edge sends summaries to Cloud", shape=box];
 
-                    step1 -> step2 -> step3 -> step4 -> step5;
-                }
-                """
+    step1 -> step2 -> step3 -> step4 -> step5;
+}
+"""
             )
 
         with data_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Cloud [shape=box, style=filled, color=lightblue];
-                    Edge [shape=box, style=filled, color=lightgrey];
-                    Things [shape=box, style=filled, color=lightyellow];
+digraph G {
+    rankdir=LR;
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
+    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
+    Things [shape=box, style=filled, color=lightyellow, label="IoT Things"];
 
-                    Cloud -> Edge [label="Bulk data / models"];
-                    Edge -> Things [label="Filtered data / commands"];
-                    Things -> Edge [label="Raw telemetry"];
-                    Edge -> Cloud [label="Aggregated metrics"];
-                }
-                """
+    Cloud -> Edge [label="Bulk Data / Models"];
+    Edge -> Things [label="Filtered Data / Commands"];
+    Things -> Edge [label="Raw Telemetry"];
+    Edge -> Cloud [label="Aggregated Metrics"];
+}
+"""
             )
 
         with control_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CloudCtrl [label="Cloud Control", shape=box, style=filled, color=lightblue];
-                    EdgeCtrl [label="Edge Orchestrator", shape=box, style=filled, color=lightgrey];
-                    ThingsCtrl [label="Device Agents", shape=box, style=filled, color=lightyellow];
+digraph G {
+    rankdir=LR;
+    CloudCtrl [label="Cloud Control", shape=box, style=filled, color=lightblue];
+    EdgeCtrl [label="Edge Orchestrator", shape=box, style=filled, color=lightgrey];
+    ThingsCtrl [label="Device Agents", shape=box, style=filled, color=lightyellow];
 
-                    CloudCtrl -> EdgeCtrl [label="Policies / configs"];
-                    EdgeCtrl -> ThingsCtrl [label="Commands / updates"];
-                    ThingsCtrl -> EdgeCtrl [label="Status / health"];
-                    EdgeCtrl -> CloudCtrl [label="Reports / logs"];
-                }
-                """
+    CloudCtrl -> EdgeCtrl [label="Policies / Configs"];
+    EdgeCtrl -> ThingsCtrl [label="Commands / Updates"];
+    ThingsCtrl -> EdgeCtrl [label="Status / Health"];
+    EdgeCtrl -> CloudCtrl [label="Reports / Logs"];
+}
+"""
             )
 
         with interaction_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Cloud [shape=box, style=filled, color=lightblue];
-                    Edge [shape=box, style=filled, color=lightgrey];
+digraph G {
+    rankdir=LR;
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
+    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
 
-                    Cloud -> Edge [label="Tasks, models, policies"];
-                    Edge -> Cloud [label="Aggregated results, feedback"];
-                }
-                """
+    Cloud -> Edge [label="Tasks / Models / Policies"];
+    Edge -> Cloud [label="Aggregated Results / Feedback"];
+}
+"""
             )
 
         with security_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CloudSec [label="Cloud Security", shape=box, style=filled, color=lightblue];
-                    EdgeSec [label="Edge Security", shape=box, style=filled, color=lightgrey];
-                    DeviceSec [label="Device Security", shape=box, style=filled, color=lightyellow];
+digraph G {
+    rankdir=LR;
+    CloudSec [label="Cloud Security", shape=box, style=filled, color=lightblue];
+    EdgeSec [label="Edge Security", shape=box, style=filled, color=lightgrey];
+    DeviceSec [label="Device Security", shape=box, style=filled, color=lightyellow];
 
-                    CloudSec -> EdgeSec [label="Trust / certs"];
-                    EdgeSec -> DeviceSec [label="Auth / encryption"];
-                    DeviceSec -> EdgeSec [label="Logs / anomalies"];
-                    EdgeSec -> CloudSec [label="Security telemetry"];
-                }
-                """
+    CloudSec -> EdgeSec [label="Trust / Certificates"];
+    EdgeSec -> DeviceSec [label="Auth / Encryption"];
+    DeviceSec -> EdgeSec [label="Logs / Anomalies"];
+    EdgeSec -> CloudSec [label="Security Telemetry"];
+}
+"""
             )
 
     # ----------------- PULL FROM IOT -----------------
@@ -254,99 +251,99 @@ if main_category.startswith("1"):
         with concept_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Things [shape=box, style=filled, color=lightyellow, label="IoT Things"];
-                    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node / Gateway"];
-                    LocalApps [shape=box, style=filled, color=lightgreen, label="Local Apps / Services"];
-                    Cloud [shape=box, style=filled, color=lightblue];
+digraph G {
+    rankdir=LR;
+    Things [shape=box, style=filled, color=lightyellow, label="IoT Things"];
+    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node / Gateway"];
+    LocalApps [shape=box, style=filled, color=lightgreen, label="Local Apps / Services"];
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
 
-                    Things -> Edge [label="Sensor data"];
-                    Edge -> LocalApps [label="Insights / control"];
-                    Edge -> Cloud [label="Summaries"];
-                    Cloud -> Edge [label="Policies / models"];
-                }
-                """
+    Things -> Edge [label="Sensor Data"];
+    Edge -> LocalApps [label="Insights / Control"];
+    Edge -> Cloud [label="Summaries"];
+    Cloud -> Edge [label="Policies / Models"];
+}
+"""
             )
 
         with flow_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=TB;
-                    step1 [label="1. Things generate raw data", shape=box];
-                    step2 [label="2. Edge pulls data from Things", shape=box];
-                    step3 [label="3. Edge processes and filters data", shape=box];
-                    step4 [label="4. Local apps consume processed data", shape=box];
-                    step5 [label="5. Edge sends aggregates to Cloud", shape=box];
+digraph G {
+    rankdir=TB;
+    step1 [label="1. Things generate raw data", shape=box];
+    step2 [label="2. Edge pulls data from Things", shape=box];
+    step3 [label="3. Edge processes and filters data", shape=box];
+    step4 [label="4. Local apps consume processed data", shape=box];
+    step5 [label="5. Edge sends aggregates to Cloud", shape=box];
 
-                    step1 -> step2 -> step3 -> step4 -> step5;
-                }
-                """
+    step1 -> step2 -> step3 -> step4 -> step5;
+}
+"""
             )
 
         with data_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Things [shape=box, style=filled, color=lightyellow];
-                    Edge [shape=box, style=filled, color=lightgrey];
-                    Cloud [shape=box, style=filled, color=lightblue];
+digraph G {
+    rankdir=LR;
+    Things [shape=box, style=filled, color=lightyellow, label="IoT Things"];
+    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
 
-                    Things -> Edge [label="Continuous sensor streams"];
-                    Edge -> Cloud [label="Aggregated / compressed data"];
-                    Cloud -> Edge [label="Models / thresholds"];
-                }
-                """
+    Things -> Edge [label="Continuous Sensor Streams"];
+    Edge -> Cloud [label="Aggregated / Compressed Data"];
+    Cloud -> Edge [label="Models / Thresholds"];
+}
+"""
             )
 
         with control_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CloudCtrl [label="Cloud Control", shape=box, style=filled, color=lightblue];
-                    EdgeCtrl [label="Edge Controller", shape=box, style=filled, color=lightgrey];
-                    ThingsCtrl [label="Device Agents", shape=box, style=filled, color=lightyellow];
+digraph G {
+    rankdir=LR;
+    CloudCtrl [label="Cloud Control", shape=box, style=filled, color=lightblue];
+    EdgeCtrl [label="Edge Controller", shape=box, style=filled, color=lightgrey];
+    ThingsCtrl [label="Device Agents", shape=box, style=filled, color=lightyellow];
 
-                    CloudCtrl -> EdgeCtrl [label="Rules / policies"];
-                    EdgeCtrl -> ThingsCtrl [label="Sampling rates / modes"];
-                    ThingsCtrl -> EdgeCtrl [label="Status / alarms"];
-                    EdgeCtrl -> CloudCtrl [label="Aggregated health / KPIs"];
-                }
-                """
+    CloudCtrl -> EdgeCtrl [label="Rules / Policies"];
+    EdgeCtrl -> ThingsCtrl [label="Sampling Rates / Modes"];
+    ThingsCtrl -> EdgeCtrl [label="Status / Alarms"];
+    EdgeCtrl -> CloudCtrl [label="Aggregated Health / KPIs"];
+}
+"""
             )
 
         with interaction_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Cloud [shape=box, style=filled, color=lightblue];
-                    Edge [shape=box, style=filled, color=lightgrey];
+digraph G {
+    rankdir=LR;
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
+    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
 
-                    Edge -> Cloud [label="Aggregated sensor data"];
-                    Cloud -> Edge [label="Updated models / policies"];
-                }
-                """
+    Edge -> Cloud [label="Aggregated Sensor Data"];
+    Cloud -> Edge [label="Updated Models / Policies"];
+}
+"""
             )
 
         with security_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CloudSec [label="Cloud Security", shape=box, style=filled, color=lightblue];
-                    EdgeSec [label="Edge Security", shape=box, style=filled, color=lightgrey];
-                    DeviceSec [label="IoT Device Security", shape=box, style=filled, color=lightyellow];
+digraph G {
+    rankdir=LR;
+    CloudSec [label="Cloud Security", shape=box, style=filled, color=lightblue];
+    EdgeSec [label="Edge Security", shape=box, style=filled, color=lightgrey];
+    DeviceSec [label="IoT Device Security", shape=box, style=filled, color=lightyellow];
 
-                    CloudSec -> EdgeSec [label="Policies / certs"];
-                    EdgeSec -> DeviceSec [label="Keys / auth"];
-                    DeviceSec -> EdgeSec [label="Alerts / anomalies"];
-                    EdgeSec -> CloudSec [label="Security posture"];
-                }
-                """
+    CloudSec -> EdgeSec [label="Policies / Certificates"];
+    EdgeSec -> DeviceSec [label="Keys / Auth"];
+    DeviceSec -> EdgeSec [label="Alerts / Anomalies"];
+    EdgeSec -> CloudSec [label="Security Posture"];
+}
+"""
             )
 
     # ----------------- CHANGE FROM DATA CONSUMER TO PRODUCER -----------------
@@ -377,100 +374,100 @@ if main_category.startswith("1"):
         with concept_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Cloud [shape=box, style=filled, color=lightblue];
-                    Device [shape=box, style=filled, color=lightyellow, label="Mobile / Wearable Device"];
-                    Edge [shape=box, style=filled, color=lightgrey];
+digraph G {
+    rankdir=LR;
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
+    Device [shape=box, style=filled, color=lightyellow, label="Mobile / Wearable Device"];
+    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
 
-                    Cloud -> Device [label="Content / services"];
-                    Device -> Cloud [label="User data"];
-                    Device -> Edge [label="Raw sensor / video / health data"];
-                    Edge -> Cloud [label="Filtered / anonymized data"];
-                    Edge -> Device [label="Real-time insights"];
-                }
-                """
+    Cloud -> Device [label="Content / Services"];
+    Device -> Cloud [label="User Data"];
+    Device -> Edge [label="Raw Sensor / Video / Health Data"];
+    Edge -> Cloud [label="Filtered / Anonymized Data"];
+    Edge -> Device [label="Real-time Insights"];
+}
+"""
             )
 
         with flow_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=TB;
-                    step1 [label="1. Device consumes cloud content", shape=box];
-                    step2 [label="2. Device starts producing rich data", shape=box];
-                    step3 [label="3. Raw data sent to Edge", shape=box];
-                    step4 [label="4. Edge processes / anonymizes data", shape=box];
-                    step5 [label="5. Edge sends insights to Device and Cloud", shape=box];
+digraph G {
+    rankdir=TB;
+    step1 [label="1. Device consumes cloud content", shape=box];
+    step2 [label="2. Device starts producing rich data", shape=box];
+    step3 [label="3. Raw data sent to Edge", shape=box];
+    step4 [label="4. Edge processes / anonymizes data", shape=box];
+    step5 [label="5. Edge sends insights to Device and Cloud", shape=box];
 
-                    step1 -> step2 -> step3 -> step4 -> step5;
-                }
-                """
+    step1 -> step2 -> step3 -> step4 -> step5;
+}
+"""
             )
 
         with data_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Device [shape=box, style=filled, color=lightyellow];
-                    Edge [shape=box, style=filled, color=lightgrey];
-                    Cloud [shape=box, style=filled, color=lightblue];
+digraph G {
+    rankdir=LR;
+    Device [shape=box, style=filled, color=lightyellow, label="Device"];
+    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
 
-                    Device -> Edge [label="High-volume sensor / media data"];
-                    Edge -> Cloud [label="Summaries / anonymized data"];
-                    Cloud -> Edge [label="Models / personalization"];
-                    Edge -> Device [label="Real-time feedback"];
-                }
-                """
+    Device -> Edge [label="High-volume Sensor / Media Data"];
+    Edge -> Cloud [label="Summaries / Anonymized Data"];
+    Cloud -> Edge [label="Models / Personalization"];
+    Edge -> Device [label="Real-time Feedback"];
+}
+"""
             )
 
         with control_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CloudCtrl [label="Cloud Personalization Engine", shape=box, style=filled, color=lightblue];
-                    EdgeCtrl [label="Edge Privacy / Policy Engine", shape=box, style=filled, color=lightgrey];
-                    DeviceCtrl [label="Device App / Agent", shape=box, style=filled, color=lightyellow];
+digraph G {
+    rankdir=LR;
+    CloudCtrl [label="Cloud Personalization Engine", shape=box, style=filled, color=lightblue];
+    EdgeCtrl [label="Edge Privacy / Policy Engine", shape=box, style=filled, color=lightgrey];
+    DeviceCtrl [label="Device App / Agent", shape=box, style=filled, color=lightyellow];
 
-                    CloudCtrl -> EdgeCtrl [label="Global policies"];
-                    EdgeCtrl -> DeviceCtrl [label="Local rules / consent"];
-                    DeviceCtrl -> EdgeCtrl [label="User preferences"];
-                    EdgeCtrl -> CloudCtrl [label="Compliance / audit logs"];
-                }
-                """
+    CloudCtrl -> EdgeCtrl [label="Global Policies"];
+    EdgeCtrl -> DeviceCtrl [label="Local Rules / Consent"];
+    DeviceCtrl -> EdgeCtrl [label="User Preferences"];
+    EdgeCtrl -> CloudCtrl [label="Compliance / Audit Logs"];
+}
+"""
             )
 
         with interaction_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Cloud [shape=box, style=filled, color=lightblue];
-                    Edge [shape=box, style=filled, color=lightgrey];
+digraph G {
+    rankdir=LR;
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
+    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
 
-                    Edge -> Cloud [label="Anonymized / aggregated user data"];
-                    Cloud -> Edge [label="Updated personalization models"];
-                }
-                """
+    Edge -> Cloud [label="Aggregated / Anonymized User Data"];
+    Cloud -> Edge [label="Updated Personalization Models"];
+}
+"""
             )
 
         with security_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CloudSec [label="Cloud Privacy / Security", shape=box, style=filled, color=lightblue];
-                    EdgeSec [label="Edge Privacy Guard", shape=box, style=filled, color=lightgrey];
-                    DeviceSec [label="Device Security / Consent", shape=box, style=filled, color=lightyellow];
+digraph G {
+    rankdir=LR;
+    CloudSec [label="Cloud Privacy / Security", shape=box, style=filled, color=lightblue];
+    EdgeSec [label="Edge Privacy Guard", shape=box, style=filled, color=lightgrey];
+    DeviceSec [label="Device Security / Consent", shape=box, style=filled, color=lightyellow];
 
-                    CloudSec -> EdgeSec [label="Privacy policies"];
-                    EdgeSec -> DeviceSec [label="Consent enforcement"];
-                    DeviceSec -> EdgeSec [label="User choices"];
-                    EdgeSec -> CloudSec [label="Compliance reports"];
-                }
-                """
+    CloudSec -> EdgeSec [label="Privacy Policies"];
+    EdgeSec -> DeviceSec [label="Consent Enforcement"];
+    DeviceSec -> EdgeSec [label="User Choices"];
+    EdgeSec -> CloudSec [label="Compliance Reports"];
+}
+"""
             )
 
 # ------------------------------------------------------------------------------------
@@ -531,93 +528,93 @@ elif main_category.startswith("2"):
         with concept_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    User [shape=box, style=filled, color=lightyellow];
-                    Edge [shape=box, style=filled, color=lightgrey];
-                    Cloud [shape=box, style=filled, color=lightblue];
+digraph G {
+    rankdir=LR;
+    User [shape=box, style=filled, color=lightyellow, label="User"];
+    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
 
-                    User -> Edge [label="Requests / data"];
-                    Edge -> Cloud [label="Offloaded heavy tasks"];
-                    Cloud -> Edge [label="Models / updates"];
-                    Edge -> User [label="Low-latency responses"];
-                }
-                """
+    User -> Edge [label="Requests / Data"];
+    Edge -> Cloud [label="Offloaded Heavy Tasks"];
+    Cloud -> Edge [label="Models / Updates"];
+    Edge -> User [label="Low-latency Responses"];
+}
+"""
             )
 
         with flow_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=TB;
-                    step1 [label="1. User sends request", shape=box];
-                    step2 [label="2. Edge handles time-sensitive part", shape=box];
-                    step3 [label="3. Edge offloads heavy tasks to Cloud", shape=box];
-                    step4 [label="4. Cloud processes and returns models", shape=box];
-                    step5 [label="5. Edge responds quickly to User", shape=box];
+digraph G {
+    rankdir=TB;
+    step1 [label="1. User sends request", shape=box];
+    step2 [label="2. Edge handles time-sensitive part", shape=box];
+    step3 [label="3. Edge offloads heavy tasks to Cloud", shape=box];
+    step4 [label="4. Cloud processes and returns models", shape=box];
+    step5 [label="5. Edge responds quickly to User", shape=box];
 
-                    step1 -> step2 -> step3 -> step4 -> step5;
-                }
-                """
+    step1 -> step2 -> step3 -> step4 -> step5;
+}
+"""
             )
 
         with data_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    User [shape=box, style=filled, color=lightyellow];
-                    Edge [shape=box, style=filled, color=lightgrey];
-                    Cloud [shape=box, style=filled, color=lightblue];
+digraph G {
+    rankdir=LR;
+    User [shape=box, style=filled, color=lightyellow, label="User"];
+    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
 
-                    User -> Edge [label="Requests / small data"];
-                    Edge -> Cloud [label="Batch / heavy data"];
-                    Cloud -> Edge [label="Models / large artifacts"];
-                    Edge -> User [label="Responses / results"];
-                }
-                """
+    User -> Edge [label="Requests / Small Data"];
+    Edge -> Cloud [label="Batch / Heavy Data"];
+    Cloud -> Edge [label="Models / Large Artifacts"];
+    Edge -> User [label="Responses / Results"];
+}
+"""
             )
 
         with control_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CloudCtrl [label="Cloud Orchestrator", shape=box, style=filled, color=lightblue];
-                    EdgeCtrl [label="Edge Scheduler", shape=box, style=filled, color=lightgrey];
+digraph G {
+    rankdir=LR;
+    CloudCtrl [label="Cloud Orchestrator", shape=box, style=filled, color=lightblue];
+    EdgeCtrl [label="Edge Scheduler", shape=box, style=filled, color=lightgrey];
 
-                    CloudCtrl -> EdgeCtrl [label="Offload policies"];
-                    EdgeCtrl -> CloudCtrl [label="Load / capacity reports"];
-                }
-                """
+    CloudCtrl -> EdgeCtrl [label="Offload Policies"];
+    EdgeCtrl -> CloudCtrl [label="Load / Capacity Reports"];
+}
+"""
             )
 
         with interaction_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Cloud [shape=box, style=filled, color=lightblue];
-                    Edge [shape=box, style=filled, color=lightgrey];
+digraph G {
+    rankdir=LR;
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
+    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
 
-                    Edge -> Cloud [label="Offloaded workloads"];
-                    Cloud -> Edge [label="Processed results / models"];
-                }
-                """
+    Edge -> Cloud [label="Offloaded Workloads"];
+    Cloud -> Edge [label="Processed Results / Models"];
+}
+"""
             )
 
         with security_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CloudSec [label="Cloud Security", shape=box, style=filled, color=lightblue];
-                    EdgeSec [label="Edge Security", shape=box, style=filled, color=lightgrey];
+digraph G {
+    rankdir=LR;
+    CloudSec [label="Cloud Security", shape=box, style=filled, color=lightblue];
+    EdgeSec [label="Edge Security", shape=box, style=filled, color=lightgrey];
 
-                    CloudSec -> EdgeSec [label="Secure channels / policies"];
-                    EdgeSec -> CloudSec [label="Audit / logs"];
-                }
-                """
+    CloudSec -> EdgeSec [label="Secure Channels / Policies"];
+    EdgeSec -> CloudSec [label="Audit / Logs"];
+}
+"""
             )
 
     # ----------------- VIDEO ANALYTICS -----------------
@@ -649,96 +646,96 @@ elif main_category.startswith("2"):
         with concept_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Camera [shape=box, style=filled, color=lightyellow];
-                    Edge [shape=box, style=filled, color=lightgrey];
-                    LocalAI [shape=box, style=filled, color=lightgreen];
-                    Cloud [shape=box, style=filled, color=lightblue];
+digraph G {
+    rankdir=LR;
+    Camera [shape=box, style=filled, color=lightyellow, label="Camera / Phone"];
+    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
+    LocalAI [shape=box, style=filled, color=lightgreen, label="Local AI"];
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
 
-                    Camera -> Edge [label="Raw video"];
-                    Edge -> LocalAI [label="Frames / features"];
-                    LocalAI -> Edge [label="Detections / events"];
-                    Edge -> Cloud [label="Summaries / alerts"];
-                }
-                """
+    Camera -> Edge [label="Raw Video"];
+    Edge -> LocalAI [label="Frames / Features"];
+    LocalAI -> Edge [label="Detections / Events"];
+    Edge -> Cloud [label="Summaries / Alerts"];
+}
+"""
             )
 
         with flow_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=TB;
-                    step1 [label="1. Camera captures video", shape=box];
-                    step2 [label="2. Edge receives stream", shape=box];
-                    step3 [label="3. Edge / Local AI analyze frames", shape=box];
-                    step4 [label="4. Edge generates events / alerts", shape=box];
-                    step5 [label="5. Edge sends summaries to Cloud", shape=box];
+digraph G {
+    rankdir=TB;
+    step1 [label="1. Camera captures video", shape=box];
+    step2 [label="2. Edge receives stream", shape=box];
+    step3 [label="3. Edge / Local AI analyze frames", shape=box];
+    step4 [label="4. Edge generates events / alerts", shape=box];
+    step5 [label="5. Edge sends summaries to Cloud", shape=box];
 
-                    step1 -> step2 -> step3 -> step4 -> step5;
-                }
-                """
+    step1 -> step2 -> step3 -> step4 -> step5;
+}
+"""
             )
 
         with data_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Camera [shape=box, style=filled, color=lightyellow];
-                    Edge [shape=box, style=filled, color=lightgrey];
-                    Cloud [shape=box, style=filled, color=lightblue];
+digraph G {
+    rankdir=LR;
+    Camera [shape=box, style=filled, color=lightyellow, label="Camera"];
+    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
 
-                    Camera -> Edge [label="High-bandwidth video"];
-                    Edge -> Cloud [label="Low-bandwidth events / metadata"];
-                }
-                """
+    Camera -> Edge [label="High-bandwidth Video"];
+    Edge -> Cloud [label="Low-bandwidth Events / Metadata"];
+}
+"""
             )
 
         with control_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CloudCtrl [label="Cloud Analytics Config", shape=box, style=filled, color=lightblue];
-                    EdgeCtrl [label="Edge Analytics Engine", shape=box, style=filled, color=lightgrey];
-                    CameraCtrl [label="Camera Settings", shape=box, style=filled, color=lightyellow];
+digraph G {
+    rankdir=LR;
+    CloudCtrl [label="Cloud Analytics Config", shape=box, style=filled, color=lightblue];
+    EdgeCtrl [label="Edge Analytics Engine", shape=box, style=filled, color=lightgrey];
+    CameraCtrl [label="Camera Settings", shape=box, style=filled, color=lightyellow];
 
-                    CloudCtrl -> EdgeCtrl [label="Models / thresholds"];
-                    EdgeCtrl -> CameraCtrl [label="FPS / resolution / zones"];
-                    EdgeCtrl -> CloudCtrl [label="Performance / accuracy stats"];
-                }
-                """
+    CloudCtrl -> EdgeCtrl [label="Models / Thresholds"];
+    EdgeCtrl -> CameraCtrl [label="FPS / Resolution / Zones"];
+    EdgeCtrl -> CloudCtrl [label="Performance / Accuracy Stats"];
+}
+"""
             )
 
         with interaction_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Cloud [shape=box, style=filled, color=lightblue];
-                    Edge [shape=box, style=filled, color=lightgrey];
+digraph G {
+    rankdir=LR;
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
+    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
 
-                    Edge -> Cloud [label="Alerts / summaries"];
-                    Cloud -> Edge [label="Updated models / rules"];
-                }
-                """
+    Edge -> Cloud [label="Alerts / Summaries"];
+    Cloud -> Edge [label="Updated Models / Rules"];
+}
+"""
             )
 
         with security_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CloudSec [label="Cloud Security", shape=box, style=filled, color=lightblue];
-                    EdgeSec [label="Edge Security", shape=box, style=filled, color=lightgrey];
-                    CameraSec [label="Camera Security", shape=box, style=filled, color=lightyellow];
+digraph G {
+    rankdir=LR;
+    CloudSec [label="Cloud Security", shape=box, style=filled, color=lightblue];
+    EdgeSec [label="Edge Security", shape=box, style=filled, color=lightgrey];
+    CameraSec [label="Camera Security", shape=box, style=filled, color=lightyellow];
 
-                    CloudSec -> EdgeSec [label="Model integrity"];
-                    EdgeSec -> CameraSec [label="Secure streaming"];
-                    CameraSec -> EdgeSec [label="Tamper alerts"];
-                }
-                """
+    CloudSec -> EdgeSec [label="Model Integrity"];
+    EdgeSec -> CameraSec [label="Secure Streaming"];
+    CameraSec -> EdgeSec [label="Tamper Alerts"];
+}
+"""
             )
 
     # ----------------- SMART HOME -----------------
@@ -770,98 +767,98 @@ elif main_category.startswith("2"):
         with concept_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Sensors [shape=box, style=filled, color=lightyellow];
-                    EdgeGateway [shape=box, style=filled, color=lightgrey];
-                    LocalServices [shape=box, style=filled, color=lightgreen];
-                    Cloud [shape=box, style=filled, color=lightblue];
-                    UserApp [shape=box, style=filled, color=lightyellow];
+digraph G {
+    rankdir=LR;
+    Sensors [shape=box, style=filled, color=lightyellow, label="Home Sensors"];
+    EdgeGateway [shape=box, style=filled, color=lightgrey, label="Edge Gateway"];
+    LocalServices [shape=box, style=filled, color=lightgreen, label="Local Services"];
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
+    UserApp [shape=box, style=filled, color=lightyellow, label="User App"];
 
-                    Sensors -> EdgeGateway [label="Telemetry"];
-                    EdgeGateway -> LocalServices [label="Rules / automation"];
-                    EdgeGateway -> Cloud [label="Aggregated data"];
-                    UserApp -> EdgeGateway [label="Control / monitoring"];
-                }
-                """
+    Sensors -> EdgeGateway [label="Telemetry"];
+    EdgeGateway -> LocalServices [label="Rules / Automation"];
+    EdgeGateway -> Cloud [label="Aggregated Data"];
+    UserApp -> EdgeGateway [label="Control / Monitoring"];
+}
+"""
             )
 
         with flow_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=TB;
-                    step1 [label="1. Sensors collect home data", shape=box];
-                    step2 [label="2. Edge gateway receives data", shape=box];
-                    step3 [label="3. Edge applies rules / automation", shape=box];
-                    step4 [label="4. User app interacts with Edge", shape=box];
-                    step5 [label="5. Edge sends aggregates to Cloud", shape=box];
+digraph G {
+    rankdir=TB;
+    step1 [label="1. Sensors collect home data", shape=box];
+    step2 [label="2. Edge gateway receives data", shape=box];
+    step3 [label="3. Edge applies rules / automation", shape=box];
+    step4 [label="4. User app interacts with Edge", shape=box];
+    step5 [label="5. Edge sends aggregates to Cloud", shape=box];
 
-                    step1 -> step2 -> step3 -> step4 -> step5;
-                }
-                """
+    step1 -> step2 -> step3 -> step4 -> step5;
+}
+"""
             )
 
         with data_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Sensors [shape=box, style=filled, color=lightyellow];
-                    EdgeGateway [shape=box, style=filled, color=lightgrey];
-                    Cloud [shape=box, style=filled, color=lightblue];
+digraph G {
+    rankdir=LR;
+    Sensors [shape=box, style=filled, color=lightyellow, label="Sensors"];
+    EdgeGateway [shape=box, style=filled, color=lightgrey, label="Edge Gateway"];
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
 
-                    Sensors -> EdgeGateway [label="Local telemetry"];
-                    EdgeGateway -> Cloud [label="Aggregated / periodic data"];
-                    Cloud -> EdgeGateway [label="Global updates / services"];
-                }
-                """
+    Sensors -> EdgeGateway [label="Local Telemetry"];
+    EdgeGateway -> Cloud [label="Aggregated / Periodic Data"];
+    Cloud -> EdgeGateway [label="Global Updates / Services"];
+}
+"""
             )
 
         with control_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CloudCtrl [label="Cloud Smart Home Service", shape=box, style=filled, color=lightblue];
-                    EdgeCtrl [label="Home Edge Gateway", shape=box, style=filled, color=lightgrey];
-                    UserCtrl [label="User App", shape=box, style=filled, color=lightyellow];
+digraph G {
+    rankdir=LR;
+    CloudCtrl [label="Cloud Smart Home Service", shape=box, style=filled, color=lightblue];
+    EdgeCtrl [label="Home Edge Gateway", shape=box, style=filled, color=lightgrey];
+    UserCtrl [label="User App", shape=box, style=filled, color=lightyellow];
 
-                    CloudCtrl -> EdgeCtrl [label="Feature configs / firmware"];
-                    UserCtrl -> EdgeCtrl [label="Preferences / scenes"];
-                    EdgeCtrl -> CloudCtrl [label="Status / diagnostics"];
-                }
-                """
+    CloudCtrl -> EdgeCtrl [label="Feature Configs / Firmware"];
+    UserCtrl -> EdgeCtrl [label="Preferences / Scenes"];
+    EdgeCtrl -> CloudCtrl [label="Status / Diagnostics"];
+}
+"""
             )
 
         with interaction_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Cloud [shape=box, style=filled, color=lightblue];
-                    Edge [shape=box, style=filled, color=lightgrey];
+digraph G {
+    rankdir=LR;
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
+    Edge [shape=box, style=filled, color=lightgrey, label="Edge Gateway"];
 
-                    Edge -> Cloud [label="Home metrics / logs"];
-                    Cloud -> Edge [label="New capabilities / updates"];
-                }
-                """
+    Edge -> Cloud [label="Home Metrics / Logs"];
+    Cloud -> Edge [label="New Capabilities / Updates"];
+}
+"""
             )
 
         with security_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CloudSec [label="Cloud Security", shape=box, style=filled, color=lightblue];
-                    EdgeSec [label="Home Gateway Security", shape=box, style=filled, color=lightgrey];
-                    DeviceSec [label="Device Security", shape=box, style=filled, color=lightyellow];
+digraph G {
+    rankdir=LR;
+    CloudSec [label="Cloud Security", shape=box, style=filled, color=lightblue];
+    EdgeSec [label="Home Gateway Security", shape=box, style=filled, color=lightgrey];
+    DeviceSec [label="Device Security", shape=box, style=filled, color=lightyellow];
 
-                    CloudSec -> EdgeSec [label="Policies / patches"];
-                    EdgeSec -> DeviceSec [label="Local auth / encryption"];
-                    DeviceSec -> EdgeSec [label="Alerts / logs"];
-                }
-                """
+    CloudSec -> EdgeSec [label="Policies / Patches"];
+    EdgeSec -> DeviceSec [label="Local Auth / Encryption"];
+    DeviceSec -> EdgeSec [label="Alerts / Logs"];
+}
+"""
             )
 
     # ----------------- SMART CITY -----------------
@@ -895,99 +892,99 @@ elif main_category.startswith("2"):
         with concept_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CitySensors [shape=box, style=filled, color=lightyellow];
-                    DistrictEdge [shape=box, style=filled, color=lightgrey];
-                    CityEdge [shape=box, style=filled, color=lightgrey];
-                    Cloud [shape=box, style=filled, color=lightblue];
-                    OpsCenter [shape=box, style=filled, color=lightgreen, label="City Ops Center"];
+digraph G {
+    rankdir=LR;
+    CitySensors [shape=box, style=filled, color=lightyellow, label="City Sensors"];
+    DistrictEdge [shape=box, style=filled, color=lightgrey, label="District Edge"];
+    CityEdge [shape=box, style=filled, color=lightgrey, label="City Edge"];
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
+    OpsCenter [shape=box, style=filled, color=lightgreen, label="City Ops Center"];
 
-                    CitySensors -> DistrictEdge;
-                    DistrictEdge -> CityEdge;
-                    CityEdge -> Cloud;
-                    Cloud -> OpsCenter;
-                }
-                """
+    CitySensors -> DistrictEdge;
+    DistrictEdge -> CityEdge;
+    CityEdge -> Cloud;
+    Cloud -> OpsCenter;
+}
+"""
             )
 
         with flow_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=TB;
-                    step1 [label="1. City sensors collect data", shape=box];
-                    step2 [label="2. District edge nodes process locally", shape=box];
-                    step3 [label="3. City edge aggregates and optimizes", shape=box];
-                    step4 [label="4. Cloud stores and analyzes long-term", shape=box];
-                    step5 [label="5. Ops center uses insights for decisions", shape=box];
+digraph G {
+    rankdir=TB;
+    step1 [label="1. City sensors collect data", shape=box];
+    step2 [label="2. District edge nodes process locally", shape=box];
+    step3 [label="3. City edge aggregates and optimizes", shape=box];
+    step4 [label="4. Cloud stores and analyzes long-term", shape=box];
+    step5 [label="5. Ops center uses insights for decisions", shape=box];
 
-                    step1 -> step2 -> step3 -> step4 -> step5;
-                }
-                """
+    step1 -> step2 -> step3 -> step4 -> step5;
+}
+"""
             )
 
         with data_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CitySensors [shape=box, style=filled, color=lightyellow];
-                    DistrictEdge [shape=box, style=filled, color=lightgrey];
-                    CityEdge [shape=box, style=filled, color=lightgrey];
-                    Cloud [shape=box, style=filled, color=lightblue];
+digraph G {
+    rankdir=LR;
+    CitySensors [shape=box, style=filled, color=lightyellow, label="Sensors"];
+    DistrictEdge [shape=box, style=filled, color=lightgrey, label="District Edge"];
+    CityEdge [shape=box, style=filled, color=lightgrey, label="City Edge"];
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
 
-                    CitySensors -> DistrictEdge [label="Local sensor data"];
-                    DistrictEdge -> CityEdge [label="Aggregated regional data"];
-                    CityEdge -> Cloud [label="City-wide metrics"];
-                }
-                """
+    CitySensors -> DistrictEdge [label="Local Sensor Data"];
+    DistrictEdge -> CityEdge [label="Aggregated Regional Data"];
+    CityEdge -> Cloud [label="City-wide Metrics"];
+}
+"""
             )
 
         with control_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CloudCtrl [label="National / Central Control", shape=box, style=filled, color=lightblue];
-                    CityCtrl [label="City Ops Center", shape=box, style=filled, color=lightgreen];
-                    EdgeCtrl [label="District Edge Controllers", shape=box, style=filled, color=lightgrey];
+digraph G {
+    rankdir=LR;
+    CloudCtrl [label="National / Central Control", shape=box, style=filled, color=lightblue];
+    CityCtrl [label="City Ops Center", shape=box, style=filled, color=lightgreen];
+    EdgeCtrl [label="District Edge Controllers", shape=box, style=filled, color=lightgrey];
 
-                    CloudCtrl -> CityCtrl [label="Policies / regulations"];
-                    CityCtrl -> EdgeCtrl [label="Operational rules"];
-                    EdgeCtrl -> CityCtrl [label="Status / incidents"];
-                }
-                """
+    CloudCtrl -> CityCtrl [label="Policies / Regulations"];
+    CityCtrl -> EdgeCtrl [label="Operational Rules"];
+    EdgeCtrl -> CityCtrl [label="Status / Incidents"];
+}
+"""
             )
 
         with interaction_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Cloud [shape=box, style=filled, color=lightblue];
-                    CityEdge [shape=box, style=filled, color=lightgrey];
+digraph G {
+    rankdir=LR;
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
+    CityEdge [shape=box, style=filled, color=lightgrey, label="City Edge"];
 
-                    CityEdge -> Cloud [label="City metrics / KPIs"];
-                    Cloud -> CityEdge [label="Benchmarking / optimization models"];
-                }
-                """
+    CityEdge -> Cloud [label="City Metrics / KPIs"];
+    Cloud -> CityEdge [label="Benchmarking / Optimization Models"];
+}
+"""
             )
 
         with security_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CloudSec [label="Central Security", shape=box, style=filled, color=lightblue];
-                    CitySec [label="City Security Ops", shape=box, style=filled, color=lightgreen];
-                    EdgeSec [label="District Edge Security", shape=box, style=filled, color=lightgrey];
+digraph G {
+    rankdir=LR;
+    CloudSec [label="Central Security", shape=box, style=filled, color=lightblue];
+    CitySec [label="City Security Ops", shape=box, style=filled, color=lightgreen];
+    EdgeSec [label="District Edge Security", shape=box, style=filled, color=lightgrey];
 
-                    CloudSec -> CitySec [label="Policies / threat intel"];
-                    CitySec -> EdgeSec [label="Local enforcement"];
-                    EdgeSec -> CitySec [label="Incidents / alerts"];
-                }
-                """
+    CloudSec -> CitySec [label="Policies / Threat Intel"];
+    CitySec -> EdgeSec [label="Local Enforcement"];
+    EdgeSec -> CitySec [label="Incidents / Alerts"];
+}
+"""
             )
 
     # ----------------- COLLABORATIVE EDGE -----------------
@@ -1004,97 +1001,97 @@ elif main_category.startswith("2"):
         with concept_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Edge1 [shape=box, style=filled, color=lightgrey];
-                    Edge2 [shape=box, style=filled, color=lightgrey];
-                    Edge3 [shape=box, style=filled, color=lightgrey];
-                    Cloud [shape=box, style=filled, color=lightblue];
+digraph G {
+    rankdir=LR;
+    Edge1 [shape=box, style=filled, color=lightgrey, label="Edge 1"];
+    Edge2 [shape=box, style=filled, color=lightgrey, label="Edge 2"];
+    Edge3 [shape=box, style=filled, color=lightgrey, label="Edge 3"];
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
 
-                    Edge1 -> Edge2 [label="Data / tasks"];
-                    Edge2 -> Edge3 [label="Models / insights"];
-                    Edge3 -> Cloud [label="Aggregated results"];
-                    Cloud -> Edge1 [label="Global policies"];
-                }
-                """
+    Edge1 -> Edge2 [label="Data / Tasks"];
+    Edge2 -> Edge3 [label="Models / Insights"];
+    Edge3 -> Cloud [label="Aggregated Results"];
+    Cloud -> Edge1 [label="Global Policies"];
+}
+"""
             )
 
         with flow_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=TB;
-                    step1 [label="1. Edge nodes receive local workloads", shape=box];
-                    step2 [label="2. Edges share tasks / data among peers", shape=box];
-                    step3 [label="3. Collaborative processing across edges", shape=box];
-                    step4 [label="4. Aggregated results sent to Cloud", shape=box];
-                    step5 [label="5. Cloud distributes global policies back", shape=box];
+digraph G {
+    rankdir=TB;
+    step1 [label="1. Edge nodes receive local workloads", shape=box];
+    step2 [label="2. Edges share tasks / data among peers", shape=box];
+    step3 [label="3. Collaborative processing across edges", shape=box];
+    step4 [label="4. Aggregated results sent to Cloud", shape=box];
+    step5 [label="5. Cloud distributes global policies back", shape=box];
 
-                    step1 -> step2 -> step3 -> step4 -> step5;
-                }
-                """
+    step1 -> step2 -> step3 -> step4 -> step5;
+}
+"""
             )
 
         with data_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Edge1 [shape=box, style=filled, color=lightgrey];
-                    Edge2 [shape=box, style=filled, color=lightgrey];
-                    Edge3 [shape=box, style=filled, color=lightgrey];
+digraph G {
+    rankdir=LR;
+    Edge1 [shape=box, style=filled, color=lightgrey, label="Edge 1"];
+    Edge2 [shape=box, style=filled, color=lightgrey, label="Edge 2"];
+    Edge3 [shape=box, style=filled, color=lightgrey, label="Edge 3"];
 
-                    Edge1 -> Edge2 [label="Shared datasets"];
-                    Edge2 -> Edge3 [label="Model parameters"];
-                    Edge3 -> Edge1 [label="Aggregated insights"];
-                }
-                """
+    Edge1 -> Edge2 [label="Shared Datasets"];
+    Edge2 -> Edge3 [label="Model Parameters"];
+    Edge3 -> Edge1 [label="Aggregated Insights"];
+}
+"""
             )
 
         with control_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CloudCtrl [label="Global Coordinator", shape=box, style=filled, color=lightblue];
-                    EdgeCtrl1 [label="Edge Controller 1", shape=box, style=filled, color=lightgrey];
-                    EdgeCtrl2 [label="Edge Controller 2", shape=box, style=filled, color=lightgrey];
+digraph G {
+    rankdir=LR;
+    CloudCtrl [label="Global Coordinator", shape=box, style=filled, color=lightblue];
+    EdgeCtrl1 [label="Edge Controller 1", shape=box, style=filled, color=lightgrey];
+    EdgeCtrl2 [label="Edge Controller 2", shape=box, style=filled, color=lightgrey];
 
-                    CloudCtrl -> EdgeCtrl1 [label="Policies / roles"];
-                    CloudCtrl -> EdgeCtrl2 [label="Policies / roles"];
-                    EdgeCtrl1 -> EdgeCtrl2 [label="Coordination / negotiation"];
-                }
-                """
+    CloudCtrl -> EdgeCtrl1 [label="Policies / Roles"];
+    CloudCtrl -> EdgeCtrl2 [label="Policies / Roles"];
+    EdgeCtrl1 -> EdgeCtrl2 [label="Coordination / Negotiation"];
+}
+"""
             )
 
         with interaction_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Cloud [shape=box, style=filled, color=lightblue];
-                    EdgeCluster [shape=box, style=filled, color=lightgrey, label="Edge Cluster"];
+digraph G {
+    rankdir=LR;
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
+    EdgeCluster [shape=box, style=filled, color=lightgrey, label="Edge Cluster"];
 
-                    EdgeCluster -> Cloud [label="Cluster-wide results"];
-                    Cloud -> EdgeCluster [label="Global optimization / policies"];
-                }
-                """
+    EdgeCluster -> Cloud [label="Cluster-wide Results"];
+    Cloud -> EdgeCluster [label="Global Optimization / Policies"];
+}
+"""
             )
 
         with security_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CloudSec [label="Global Security", shape=box, style=filled, color=lightblue];
-                    EdgeSec1 [label="Edge Security 1", shape=box, style=filled, color=lightgrey];
-                    EdgeSec2 [label="Edge Security 2", shape=box, style=filled, color=lightgrey];
+digraph G {
+    rankdir=LR;
+    CloudSec [label="Global Security", shape=box, style=filled, color=lightblue];
+    EdgeSec1 [label="Edge Security 1", shape=box, style=filled, color=lightgrey];
+    EdgeSec2 [label="Edge Security 2", shape=box, style=filled, color=lightgrey];
 
-                    CloudSec -> EdgeSec1 [label="Policies"];
-                    CloudSec -> EdgeSec2 [label="Policies"];
-                    EdgeSec1 -> EdgeSec2 [label="Trust / federation"];
-                }
-                """
+    CloudSec -> EdgeSec1 [label="Policies"];
+    CloudSec -> EdgeSec2 [label="Policies"];
+    EdgeSec1 -> EdgeSec2 [label="Trust / Federation"];
+}
+"""
             )
 
     # ----------------- INDUSTRIAL IOT -----------------
@@ -1116,98 +1113,98 @@ elif main_category.startswith("2"):
         with concept_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Machines [shape=box, style=filled, color=lightyellow];
-                    EdgeNode [shape=box, style=filled, color=lightgrey];
-                    PlantControl [shape=box, style=filled, color=lightgreen];
-                    Cloud [shape=box, style=filled, color=lightblue];
+digraph G {
+    rankdir=LR;
+    Machines [shape=box, style=filled, color=lightyellow, label="Machines"];
+    EdgeNode [shape=box, style=filled, color=lightgrey, label="Edge Node"];
+    PlantControl [shape=box, style=filled, color=lightgreen, label="Plant Control"];
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
 
-                    Machines -> EdgeNode [label="Sensor data"];
-                    EdgeNode -> PlantControl [label="Alerts / recommendations"];
-                    EdgeNode -> Cloud [label="Aggregated metrics"];
-                    Cloud -> PlantControl [label="Global optimization / models"];
-                }
-                """
+    Machines -> EdgeNode [label="Sensor Data"];
+    EdgeNode -> PlantControl [label="Alerts / Recommendations"];
+    EdgeNode -> Cloud [label="Aggregated Metrics"];
+    Cloud -> PlantControl [label="Global Optimization / Models"];
+}
+"""
             )
 
         with flow_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=TB;
-                    step1 [label="1. Machines emit sensor data", shape=box];
-                    step2 [label="2. Edge node ingests and analyzes", shape=box];
-                    step3 [label="3. Edge triggers local actions / alerts", shape=box];
-                    step4 [label="4. Edge sends metrics to Cloud", shape=box];
-                    step5 [label="5. Cloud refines models and sends back", shape=box];
+digraph G {
+    rankdir=TB;
+    step1 [label="1. Machines emit sensor data", shape=box];
+    step2 [label="2. Edge node ingests and analyzes", shape=box];
+    step3 [label="3. Edge triggers local actions / alerts", shape=box];
+    step4 [label="4. Edge sends metrics to Cloud", shape=box];
+    step5 [label="5. Cloud refines models and sends back", shape=box];
 
-                    step1 -> step2 -> step3 -> step4 -> step5;
-                }
-                """
+    step1 -> step2 -> step3 -> step4 -> step5;
+}
+"""
             )
 
         with data_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Machines [shape=box, style=filled, color=lightyellow];
-                    EdgeNode [shape=box, style=filled, color=lightgrey];
-                    Cloud [shape=box, style=filled, color=lightblue];
+digraph G {
+    rankdir=LR;
+    Machines [shape=box, style=filled, color=lightyellow, label="Machines"];
+    EdgeNode [shape=box, style=filled, color=lightgrey, label="Edge Node"];
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
 
-                    Machines -> EdgeNode [label="High-frequency sensor data"];
-                    EdgeNode -> Cloud [label="Aggregated KPIs / events"];
-                    Cloud -> EdgeNode [label="Updated models / thresholds"];
-                }
-                """
+    Machines -> EdgeNode [label="High-frequency Sensor Data"];
+    EdgeNode -> Cloud [label="Aggregated KPIs / Events"];
+    Cloud -> EdgeNode [label="Updated Models / Thresholds"];
+}
+"""
             )
 
         with control_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CloudCtrl [label="Fleet Management", shape=box, style=filled, color=lightblue];
-                    EdgeCtrl [label="Plant Edge Controller", shape=box, style=filled, color=lightgrey];
-                    MachineCtrl [label="Machine PLC / Agent", shape=box, style=filled, color=lightyellow];
+digraph G {
+    rankdir=LR;
+    CloudCtrl [label="Fleet Management", shape=box, style=filled, color=lightblue];
+    EdgeCtrl [label="Plant Edge Controller", shape=box, style=filled, color=lightgrey];
+    MachineCtrl [label="Machine PLC / Agent", shape=box, style=filled, color=lightyellow];
 
-                    CloudCtrl -> EdgeCtrl [label="Global policies / schedules"];
-                    EdgeCtrl -> MachineCtrl [label="Local control / overrides"];
-                    MachineCtrl -> EdgeCtrl [label="Status / alarms"];
-                    EdgeCtrl -> CloudCtrl [label="Plant KPIs / incidents"];
-                }
-                """
+    CloudCtrl -> EdgeCtrl [label="Global Policies / Schedules"];
+    EdgeCtrl -> MachineCtrl [label="Local Control / Overrides"];
+    MachineCtrl -> EdgeCtrl [label="Status / Alarms"];
+    EdgeCtrl -> CloudCtrl [label="Plant KPIs / Incidents"];
+}
+"""
             )
 
         with interaction_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    Cloud [shape=box, style=filled, color=lightblue];
-                    Edge [shape=box, style=filled, color=lightgrey];
+digraph G {
+    rankdir=LR;
+    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
+    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
 
-                    Edge -> Cloud [label="Plant metrics / events"];
-                    Cloud -> Edge [label="Optimization strategies / models"];
-                }
-                """
+    Edge -> Cloud [label="Plant Metrics / Events"];
+    Cloud -> Edge [label="Optimization Strategies / Models"];
+}
+"""
             )
 
         with security_tab:
             st.graphviz_chart(
                 """
-                digraph {
-                    rankdir=LR;
-                    CloudSec [label="Fleet Security", shape=box, style=filled, color=lightblue];
-                    EdgeSec [label="Plant Security", shape=box, style=filled, color=lightgrey];
-                    MachineSec [label="Machine Security", shape=box, style=filled, color=lightyellow];
+digraph G {
+    rankdir=LR;
+    CloudSec [label="Fleet Security", shape=box, style=filled, color=lightblue];
+    EdgeSec [label="Plant Security", shape=box, style=filled, color=lightgrey];
+    MachineSec [label="Machine Security", shape=box, style=filled, color=lightyellow];
 
-                    CloudSec -> EdgeSec [label="Policies / threat intel"];
-                    EdgeSec -> MachineSec [label="Local enforcement"];
-                    MachineSec -> EdgeSec [label="Incidents / alerts"];
-                }
-                """
+    CloudSec -> EdgeSec [label="Policies / Threat Intel"];
+    EdgeSec -> MachineSec [label="Local Enforcement"];
+    MachineSec -> EdgeSec [label="Incidents / Alerts"];
+}
+"""
             )
 
 # ------------------------------------------------------------------------------------
@@ -1242,89 +1239,95 @@ elif main_category.startswith("3"):
     with flow_tab:
         st.graphviz_chart(
             """
-            digraph {
-                rankdir=TB;
-                Requirement -> Design;
-                Design -> EdgeNodes;
-                EdgeNodes -> Monitoring;
-                Monitoring -> Optimization;
-            }
-            """
+digraph G {
+    rankdir=TB;
+    Requirement [label="Requirements", shape=box];
+    Design [label="Design", shape=box];
+    EdgeNodes [label="Edge Nodes", shape=box];
+    Monitoring [label="Monitoring", shape=box];
+    Optimization [label="Optimization", shape=box];
+
+    Requirement -> Design;
+    Design -> EdgeNodes;
+    EdgeNodes -> Monitoring;
+    Monitoring -> Optimization;
+}
+"""
         )
 
     with concept_tab:
         st.graphviz_chart(
             """
-            digraph {
-                rankdir=LR;
-                Requirement [shape=box];
-                Design [shape=box];
-                EdgeNodes [shape=box];
-                Cloud [shape=box];
+digraph G {
+    rankdir=LR;
+    Requirement [shape=box, label="Requirements"];
+    Design [shape=box, label="Design"];
+    EdgeNodes [shape=box, label="Edge Nodes"];
+    Cloud [shape=box, label="Cloud"];
 
-                Requirement -> Design;
-                Design -> EdgeNodes;
-                EdgeNodes -> Cloud;
-            }
-            """
+    Requirement -> Design;
+    Design -> EdgeNodes;
+    EdgeNodes -> Cloud;
+}
+"""
         )
 
     with data_tab:
         st.graphviz_chart(
             """
-            digraph {
-                rankdir=LR;
-                EdgeNodes [shape=box];
-                Cloud [shape=box];
+digraph G {
+    rankdir=LR;
+    EdgeNodes [shape=box, label="Edge Nodes"];
+    Cloud [shape=box, label="Cloud"];
 
-                EdgeNodes -> Cloud [label="Metrics / logs"];
-                Cloud -> EdgeNodes [label="Configs / policies"];
-            }
-            """
+    EdgeNodes -> Cloud [label="Metrics / Logs"];
+    Cloud -> EdgeNodes [label="Configs / Policies"];
+}
+"""
         )
 
     with control_tab:
         st.graphviz_chart(
             """
-            digraph {
-                rankdir=LR;
-                Orchestrator [shape=box];
-                EdgeNodes [shape=box];
+digraph G {
+    rankdir=LR;
+    Orchestrator [shape=box, label="Orchestrator"];
+    EdgeNodes [shape=box, label="Edge Nodes"];
 
-                Orchestrator -> EdgeNodes [label="Control commands"];
-                EdgeNodes -> Orchestrator [label="Status / feedback"];
-            }
-            """
+    Orchestrator -> EdgeNodes [label="Control Commands"];
+    EdgeNodes -> Orchestrator [label="Status / Feedback"];
+}
+"""
         )
 
     with interaction_tab:
         st.graphviz_chart(
             """
-            digraph {
-                rankdir=LR;
-                Cloud [shape=box];
-                Edge [shape=box];
+digraph G {
+    rankdir=LR;
+    Cloud [shape=box, label="Cloud"];
+    Edge [shape=box, label="Edge"];
 
-                Cloud -> Edge [label="Policies / updates"];
-                Edge -> Cloud [label="Telemetry / KPIs"];
-            }
-            """
+    Cloud -> Edge [label="Policies / Updates"];
+    Edge -> Cloud [label="Telemetry / KPIs"];
+}
+"""
         )
 
     with security_tab:
         st.graphviz_chart(
             """
-            digraph {
-                rankdir=LR;
-                SecPolicy [shape=box, label="Security Policy"];
-                EdgeSec [shape=box, label="Edge Security"];
-                CloudSec [shape=box, label="Cloud Security"];
+digraph G {
+    rankdir=LR;
+    SecPolicy [shape=box, label="Security Policy"];
+    EdgeSec [shape=box, label="Edge Security"];
+    CloudSec [shape=box, label="Cloud Security"];
 
-                SecPolicy -> EdgeSec;
-                SecPolicy -> CloudSec;
-                EdgeSec -> CloudSec [label="Incidents / alerts"];
-            }
-            """
+    SecPolicy -> EdgeSec;
+    SecPolicy -> CloudSec;
+    EdgeSec -> CloudSec [label="Incidents / Alerts"];
+}
+"""
         )
 
 # ------------------------------------------------------------------------------------
@@ -1386,7 +1389,9 @@ else:
 
     df = pd.DataFrame(data)
     st.dataframe(df, use_container_width=True)
-    current_text_lines.append("Taxonomy matrix comparing use cases by latency, privacy, bandwidth, edge intensity, and cloud dependence.")
+    current_text_lines.append(
+        "Taxonomy matrix comparing use cases by latency, privacy, bandwidth, edge intensity, and cloud dependence."
+    )
 
 # ------------------------------------------------------------------------------------
 # EXPORT CURRENT SECTION
