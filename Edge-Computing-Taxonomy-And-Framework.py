@@ -125,8 +125,7 @@ if main_category.startswith("1"):
         concept_tab, flow_tab, data_tab, control_tab, interaction_tab, security_tab = framework_tabs()
 
         with concept_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
@@ -138,89 +137,78 @@ digraph G {
     Things -> Edge [label="Telemetry"];
     Edge -> Cloud [label="Aggregated Data"];
 }
-"""
-            )
+""")
 
         with flow_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=TB;
-    step1 [label="1. Cloud generates tasks", shape=box];
-    step2 [label="2. Tasks pushed to Edge", shape=box];
-    step3 [label="3. Edge executes tasks near Things", shape=box];
-    step4 [label="4. Edge aggregates results", shape=box];
-    step5 [label="5. Edge sends summaries to Cloud", shape=box];
+    A [label="1. Cloud Generates Tasks", shape=box];
+    B [label="2. Tasks Pushed to Edge", shape=box];
+    C [label="3. Edge Executes Tasks", shape=box];
+    D [label="4. Edge Aggregates Results", shape=box];
+    E [label="5. Edge Sends Summaries to Cloud", shape=box];
 
-    step1 -> step2 -> step3 -> step4 -> step5;
+    A -> B -> C -> D -> E;
 }
-"""
-            )
+""")
 
         with data_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
-    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
-    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
-    Things [shape=box, style=filled, color=lightyellow, label="IoT Things"];
+    Cloud [shape=box, style=filled, color=lightblue];
+    Edge [shape=box, style=filled, color=lightgrey];
+    Things [shape=box, style=filled, color=lightyellow];
 
     Cloud -> Edge [label="Bulk Data / Models"];
     Edge -> Things [label="Filtered Data / Commands"];
     Things -> Edge [label="Raw Telemetry"];
     Edge -> Cloud [label="Aggregated Metrics"];
 }
-"""
-            )
+""")
 
         with control_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
-    CloudCtrl [label="Cloud Control", shape=box, style=filled, color=lightblue];
-    EdgeCtrl [label="Edge Orchestrator", shape=box, style=filled, color=lightgrey];
-    ThingsCtrl [label="Device Agents", shape=box, style=filled, color=lightyellow];
+    CloudCtrl [shape=box, style=filled, color=lightblue, label="Cloud Control"];
+    EdgeCtrl [shape=box, style=filled, color=lightgrey, label="Edge Orchestrator"];
+    DeviceCtrl [shape=box, style=filled, color=lightyellow, label="Device Agents"];
 
     CloudCtrl -> EdgeCtrl [label="Policies / Configs"];
-    EdgeCtrl -> ThingsCtrl [label="Commands / Updates"];
-    ThingsCtrl -> EdgeCtrl [label="Status / Health"];
+    EdgeCtrl -> DeviceCtrl [label="Commands / Updates"];
+    DeviceCtrl -> EdgeCtrl [label="Status / Health"];
     EdgeCtrl -> CloudCtrl [label="Reports / Logs"];
 }
-"""
-            )
+""")
 
         with interaction_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
-    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
-    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
+    Cloud [shape=box, style=filled, color=lightblue];
+    Edge [shape=box, style=filled, color=lightgrey];
 
     Cloud -> Edge [label="Tasks / Models / Policies"];
     Edge -> Cloud [label="Aggregated Results / Feedback"];
 }
-"""
-            )
+""")
 
         with security_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
-    CloudSec [label="Cloud Security", shape=box, style=filled, color=lightblue];
-    EdgeSec [label="Edge Security", shape=box, style=filled, color=lightgrey];
-    DeviceSec [label="Device Security", shape=box, style=filled, color=lightyellow];
+    CloudSec [shape=box, style=filled, color=lightblue, label="Cloud Security"];
+    EdgeSec [shape=box, style=filled, color=lightgrey, label="Edge Security"];
+    DeviceSec [shape=box, style=filled, color=lightyellow, label="Device Security"];
 
     CloudSec -> EdgeSec [label="Trust / Certificates"];
     EdgeSec -> DeviceSec [label="Auth / Encryption"];
     DeviceSec -> EdgeSec [label="Logs / Anomalies"];
     EdgeSec -> CloudSec [label="Security Telemetry"];
 }
-"""
-            )
+""")
 
     # ----------------- PULL FROM IOT -----------------
     elif sub.startswith("2"):
@@ -249,102 +237,88 @@ digraph G {
         concept_tab, flow_tab, data_tab, control_tab, interaction_tab, security_tab = framework_tabs()
 
         with concept_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     Things [shape=box, style=filled, color=lightyellow, label="IoT Things"];
-    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node / Gateway"];
-    LocalApps [shape=box, style=filled, color=lightgreen, label="Local Apps / Services"];
+    Edge [shape=box, style=filled, color=lightgrey, label="Edge Gateway"];
     Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
 
     Things -> Edge [label="Sensor Data"];
-    Edge -> LocalApps [label="Insights / Control"];
     Edge -> Cloud [label="Summaries"];
     Cloud -> Edge [label="Policies / Models"];
 }
-"""
-            )
+""")
 
         with flow_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=TB;
-    step1 [label="1. Things generate raw data", shape=box];
-    step2 [label="2. Edge pulls data from Things", shape=box];
-    step3 [label="3. Edge processes and filters data", shape=box];
-    step4 [label="4. Local apps consume processed data", shape=box];
-    step5 [label="5. Edge sends aggregates to Cloud", shape=box];
+    A [label="1. IoT Devices Generate Data", shape=box];
+    B [label="2. Edge Pulls Data", shape=box];
+    C [label="3. Edge Filters / Processes", shape=box];
+    D [label="4. Local Apps Consume Data", shape=box];
+    E [label="5. Edge Sends Aggregates to Cloud", shape=box];
 
-    step1 -> step2 -> step3 -> step4 -> step5;
+    A -> B -> C -> D -> E;
 }
-"""
-            )
+""")
 
         with data_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
-    Things [shape=box, style=filled, color=lightyellow, label="IoT Things"];
-    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
-    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
+    Things [shape=box, style=filled, color=lightyellow];
+    Edge [shape=box, style=filled, color=lightgrey];
+    Cloud [shape=box, style=filled, color=lightblue];
 
     Things -> Edge [label="Continuous Sensor Streams"];
     Edge -> Cloud [label="Aggregated / Compressed Data"];
     Cloud -> Edge [label="Models / Thresholds"];
 }
-"""
-            )
+""")
 
         with control_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
-    CloudCtrl [label="Cloud Control", shape=box, style=filled, color=lightblue];
-    EdgeCtrl [label="Edge Controller", shape=box, style=filled, color=lightgrey];
-    ThingsCtrl [label="Device Agents", shape=box, style=filled, color=lightyellow];
+    CloudCtrl [shape=box, style=filled, color=lightblue, label="Cloud Control"];
+    EdgeCtrl [shape=box, style=filled, color=lightgrey, label="Edge Controller"];
+    DeviceCtrl [shape=box, style=filled, color=lightyellow, label="Device Agents"];
 
     CloudCtrl -> EdgeCtrl [label="Rules / Policies"];
-    EdgeCtrl -> ThingsCtrl [label="Sampling Rates / Modes"];
-    ThingsCtrl -> EdgeCtrl [label="Status / Alarms"];
-    EdgeCtrl -> CloudCtrl [label="Aggregated Health / KPIs"];
+    EdgeCtrl -> DeviceCtrl [label="Sampling Rates / Modes"];
+    DeviceCtrl -> EdgeCtrl [label="Status / Alarms"];
+    EdgeCtrl -> CloudCtrl [label="Health / KPIs"];
 }
-"""
-            )
+""")
 
         with interaction_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
-    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
-    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
+    Cloud [shape=box, style=filled, color=lightblue];
+    Edge [shape=box, style=filled, color=lightgrey];
 
     Edge -> Cloud [label="Aggregated Sensor Data"];
     Cloud -> Edge [label="Updated Models / Policies"];
 }
-"""
-            )
+""")
 
         with security_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
-    CloudSec [label="Cloud Security", shape=box, style=filled, color=lightblue];
-    EdgeSec [label="Edge Security", shape=box, style=filled, color=lightgrey];
-    DeviceSec [label="IoT Device Security", shape=box, style=filled, color=lightyellow];
+    CloudSec [shape=box, style=filled, color=lightblue];
+    EdgeSec [shape=box, style=filled, color=lightgrey];
+    DeviceSec [shape=box, style=filled, color=lightyellow];
 
     CloudSec -> EdgeSec [label="Policies / Certificates"];
     EdgeSec -> DeviceSec [label="Keys / Auth"];
     DeviceSec -> EdgeSec [label="Alerts / Anomalies"];
     EdgeSec -> CloudSec [label="Security Posture"];
 }
-"""
-            )
+""")
 
     # ----------------- CHANGE FROM DATA CONSUMER TO PRODUCER -----------------
     else:
@@ -372,103 +346,91 @@ digraph G {
         concept_tab, flow_tab, data_tab, control_tab, interaction_tab, security_tab = framework_tabs()
 
         with concept_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
-    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
-    Device [shape=box, style=filled, color=lightyellow, label="Mobile / Wearable Device"];
-    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
+    Cloud [shape=box, style=filled, color=lightblue];
+    Device [shape=box, style=filled, color=lightyellow];
+    Edge [shape=box, style=filled, color=lightgrey];
 
     Cloud -> Device [label="Content / Services"];
     Device -> Cloud [label="User Data"];
-    Device -> Edge [label="Raw Sensor / Video / Health Data"];
+    Device -> Edge [label="Raw Sensor / Video"];
     Edge -> Cloud [label="Filtered / Anonymized Data"];
     Edge -> Device [label="Real-time Insights"];
 }
-"""
-            )
+""")
 
         with flow_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=TB;
-    step1 [label="1. Device consumes cloud content", shape=box];
-    step2 [label="2. Device starts producing rich data", shape=box];
-    step3 [label="3. Raw data sent to Edge", shape=box];
-    step4 [label="4. Edge processes / anonymizes data", shape=box];
-    step5 [label="5. Edge sends insights to Device and Cloud", shape=box];
+    A [label="1. Device Consumes Cloud Content", shape=box];
+    B [label="2. Device Produces Rich Data", shape=box];
+    C [label="3. Raw Data Sent to Edge", shape=box];
+    D [label="4. Edge Processes / Anonymizes", shape=box];
+    E [label="5. Edge Sends Insights to Cloud & Device", shape=box];
 
-    step1 -> step2 -> step3 -> step4 -> step5;
+    A -> B -> C -> D -> E;
 }
-"""
-            )
+""")
 
         with data_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
-    Device [shape=box, style=filled, color=lightyellow, label="Device"];
-    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
-    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
+    Device [shape=box, style=filled, color=lightyellow];
+    Edge [shape=box, style=filled, color=lightgrey];
+    Cloud [shape=box, style=filled, color=lightblue];
 
     Device -> Edge [label="High-volume Sensor / Media Data"];
     Edge -> Cloud [label="Summaries / Anonymized Data"];
     Cloud -> Edge [label="Models / Personalization"];
     Edge -> Device [label="Real-time Feedback"];
 }
-"""
-            )
+""")
 
         with control_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
-    CloudCtrl [label="Cloud Personalization Engine", shape=box, style=filled, color=lightblue];
-    EdgeCtrl [label="Edge Privacy / Policy Engine", shape=box, style=filled, color=lightgrey];
-    DeviceCtrl [label="Device App / Agent", shape=box, style=filled, color=lightyellow];
+    CloudCtrl [shape=box, style=filled, color=lightblue, label="Cloud Personalization Engine"];
+    EdgeCtrl [shape=box, style=filled, color=lightgrey, label="Edge Privacy Engine"];
+    DeviceCtrl [shape=box, style=filled, color=lightyellow, label="Device Agent"];
 
     CloudCtrl -> EdgeCtrl [label="Global Policies"];
     EdgeCtrl -> DeviceCtrl [label="Local Rules / Consent"];
     DeviceCtrl -> EdgeCtrl [label="User Preferences"];
-    EdgeCtrl -> CloudCtrl [label="Compliance / Audit Logs"];
+    EdgeCtrl -> CloudCtrl [label="Compliance Logs"];
 }
-"""
-            )
+""")
 
         with interaction_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
-    Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
-    Edge [shape=box, style=filled, color=lightgrey, label="Edge Node"];
+    Cloud [shape=box, style=filled, color=lightblue];
+    Edge [shape=box, style=filled, color=lightgrey];
 
     Edge -> Cloud [label="Aggregated / Anonymized User Data"];
     Cloud -> Edge [label="Updated Personalization Models"];
 }
-"""
-            )
+""")
 
         with security_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
-    CloudSec [label="Cloud Privacy / Security", shape=box, style=filled, color=lightblue];
-    EdgeSec [label="Edge Privacy Guard", shape=box, style=filled, color=lightgrey];
-    DeviceSec [label="Device Security / Consent", shape=box, style=filled, color=lightyellow];
+    CloudSec [shape=box, style=filled, color=lightblue];
+    EdgeSec [shape=box, style=filled, color=lightgrey];
+    DeviceSec [shape=box, style=filled, color=lightyellow];
 
     CloudSec -> EdgeSec [label="Privacy Policies"];
     EdgeSec -> DeviceSec [label="Consent Enforcement"];
     DeviceSec -> EdgeSec [label="User Choices"];
     EdgeSec -> CloudSec [label="Compliance Reports"];
 }
-"""
-            )
+""")
 
 # ------------------------------------------------------------------------------------
 # USE CASES
@@ -526,8 +488,7 @@ elif main_category.startswith("2"):
         )
 
         with concept_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     User [shape=box, style=filled, color=lightyellow, label="User"];
@@ -539,12 +500,10 @@ digraph G {
     Cloud -> Edge [label="Models / Updates"];
     Edge -> User [label="Low-latency Responses"];
 }
-"""
-            )
+""")
 
         with flow_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=TB;
     step1 [label="1. User sends request", shape=box];
@@ -555,12 +514,10 @@ digraph G {
 
     step1 -> step2 -> step3 -> step4 -> step5;
 }
-"""
-            )
+""")
 
         with data_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     User [shape=box, style=filled, color=lightyellow, label="User"];
@@ -572,12 +529,10 @@ digraph G {
     Cloud -> Edge [label="Models / Large Artifacts"];
     Edge -> User [label="Responses / Results"];
 }
-"""
-            )
+""")
 
         with control_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     CloudCtrl [label="Cloud Orchestrator", shape=box, style=filled, color=lightblue];
@@ -586,12 +541,10 @@ digraph G {
     CloudCtrl -> EdgeCtrl [label="Offload Policies"];
     EdgeCtrl -> CloudCtrl [label="Load / Capacity Reports"];
 }
-"""
-            )
+""")
 
         with interaction_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
@@ -600,12 +553,10 @@ digraph G {
     Edge -> Cloud [label="Offloaded Workloads"];
     Cloud -> Edge [label="Processed Results / Models"];
 }
-"""
-            )
+""")
 
         with security_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     CloudSec [label="Cloud Security", shape=box, style=filled, color=lightblue];
@@ -614,8 +565,7 @@ digraph G {
     CloudSec -> EdgeSec [label="Secure Channels / Policies"];
     EdgeSec -> CloudSec [label="Audit / Logs"];
 }
-"""
-            )
+""")
 
     # ----------------- VIDEO ANALYTICS -----------------
     elif sub.startswith("2"):
@@ -644,8 +594,7 @@ digraph G {
         )
 
         with concept_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     Camera [shape=box, style=filled, color=lightyellow, label="Camera / Phone"];
@@ -658,12 +607,10 @@ digraph G {
     LocalAI -> Edge [label="Detections / Events"];
     Edge -> Cloud [label="Summaries / Alerts"];
 }
-"""
-            )
+""")
 
         with flow_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=TB;
     step1 [label="1. Camera captures video", shape=box];
@@ -674,12 +621,10 @@ digraph G {
 
     step1 -> step2 -> step3 -> step4 -> step5;
 }
-"""
-            )
+""")
 
         with data_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     Camera [shape=box, style=filled, color=lightyellow, label="Camera"];
@@ -689,12 +634,10 @@ digraph G {
     Camera -> Edge [label="High-bandwidth Video"];
     Edge -> Cloud [label="Low-bandwidth Events / Metadata"];
 }
-"""
-            )
+""")
 
         with control_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     CloudCtrl [label="Cloud Analytics Config", shape=box, style=filled, color=lightblue];
@@ -705,12 +648,10 @@ digraph G {
     EdgeCtrl -> CameraCtrl [label="FPS / Resolution / Zones"];
     EdgeCtrl -> CloudCtrl [label="Performance / Accuracy Stats"];
 }
-"""
-            )
+""")
 
         with interaction_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
@@ -719,12 +660,10 @@ digraph G {
     Edge -> Cloud [label="Alerts / Summaries"];
     Cloud -> Edge [label="Updated Models / Rules"];
 }
-"""
-            )
+""")
 
         with security_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     CloudSec [label="Cloud Security", shape=box, style=filled, color=lightblue];
@@ -735,8 +674,7 @@ digraph G {
     EdgeSec -> CameraSec [label="Secure Streaming"];
     CameraSec -> EdgeSec [label="Tamper Alerts"];
 }
-"""
-            )
+""")
 
     # ----------------- SMART HOME -----------------
     elif sub.startswith("3"):
@@ -765,8 +703,7 @@ digraph G {
         )
 
         with concept_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     Sensors [shape=box, style=filled, color=lightyellow, label="Home Sensors"];
@@ -780,12 +717,10 @@ digraph G {
     EdgeGateway -> Cloud [label="Aggregated Data"];
     UserApp -> EdgeGateway [label="Control / Monitoring"];
 }
-"""
-            )
+""")
 
         with flow_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=TB;
     step1 [label="1. Sensors collect home data", shape=box];
@@ -796,12 +731,10 @@ digraph G {
 
     step1 -> step2 -> step3 -> step4 -> step5;
 }
-"""
-            )
+""")
 
         with data_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     Sensors [shape=box, style=filled, color=lightyellow, label="Sensors"];
@@ -812,12 +745,10 @@ digraph G {
     EdgeGateway -> Cloud [label="Aggregated / Periodic Data"];
     Cloud -> EdgeGateway [label="Global Updates / Services"];
 }
-"""
-            )
+""")
 
         with control_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     CloudCtrl [label="Cloud Smart Home Service", shape=box, style=filled, color=lightblue];
@@ -828,12 +759,10 @@ digraph G {
     UserCtrl -> EdgeCtrl [label="Preferences / Scenes"];
     EdgeCtrl -> CloudCtrl [label="Status / Diagnostics"];
 }
-"""
-            )
+""")
 
         with interaction_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
@@ -842,12 +771,10 @@ digraph G {
     Edge -> Cloud [label="Home Metrics / Logs"];
     Cloud -> Edge [label="New Capabilities / Updates"];
 }
-"""
-            )
+""")
 
         with security_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     CloudSec [label="Cloud Security", shape=box, style=filled, color=lightblue];
@@ -858,8 +785,7 @@ digraph G {
     EdgeSec -> DeviceSec [label="Local Auth / Encryption"];
     DeviceSec -> EdgeSec [label="Alerts / Logs"];
 }
-"""
-            )
+""")
 
     # ----------------- SMART CITY -----------------
     elif sub.startswith("4"):
@@ -890,8 +816,7 @@ digraph G {
         )
 
         with concept_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     CitySensors [shape=box, style=filled, color=lightyellow, label="City Sensors"];
@@ -905,12 +830,10 @@ digraph G {
     CityEdge -> Cloud;
     Cloud -> OpsCenter;
 }
-"""
-            )
+""")
 
         with flow_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=TB;
     step1 [label="1. City sensors collect data", shape=box];
@@ -921,12 +844,10 @@ digraph G {
 
     step1 -> step2 -> step3 -> step4 -> step5;
 }
-"""
-            )
+""")
 
         with data_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     CitySensors [shape=box, style=filled, color=lightyellow, label="Sensors"];
@@ -938,12 +859,10 @@ digraph G {
     DistrictEdge -> CityEdge [label="Aggregated Regional Data"];
     CityEdge -> Cloud [label="City-wide Metrics"];
 }
-"""
-            )
+""")
 
         with control_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     CloudCtrl [label="National / Central Control", shape=box, style=filled, color=lightblue];
@@ -954,12 +873,10 @@ digraph G {
     CityCtrl -> EdgeCtrl [label="Operational Rules"];
     EdgeCtrl -> CityCtrl [label="Status / Incidents"];
 }
-"""
-            )
+""")
 
         with interaction_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
@@ -968,12 +885,10 @@ digraph G {
     CityEdge -> Cloud [label="City Metrics / KPIs"];
     Cloud -> CityEdge [label="Benchmarking / Optimization Models"];
 }
-"""
-            )
+""")
 
         with security_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     CloudSec [label="Central Security", shape=box, style=filled, color=lightblue];
@@ -984,8 +899,7 @@ digraph G {
     CitySec -> EdgeSec [label="Local Enforcement"];
     EdgeSec -> CitySec [label="Incidents / Alerts"];
 }
-"""
-            )
+""")
 
     # ----------------- COLLABORATIVE EDGE -----------------
     elif sub.startswith("5"):
@@ -999,8 +913,7 @@ digraph G {
         )
 
         with concept_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     Edge1 [shape=box, style=filled, color=lightgrey, label="Edge 1"];
@@ -1013,12 +926,10 @@ digraph G {
     Edge3 -> Cloud [label="Aggregated Results"];
     Cloud -> Edge1 [label="Global Policies"];
 }
-"""
-            )
+""")
 
         with flow_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=TB;
     step1 [label="1. Edge nodes receive local workloads", shape=box];
@@ -1029,12 +940,10 @@ digraph G {
 
     step1 -> step2 -> step3 -> step4 -> step5;
 }
-"""
-            )
+""")
 
         with data_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     Edge1 [shape=box, style=filled, color=lightgrey, label="Edge 1"];
@@ -1045,12 +954,10 @@ digraph G {
     Edge2 -> Edge3 [label="Model Parameters"];
     Edge3 -> Edge1 [label="Aggregated Insights"];
 }
-"""
-            )
+""")
 
         with control_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     CloudCtrl [label="Global Coordinator", shape=box, style=filled, color=lightblue];
@@ -1061,12 +968,10 @@ digraph G {
     CloudCtrl -> EdgeCtrl2 [label="Policies / Roles"];
     EdgeCtrl1 -> EdgeCtrl2 [label="Coordination / Negotiation"];
 }
-"""
-            )
+""")
 
         with interaction_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
@@ -1075,12 +980,10 @@ digraph G {
     EdgeCluster -> Cloud [label="Cluster-wide Results"];
     Cloud -> EdgeCluster [label="Global Optimization / Policies"];
 }
-"""
-            )
+""")
 
         with security_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     CloudSec [label="Global Security", shape=box, style=filled, color=lightblue];
@@ -1091,8 +994,7 @@ digraph G {
     CloudSec -> EdgeSec2 [label="Policies"];
     EdgeSec1 -> EdgeSec2 [label="Trust / Federation"];
 }
-"""
-            )
+""")
 
     # ----------------- INDUSTRIAL IOT -----------------
     else:
@@ -1111,8 +1013,7 @@ digraph G {
         )
 
         with concept_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     Machines [shape=box, style=filled, color=lightyellow, label="Machines"];
@@ -1125,12 +1026,10 @@ digraph G {
     EdgeNode -> Cloud [label="Aggregated Metrics"];
     Cloud -> PlantControl [label="Global Optimization / Models"];
 }
-"""
-            )
+""")
 
         with flow_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=TB;
     step1 [label="1. Machines emit sensor data", shape=box];
@@ -1141,12 +1040,10 @@ digraph G {
 
     step1 -> step2 -> step3 -> step4 -> step5;
 }
-"""
-            )
+""")
 
         with data_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     Machines [shape=box, style=filled, color=lightyellow, label="Machines"];
@@ -1157,12 +1054,10 @@ digraph G {
     EdgeNode -> Cloud [label="Aggregated KPIs / Events"];
     Cloud -> EdgeNode [label="Updated Models / Thresholds"];
 }
-"""
-            )
+""")
 
         with control_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     CloudCtrl [label="Fleet Management", shape=box, style=filled, color=lightblue];
@@ -1174,12 +1069,10 @@ digraph G {
     MachineCtrl -> EdgeCtrl [label="Status / Alarms"];
     EdgeCtrl -> CloudCtrl [label="Plant KPIs / Incidents"];
 }
-"""
-            )
+""")
 
         with interaction_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     Cloud [shape=box, style=filled, color=lightblue, label="Cloud"];
@@ -1188,12 +1081,10 @@ digraph G {
     Edge -> Cloud [label="Plant Metrics / Events"];
     Cloud -> Edge [label="Optimization Strategies / Models"];
 }
-"""
-            )
+""")
 
         with security_tab:
-            st.graphviz_chart(
-                """
+            st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     CloudSec [label="Fleet Security", shape=box, style=filled, color=lightblue];
@@ -1204,8 +1095,7 @@ digraph G {
     EdgeSec -> MachineSec [label="Local Enforcement"];
     MachineSec -> EdgeSec [label="Incidents / Alerts"];
 }
-"""
-            )
+""")
 
 # ------------------------------------------------------------------------------------
 # FRAMEWORK CHALLENGES
@@ -1237,8 +1127,7 @@ elif main_category.startswith("3"):
     concept_tab, flow_tab, data_tab, control_tab, interaction_tab, security_tab = framework_tabs()
 
     with flow_tab:
-        st.graphviz_chart(
-            """
+        st.graphviz_chart("""
 digraph G {
     rankdir=TB;
     Requirement [label="Requirements", shape=box];
@@ -1252,12 +1141,10 @@ digraph G {
     EdgeNodes -> Monitoring;
     Monitoring -> Optimization;
 }
-"""
-        )
+""")
 
     with concept_tab:
-        st.graphviz_chart(
-            """
+        st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     Requirement [shape=box, label="Requirements"];
@@ -1269,12 +1156,10 @@ digraph G {
     Design -> EdgeNodes;
     EdgeNodes -> Cloud;
 }
-"""
-        )
+""")
 
     with data_tab:
-        st.graphviz_chart(
-            """
+        st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     EdgeNodes [shape=box, label="Edge Nodes"];
@@ -1283,12 +1168,10 @@ digraph G {
     EdgeNodes -> Cloud [label="Metrics / Logs"];
     Cloud -> EdgeNodes [label="Configs / Policies"];
 }
-"""
-        )
+""")
 
     with control_tab:
-        st.graphviz_chart(
-            """
+        st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     Orchestrator [shape=box, label="Orchestrator"];
@@ -1297,12 +1180,10 @@ digraph G {
     Orchestrator -> EdgeNodes [label="Control Commands"];
     EdgeNodes -> Orchestrator [label="Status / Feedback"];
 }
-"""
-        )
+""")
 
     with interaction_tab:
-        st.graphviz_chart(
-            """
+        st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     Cloud [shape=box, label="Cloud"];
@@ -1311,12 +1192,10 @@ digraph G {
     Cloud -> Edge [label="Policies / Updates"];
     Edge -> Cloud [label="Telemetry / KPIs"];
 }
-"""
-        )
+""")
 
     with security_tab:
-        st.graphviz_chart(
-            """
+        st.graphviz_chart("""
 digraph G {
     rankdir=LR;
     SecPolicy [shape=box, label="Security Policy"];
@@ -1327,8 +1206,7 @@ digraph G {
     SecPolicy -> CloudSec;
     EdgeSec -> CloudSec [label="Incidents / Alerts"];
 }
-"""
-        )
+""")
 
 # ------------------------------------------------------------------------------------
 # TAXONOMY MATRIX
