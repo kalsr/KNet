@@ -1,7 +1,7 @@
 # -----------------------------
 # Operation 3: Read file (PATCHED)
 # -----------------------------
-elif selected_op["id"] == 3:
+elsif selected_op["id"] == 3:
     st.markdown("### Read IoT Sensor Data File")
 
     st.markdown("You can read:")
