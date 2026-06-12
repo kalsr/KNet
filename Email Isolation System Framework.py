@@ -46,8 +46,8 @@ st.markdown(
 st.markdown(
     """
     This Streamlit application is a modern, cloud‑safe version of the original Java **EmailIsolationMenu** framework.  
-    It presents the 17 main categories of the Email Isolation Framework, with detailed content for **Email Elements**  
-    and structured content for all other categories.
+    It presents the 17 main categories of the Email Isolation Framework, with detailed content, real‑world examples,  
+    and diagrams for each category.
     """
 )
 
@@ -88,106 +88,93 @@ EMAIL_ELEMENTS_SUBMENU = {
 }
 
 EMAIL_COMPONENTS_TEXT = """
+Email components form the building blocks of any email system.
+
 Mail User Agents (MUAs):
 A MUA is a software component (or web interface) that allows an end user to compose and send messages to one or more recipients.
-A MUA transmits new messages to a server for further processing (either final delivery or transfer to another server).
-The MUA is also the component used by end users to access a mailbox where in-bound emails have been delivered.
-MUAs are available for a variety of systems including mobile hosts.
-The proper secure configuration for an MUA depends on the MUA in question and the system it is running on.
-MUAs may utilize several protocols to connect to and communicate with email servers.
-There may also be other features as well such as a cryptographic interface for producing encrypted and/or digitally signed email.
+Real-world example: Outlook, Thunderbird, Apple Mail, Gmail web UI.
 
 Mail Transfer Agents (MTAs):
-Email is transmitted, in a store and forward fashion, across networks via Mail Transfer Agents (MTAs).
-MTAs communicate using the Simple Mail Transfer Protocol (SMTP) and act as both client and server, depending on the situation.
-For example, an MTA can act as a server when accepting an email message from an end user's MUA, then act as a client in connecting to
-and transferring the message to the recipient domain's MTA for final delivery.
+Email is transmitted, in a store and forward fashion, across networks via MTAs.
+Real-world example: Postfix, Exim, Microsoft Exchange transport service.
 
-Mail Submission Agents (MSA):
-An MTA that accepts mail from MUAs and begins the transmission process by sending it to an MTA for further processing.
-Often the MSA and first-hop MTA is the same process, just fulfilling both roles.
-
-Mail Delivery Agent (MDA):
-An MTA that receives mail from an organization's inbound MTA and ultimately places the message in a specific mailbox.
-Mail servers may also perform various security functions to prevent malicious email from being delivered or include authentication
-credentials such as digital signatures.
+Mail Submission Agents (MSA) and Mail Delivery Agents (MDA):
+MSA accepts mail from MUAs; MDA delivers mail into mailboxes.
+Real-world example: Dovecot acting as MDA for IMAP mailboxes.
 
 Special Use Components:
-In addition to MUAs and MTAs, an organization may use one or more special purpose components for a particular task, such as malware
-filtering, email archiving, or content filtering.
+Malware filters, archiving systems, and DLP gateways sit alongside MTAs.
+Real-world example: Secure email gateways like Proofpoint or Microsoft Defender for Office 365.
 
-Special Considerations for Cloud and Hosted Service Customers:
-Organizations that outsource their email service (whole or in part) may not have direct access to MTAs or special use components.
-In Email as a Service (EaaS), the service provider is responsible for the email infrastructure; in Infrastructure as a Service (IaaS),
-customers may configure their own email servers.
+Cloud and Hosted Service Customers:
+In Email as a Service (EaaS), the provider runs MTAs and MDAs; customers configure MUAs and policies.
+Real-world example: Microsoft 365, Google Workspace.
 """
 
 EMAIL_RELATED_COMPONENTS_TEXT = """
-In addition to MUAs and MTAs, there are other network components used to support the email service for an organization.
+Related components support email but are not themselves email servers.
 
 Domain Name System (DNS):
-DNS is a global, distributed database and lookup protocol used to map domain names to IP addresses.
-MUAs use DNS to find MSAs; MTAs use DNS to find the next-hop server via MX records.
-Reverse DNS is used to map IP addresses to domain names and is sometimes used as a crude authentication check.
+DNS maps domain names to IP addresses and MX records to mail servers.
+Real-world example: A domain 'example.com' with MX records pointing to 'mail.example.com'.
 
 DNS and Email Security:
-DNS publishes policy artifacts and public keys for SPF, DKIM, and related technologies used to validate that messages originate
-from authorized mail servers.
-Reputation services also use DNS-based data to assess authenticity and combat spam and malicious email.
+SPF, DKIM, and DMARC records are published in DNS.
+Real-world example: A DMARC policy 'v=DMARC1; p=reject;' for a high-security domain.
 
 Enterprise Perimeter Security Components:
-Firewalls, IDS, and malware scanners may affect email transactions even if they do not directly handle email.
-Misconfiguration can block legitimate SMTP connections and prevent valid email delivery.
+Firewalls, IDS/IPS, and web proxies influence email flows.
+Real-world example: A firewall only allowing SMTP over TLS from specific IP ranges.
 
 Public Key Infrastructure (PKIX):
-Organizations that use S/MIME, OpenPGP, or TLS rely on certificate infrastructure.
-X.509 certificates authenticate TLS endpoints and certify public keys used for digital signatures and encryption.
+Certificates for TLS and S/MIME are issued and managed via PKI.
+Real-world example: An internal CA issuing certificates for mail.example.com used in TLS.
 """
 
 EMAIL_PROTOCOLS_TEXT = """
-There are two types of protocols used in the transmission of email:
-1) Protocols used to transfer messages between MTAs and end users (MUAs).
-2) Protocols used to transfer messages between mail servers.
+Protocols define how email is transported and accessed.
 
 Simple Mail Transfer Protocol (SMTP):
-SMTP is a text-based client-server protocol used to transfer email messages from one server to another or from an MUA to an MSA/MTA.
-Clients send ASCII commands; servers respond with ASCII status codes.
+SMTP moves messages between servers and from MUAs to MTAs.
+Real-world example: An MTA listening on port 587 for authenticated submission and 25 for server-to-server relay.
 
 Mail Access Protocols (POP3, IMAP, MAPI/RPC):
-MUAs typically use POP3 or IMAP to retrieve mail from a mailbox.
-POP3 usually downloads all mail and may delete it from the server; IMAP keeps mail on the server and supports multiple clients accessing
-the same mailbox.
-Both POP3 and IMAP can be secured via TLS (ports 995 and 993 respectively, or STARTTLS on 110/143).
-Microsoft Exchange clients may use MAPI/RPC; some cloud providers use web portals as MUAs.
+POP3 downloads mail; IMAP synchronizes mail across devices; MAPI/RPC is used by Outlook with Exchange.
+Real-world example: A user reading mail on a phone via IMAP and on a laptop via Outlook (MAPI).
 
 Internet Email Addresses:
-SMTP uses an envelope MAIL FROM address; email headers contain a FROM address.
-Both consist of local-part@domain-part.
+SMTP uses an envelope MAIL FROM; headers use a FROM field.
+Real-world example: MAIL FROM: bounce@example.com, header From: "Support" <support@example.com>.
 """
 
 EMAIL_FORMATS_TEXT = """
-Email messages may be formatted as plain text or as compound documents containing multiple components and attachments.
+Email formats describe how messages are structured.
 
-Multi-Purpose Internet Mail Extensions (MIME):
-MIME allows email to contain non-ASCII character sets and non-text components.
-Messages are broken into parts, each with a content type (e.g., text/plain, image/jpeg, text/html).
-MIME messages can be nested and include attachments.
+MIME:
+MIME allows multipart messages with text, HTML, and attachments.
+Real-world example: An email with both plain text and HTML versions plus a PDF attachment.
 
-Security in MIME Messages (S/MIME):
-S/MIME provides authentication, integrity, non-repudiation (via digital signatures), and confidentiality (via encryption).
-It uses public key cryptography and X.509 certificates.
-Messages can be signed, encrypted, or both.
+S/MIME:
+S/MIME adds signatures and encryption using X.509 certificates.
+Real-world example: A signed email from finance@example.com where the recipient can verify authenticity.
 
-Pretty Good Privacy (PGP/OpenPGP):
-OpenPGP is an open standard for signing and encrypting email, derived from PGP.
-It defines formats for keys, signatures, and messages and is widely implemented (e.g., GnuPG).
+OpenPGP:
+OpenPGP provides encryption and signatures using PGP-compatible keys.
+Real-world example: A developer mailing patches to a security mailing list using PGP-encrypted email.
 """
 
 SECURE_WEBMAIL_TEXT = """
-Secure web-mail solutions provide browser-based access to email while enforcing strong authentication, TLS encryption,
-content filtering, and isolation of active content (scripts, macros, embedded objects). They are often deployed as part of
-zero-trust architectures, ensuring that email is rendered in a controlled environment and limiting direct exposure of endpoints
-to malicious payloads.
+Secure web-mail solutions provide browser-based access to email while enforcing strong controls.
+
+Key Features:
+- Strong authentication (MFA, conditional access)
+- TLS encryption for all sessions
+- Content filtering and script isolation
+- Remote rendering of risky content
+
+Real-world example:
+A bank provides web-mail to employees via a hardened portal that opens attachments in a remote sandbox.
+Users see the content, but malicious macros never run on their local devices.
 """
 
 # ---------------------------------------------------------
@@ -297,194 +284,324 @@ with col_left:
             st.text_area("Details", EMAIL_FORMATS_TEXT, height=400)
         elif sub_id == 5:
             st.markdown("#### SECURE WEB-MAIL SOLUTIONS")
-            st.text_area("Details", SECURE_WEBMAIL_TEXT, height=300)
+            st.text_area("Details", SECURE_WEBMAIL_TEXT, height=350)
 
-    # Categories 2–17: concrete content
     elif selected_main_id == 2:
         st.markdown("### EMAIL STANDARDS")
         st.text_area(
             "Details",
-            "Email standards define the protocols, formats, and security mechanisms that underpin interoperable messaging. "
-            "Core standards include SMTP for transport, MIME for message structure, and POP/IMAP for mailbox access. "
-            "Security-related standards include SPF, DKIM, DMARC, S/MIME, and OpenPGP, which collectively address "
-            "authentication, integrity, confidentiality, and anti-spoofing. A robust email isolation framework aligns "
-            "with these standards to ensure compatibility while enforcing stronger controls.",
-            height=350,
+            """
+Email standards define the protocols, formats, and security mechanisms that underpin interoperable messaging.
+
+Core Standards:
+- SMTP for transport
+- MIME for message structure
+- POP/IMAP for mailbox access
+
+Security Standards:
+- SPF: declares authorized sending IPs
+- DKIM: signs messages with domain keys
+- DMARC: enforces alignment and policies
+- S/MIME and OpenPGP: provide encryption and signatures
+
+Real-world example:
+A SaaS provider configures SPF, DKIM, and DMARC for its domain to ensure that customers can trust invoices and notifications.
+            """,
+            height=400,
         )
 
     elif selected_main_id == 3:
         st.markdown("### EMAIL SECURITY THREATS")
         st.text_area(
             "Details",
-            "Email security threats include phishing, spear-phishing, business email compromise (BEC), malware delivery, "
-            "ransomware, credential harvesting, and data exfiltration via attachments or links. Attackers exploit human "
-            "trust, weak authentication, and unpatched clients or servers. An isolation framework mitigates these threats "
-            "by separating untrusted content from endpoints, scanning attachments and URLs, enforcing policy-based "
-            "controls, and integrating threat intelligence.",
-            height=350,
+            """
+Email security threats include:
+
+- Phishing and spear-phishing
+- Business Email Compromise (BEC)
+- Malware and ransomware delivery
+- Credential harvesting
+- Data exfiltration via attachments or links
+
+Real-world example:
+An attacker sends a fake invoice to finance@company.com with a malicious macro-enabled spreadsheet.
+Without isolation, opening the file on a finance workstation could trigger ransomware.
+With isolation, the spreadsheet opens in a remote sandbox, and the macro never runs on the endpoint.
+            """,
+            height=400,
         )
 
     elif selected_main_id == 4:
         st.markdown("### EMAIL ISOLATION USE-CASES")
         st.text_area(
             "Details",
-            "Key use-cases for email isolation include: (1) isolating active content in HTML emails; (2) opening attachments "
-            "in disposable or sandboxed environments; (3) rendering potentially malicious emails in remote browsers; "
-            "(4) protecting high-value users such as executives and system administrators; and (5) supporting incident "
-            "response by safely analyzing suspicious messages. These use-cases align with zero-trust principles and "
-            "reduce the attack surface of the enterprise.",
-            height=350,
+            """
+Key use-cases for email isolation:
+
+1. Isolating active content in HTML emails
+2. Opening attachments in disposable or sandboxed environments
+3. Rendering potentially malicious emails in remote browsers
+4. Protecting high-value users (executives, admins)
+5. Supporting incident response and forensic analysis
+
+Real-world example:
+A CISO mandates that all emails to the executive team are rendered via a remote browser solution.
+Executives see full content, but any malicious scripts run in a controlled environment.
+            """,
+            height=400,
         )
 
     elif selected_main_id == 5:
         st.markdown("### EMAIL-MALWARE INCIDENTS PREVENTION")
         st.text_area(
             "Details",
-            "Prevention focuses on blocking malware before it reaches end users. Controls include signature-based and "
-            "behavioral malware scanning, sandbox detonation of attachments, URL rewriting and time-of-click analysis, "
-            "policy-based blocking of risky file types, and enforcement of strong authentication and encryption. "
-            "Email isolation adds another layer by ensuring that even if malicious content is delivered, it is executed "
-            "in a controlled environment rather than on the endpoint.",
-            height=350,
+            """
+Prevention strategies:
+
+- Signature-based and behavioral malware scanning
+- Sandbox detonation of attachments
+- URL rewriting and time-of-click analysis
+- Blocking risky file types (e.g., .exe, .js, macro-enabled Office files)
+- Enforcing strong authentication and encryption
+
+Real-world example:
+A healthcare organization blocks all macro-enabled Office attachments at the gateway and uses isolation for PDFs and images.
+Suspicious content is opened in a sandbox, protecting clinical workstations.
+            """,
+            height=400,
         )
 
     elif selected_main_id == 6:
         st.markdown("### EMAIL-MALWARE INCIDENTS RESPONSE")
         st.text_area(
             "Details",
-            "Incident response for email-based malware includes rapid identification of affected users, quarantine of "
-            "malicious messages, revocation of compromised credentials, forensic analysis of payloads, and coordinated "
-            "communication with stakeholders. Isolation platforms can capture detailed telemetry about how a message was "
-            "rendered and interacted with, supporting root-cause analysis and improving future detection and prevention.",
-            height=350,
+            """
+Incident response steps:
+
+- Identify affected users and mailboxes
+- Quarantine malicious messages
+- Revoke compromised credentials
+- Analyze payloads in a forensic sandbox
+- Communicate with stakeholders and regulators
+
+Real-world example:
+After detecting a phishing campaign, the SOC uses isolation logs to see which users opened the email and what actions were taken.
+They quickly reset passwords and block the malicious domain.
+            """,
+            height=400,
         )
 
     elif selected_main_id == 7:
         st.markdown("### SIGNING & ENCRYPTING EMAIL MESSAGES")
         st.text_area(
             "Details",
-            "Digital signatures (S/MIME, OpenPGP) provide authentication, integrity, and non-repudiation for email, while "
-            "encryption protects confidentiality. Proper key management, certificate validation, and policy enforcement "
-            "are critical. An isolation framework must respect cryptographic protections while still inspecting metadata "
-            "and enforcing organizational policies, for example by scanning encrypted content at trusted gateways or "
-            "requiring secure key escrow for regulated environments.",
-            height=350,
+            """
+Digital signatures and encryption:
+
+- S/MIME and OpenPGP provide authentication, integrity, and confidentiality
+- Certificates and keys must be managed securely
+- Policies define when signing and encryption are required
+
+Real-world example:
+A legal department requires all external communications to be signed and sensitive contracts to be encrypted.
+Isolation respects signatures while still inspecting metadata and enforcing policy at trusted gateways.
+            """,
+            height=400,
         )
 
     elif selected_main_id == 8:
         st.markdown("### PLANNING & MANAGING EMAIL SERVERS")
         st.text_area(
             "Details",
-            "Planning and managing email servers involves capacity planning, high availability design, backup and recovery, "
-            "patch management, and configuration hardening. Administrators must define clear roles for MTAs, MDAs, and "
-            "gateways, integrate logging and monitoring, and align with organizational security policies. Email isolation "
-            "components are typically deployed alongside or in front of these servers, requiring careful architectural "
-            "integration and change management.",
-            height=350,
+            """
+Planning and management:
+
+- Capacity planning and high availability
+- Backup and disaster recovery
+- Patch management and configuration hardening
+- Logging, monitoring, and alerting
+
+Real-world example:
+An enterprise deploys redundant MTAs in two data centers, with isolation gateways in front.
+If one data center fails, email and isolation continue from the other site.
+            """,
+            height=400,
         )
 
     elif selected_main_id == 9:
         st.markdown("### SECURING THE EMAIL SERVERS OPERATING SYSTEMS")
         st.text_area(
             "Details",
-            "Securing the operating systems that host email servers includes hardening baselines, disabling unnecessary "
-            "services, enforcing least privilege, applying timely patches, and monitoring for anomalous activity. "
-            "Configuration management and compliance scanning help ensure that OS-level vulnerabilities do not undermine "
-            "the security of the email infrastructure. Isolation solutions rely on these hardened platforms to provide "
-            "trustworthy execution environments.",
-            height=350,
+            """
+OS security for email servers:
+
+- Harden baselines (CIS benchmarks)
+- Disable unnecessary services
+- Enforce least privilege
+- Apply timely patches
+- Monitor for anomalous activity
+
+Real-world example:
+A Linux-based MTA runs on a hardened OS image with SELinux enforced, SSH restricted, and configuration managed via Ansible.
+Isolation components rely on this hardened platform.
+            """,
+            height=400,
         )
 
     elif selected_main_id == 10:
         st.markdown("### SECURING EMAIL SERVER CONTENTS")
         st.text_area(
             "Details",
-            "Email server contents—mailboxes, archives, logs—often contain sensitive information. Controls include access "
-            "control, encryption at rest, retention and deletion policies, legal hold mechanisms, and protection against "
-            "unauthorized export. Isolation frameworks may integrate with content scanning and data loss prevention (DLP) "
-            "to ensure that sensitive data is not leaked via email.",
-            height=350,
+            """
+Securing contents:
+
+- Access control and role-based permissions
+- Encryption at rest for mailboxes and archives
+- Retention and deletion policies
+- Legal hold mechanisms
+- Protection against unauthorized export
+
+Real-world example:
+A financial institution encrypts all mailbox databases and uses DLP to prevent sensitive data (e.g., account numbers) from leaving via email.
+Isolation integrates with DLP to inspect content safely.
+            """,
+            height=400,
         )
 
     elif selected_main_id == 11:
         st.markdown("### IMPLEMENTING SECURE NETWORK INFRASTRUCTURE")
         st.text_area(
             "Details",
-            "Secure network infrastructure for email includes segmented networks, firewalls, secure DNS, TLS for all "
-            "server-to-server and client-to-server connections, and intrusion detection/prevention systems. Email "
-            "isolation components often sit at network boundaries, requiring secure routing, certificate management, and "
-            "integration with SIEM and SOC workflows.",
-            height=350,
+            """
+Network security for email:
+
+- Segmented networks and DMZs
+- Firewalls and secure DNS
+- TLS for all server-to-server and client-to-server connections
+- IDS/IPS and SIEM integration
+
+Real-world example:
+MTAs and isolation gateways sit in a DMZ, with strict firewall rules controlling inbound and outbound SMTP.
+TLS is enforced with modern ciphers, and logs feed into a central SIEM.
+            """,
+            height=400,
         )
 
     elif selected_main_id == 12:
         st.markdown("### SECURING EMAIL CLIENTS")
         st.text_area(
             "Details",
-            "Securing email clients (MUAs) involves hardening configurations, disabling risky features (macros, active "
-            "content), enforcing secure protocols (IMAP/POP over TLS), and integrating endpoint protection. Isolation "
-            "reduces reliance on client-side defenses by rendering untrusted content remotely, but client hygiene remains "
-            "essential for credentials, local data, and user behavior.",
-            height=350,
+            """
+Client security:
+
+- Hardened configurations (disable macros, active content)
+- Secure protocols (IMAP/POP over TLS)
+- Endpoint protection (EDR/AV)
+- Regular updates and patching
+
+Real-world example:
+A company configures Outlook via group policy to disable automatic macro execution and to warn users about external content.
+Isolation further reduces risk by rendering risky content remotely.
+            """,
+            height=400,
         )
 
     elif selected_main_id == 13:
         st.markdown("### ADMINISTERING THE EMAIL SERVERS")
         st.text_area(
             "Details",
-            "Administration covers account provisioning, role-based access control, monitoring, logging, change management, "
-            "and policy enforcement. Secure administration requires strong authentication, just-in-time access, and "
-            "auditing of administrative actions. Isolation frameworks may expose administrative consoles and APIs that "
-            "must be protected with the same rigor as core email servers.",
-            height=350,
+            """
+Administration:
+
+- Account provisioning and deprovisioning
+- Role-based access control
+- Monitoring and logging
+- Change management and approvals
+- Auditing administrative actions
+
+Real-world example:
+Admin access to MTAs and isolation gateways is controlled via just-in-time privileged access, with all actions logged and reviewed.
+            """,
+            height=400,
         )
 
     elif selected_main_id == 14:
         st.markdown("### AUTHENTICATING A SENDING DOMAIN & EMAIL MESSAGES")
         st.text_area(
             "Details",
-            "Authenticating sending domains and messages relies on SPF, DKIM, and DMARC, plus reputation services and "
-            "TLS with certificate validation. These mechanisms help distinguish legitimate email from spoofed or "
-            "fraudulent messages. Isolation platforms can use authentication results to decide how aggressively to "
-            "isolate or block content, and to feed signals into broader threat intelligence systems.",
-            height=350,
+            """
+Authentication mechanisms:
+
+- SPF: validates sending IPs
+- DKIM: signs messages with domain keys
+- DMARC: enforces alignment and policies
+- Reputation services and TLS certificate validation
+
+Real-world example:
+A retailer uses DMARC with 'p=quarantine' and monitors reports.
+Isolation uses SPF/DKIM/DMARC results to decide whether to render content in a high-risk sandbox or block it outright.
+            """,
+            height=400,
         )
 
     elif selected_main_id == 15:
         st.markdown("### PROTECTING EMAIL CONFIDENTIALITY")
         st.text_area(
             "Details",
-            "Confidentiality is protected through encryption in transit (TLS) and at rest, plus end-to-end encryption "
-            "mechanisms like S/MIME and OpenPGP. Policy controls determine when encryption is required, how keys are "
-            "managed, and how exceptions are handled. Isolation must coexist with confidentiality, ensuring that sensitive "
-            "messages are handled securely while still enabling necessary inspection and control at trusted points.",
-            height=350,
+            """
+Confidentiality controls:
+
+- Encryption in transit (TLS)
+- Encryption at rest (disk/database encryption)
+- End-to-end encryption (S/MIME, OpenPGP)
+- Policies for sensitive data handling
+
+Real-world example:
+A healthcare provider encrypts all email containing patient data and uses isolation to safely inspect metadata and routing information
+without exposing the content to untrusted systems.
+            """,
+            height=400,
         )
 
     elif selected_main_id == 16:
         st.markdown("### REDUCING UNSOLICITED BULK EMAIL")
         st.text_area(
             "Details",
-            "Reducing unsolicited bulk email (spam) involves content filtering, reputation-based blocking, rate limiting, "
-            "feedback loops, and enforcement of DMARC policies. Advanced systems use machine learning to classify messages "
-            "and adapt to evolving spam campaigns. Isolation adds resilience by ensuring that even spam that bypasses "
-            "filters is rendered safely and cannot easily compromise endpoints.",
-            height=350,
+            """
+Spam reduction:
+
+- Content filtering and Bayesian analysis
+- Reputation-based blocking and blacklists
+- Rate limiting and feedback loops
+- DMARC enforcement
+
+Real-world example:
+An ISP uses machine learning-based spam filters plus DMARC enforcement.
+Isolation ensures that any spam that slips through is rendered safely and cannot easily compromise endpoints.
+            """,
+            height=400,
         )
 
     elif selected_main_id == 17:
         st.markdown("### END USER EMAIL SECURITY RECOMMENDATIONS")
         st.text_area(
             "Details",
-            "End users should be trained to recognize phishing, avoid clicking unknown links, verify unexpected requests, "
-            "use strong and unique passwords, enable multi-factor authentication, and report suspicious messages. "
-            "Security awareness programs, simulated phishing campaigns, and clear reporting channels are essential. "
-            "Email isolation supports users by reducing the impact of mistakes, but human vigilance remains a critical "
-            "layer of defense.",
-            height=350,
+            """
+End-user best practices:
+
+- Recognize phishing and suspicious requests
+- Avoid clicking unknown links or opening unexpected attachments
+- Use strong, unique passwords and MFA
+- Report suspicious messages promptly
+
+Real-world example:
+A company runs quarterly phishing simulations and provides just-in-time training.
+Isolation reduces the impact of mistakes, but user vigilance remains critical.
+            """,
+            height=400,
         )
 
-    # Conceptual flow diagram
+    # Conceptual flow diagram (Mermaid)
     st.markdown("#### Conceptual Flow (Mermaid)")
     mermaid = f"""
 flowchart TD
@@ -494,6 +611,23 @@ flowchart TD
     Policy --> Report[Exported Report / Synthetic Data]
     """
     st.markdown(f"```mermaid\n{mermaid}\n```")
+
+    # Additional diagram (Graphviz)
+    st.markdown("#### Structural Diagram (Graphviz)")
+    graphviz_src = f"""
+digraph G {{
+    rankdir=LR;
+    node [shape=box, style=filled, color="#e0f2ff"];
+
+    User -> Menu;
+    Menu -> Engine;
+    Engine -> Policy;
+    Policy -> Report;
+
+    Engine [label="Engine\\n({MAIN_MENU[selected_main_id]})"];
+}}
+"""
+    st.graphviz_chart(graphviz_src)
 
 with col_right:
     st.subheader("Synthetic Email Isolation Framework Data")
