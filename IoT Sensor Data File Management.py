@@ -550,7 +550,7 @@ with col_right:
 def build_text_report(operation_name, op, synthetic_data):
     lines = [
         "IoT Sensor Data File Management Report",
-        "Developed by Randy Singh, Technology Innovation Team (DISA/BDE5)",
+        "Developed by Randy Singh, Developed by Randy Singh, Kalsnet(KNet) Consulting Group.",
         "",
         f"Operation: {operation_name}",
         "",
