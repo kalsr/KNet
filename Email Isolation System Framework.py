@@ -47,7 +47,7 @@ st.markdown(
     """
     This Streamlit application is a modern, cloud‑safe version of the original Java **EmailIsolationMenu** framework.  
     It presents the 17 main categories of the Email Isolation Framework, with detailed content for **Email Elements**  
-    and placeholders for the remaining categories until their full text is integrated.
+    and structured content for all other categories.
     """
 )
 
@@ -77,14 +77,14 @@ MAIN_MENU = {
 }
 
 # ---------------------------------------------------------
-# Email Elements subcategories (from Java code)
+# Email Elements subcategories
 # ---------------------------------------------------------
 EMAIL_ELEMENTS_SUBMENU = {
     1: "EMAIL COMPONENTS",
     2: "RELATED COMPONENTS",
     3: "EMAIL PROTOCOLS",
     4: "EMAIL FORMATS",
-    5: "SECURE WEB-MAIL SOLUTIONS (placeholder)",
+    5: "SECURE WEB-MAIL SOLUTIONS",
 }
 
 EMAIL_COMPONENTS_TEXT = """
@@ -181,6 +181,13 @@ Messages can be signed, encrypted, or both.
 Pretty Good Privacy (PGP/OpenPGP):
 OpenPGP is an open standard for signing and encrypting email, derived from PGP.
 It defines formats for keys, signatures, and messages and is widely implemented (e.g., GnuPG).
+"""
+
+SECURE_WEBMAIL_TEXT = """
+Secure web-mail solutions provide browser-based access to email while enforcing strong authentication, TLS encryption,
+content filtering, and isolation of active content (scripts, macros, embedded objects). They are often deployed as part of
+zero-trust architectures, ensuring that email is rendered in a controlled environment and limiting direct exposure of endpoints
+to malicious payloads.
 """
 
 # ---------------------------------------------------------
@@ -289,19 +296,195 @@ with col_left:
             st.markdown("#### EMAIL FORMATS")
             st.text_area("Details", EMAIL_FORMATS_TEXT, height=400)
         elif sub_id == 5:
-            st.markdown("#### SECURE WEB-MAIL SOLUTIONS (Placeholder)")
-            st.info("This section is pending full text from the original Java framework. Paste content later to complete.")
+            st.markdown("#### SECURE WEB-MAIL SOLUTIONS")
+            st.text_area("Details", SECURE_WEBMAIL_TEXT, height=300)
 
-    else:
-        # Placeholder for categories 2–17
-        st.markdown(f"### {MAIN_MENU[selected_main_id]}")
-        st.info(
-            "This category is part of the original Email Isolation Framework but its detailed text "
-            "has not yet been fully migrated from the Java source. "
-            "You can paste the original content later and extend this app."
+    # Categories 2–17: concrete content
+    elif selected_main_id == 2:
+        st.markdown("### EMAIL STANDARDS")
+        st.text_area(
+            "Details",
+            "Email standards define the protocols, formats, and security mechanisms that underpin interoperable messaging. "
+            "Core standards include SMTP for transport, MIME for message structure, and POP/IMAP for mailbox access. "
+            "Security-related standards include SPF, DKIM, DMARC, S/MIME, and OpenPGP, which collectively address "
+            "authentication, integrity, confidentiality, and anti-spoofing. A robust email isolation framework aligns "
+            "with these standards to ensure compatibility while enforcing stronger controls.",
+            height=350,
         )
 
-    # Simple diagram per category (Mermaid)
+    elif selected_main_id == 3:
+        st.markdown("### EMAIL SECURITY THREATS")
+        st.text_area(
+            "Details",
+            "Email security threats include phishing, spear-phishing, business email compromise (BEC), malware delivery, "
+            "ransomware, credential harvesting, and data exfiltration via attachments or links. Attackers exploit human "
+            "trust, weak authentication, and unpatched clients or servers. An isolation framework mitigates these threats "
+            "by separating untrusted content from endpoints, scanning attachments and URLs, enforcing policy-based "
+            "controls, and integrating threat intelligence.",
+            height=350,
+        )
+
+    elif selected_main_id == 4:
+        st.markdown("### EMAIL ISOLATION USE-CASES")
+        st.text_area(
+            "Details",
+            "Key use-cases for email isolation include: (1) isolating active content in HTML emails; (2) opening attachments "
+            "in disposable or sandboxed environments; (3) rendering potentially malicious emails in remote browsers; "
+            "(4) protecting high-value users such as executives and system administrators; and (5) supporting incident "
+            "response by safely analyzing suspicious messages. These use-cases align with zero-trust principles and "
+            "reduce the attack surface of the enterprise.",
+            height=350,
+        )
+
+    elif selected_main_id == 5:
+        st.markdown("### EMAIL-MALWARE INCIDENTS PREVENTION")
+        st.text_area(
+            "Details",
+            "Prevention focuses on blocking malware before it reaches end users. Controls include signature-based and "
+            "behavioral malware scanning, sandbox detonation of attachments, URL rewriting and time-of-click analysis, "
+            "policy-based blocking of risky file types, and enforcement of strong authentication and encryption. "
+            "Email isolation adds another layer by ensuring that even if malicious content is delivered, it is executed "
+            "in a controlled environment rather than on the endpoint.",
+            height=350,
+        )
+
+    elif selected_main_id == 6:
+        st.markdown("### EMAIL-MALWARE INCIDENTS RESPONSE")
+        st.text_area(
+            "Details",
+            "Incident response for email-based malware includes rapid identification of affected users, quarantine of "
+            "malicious messages, revocation of compromised credentials, forensic analysis of payloads, and coordinated "
+            "communication with stakeholders. Isolation platforms can capture detailed telemetry about how a message was "
+            "rendered and interacted with, supporting root-cause analysis and improving future detection and prevention.",
+            height=350,
+        )
+
+    elif selected_main_id == 7:
+        st.markdown("### SIGNING & ENCRYPTING EMAIL MESSAGES")
+        st.text_area(
+            "Details",
+            "Digital signatures (S/MIME, OpenPGP) provide authentication, integrity, and non-repudiation for email, while "
+            "encryption protects confidentiality. Proper key management, certificate validation, and policy enforcement "
+            "are critical. An isolation framework must respect cryptographic protections while still inspecting metadata "
+            "and enforcing organizational policies, for example by scanning encrypted content at trusted gateways or "
+            "requiring secure key escrow for regulated environments.",
+            height=350,
+        )
+
+    elif selected_main_id == 8:
+        st.markdown("### PLANNING & MANAGING EMAIL SERVERS")
+        st.text_area(
+            "Details",
+            "Planning and managing email servers involves capacity planning, high availability design, backup and recovery, "
+            "patch management, and configuration hardening. Administrators must define clear roles for MTAs, MDAs, and "
+            "gateways, integrate logging and monitoring, and align with organizational security policies. Email isolation "
+            "components are typically deployed alongside or in front of these servers, requiring careful architectural "
+            "integration and change management.",
+            height=350,
+        )
+
+    elif selected_main_id == 9:
+        st.markdown("### SECURING THE EMAIL SERVERS OPERATING SYSTEMS")
+        st.text_area(
+            "Details",
+            "Securing the operating systems that host email servers includes hardening baselines, disabling unnecessary "
+            "services, enforcing least privilege, applying timely patches, and monitoring for anomalous activity. "
+            "Configuration management and compliance scanning help ensure that OS-level vulnerabilities do not undermine "
+            "the security of the email infrastructure. Isolation solutions rely on these hardened platforms to provide "
+            "trustworthy execution environments.",
+            height=350,
+        )
+
+    elif selected_main_id == 10:
+        st.markdown("### SECURING EMAIL SERVER CONTENTS")
+        st.text_area(
+            "Details",
+            "Email server contents—mailboxes, archives, logs—often contain sensitive information. Controls include access "
+            "control, encryption at rest, retention and deletion policies, legal hold mechanisms, and protection against "
+            "unauthorized export. Isolation frameworks may integrate with content scanning and data loss prevention (DLP) "
+            "to ensure that sensitive data is not leaked via email.",
+            height=350,
+        )
+
+    elif selected_main_id == 11:
+        st.markdown("### IMPLEMENTING SECURE NETWORK INFRASTRUCTURE")
+        st.text_area(
+            "Details",
+            "Secure network infrastructure for email includes segmented networks, firewalls, secure DNS, TLS for all "
+            "server-to-server and client-to-server connections, and intrusion detection/prevention systems. Email "
+            "isolation components often sit at network boundaries, requiring secure routing, certificate management, and "
+            "integration with SIEM and SOC workflows.",
+            height=350,
+        )
+
+    elif selected_main_id == 12:
+        st.markdown("### SECURING EMAIL CLIENTS")
+        st.text_area(
+            "Details",
+            "Securing email clients (MUAs) involves hardening configurations, disabling risky features (macros, active "
+            "content), enforcing secure protocols (IMAP/POP over TLS), and integrating endpoint protection. Isolation "
+            "reduces reliance on client-side defenses by rendering untrusted content remotely, but client hygiene remains "
+            "essential for credentials, local data, and user behavior.",
+            height=350,
+        )
+
+    elif selected_main_id == 13:
+        st.markdown("### ADMINISTERING THE EMAIL SERVERS")
+        st.text_area(
+            "Details",
+            "Administration covers account provisioning, role-based access control, monitoring, logging, change management, "
+            "and policy enforcement. Secure administration requires strong authentication, just-in-time access, and "
+            "auditing of administrative actions. Isolation frameworks may expose administrative consoles and APIs that "
+            "must be protected with the same rigor as core email servers.",
+            height=350,
+        )
+
+    elif selected_main_id == 14:
+        st.markdown("### AUTHENTICATING A SENDING DOMAIN & EMAIL MESSAGES")
+        st.text_area(
+            "Details",
+            "Authenticating sending domains and messages relies on SPF, DKIM, and DMARC, plus reputation services and "
+            "TLS with certificate validation. These mechanisms help distinguish legitimate email from spoofed or "
+            "fraudulent messages. Isolation platforms can use authentication results to decide how aggressively to "
+            "isolate or block content, and to feed signals into broader threat intelligence systems.",
+            height=350,
+        )
+
+    elif selected_main_id == 15:
+        st.markdown("### PROTECTING EMAIL CONFIDENTIALITY")
+        st.text_area(
+            "Details",
+            "Confidentiality is protected through encryption in transit (TLS) and at rest, plus end-to-end encryption "
+            "mechanisms like S/MIME and OpenPGP. Policy controls determine when encryption is required, how keys are "
+            "managed, and how exceptions are handled. Isolation must coexist with confidentiality, ensuring that sensitive "
+            "messages are handled securely while still enabling necessary inspection and control at trusted points.",
+            height=350,
+        )
+
+    elif selected_main_id == 16:
+        st.markdown("### REDUCING UNSOLICITED BULK EMAIL")
+        st.text_area(
+            "Details",
+            "Reducing unsolicited bulk email (spam) involves content filtering, reputation-based blocking, rate limiting, "
+            "feedback loops, and enforcement of DMARC policies. Advanced systems use machine learning to classify messages "
+            "and adapt to evolving spam campaigns. Isolation adds resilience by ensuring that even spam that bypasses "
+            "filters is rendered safely and cannot easily compromise endpoints.",
+            height=350,
+        )
+
+    elif selected_main_id == 17:
+        st.markdown("### END USER EMAIL SECURITY RECOMMENDATIONS")
+        st.text_area(
+            "Details",
+            "End users should be trained to recognize phishing, avoid clicking unknown links, verify unexpected requests, "
+            "use strong and unique passwords, enable multi-factor authentication, and report suspicious messages. "
+            "Security awareness programs, simulated phishing campaigns, and clear reporting channels are essential. "
+            "Email isolation supports users by reducing the impact of mistakes, but human vigilance remains a critical "
+            "layer of defense.",
+            height=350,
+        )
+
+    # Conceptual flow diagram
     st.markdown("#### Conceptual Flow (Mermaid)")
     mermaid = f"""
 flowchart TD
