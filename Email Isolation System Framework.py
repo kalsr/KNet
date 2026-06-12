@@ -33,10 +33,10 @@ st.markdown(
             EMAIL-ISOLATION FRAMEWORK APPLICATION
         </h1>
         <h4 style="color:white;text-align:center;margin-top:0;">
-            Developed by Randy Singh, Computer Scientist (October 2020)
+            Developed by Randy Singh, Computer Scientist From Kalsnet(KNet) Consulting Group.
         </h4>
         <h5 style="color:white;text-align:center;margin-top:0;">
-            Email Isolation is one of the technologies listed in FY21 vision (Mr. Steven Wallace All Hands, Oct 22, 2020)
+            This Streamlit application is a modern, cloud‑safe version of the original Java EmailIsolationMenu framework.
         </h5>
     </div>
     """,
