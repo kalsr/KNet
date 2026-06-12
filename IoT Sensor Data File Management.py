@@ -34,7 +34,7 @@ st.markdown(
             IoT Sensor Data File Management Application Platform
         </h1>
         <h4 style="color:white;text-align:center;margin-top:0;">
-            Developed by Randy Singh, Technology Innovation Team (DISA/BDE5)
+            Developed by Randy Singh, Kalsnet(KNet) Consulting Group.
         </h4>
     </div>
     """,
