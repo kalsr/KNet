@@ -1,0 +1,216 @@
+,,Locaton,New Cases,Cumul. Cases,New Deaths,Cumul. Deaths,Death Rate,% Case Growth daily,% Deaths Growth daily,Week,Month,Country,GeoRegion,Note,CountryPopulation,Density p/km,Cases % population
+,,United States,"2,244","468,895",87,"16,697",3.561,0,1,Week 19 Apr 05 - Apr 11,2020 April,United States,North America,,331002651,36,0.142
+,,Spain,"3,800","157,022",396,"15,843",10.09,2,3,Week 19 Apr 05 - Apr 11,2020 April,Spain,Europe,,46754778,94,0.336
+,,Italy,0,"143,626",0,"18,279",12.727,0,0,Week 19 Apr 05 - Apr 11,2020 April,Italy,Europe,,60461826,206,0.238
+,,Germany,0,"118,235",0,"2,607",2.205,0,0,Week 19 Apr 05 - Apr 11,2020 April,Germany,Europe,,83783942,240,0.141
+,,France,0,"117,749",0,"12,210",10.37,0,0,Week 19 Apr 05 - Apr 11,2020 April,France,Europe,,65273511,119,0.18
+,,China,42,"81,907",1,"3,336",4.073,0,0,Week 19 Apr 05 - Apr 11,2020 April,China,Asia,,1439323776,153,0.006
+,,Iran,"1,972","68,192",122,"4,232",6.206,3,3,Week 19 Apr 05 - Apr 11,2020 April,Iran,Middle East,,83992949,52,0.081
+,,United Kingdom,0,"65,077",0,"7,978",12.259,0,0,Week 19 Apr 05 - Apr 11,2020 April,United Kingdom,Europe,,67886011,281,0.096
+,,Turkey,0,"42,282",0,908,2.147,0,0,Week 19 Apr 05 - Apr 11,2020 April,Turkey,Europe,,84339067,110,0.05
+,,Belgium,"1,684","26,667",496,"3,019",11.321,7,20,Week 19 Apr 05 - Apr 11,2020 April,Belgium,Europe,,11589623,383,0.23
+,,Switzerland,121,"24,172",10,958,3.963,1,1,Week 19 Apr 05 - Apr 11,2020 April,Switzerland,Europe,,8654622,219,0.279
+,,Netherlands,0,"21,762",0,"2,396",11.01,0,0,Week 19 Apr 05 - Apr 11,2020 April,Netherlands,Europe,,17134872,508,0.127
+,,Canada,0,"20,765",0,509,2.451,0,0,Week 19 Apr 05 - Apr 11,2020 April,Canada,North America,,37742154,4,0.055
+,,Brazil,31,"18,176",3,957,5.265,0,0,Week 19 Apr 05 - Apr 11,2020 April,Brazil,South America,,212559417,25,0.009
+,,Portugal,0,"13,956",0,409,2.931,0,0,Week 19 Apr 05 - Apr 11,2020 April,Portugal,Europe,,10196709,111,0.137
+,,Austria,187,"13,431",24,319,2.375,1,8,Week 19 Apr 05 - Apr 11,2020 April,Austria,Europe,,9006398,109,0.149
+,,Russia,"1,786","11,917",18,94,0.789,18,24,Week 19 Apr 05 - Apr 11,2020 April,Russia,Europe,,145934462,9,0.008
+,,South Korea,27,"10,450",4,208,1.99,0,2,Week 19 Apr 05 - Apr 11,2020 April,South Korea,Asia,,51269185,527,0.02
+,,Israel,127,"10,095",6,92,0.911,1,7,Week 19 Apr 05 - Apr 11,2020 April,Israel,Middle East,,8655535,400,0.117
+,,Sweden,0,"9,141",0,793,8.675,0,0,Week 19 Apr 05 - Apr 11,2020 April,Sweden,Europe,,10099265,25,0.091
+,,India,46,"6,771",2,228,3.367,1,1,Week 19 Apr 05 - Apr 11,2020 April,India,Asia,,1380004385,464,0
+,,Ireland,0,"6,574",0,263,4.001,0,0,Week 19 Apr 05 - Apr 11,2020 April,Ireland,Europe,,4937786,72,0.133
+,,Norway,0,"6,219",0,108,1.737,0,0,Week 19 Apr 05 - Apr 11,2020 April,Norway,Europe,,5421241,15,0.115
+,,Australia,51,"6,203",2,53,0.854,1,4,Week 19 Apr 05 - Apr 11,2020 April,Australia,Oceania,,25499884,3,0.024
+,,Chile,0,"5,972",0,57,0.954,0,0,Week 19 Apr 05 - Apr 11,2020 April,Chile,South America,,19116201,26,0.031
+,,Poland,167,"5,742",1,175,3.048,3,1,Week 19 Apr 05 - Apr 11,2020 April,Poland,Europe,,37846611,124,0.015
+,,Denmark,0,"5,635",0,237,4.206,0,0,Week 19 Apr 05 - Apr 11,2020 April,Denmark,Europe,,5792202,137,0.097
+,,Czech Republic,20,"5,589",1,113,2.022,0,1,Week 19 Apr 05 - Apr 11,2020 April,Czech Republic,Europe,,10708981,139,0.052
+,,Japan,863,"5,530",5,99,1.79,18,5,Week 19 Apr 05 - Apr 11,2020 April,Japan,Asia,,126476461,347,0.004
+,,Romania,265,"5,467",17,265,4.847,5,7,Week 19 Apr 05 - Apr 11,2020 April,Romania,Europe,,19237691,84,0.028
+,,Peru,0,"5,256",0,138,2.626,0,0,Week 19 Apr 05 - Apr 11,2020 April,Peru,South America,,32971854,26,0.016
+,,Ecuador,0,"4,965",0,272,5.478,0,0,Week 19 Apr 05 - Apr 11,2020 April,Ecuador,South America,,17643054,71,0.028
+,,Pakistan,112,"4,601",1,66,1.434,2,2,Week 19 Apr 05 - Apr 11,2020 April,Pakistan,Asia,,220892340,287,0.002
+,,Malaysia,118,"4,346",3,70,1.611,3,4,Week 19 Apr 05 - Apr 11,2020 April,Malaysia,Asia,,32365999,99,0.013
+,,Philippines,119,"4,195",18,221,5.268,3,9,Week 19 Apr 05 - Apr 11,2020 April,Philippines,Asia,,109581078,368,0.004
+,,Indonesia,219,"3,512",26,306,8.713,7,9,Week 19 Apr 05 - Apr 11,2020 April,Indonesia,Asia,,273523615,151,0.001
+,,Mexico,260,"3,441",20,194,5.638,8,11,Week 19 Apr 05 - Apr 11,2020 April,Mexico,North America,,128932753,66,0.003
+,,Saudi Arabia,0,"3,287",0,44,1.339,0,0,Week 19 Apr 05 - Apr 11,2020 April,Saudi Arabia,Asia,,34813871,16,0.009
+,,Luxembourg,0,"3,115",0,52,1.669,0,0,Week 19 Apr 05 - Apr 11,2020 April,Luxembourg,Europe,,625978,242,0.498
+,,UAE,0,"2,990",0,14,0.468,0,0,Week 19 Apr 05 - Apr 11,2020 April,United Arab Emirates,Middle East,,9890402,118,0.03
+,,Serbia,0,"2,867",0,66,2.302,0,0,Week 19 Apr 05 - Apr 11,2020 April,Serbia,Europe,,8737371,100,0.033
+,,Finland,164,"2,769",6,48,1.733,6,14,Week 19 Apr 05 - Apr 11,2020 April,Finland,Europe,,5540720,18,0.05
+,,Panama,0,"2,752",0,66,2.398,0,0,Week 19 Apr 05 - Apr 11,2020 April,Panama,Central America,,4314767,58,0.064
+,,Qatar,136,"2,512",0,6,0.239,6,0,Week 19 Apr 05 - Apr 11,2020 April,Qatar,Middle East,,2881053,248,0.087
+,,Thailand,50,"2,473",1,33,1.334,2,3,Week 19 Apr 05 - Apr 11,2020 April,Thailand,Asia,,69799978,137,0.004
+,,Dominican Republic,0,"2,349",0,118,5.023,0,0,Week 19 Apr 05 - Apr 11,2020 April,Dominican Republic,Caribbean,,10847910,225,0.022
+,,Colombia,0,"2,223",0,69,3.104,0,0,Week 19 Apr 05 - Apr 11,2020 April,Colombia,South America,,50882891,46,0.004
+,,Ukraine,311,"2,203",12,69,3.132,16,21,Week 19 Apr 05 - Apr 11,2020 April,Ukraine,Europe,,43733762,75,0.005
+,,Belarus,495,"1,981",3,19,0.959,33,19,Week 19 Apr 05 - Apr 11,2020 April,Belarus,Europe,,9449323,47,0.021
+,,Greece,0,"1,955",0,87,4.45,0,0,Week 19 Apr 05 - Apr 11,2020 April,Greece,Europe,,10423054,81,0.019
+,,South Africa,0,"1,934",0,18,0.931,0,0,Week 19 Apr 05 - Apr 11,2020 April,South Africa,Africa,,59308690,49,0.003
+,,Singapore,0,"1,910",-1,6,0.314,0,-14,Week 19 Apr 05 - Apr 11,2020 April,Singapore,Asia,,5850342,8358,0.033
+,,Argentina,0,"1,894",0,79,4.171,0,0,Week 19 Apr 05 - Apr 11,2020 April,Argentina,South America,,45195774,17,0.004
+,,Egypt,0,"1,699",0,118,6.945,0,0,Week 19 Apr 05 - Apr 11,2020 April,Egypt,Africa,,102334404,103,0.002
+,,Algeria,0,"1,666",0,235,14.106,0,0,Week 19 Apr 05 - Apr 11,2020 April,Algeria,Africa,,43851044,18,0.004
+,,Iceland,0,"1,648",0,6,0.364,0,0,Week 19 Apr 05 - Apr 11,2020 April,Iceland,Europe,,341243,3,0.483
+,,Morocco,57,"1,431",8,105,7.338,4,8,Week 19 Apr 05 - Apr 11,2020 April,Morocco,Africa,,36910560,83,0.004
+,,Croatia,0,"1,407",0,20,1.421,0,0,Week 19 Apr 05 - Apr 11,2020 April,Croatia,Europe,,4105267,73,0.034
+,,Moldova,0,"1,289",0,29,2.25,0,0,Week 19 Apr 05 - Apr 11,2020 April,Moldova,Europe,,4033963,123,0.032
+,,New Zealand,44,"1,283",1,2,0.156,4,100,Week 19 Apr 05 - Apr 11,2020 April,New Zealand,Oceania,,4822233,18,0.027
+,,Estonia,51,"1,258",0,24,1.908,4,0,Week 19 Apr 05 - Apr 11,2020 April,Estonia,Europe,,1326535,31,0.095
+,,Iraq,0,"1,232",0,69,5.601,0,0,Week 19 Apr 05 - Apr 11,2020 April,Iraq,Middle East,,40222493,93,0.003
+,,Hungary,210,"1,190",11,77,6.471,21,17,Week 19 Apr 05 - Apr 11,2020 April,Hungary,Europe,,9660351,107,0.012
+,,Slovenia,36,"1,160",2,45,3.879,3,5,Week 19 Apr 05 - Apr 11,2020 April,Slovenia,Europe,,2078938,103,0.056
+,,Lithuania,44,999,6,22,2.202,5,38,Week 19 Apr 05 - Apr 11,2020 April,Lithuania,Europe,,2722289,43,0.037
+,,Kuwait,83,993,0,1,0.101,9,0,Week 19 Apr 05 - Apr 11,2020 April,Kuwait,Middle East,,4270571,240,0.023
+,,Hong Kong,16,990,0,4,0.404,2,0,Week 19 Apr 05 - Apr 11,2020 April,"REGIONS, Hong Kong","Asia, Asia",,7496981,7140,0.013
+,,Armenia,16,937,1,11,1.174,2,10,Week 19 Apr 05 - Apr 11,2020 April,Armenia,Asia,,2963243,104,0.032
+,,Azerbaijan,0,926,0,9,0.972,0,0,Week 19 Apr 05 - Apr 11,2020 April,Azerbaijan,Asia,,10139177,123,0.009
+,,Bahrain,0,887,0,5,0.564,0,0,Week 19 Apr 05 - Apr 11,2020 April,Bahrain,Middle East,,1701575,2239,0.052
+,,Bosnia and Herzegovina,17,875,0,35,4,2,0,Week 19 Apr 05 - Apr 11,2020 April,Bosnia and Herzegovina,Europe,,3280819,64,0.027
+,,Cameroon,73,803,2,12,1.494,10,20,Week 19 Apr 05 - Apr 11,2020 April,Cameroon,Africa,,26545863,56,0.003
+,,Kazakhstan,21,802,1,9,1.122,3,13,Week 19 Apr 05 - Apr 11,2020 April,Kazakhstan,Asia,,18776707,7,0.004
+,,Diamond Princess,0,712,0,11,1.545,0,0,Week 19 Apr 05 - Apr 11,2020 April,Cruise Ship,Cruise ship,,,,Infinity
+,,Slovakia,0,701,0,2,0.285,0,0,Week 19 Apr 05 - Apr 11,2020 April,Slovakia,Europe,,5459642,114,0.013
+,,North Macedonia,0,663,0,30,4.525,0,0,Week 19 Apr 05 - Apr 11,2020 April,North Macedonia,Europe,,2083374,83,0.032
+,,Tunisia,0,643,0,25,3.888,0,0,Week 19 Apr 05 - Apr 11,2020 April,Tunisia,Africa,,11818619,76,0.005
+,,Bulgaria,6,624,0,24,3.846,1,0,Week 19 Apr 05 - Apr 11,2020 April,Bulgaria,Europe,,6948445,64,0.009
+,,Uzbekistan,42,624,0,3,0.481,7,0,Week 19 Apr 05 - Apr 11,2020 April,Uzbekistan,Asia,,33469203,79,0.002
+,,Latvia,23,612,0,3,0.49,4,0,Week 19 Apr 05 - Apr 11,2020 April,Latvia,Europe,,1886198,30,0.032
+,,Lebanon,27,609,1,20,3.284,5,5,Week 19 Apr 05 - Apr 11,2020 April,Lebanon,Middle East,,6825445,667,0.009
+,,Andorra,0,583,0,25,4.288,0,0,Week 19 Apr 05 - Apr 11,2020 April,Andorra,Europe,,77265,164,0.755
+,,Cyprus,0,564,0,10,1.773,0,0,Week 19 Apr 05 - Apr 11,2020 April,Cyprus,Europe,,1207359,131,0.047
+,,Costa Rica,0,539,0,3,0.557,0,0,Week 19 Apr 05 - Apr 11,2020 April,Costa Rica,Central America,,5094118,100,0.011
+,,Afghanistan,37,521,0,15,2.879,8,0,Week 19 Apr 05 - Apr 11,2020 April,Afghanistan,Middle East,,38928346,60,0.001
+,,Cuba,0,515,0,15,2.913,0,0,Week 19 Apr 05 - Apr 11,2020 April,Cuba,Caribbean,,11326616,106,0.005
+,,Oman,27,484,0,3,0.62,6,0,Week 19 Apr 05 - Apr 11,2020 April,Oman,Middle East,,5106626,16,0.009
+,,Uruguay,17,473,0,7,1.48,4,0,Week 19 Apr 05 - Apr 11,2020 April,Uruguay,South America,,3473730,20,0.014
+,,Ivory Coast,0,444,0,3,0.676,0,0,Week 19 Apr 05 - Apr 11,2020 April,C“te d'Ivoire,Africa,,26378274,83,0.002
+,,Burkina Faso,0,443,0,24,5.418,0,0,Week 19 Apr 05 - Apr 11,2020 April,Burkina Faso,Africa,,20903273,76,0.002
+,,Bangladesh,94,424,6,27,6.368,28,29,Week 19 Apr 05 - Apr 11,2020 April,Bangladesh,Asia,,164689383,1265,0
+,,Albania,7,416,0,23,5.529,2,0,Week 19 Apr 05 - Apr 11,2020 April,Albania,Europe,,2877797,105,0.014
+,,Niger,0,410,0,11,2.683,0,0,Week 19 Apr 05 - Apr 11,2020 April,Niger,Africa,,24206644,19,0.002
+,,Taiwan,2,382,1,6,1.571,1,20,Week 19 Apr 05 - Apr 11,2020 April,"REGIONS, Taiwan","Asia, Asia",,23816775,673,0.002
+,,Honduras,39,382,0,23,6.021,11,0,Week 19 Apr 05 - Apr 11,2020 April,Honduras,Central America,,9904607,89,0.004
+,,Ghana,0,378,0,6,1.587,0,0,Week 19 Apr 05 - Apr 11,2020 April,Ghana,Africa,,31072940,137,0.001
+,,Jordan,0,372,0,7,1.882,0,0,Week 19 Apr 05 - Apr 11,2020 April,Jordan,Middle East,,10203134,115,0.004
+,,R‚union,0,362,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,R‚union,Africa,,895312,358,0.04
+,,Channel Islands,0,361,0,8,2.216,0,0,Week 19 Apr 05 - Apr 11,2020 April,Channel Islands,Europe,,173863,915,0.208
+,,Malta,13,350,0,2,0.571,4,0,Week 19 Apr 05 - Apr 11,2020 April,Malta,Europe,,441543,1380,0.079
+,,San Marino,0,333,0,34,10.21,0,0,Week 19 Apr 05 - Apr 11,2020 April,San Marino,Europe,,33931,566,0.981
+,,Mauritius,0,314,2,9,2.866,0,29,Week 19 Apr 05 - Apr 11,2020 April,Mauritius,Africa,,1271768,626,0.025
+,,Kyrgyzstan,18,298,1,5,1.678,6,25,Week 19 Apr 05 - Apr 11,2020 April,Kyrgyzstan,Asia,,6524195,34,0.005
+,,Nigeria,0,288,0,7,2.431,0,0,Week 19 Apr 05 - Apr 11,2020 April,Nigeria,Africa,,206139589,226,0
+,,Bolivia,4,268,1,19,7.09,2,6,Week 19 Apr 05 - Apr 11,2020 April,Bolivia,South America,,11673021,11,0.002
+,,Palestine,3,266,1,2,0.752,1,100,Week 19 Apr 05 - Apr 11,2020 April,Palestine,Asia,,5101414,847,0.005
+,,Senegal,15,265,0,2,0.755,6,0,Week 19 Apr 05 - Apr 11,2020 April,Senegal,Africa,,16743927,87,0.002
+,,Vietnam,2,257,0,0,0,1,,Week 19 Apr 05 - Apr 11,2020 April,Vietnam,Asia,,97338579,314,0
+,,Montenegro,3,255,0,2,0.784,1,0,Week 19 Apr 05 - Apr 11,2020 April,Montenegro,Europe,,628066,47,0.041
+,,Georgia,12,230,0,3,1.304,6,0,Week 19 Apr 05 - Apr 11,2020 April,Georgia,Asia,,3989167,57,0.006
+,,DRC,35,215,2,20,9.302,19,11,Week 19 Apr 05 - Apr 11,2020 April,Democratic Republic of the Congo,Africa,,89561403,40,0
+,,Guinea,0,194,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Guinea,Africa,,13132795,53,0.001
+,,Isle of Man,0,190,0,1,0.526,0,0,Week 19 Apr 05 - Apr 11,2020 April,Isle of Man,Europe,,85033,149,0.223
+,,Sri Lanka,0,190,0,7,3.684,0,0,Week 19 Apr 05 - Apr 11,2020 April,Sri Lanka,Asia,,21413249,341,0.001
+,,Mayotte,2,186,0,2,1.075,1,0,Week 19 Apr 05 - Apr 11,2020 April,Mayotte,Africa,,272815,728,0.068
+,,Kenya,0,184,0,7,3.804,0,0,Week 19 Apr 05 - Apr 11,2020 April,Kenya,Africa,,53771296,94,0
+,,Faroe Islands,0,184,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Faroe Islands,Europe,,48863,35,0.377
+,,Venezuela,0,171,0,9,5.263,0,0,Week 19 Apr 05 - Apr 11,2020 April,Venezuela,South America,,28435940,32,0.001
+,,Martinique,0,154,0,6,3.896,0,0,Week 19 Apr 05 - Apr 11,2020 April,Martinique,Caribbean,,375265,354,0.041
+,,Guadeloupe,0,143,0,8,5.594,0,0,Week 19 Apr 05 - Apr 11,2020 April,Guadeloupe,Caribbean,,400124,237,0.036
+,,Djibouti,0,140,0,1,0.714,0,0,Week 19 Apr 05 - Apr 11,2020 April,Djibouti,Africa,,988000,43,0.014
+,,Brunei,1,136,0,1,0.735,1,0,Week 19 Apr 05 - Apr 11,2020 April,Brunei,Asia,,437479,83,0.031
+,,Paraguay,5,129,1,6,4.651,4,20,Week 19 Apr 05 - Apr 11,2020 April,Paraguay,South America,,7132538,18,0.002
+,,Guatemala,31,126,0,3,2.381,33,0,Week 19 Apr 05 - Apr 11,2020 April,Guatemala,Central America,,17915568,167,0.001
+,,Gibraltar,0,123,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Gibraltar,Europe,,33691,3369,0.365
+,,Cambodia,0,119,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Cambodia,Asia,,16718965,95,0.001
+,,El Salvador,14,117,0,6,5.128,14,0,Week 19 Apr 05 - Apr 11,2020 April,El Salvador,Central America,,6486205,313,0.002
+,,Rwanda,0,113,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Rwanda,Africa,,12952218,525,0.001
+,,Trinidad and Tobago,0,109,0,8,7.339,0,0,Week 19 Apr 05 - Apr 11,2020 April,Trinidad and Tobago,Caribbean,,1399488,273,0.008
+,,Madagascar,0,93,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Madagascar,Africa,,27691018,48,0
+,,Monaco,0,84,0,1,1.19,0,0,Week 19 Apr 05 - Apr 11,2020 April,Monaco,Europe,,39242,,0.214
+,,Aruba,0,82,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Aruba,Caribbean,,106766,593,0.077
+,,Liechtenstein,0,78,0,1,1.282,0,0,Week 19 Apr 05 - Apr 11,2020 April,Liechtenstein,Europe,,38128,238,0.205
+,,Togo,3,76,0,3,3.947,4,0,Week 19 Apr 05 - Apr 11,2020 April,Togo,Africa,,8278724,152,0.001
+,,Mali,0,74,0,7,9.459,0,0,Week 19 Apr 05 - Apr 11,2020 April,Mali,Africa,,20250833,17,0
+,,Barbados,0,66,0,3,4.545,0,0,Week 19 Apr 05 - Apr 11,2020 April,Barbados,Caribbean,,287375,668,0.023
+,,Ethiopia,9,65,0,2,3.077,16,0,Week 19 Apr 05 - Apr 11,2020 April,Ethiopia,Africa,,114963588,115,0
+,,Jamaica,0,63,0,4,6.349,0,0,Week 19 Apr 05 - Apr 11,2020 April,Jamaica,Caribbean,,2961167,273,0.002
+,,Congo,0,60,0,5,8.333,0,0,Week 19 Apr 05 - Apr 11,2020 April,Republic of the Congo,Africa,,5518087,16,0.001
+,,Uganda,0,53,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Uganda,Africa,,45741007,229,0
+,,French Polynesia,0,51,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,French Polynesia,Oceania,,280908,77,0.018
+,,Sint Maarten,7,50,2,8,16,16,33,Week 19 Apr 05 - Apr 11,2020 April,Sint Maarten,Caribbean,,42876,1261,0.117
+,,Bermuda,0,48,0,4,8.333,0,0,Week 19 Apr 05 - Apr 11,2020 April,Bermuda,Caribbean,,62278,1246,0.077
+,,Macau,0,45,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,"REGIONS, Macau","Asia, Asia",,649335,21645,0.007
+,,Cayman Islands,0,45,0,1,2.222,0,0,Week 19 Apr 05 - Apr 11,2020 April,Cayman Islands,Caribbean,,65722,274,0.068
+,,Gabon,0,44,0,1,2.273,0,0,Week 19 Apr 05 - Apr 11,2020 April,Gabon,Africa,,2225734,9,0.002
+,,Bahamas,0,41,0,8,19.512,0,0,Week 19 Apr 05 - Apr 11,2020 April,Bahamas,Caribbean,,393244,39,0.01
+,,Zambia,0,39,1,2,5.128,0,100,Week 19 Apr 05 - Apr 11,2020 April,Zambia,Africa,,18383955,25,0
+,,Guyana,0,37,0,6,16.216,0,0,Week 19 Apr 05 - Apr 11,2020 April,Guyana,South America,,786552,4,0.005
+,,Guinea-Bissau,0,36,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Guinea-Bissau,Africa,,1968001,70,0.002
+,,Eritrea,0,33,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Eritrea,Africa,,3546421,35,0.001
+,,Saint Martin,0,32,0,2,6.25,0,0,Week 19 Apr 05 - Apr 11,2020 April,Saint Martin,Caribbean,,38666,53,0.083
+,,Liberia,0,31,0,4,12.903,0,0,Week 19 Apr 05 - Apr 11,2020 April,Liberia,Africa,,5057681,53,0.001
+,,Haiti,0,30,0,2,6.667,0,0,Week 19 Apr 05 - Apr 11,2020 April,Haiti,Caribbean,,11402528,414,0
+,,Myanmar,4,27,0,3,11.111,17,0,Week 19 Apr 05 - Apr 11,2020 April,Myanmar,Asia,,54409800,83,0
+,,Benin,0,26,0,1,3.846,0,0,Week 19 Apr 05 - Apr 11,2020 April,Benin,Africa,,12123200,108,0
+,,Tanzania,0,25,0,1,4,0,0,Week 19 Apr 05 - Apr 11,2020 April,Tanzania,Africa,,59734218,67,0
+,,Libya,0,24,0,1,4.167,0,0,Week 19 Apr 05 - Apr 11,2020 April,Libya,Africa,,6871292,4,0
+,,Maldives,0,19,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Maldives,Asia,,540544,1802,0.004
+,,Angola,0,19,0,2,10.526,0,0,Week 19 Apr 05 - Apr 11,2020 April,Angola,Africa,,32866272,26,0
+,,Syria,0,19,0,2,10.526,0,0,Week 19 Apr 05 - Apr 11,2020 April,Syria,Middle East,,17500658,95,0
+,,Antigua and Barbuda,0,19,0,2,10.526,0,0,Week 19 Apr 05 - Apr 11,2020 April,Antigua and Barbuda,Caribbean,,97929,223,0.019
+,,New Caledonia,0,18,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,New Caledonia,Oceania,,285498,16,0.006
+,,Equatorial Guinea,0,18,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Equatorial Guinea,Africa,,1402985,50,0.001
+,,Mozambique,0,17,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Mozambique,Africa,,31255435,40,0
+,,Mongolia,0,16,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Mongolia,Asia,,3278290,2,0
+,,Dominica,1,16,0,0,0,7,,Week 19 Apr 05 - Apr 11,2020 April,Dominica,Caribbean,,71986,96,0.022
+,,Fiji,1,16,0,0,0,7,,Week 19 Apr 05 - Apr 11,2020 April,Fiji,Oceania,,896445,49,0.002
+,,Laos,0,16,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Laos,Asia,,7275560,32,0
+,,Namibia,0,16,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Namibia,Africa,,2540905,3,0.001
+,,Sudan,15,15,2,2,13.333,,,Week 19 Apr 05 - Apr 11,2020 April,Sudan,Africa,,43849260,25,0
+,,Cura‡ao,0,14,0,1,7.143,0,0,Week 19 Apr 05 - Apr 11,2020 April,Cura‡ao,Caribbean,,164093,370,0.009
+,,Saint Lucia,0,14,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Saint Lucia,Caribbean,,183627,301,0.008
+,,Botswana,0,13,0,1,7.692,0,0,Week 19 Apr 05 - Apr 11,2020 April,Botswana,Africa,,2351627,4,0.001
+,,Somalia,0,12,0,1,8.333,0,0,Week 19 Apr 05 - Apr 11,2020 April,Somalia,Africa,,15893222,25,0
+,,Eswatini,0,12,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,eSwatini,Africa,,1160164,67,0.001
+,,Grenada,0,12,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Grenada,Caribbean,,112523,331,0.011
+,,St. Vincent Grenadines,0,12,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Saint Vincent and the Grenadines,Caribbean,,110940,264,0.011
+,,Zimbabwe,0,11,0,3,27.273,0,0,Week 19 Apr 05 - Apr 11,2020 April,Zimbabwe,Africa,,14862924,38,0
+,,Chad,0,11,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Chad,Africa,,16425864,13,0
+,,Greenland,0,11,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Greenland,Europe,,56770,0,0.019
+,,Seychelles,0,11,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Seychelles,Africa,,98347,214,0.011
+,,Saint Kitts and Nevis,0,11,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Saint Kitts & Nevis,Caribbean,,53199,205,0.021
+,,Suriname,0,10,0,1,10,0,0,Week 19 Apr 05 - Apr 11,2020 April,Suriname,South America,,586632,4,0.002
+,,Nepal,0,9,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Nepal,Asia,,29136808,203,0
+,,Montserrat,0,9,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Montserrat,Caribbean,,4992,50,0.18
+,,Belize,0,9,0,1,11.111,0,0,Week 19 Apr 05 - Apr 11,2020 April,Belize,Central America,,397628,17,0.002
+,,Malawi,1,9,0,1,11.111,13,0,Week 19 Apr 05 - Apr 11,2020 April,Malawi,Africa,,19129952,203,0
+,,MS Zaandam,0,9,0,2,22.222,0,0,Week 19 Apr 05 - Apr 11,2020 April,Cruise Ship,Cruise ship,,,,Infinity
+,,CAR,0,8,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Central African Republic,Africa,,4829767,8,0
+,,Turks and Caicos,0,8,0,1,12.5,0,0,Week 19 Apr 05 - Apr 11,2020 April,Turks and Caicos Islands,Caribbean,,38717,41,0.021
+,,Vatican City,0,8,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Vatican City,Europe,,801,2,0.999
+,,Cabo Verde,0,7,0,1,14.286,0,0,Week 19 Apr 05 - Apr 11,2020 April,Cabo Verde,Africa,,,138,Infinity
+,,Mauritania,0,7,0,1,14.286,0,0,Week 19 Apr 05 - Apr 11,2020 April,Mauritania,Africa,,4649658,5,0
+,,Nicaragua,0,7,0,1,14.286,0,0,Week 19 Apr 05 - Apr 11,2020 April,Nicaragua,Central America,,6624554,55,0
+,,Sierra Leone,0,7,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Sierra Leone,Africa,,7976983,111,0
+,,St. Barth,0,6,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,St. Barth,Caribbean,,9877,470,0.061
+,,Bhutan,0,5,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Bhutan,Asia,,771608,20,0.001
+,,Falkland Islands,0,5,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Falkland Islands,South America,,3480,103,0.144
+,,Sao Tome and Principe,0,4,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Sao Tome and Principe,Africa,,219159,228,0.002
+,,Gambia,0,4,0,1,25,0,0,Week 19 Apr 05 - Apr 11,2020 April,Gambia,Africa,,2416668,239,0
+,,Western Sahara,0,4,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Western Sahara,Africa,,597339,2,0.001
+,,British Virgin Islands,0,3,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,British Virgin Islands,Caribbean,,30231,202,0.01
+,,South Sudan,0,3,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,South Sudan,Africa,,11193725,18,0
+,,Burundi,0,3,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Burundi,Africa,,11890784,463,0
+,,Anguilla,0,3,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Anguilla,Caribbean,,15003,167,0.02
+,,Caribbean Netherlands,0,2,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Netherlands Antilles,Caribbean,,,,Infinity
+,,Papua New Guinea,0,2,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,Papua New Guinea,Oceania,,8947024,20,0
+,,Timor-Leste,1,2,0,0,0,100,,Week 19 Apr 05 - Apr 11,2020 April,East Timor,Oceania,,1318445,89,0
+,,Saint Pierre Miquelon,0,1,0,0,0,0,,Week 19 Apr 05 - Apr 11,2020 April,St Pierre and Miquelon,Caribbean,,5794,25,0.017
+,,Yemen,1,1,0,0,0,,,Week 19 Apr 05 - Apr 11,,Yemen,Middle East,,29825964,56,0
+,,French Guiana,0,,0,,,,,Week 19 Apr 05 - Apr 11,2020 April,French Guiana,South America,,298682,4,0
+,,Guam,0,,0,,,,,Week 19 Apr 05 - Apr 11,2020 April,Guam,Asia,,168775,313,0
+,,Puerto Rico,0,,0,,,,,Week 19 Apr 05 - Apr 11,2020 April,Puerto Rico,Caribbean,,2860853,323,0
+,,U.S. Virgin Islands,0,,0,,,,,Week 19 Apr 05 - Apr 11,2020 April,US Virgin Islands,Caribbean,,104425,298,0
