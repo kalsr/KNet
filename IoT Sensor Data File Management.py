@@ -46,7 +46,7 @@ st.markdown(
     This application manages IoT sensor data files inside a cloud‑safe `workspace/` folder.  
     All file operations (create, read, delete, copy, append, size, metadata) occur inside this workspace,  
     ensuring compatibility with Streamlit Cloud, Windows, Linux, and macOS.  
-    Uploaded files are stored in `workspace/uploads/`, and created files are stored in `workspace/files/`.
+    Uploaded files are stored in `workspace/uploads/`, and created/copied files are stored in `workspace/files/`.
     """
 )
 
@@ -278,25 +278,54 @@ def generate_synthetic_data(n):
 synthetic_data = generate_synthetic_data(record_count)
 
 # ---------------------------------------------------------
-# Sidebar: workspace browser + uploader
+# Sidebar: workspace browser + uploader (A, B, C, D)
 # ---------------------------------------------------------
 st.sidebar.markdown("---")
 st.sidebar.subheader("Workspace Directory Browser")
 
-workspace_files = sorted(os.listdir(FILES_DIR))
-st.sidebar.write(f"Files in workspace/files ({len(workspace_files)}):")
-for f in workspace_files[:20]:
+files_in_files = sorted(os.listdir(FILES_DIR))
+files_in_uploads = sorted(os.listdir(UPLOADS_DIR))
+
+st.sidebar.write(f"Files in workspace/files ({len(files_in_files)}):")
+for f in files_in_files[:20]:
+    st.sidebar.write(f"- {f}")
+
+st.sidebar.write(f"Files in workspace/uploads ({len(files_in_uploads)}):")
+for f in files_in_uploads[:20]:
     st.sidebar.write(f"- {f}")
 
 st.sidebar.markdown("---")
 st.sidebar.subheader("Upload IoT Sensor Data File")
 
 uploaded_file_sidebar = st.sidebar.file_uploader("Upload a file")
+auto_move = st.sidebar.checkbox("Automatically copy uploaded files into workspace/files", value=True)
+
 if uploaded_file_sidebar:
-    save_path = os.path.join(UPLOADS_DIR, uploaded_file_sidebar.name)
-    with open(save_path, "wb") as f:
+    upload_path = os.path.join(UPLOADS_DIR, uploaded_file_sidebar.name)
+    with open(upload_path, "wb") as f:
         f.write(uploaded_file_sidebar.read())
-    st.sidebar.success(f"Uploaded to {save_path}")
+    st.sidebar.success(f"Uploaded to {upload_path}")
+
+    if auto_move:
+        dest_path = os.path.join(FILES_DIR, uploaded_file_sidebar.name)
+        try:
+            shutil.copy2(upload_path, dest_path)
+            st.sidebar.success(f"Copied to workspace/files as {uploaded_file_sidebar.name}")
+        except Exception as e:
+            st.sidebar.error(f"Error copying to workspace/files: {e}")
+
+# Manual move button (B)
+if len(files_in_uploads) > 0:
+    st.sidebar.markdown("Move uploaded file into workspace/files")
+    file_to_move = st.sidebar.selectbox("Select uploaded file", files_in_uploads)
+    if st.sidebar.button("Move selected uploaded file to workspace/files"):
+        src = os.path.join(UPLOADS_DIR, file_to_move)
+        dst = os.path.join(FILES_DIR, file_to_move)
+        try:
+            shutil.copy2(src, dst)
+            st.sidebar.success(f"Moved {file_to_move} to workspace/files")
+        except Exception as e:
+            st.sidebar.error(f"Error moving file: {e}")
 
 # ---------------------------------------------------------
 # Main layout
@@ -348,7 +377,7 @@ with col_left:
             else:
                 st.error("Please enter both subdirectory and file name.")
 
-    # 3. Read file (PATCHED)
+    # 3. Read file (safe, with all sources)
     elif selected_op["id"] == 3:
         st.markdown("### Read IoT Sensor Data File")
         st.markdown("You can read:")
