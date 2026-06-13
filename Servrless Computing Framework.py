@@ -815,7 +815,7 @@ def category_4_use_cases():
     }
 
     for uc, (desc, example) in use_cases.items():
-        with st.expander(f"📌 {uc}"):
+        with st.expander(f" {uc}"):
             st.write(desc)
             st.info(f"**Example:** {example}")
 
