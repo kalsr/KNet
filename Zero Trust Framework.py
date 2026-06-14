@@ -33,53 +33,99 @@ st.set_page_config(
 )
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  GLOBAL STYLES
+#  GLOBAL STYLES (Option A – Deep Blue Federal Theme)
 # ══════════════════════════════════════════════════════════════════════════════
-st.markdown("""
+st.markdown(
+    """
 <style>
+  body {
+      background-color: #f4f7fc;
+      font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  }
   .zt-title {
-      text-align: center; font-size: 2.4rem; font-weight: 900;
-      color: #0047AB; letter-spacing: 1px; margin-bottom: 0;
+      text-align: center; font-size: 2.6rem; font-weight: 900;
+      color: #003087; letter-spacing: 1px; margin-bottom: 0;
   }
   .zt-subtitle {
-      text-align: center; font-size: 1.05rem; font-weight: 700;
-      color: #0047AB; margin-top: 2px; margin-bottom: 4px;
+      text-align: center; font-size: 1.1rem; font-weight: 700;
+      color: #0047AB; margin-top: 4px; margin-bottom: 6px;
   }
   .zt-tagline {
-      text-align: center; color: #555; font-size: 0.88rem; margin-bottom: 18px;
+      text-align: center; color: #555; font-size: 0.9rem; margin-bottom: 20px;
   }
-  .zt-hr { border: 2px solid #0047AB; margin: 8px 0 18px 0; }
+  .zt-hr { border: 2px solid #0047AB; margin: 10px 0 22px 0; }
+
   .section-header {
-      background: linear-gradient(90deg, #0047AB 0%, #1a6fe8 100%);
-      color: white; padding: 8px 16px; border-radius: 6px;
-      font-weight: 700; font-size: 1.05rem; margin: 10px 0 6px 0;
+      background: linear-gradient(90deg, #003087 0%, #1a6fe8 100%);
+      color: white; padding: 10px 18px; border-radius: 8px;
+      font-weight: 700; font-size: 1.1rem; margin: 14px 0 10px 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.18);
   }
+
   .req-card {
       background: #f0f6ff; border-left: 4px solid #0047AB;
-      border-radius: 4px; padding: 10px 14px; margin: 6px 0; font-size: 0.92rem;
+      border-radius: 8px; padding: 10px 14px; margin: 6px 0;
+      font-size: 0.92rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   }
   .rec-card {
       background: #fff8e1; border-left: 4px solid #f0a500;
-      border-radius: 4px; padding: 10px 14px; margin: 6px 0; font-size: 0.92rem;
+      border-radius: 8px; padding: 10px 14px; margin: 6px 0;
+      font-size: 0.92rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   }
   .sol-card {
       background: #e8f5e9; border-left: 4px solid #2e7d32;
-      border-radius: 4px; padding: 10px 14px; margin: 6px 0; font-size: 0.92rem;
+      border-radius: 8px; padding: 10px 14px; margin: 6px 0;
+      font-size: 0.92rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   }
+
   div[data-testid="metric-container"] {
-      background: #f0f6ff; border: 1px solid #c2d9ff; border-radius: 8px; padding: 10px;
+      background: #f0f6ff; border: 1px solid #c2d9ff;
+      border-radius: 10px; padding: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   }
-  section[data-testid="stSidebar"] { background: #001a6b; }
-  section[data-testid="stSidebar"] * { color: #e8f0ff !important; }
+
+  section[data-testid="stSidebar"] {
+      background: #001a6b;
+  }
+  section[data-testid="stSidebar"] * {
+      color: #e8f0ff !important;
+  }
+  section[data-testid="stSidebar"] h1, section[data-testid="stSidebar"] h2 {
+      color: #ffffff !important;
+  }
+  .sidebar-box {
+      background: rgba(255,255,255,0.06);
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+  }
+  .sidebar-footer {
+      font-size: 0.8rem;
+      color: #cbd4ff;
+      text-align: center;
+      margin-top: 10px;
+  }
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  HEADER
 # ══════════════════════════════════════════════════════════════════════════════
-st.markdown('<p class="zt-title">ZERO-TRUST FRAMEWORK APPLICATION</p>', unsafe_allow_html=True)
-st.markdown('<p class="zt-subtitle">Developed by Randy Singh | KalSnet (KNet) Consulting Group</p>', unsafe_allow_html=True)
-st.markdown('<p class="zt-tagline">Based on DISA/BDE5 ZTA Working Group Requirements &amp; Use Cases &nbsp;|&nbsp; Originally authored April 2019</p>', unsafe_allow_html=True)
+st.markdown(
+    '<p class="zt-title">ZERO-TRUST FRAMEWORK APPLICATION</p>',
+    unsafe_allow_html=True,
+)
+st.markdown(
+    '<p class="zt-subtitle">Developed by Randy Singh | KalSnet (KNet) Consulting Group</p>',
+    unsafe_allow_html=True,
+)
+st.markdown(
+    '<p class="zt-tagline">Based on DISA/BDE5 ZTA Working Group Requirements &amp; Use Cases &nbsp;|&nbsp; Originally authored April 2019</p>',
+    unsafe_allow_html=True,
+)
 st.markdown('<hr class="zt-hr">', unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -245,19 +291,34 @@ ARCHITECTURAL_REQUIREMENTS = {
 EVALUATION_CRITERIA = {
     "Effectiveness": {
         "definition": "Ability to accomplish mission objectives and achievement of desired results -- aligned to ZTA requirements.",
-        "metrics": ["% of ZTA pillars fully implemented", "Mean Time to Detect (MTTD)", "Mean Time to Respond (MTTR)", "% reduction in lateral movement incidents"],
+        "metrics": [
+            "% of ZTA pillars fully implemented",
+            "Mean Time to Detect (MTTD)",
+            "Mean Time to Respond (MTTR)",
+            "% reduction in lateral movement incidents",
+        ],
         "target": ">= 90% pillar coverage; MTTD < 60 min; MTTR < 4 hrs",
         "recommendation": "Conduct quarterly ZTA maturity assessments against CISA ZT Maturity Model. Map every control to NIST SP 800-207.",
     },
     "Suitability": {
         "definition": "Ability of the solution to be supported in the intended operational environment, aligned to common operational requirements (automation, architecture, security).",
-        "metrics": ["Vendor SLA uptime (%)", "Integration API coverage (%)", "STIG compliance score (%)", "Number of supported identity protocols"],
+        "metrics": [
+            "Vendor SLA uptime (%)",
+            "Integration API coverage (%)",
+            "STIG compliance score (%)",
+            "Number of supported identity protocols",
+        ],
         "target": "99.9% uptime; 100% REST API coverage; STIG score >= 85%",
         "recommendation": "Evaluate solutions against DoD APL. Require vendor FIPS 140-2/3 certification. Include operational sustainment costs in TCO model.",
     },
     "Performance": {
         "definition": "Measure of system performance expressed in quantifiable form -- focused on deployment footprint and scalability.",
-        "metrics": ["Authentication latency (ms)", "Policy enforcement throughput (Gbps)", "Simultaneous sessions supported", "Auto-scale response time (sec)"],
+        "metrics": [
+            "Authentication latency (ms)",
+            "Policy enforcement throughput (Gbps)",
+            "Simultaneous sessions supported",
+            "Auto-scale response time (sec)",
+        ],
         "target": "Auth latency < 200ms; throughput >= 10 Gbps; >= 100K concurrent sessions",
         "recommendation": "Load-test at 150% of projected peak. Define auto-scaling triggers. Monitor with real-time dashboards (Grafana/Prometheus).",
     },
@@ -269,38 +330,69 @@ EVALUATION_CRITERIA = {
 @st.cache_data
 def generate_synthetic_data(n: int) -> pd.DataFrame:
     random.seed(42)
-    pillars = ["Identity & Auth", "Health & Compliance", "Authorization", "Accounting", "Segmentation", "Orchestration"]
-    device_types = ["Workstation", "Server", "Mobile", "IoT Sensor", "Network Device", "Cloud VM"]
-    departments = ["CYBERCOM", "DISA/BDE5", "TRANSCOM", "DIA", "NSA", "SOCOM", "CENTCOM", "EUCOM"]
+    pillars = [
+        "Identity & Auth",
+        "Health & Compliance",
+        "Authorization",
+        "Accounting",
+        "Segmentation",
+        "Orchestration",
+    ]
+    device_types = [
+        "Workstation",
+        "Server",
+        "Mobile",
+        "IoT Sensor",
+        "Network Device",
+        "Cloud VM",
+    ]
+    departments = [
+        "CYBERCOM",
+        "DISA/BDE5",
+        "TRANSCOM",
+        "DIA",
+        "NSA",
+        "SOCOM",
+        "CENTCOM",
+        "EUCOM",
+    ]
     statuses = ["Compliant", "Non-Compliant", "Remediation", "Pending Review"]
     status_weights = [0.60, 0.20, 0.12, 0.08]
-    os_list = ["Windows 11 STIG", "RHEL 9 STIG", "macOS Ventura", "Ubuntu 22.04 LTS", "Windows Server 2022"]
+    os_list = [
+        "Windows 11 STIG",
+        "RHEL 9 STIG",
+        "macOS Ventura",
+        "Ubuntu 22.04 LTS",
+        "Windows Server 2022",
+    ]
     base_date = datetime(2024, 1, 1)
     records = []
     for i in range(1, n + 1):
         status = random.choices(statuses, weights=status_weights)[0]
         score = random.randint(60, 100) if status == "Compliant" else random.randint(20, 59)
-        records.append({
-            "Record_ID": f"ZT-{i:04d}",
-            "Timestamp": base_date + timedelta(days=random.randint(0, 364), hours=random.randint(0, 23)),
-            "Pillar": random.choice(pillars),
-            "Device_Type": random.choice(device_types),
-            "Department": random.choice(departments),
-            "OS": random.choice(os_list),
-            "Compliance_Status": status,
-            "STIG_Score": score,
-            "Auth_Latency_ms": random.randint(45, 380),
-            "Patch_Age_Days": random.randint(0, 90),
-            "MFA_Enabled": random.choice([True, True, True, False]),
-            "Segmentation_Policy_Applied": random.choice([True, True, False]),
-            "Incident_Flagged": status == "Non-Compliant" and random.random() < 0.4,
-        })
+        records.append(
+            {
+                "Record_ID": f"ZT-{i:04d}",
+                "Timestamp": base_date
+                + timedelta(days=random.randint(0, 364), hours=random.randint(0, 23)),
+                "Pillar": random.choice(pillars),
+                "Device_Type": random.choice(device_types),
+                "Department": random.choice(departments),
+                "OS": random.choice(os_list),
+                "Compliance_Status": status,
+                "STIG_Score": score,
+                "Auth_Latency_ms": random.randint(45, 380),
+                "Patch_Age_Days": random.randint(0, 90),
+                "MFA_Enabled": random.choice([True, True, True, False]),
+                "Segmentation_Policy_Applied": random.choice([True, True, False]),
+                "Incident_Flagged": status == "Non-Compliant" and random.random() < 0.4,
+            }
+        )
     return pd.DataFrame(records)
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  EXPORT HELPERS
 # ══════════════════════════════════════════════════════════════════════════════
-
 def build_text_report(selected_category: str, content: dict) -> str:
     lines = [
         "=" * 80,
@@ -308,7 +400,8 @@ def build_text_report(selected_category: str, content: dict) -> str:
         "  Developed by Randy Singh | KalSnet (KNet) Consulting Group",
         f"  Category: {selected_category}",
         f"  Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-        "=" * 80, "",
+        "=" * 80,
+        "",
     ]
     for key, val in content.items():
         lines.append(f"[{key}]")
@@ -341,36 +434,36 @@ def build_json_report(selected_category: str, content: dict) -> str:
 
 
 def _pdf_safe(text: str) -> str:
-    """
-    Sanitise a string so it contains only Latin-1-encodable characters.
-    Replaces common Unicode symbols with ASCII equivalents, then drops
-    anything still outside Latin-1 (including emoji, box-drawing chars, etc.)
-    """
     replacements = [
-        ("\u2013", "-"), ("\u2014", "--"),
-        ("\u2018", "'"), ("\u2019", "'"),
-        ("\u201c", '"'), ("\u201d", '"'),
-        ("\u2026", "..."), ("\u2022", "*"),
-        ("\u00a0", " "), ("\u2265", ">="),
-        ("\u2264", "<="), ("\u00ae", "(R)"),
-        ("\u2122", "(TM)"), ("\u00e9", "e"),
-        ("\u00e8", "e"), ("\u00e0", "a"),
-        ("\u00fc", "u"), ("\u00f6", "o"),
-        ("\u00e4", "a"), ("\u00b0", " deg"),
-        ("\u00b7", "-"), ("\u2212", "-"),
+        ("\u2013", "-"),
+        ("\u2014", "--"),
+        ("\u2018", "'"),
+        ("\u2019", "'"),
+        ("\u201c", '"'),
+        ("\u201d", '"'),
+        ("\u2026", "..."),
+        ("\u2022", "*"),
+        ("\u00a0", " "),
+        ("\u2265", ">="),
+        ("\u2264", "<="),
+        ("\u00ae", "(R)"),
+        ("\u2122", "(TM)"),
+        ("\u00e9", "e"),
+        ("\u00e8", "e"),
+        ("\u00e0", "a"),
+        ("\u00fc", "u"),
+        ("\u00f6", "o"),
+        ("\u00e4", "a"),
+        ("\u00b0", " deg"),
+        ("\u00b7", "-"),
+        ("\u2212", "-"),
     ]
     for char, replacement in replacements:
         text = text.replace(char, replacement)
-    # Strip anything still outside Latin-1
     return text.encode("latin-1", errors="ignore").decode("latin-1")
 
 
 def build_pdf_bytes(selected_category: str, content: dict) -> bytes:
-    """
-    Build PDF and return bytes.
-    Handles both old fpdf2 (output()->str) and new fpdf2 (output()->bytearray).
-    Uses new_x/new_y API instead of deprecated ln= parameter.
-    """
     if not FPDF_AVAILABLE:
         return b""
     try:
@@ -378,19 +471,32 @@ def build_pdf_bytes(selected_category: str, content: dict) -> bytes:
         pdf.set_auto_page_break(auto=True, margin=15)
         pdf.add_page()
 
-        # Header
         pdf.set_font("Helvetica", "B", 16)
         pdf.set_text_color(0, 71, 171)
-        pdf.cell(0, 10, _pdf_safe("ZERO-TRUST FRAMEWORK APPLICATION"),
-                 new_x="LMARGIN", new_y="NEXT", align="C")
+        pdf.cell(
+            0,
+            10,
+            _pdf_safe("ZERO-TRUST FRAMEWORK APPLICATION"),
+            new_x="LMARGIN",
+            new_y="NEXT",
+            align="C",
+        )
 
         pdf.set_font("Helvetica", "B", 11)
-        pdf.cell(0, 7, _pdf_safe("Developed by Randy Singh | KalSnet (KNet) Consulting Group"),
-                 new_x="LMARGIN", new_y="NEXT", align="C")
+        pdf.cell(
+            0,
+            7,
+            _pdf_safe("Developed by Randy Singh | KalSnet (KNet) Consulting Group"),
+            new_x="LMARGIN",
+            new_y="NEXT",
+            align="C",
+        )
 
         pdf.set_font("Helvetica", "", 9)
         pdf.set_text_color(80, 80, 80)
-        ts = _pdf_safe(f"Category: {selected_category}   |   Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+        ts = _pdf_safe(
+            f"Category: {selected_category}   |   Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+        )
         pdf.cell(0, 6, ts, new_x="LMARGIN", new_y="NEXT", align="C")
 
         pdf.set_draw_color(0, 71, 171)
@@ -399,7 +505,6 @@ def build_pdf_bytes(selected_category: str, content: dict) -> bytes:
         pdf.line(10, y, 200, y)
         pdf.ln(6)
 
-        # Content
         for key, val in content.items():
             pdf.set_font("Helvetica", "B", 11)
             pdf.set_text_color(0, 71, 171)
@@ -414,7 +519,13 @@ def build_pdf_bytes(selected_category: str, content: dict) -> bytes:
             elif isinstance(val, dict):
                 for k2, v2 in val.items():
                     pdf.set_font("Helvetica", "B", 9)
-                    pdf.cell(0, 6, _pdf_safe(f"  {k2}:"), new_x="LMARGIN", new_y="NEXT")
+                    pdf.cell(
+                        0,
+                        6,
+                        _pdf_safe(f"  {k2}:"),
+                        new_x="LMARGIN",
+                        new_y="NEXT",
+                    )
                     pdf.set_font("Helvetica", "", 9)
                     if isinstance(v2, list):
                         for item in v2:
@@ -427,13 +538,11 @@ def build_pdf_bytes(selected_category: str, content: dict) -> bytes:
             pdf.ln(2)
 
         raw = pdf.output()
-        # fpdf2 >= 2.x returns bytearray; older versions returned a latin-1 str
         if isinstance(raw, (bytes, bytearray)):
             return bytes(raw)
         return raw.encode("latin-1")
 
     except Exception as exc:
-        # Return a minimal valid PDF with the error message instead of crashing
         try:
             fallback = FPDF()
             fallback.add_page()
@@ -453,13 +562,14 @@ def build_docx_bytes(selected_category: str, content: dict) -> bytes:
     try:
         doc = DocxDocument()
 
-        # Title
         t = doc.add_heading("ZERO-TRUST FRAMEWORK APPLICATION", 0)
         t.alignment = WD_ALIGN_PARAGRAPH.CENTER
         for run in t.runs:
             run.font.color.rgb = RGBColor(0, 71, 171)
 
-        sub = doc.add_paragraph("Developed by Randy Singh | KalSnet (KNet) Consulting Group")
+        sub = doc.add_paragraph(
+            "Developed by Randy Singh | KalSnet (KNet) Consulting Group"
+        )
         sub.alignment = WD_ALIGN_PARAGRAPH.CENTER
         if sub.runs:
             sub.runs[0].bold = True
@@ -497,7 +607,6 @@ def build_docx_bytes(selected_category: str, content: dict) -> bytes:
         return buf.getvalue()
 
     except Exception as exc:
-        # Return an error document instead of crashing
         try:
             doc = DocxDocument()
             doc.add_paragraph(f"Word export error: {exc}")
@@ -508,11 +617,12 @@ def build_docx_bytes(selected_category: str, content: dict) -> bytes:
             return b""
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  SIDEBAR — NAVIGATION
+#  SIDEBAR — NAVIGATION & EXPORT
 # ══════════════════════════════════════════════════════════════════════════════
 with st.sidebar:
     st.markdown("## ZTA Navigator")
     st.markdown("---")
+
     category = st.selectbox(
         "Select Framework Category",
         [
@@ -524,376 +634,344 @@ with st.sidebar:
             "Synthetic Data & Analytics",
         ],
     )
+
     st.markdown("---")
+    st.markdown('<div class="sidebar-box">', unsafe_allow_html=True)
     st.markdown("**About**")
     st.markdown("Randy Singh  \nComputer Scientist  \nDISA / BDE5  \nKalSnet (KNet) Consulting")
     st.markdown("`(301) 225-9535`")
+    st.markdown("</div>", unsafe_allow_html=True)
 
-# ══════════════════════════════════════════════════════════════════════════════
-#  SIDEBAR — EXPORT
-# ══════════════════════════════════════════════════════════════════════════════
-def get_export_content(cat: str) -> dict:
-    if "Functional" in cat:
-        return {
-            k: {
-                "Requirement": v["requirement"],
-                "Example": v["example"],
-                "Solution": v["solution"],
-                "Recommendation": v["recommendation"],
-            }
-            for k, v in FUNCTIONAL_REQUIREMENTS.items()
-        }
-    elif "Use Case" in cat:
-        return USE_CASES
-    elif "Architectural" in cat:
-        return ARCHITECTURAL_REQUIREMENTS
-    elif "Evaluation" in cat:
-        return {
-            k: {
-                "Definition": v["definition"],
-                "Metrics": v["metrics"],
-                "Target": v["target"],
-                "Recommendation": v["recommendation"],
-            }
-            for k, v in EVALUATION_CRITERIA.items()
-        }
-    else:
-        return {"Framework": "Zero-Trust Architecture", "Version": "2.0", "Author": "Randy Singh / KNet"}
+    st.markdown('<div class="sidebar-box">', unsafe_allow_html=True)
+    st.markdown("**Export Current View**")
 
-
-with st.sidebar:
-    st.markdown("---")
-    st.markdown("### Export Results")
-
-    exp_content = get_export_content(category)
-    clean_cat = (category
-                 .replace("1. ", "").replace("2. ", "").replace("3. ", "").replace("4. ", ""))
-
-    # Text — always available
-    txt_data = build_text_report(clean_cat, exp_content)
-    st.download_button(
-        "Export as Text (.txt)",
-        data=txt_data,
-        file_name="zt_framework.txt",
-        mime="text/plain",
-        use_container_width=True,
+    export_format = st.radio(
+        "Format",
+        ["Text", "JSON", "PDF", "Word"],
+        index=0,
+        key="export_format",
     )
 
-    # JSON — always available
-    json_data = build_json_report(clean_cat, exp_content)
-    st.download_button(
-        "Export as JSON (.json)",
-        data=json_data,
-        file_name="zt_framework.json",
-        mime="application/json",
-        use_container_width=True,
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown(
+        '<div class="sidebar-footer">Zero-Trust Framework | DISA / BDE5 | KalSnet (KNet) Consulting</div>',
+        unsafe_allow_html=True,
     )
 
-    # PDF
-    if FPDF_AVAILABLE:
-        pdf_bytes = build_pdf_bytes(clean_cat, exp_content)
-        st.download_button(
-            "Export as PDF (.pdf)",
-            data=pdf_bytes,
-            file_name="zt_framework.pdf",
-            mime="application/pdf",
-            use_container_width=True,
-        )
-    else:
-        st.warning("PDF unavailable. Run: pip install fpdf2")
+# ══════════════════════════════════════════════════════════════════════════════
+#  MAIN CONTENT RENDERING
+# ══════════════════════════════════════════════════════════════════════════════
+export_payload = {}
 
-    # Word
-    if DOCX_AVAILABLE:
-        docx_bytes = build_docx_bytes(clean_cat, exp_content)
-        st.download_button(
-            "Export as Word (.docx)",
-            data=docx_bytes,
-            file_name="zt_framework.docx",
-            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            use_container_width=True,
+# ─── Overview & Architecture Diagram ──────────────────────────────────────────
+if category == "Overview & Architecture Diagram":
+    st.markdown(
+        '<div class="section-header">Zero-Trust Overview & Reference Architecture</div>',
+        unsafe_allow_html=True,
+    )
+
+    col1, col2 = st.columns([1.4, 1])
+
+    with col1:
+        st.markdown(
+            """
+**Zero-Trust Tenets**
+
+- **Never trust, always verify** — every user, device, and workload is continuously validated.
+- **Assume breach** — design for containment, micro-segmentation, and rapid detection.
+- **Least privilege** — authorisation is granular, time-bound, and context-aware.
+- **Data-centric security** — protection follows the data across on-prem and cloud.
+
+**DISA / BDE5 Context**
+
+This framework aligns with DISA/BDE5 ZTA Working Group guidance and DoD reference architectures,
+providing a practical mapping from mission requirements to deployable technical controls.
+"""
         )
-    else:
-        st.warning("Word unavailable. Run: pip install python-docx")
+
+    with col2:
+        st.markdown(
+            """
+**Logical Architecture Layers**
+
+- **Identity & Authentication** — IdP, MFA, PKI, credential providers  
+- **Health & Compliance** — NAC, EDR, STIG posture, patching  
+- **Authorization & Accounting** — PAM, RBAC, SIEM, UEBA  
+- **Segmentation & Orchestration** — SDN, micro-segmentation, SOAR, IaC  
+"""
+        )
+
+    st.markdown(
+        '<div class="section-header">High-Level Architecture Diagram (Conceptual)</div>',
+        unsafe_allow_html=True,
+    )
+
+    arch_fig = go.Figure()
+
+    arch_fig.add_trace(
+        go.Scatter(
+            x=[1, 2, 3, 4],
+            y=[4, 4, 4, 4],
+            mode="markers+text",
+            text=[
+                "Identity Provider (Entra/Okta)",
+                "MFA / PKI",
+                "NAC / EDR",
+                "PAM / JIT",
+            ],
+            textposition="bottom center",
+            marker=dict(size=18, color="#0047AB"),
+        )
+    )
+
+    arch_fig.add_trace(
+        go.Scatter(
+            x=[1, 2, 3],
+            y=[2, 2, 2],
+            mode="markers+text",
+            text=["SDN / Micro-Segmentation", "Policy Engine", "SIEM / UEBA"],
+            textposition="bottom center",
+            marker=dict(size=18, color="#f0a500"),
+        )
+    )
+
+    arch_fig.update_layout(
+        xaxis=dict(visible=False),
+        yaxis=dict(visible=False),
+        showlegend=False,
+        height=360,
+        margin=dict(l=10, r=10, t=10, b=10),
+        plot_bgcolor="#f4f7fc",
+        paper_bgcolor="#f4f7fc",
+    )
+
+    st.plotly_chart(arch_fig, use_container_width=True)
+
+    export_payload = {
+        "Overview": [
+            "Zero-Trust Overview & Reference Architecture",
+            "Identity, Health & Compliance, Authorization, Accounting, Segmentation, and Orchestration pillars.",
+        ]
+    }
+
+# ─── Functional Requirements ──────────────────────────────────────────────────
+elif category == "1. Functional Requirements":
+    st.markdown(
+        '<div class="section-header">Zero-Trust Functional Requirements (Pillars)</div>',
+        unsafe_allow_html=True,
+    )
+
+    for pillar, details in FUNCTIONAL_REQUIREMENTS.items():
+        st.markdown(f"### {pillar}")
+
+        st.markdown(f'<div class="req-card"><b>Requirement:</b> {details["requirement"]}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="sol-card"><b>Solution Pattern:</b> {details["solution"]}</div>', unsafe_allow_html=True)
+        st.markdown(
+            f'<div class="rec-card"><b>Recommendation:</b> {details["recommendation"]}</div>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f'<div class="req-card"><b>Example:</b> {details["example"]}</div>',
+            unsafe_allow_html=True,
+        )
+
+    export_payload = FUNCTIONAL_REQUIREMENTS
+
+# ─── Proposed Use Cases ───────────────────────────────────────────────────────
+elif category == "2. Proposed Use Cases":
+    st.markdown(
+        '<div class="section-header">Proposed Zero-Trust Use Cases</div>',
+        unsafe_allow_html=True,
+    )
+
+    for uc_name, steps in USE_CASES.items():
+        st.markdown(f"### {uc_name}")
+        for step in steps:
+            st.markdown(f"- {step}")
+        st.markdown("")
+
+    export_payload = USE_CASES
+
+# ─── Architectural Requirements ───────────────────────────────────────────────
+elif category == "3. Architectural Requirements":
+    st.markdown(
+        '<div class="section-header">Architectural Requirements by Pillar</div>',
+        unsafe_allow_html=True,
+    )
+
+    for req_group, items in ARCHITECTURAL_REQUIREMENTS.items():
+        st.markdown(f"### {req_group}")
+        for item in items:
+            st.markdown(f"- {item}")
+        st.markdown("")
+
+    export_payload = ARCHITECTURAL_REQUIREMENTS
+
+# ─── Evaluation Criteria ──────────────────────────────────────────────────────
+elif category == "4. Evaluation Criteria":
+    st.markdown(
+        '<div class="section-header">Evaluation Criteria for Zero-Trust Solutions</div>',
+        unsafe_allow_html=True,
+    )
+
+    cols = st.columns(3)
+    keys = list(EVALUATION_CRITERIA.keys())
+
+    for i, key in enumerate(keys):
+        with cols[i]:
+            crit = EVALUATION_CRITERIA[key]
+            st.markdown(f"### {key}")
+            st.markdown(f"**Definition**: {crit['definition']}")
+            st.markdown("**Metrics:**")
+            for m in crit["metrics"]:
+                st.markdown(f"- {m}")
+            st.markdown(f"**Target:** {crit['target']}")
+            st.markdown(f"**Recommendation:** {crit['recommendation']}")
+
+    export_payload = EVALUATION_CRITERIA
+
+# ─── Synthetic Data & Analytics ───────────────────────────────────────────────
+elif category == "Synthetic Data & Analytics":
+    st.markdown(
+        '<div class="section-header">Synthetic ZTA Telemetry & Analytics</div>',
+        unsafe_allow_html=True,
+    )
+
+    n_records = st.slider("Number of synthetic records", 200, 2000, 800, step=200)
+    df = generate_synthetic_data(n_records)
+
+    top_row = st.columns(4)
+    with top_row[0]:
+        compliant_pct = (
+            (df["Compliance_Status"] == "Compliant").mean() * 100
+        )
+        st.metric("Compliant Endpoints", f"{compliant_pct:.1f} %")
+    with top_row[1]:
+        avg_stig = df["STIG_Score"].mean()
+        st.metric("Average STIG Score", f"{avg_stig:.1f}")
+    with top_row[2]:
+        mfa_pct = (df["MFA_Enabled"].mean() * 100)
+        st.metric("MFA Coverage", f"{mfa_pct:.1f} %")
+    with top_row[3]:
+        incidents = df["Incident_Flagged"].sum()
+        st.metric("Incidents Flagged", str(incidents))
+
+    col_chart1, col_chart2 = st.columns(2)
+
+    with col_chart1:
+        status_counts = df["Compliance_Status"].value_counts().reset_index()
+        status_counts.columns = ["Compliance_Status", "Count"]
+        fig_status = px.bar(
+            status_counts,
+            x="Compliance_Status",
+            y="Count",
+            color="Compliance_Status",
+            title="Compliance Status Distribution",
+            color_discrete_sequence=px.colors.qualitative.Set2,
+        )
+        fig_status.update_layout(
+            plot_bgcolor="#f4f7fc",
+            paper_bgcolor="#f4f7fc",
+            margin=dict(l=10, r=10, t=40, b=10),
+        )
+        st.plotly_chart(fig_status, use_container_width=True)
+
+    with col_chart2:
+        pillar_scores = (
+            df.groupby("Pillar")["STIG_Score"].mean().reset_index()
+        )
+        fig_pillar = px.line(
+            pillar_scores,
+            x="Pillar",
+            y="STIG_Score",
+            markers=True,
+            title="Average STIG Score by ZTA Pillar",
+            color_discrete_sequence=["#0047AB"],
+        )
+        fig_pillar.update_layout(
+            plot_bgcolor="#f4f7fc",
+            paper_bgcolor="#f4f7fc",
+            margin=dict(l=10, r=10, t=40, b=10),
+        )
+        st.plotly_chart(fig_pillar, use_container_width=True)
+
+    st.markdown("### Raw Synthetic Dataset Preview")
+    st.dataframe(df.head(20), use_container_width=True)
+
+    export_payload = {
+        "summary": {
+            "records": n_records,
+            "compliant_pct": compliant_pct,
+            "avg_stig_score": avg_stig,
+            "mfa_coverage_pct": mfa_pct,
+            "incidents_flagged": int(incidents),
+        },
+        "sample": df.head(50).to_dict(orient="records"),
+    }
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  MAIN CONTENT
+#  EXPORT ACTIONS (BOTTOM OF MAIN AREA)
 # ══════════════════════════════════════════════════════════════════════════════
+st.markdown("---")
+st.markdown("### Export This View")
 
-# ── OVERVIEW ──────────────────────────────────────────────────────────────────
-if "Overview" in category:
-    st.markdown('<div class="section-header">Zero-Trust Architecture - Conceptual Overview</div>', unsafe_allow_html=True)
+col_export1, col_export2, col_export3, col_export4 = st.columns(4)
 
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("ZTA Pillars", "6", "Core Controls")
-    c2.metric("Use Cases", "4", "Defined")
-    c3.metric("Arch. Req. Areas", "7", "Categories")
-    c4.metric("Eval. Criteria", "3", "Dimensions")
+with col_export1:
+    if st.button("Download Text Report"):
+        text_report = build_text_report(category, export_payload)
+        st.download_button(
+            "Save as .txt",
+            data=text_report,
+            file_name=f"zero_trust_{category.replace(' ', '_').lower()}.txt",
+            mime="text/plain",
+        )
 
-    st.markdown("---")
-    st.markdown("#### Zero-Trust Architecture Flow Diagram")
+with col_export2:
+    if st.button("Download JSON Report"):
+        json_report = build_json_report(category, export_payload)
+        st.download_button(
+            "Save as .json",
+            data=json_report,
+            file_name=f"zero_trust_{category.replace(' ', '_').lower()}.json",
+            mime="application/json",
+        )
 
-    try:
-        import graphviz
-        dot = graphviz.Digraph(graph_attr={"rankdir": "LR", "bgcolor": "#f8f9ff", "fontname": "Helvetica"})
-        dot.attr("node", shape="box", style="filled", fontname="Helvetica", fontsize="11")
-        dot.node("User",  "User / Device",           fillcolor="#dce8ff", color="#0047AB")
-        dot.node("MFA",   "MFA",                     fillcolor="#cce5ff", color="#0047AB")
-        dot.node("IdP",   "Identity Provider (IdP)", fillcolor="#0047AB", fontcolor="white", color="#0047AB")
-        dot.node("NAC",   "Health & Compliance",     fillcolor="#fff0cc", color="#f0a500")
-        dot.node("PAM",   "JIT / PAM Authorization", fillcolor="#e8f5e9", color="#2e7d32")
-        dot.node("PEP",   "Policy Enforcement (PEP)",fillcolor="#0047AB", fontcolor="white", color="#0047AB")
-        dot.node("App",   "Application Tier",        fillcolor="#dce8ff", color="#0047AB")
-        dot.node("SIEM",  "SIEM / Accounting",       fillcolor="#fce4ec", color="#c62828")
-        dot.node("Orch",  "Orchestration (REST API)",fillcolor="#f3e5f5", color="#6a1b9a")
-        dot.edge("User", "MFA",  label="Auth Request")
-        dot.edge("MFA",  "IdP",  label="Credentials")
-        dot.edge("User", "NAC",  label="Device Posture")
-        dot.edge("NAC",  "IdP",  label="Health Signal")
-        dot.edge("IdP",  "PAM",  label="Identity Assert")
-        dot.edge("PAM",  "PEP",  label="Auth Decision")
-        dot.edge("PEP",  "App",  label="Access Granted")
-        dot.edge("PEP",  "SIEM", label="Log Events")
-        dot.edge("Orch", "PEP",  label="Policy Push")
-        dot.edge("Orch", "IdP",  label="Role Provision")
-        dot.edge("App",  "SIEM", label="App Logs")
-        st.graphviz_chart(dot, use_container_width=True)
-    except Exception:
-        st.code("""
-USER/DEVICE ---> MFA ----------------> IdP ---------> PAM/JIT
-     |                                  |                  |
-     +---> NAC (Health Check) ----------+                  |
-                                                           v
-ORCHESTRATION (REST API) ----------------------> POLICY ENFORCEMENT POINT
-                                                           |
-                                          +----------------+----------------+
-                                          v                                 v
-                                    APPLICATION TIERS                 SIEM (ACCOUNTING)
-        """)
+with col_export3:
+    if st.button("Download PDF Report"):
+        pdf_bytes = build_pdf_bytes(category, export_payload)
+        if pdf_bytes:
+            st.download_button(
+                "Save as .pdf",
+                data=pdf_bytes,
+                file_name=f"zero_trust_{category.replace(' ', '_').lower()}.pdf",
+                mime="application/pdf",
+            )
+        else:
+            st.info("PDF export not available (fpdf not installed).")
 
-    st.markdown("---")
-    st.markdown("#### ZTA Pillar Maturity Radar")
-    pillars_r = ["Identity & Auth", "Health & Compliance", "Authorization", "Accounting", "Segmentation", "Orchestration"]
-    current   = [3.5, 2.8, 3.0, 3.8, 2.5, 2.2]
-    target    = [5, 5, 5, 5, 5, 5]
-    fig_radar = go.Figure()
-    fig_radar.add_trace(go.Scatterpolar(
-        r=current + [current[0]], theta=pillars_r + [pillars_r[0]],
-        fill="toself", name="Current Maturity",
-        line_color="#0047AB", fillcolor="rgba(0,71,171,0.2)"))
-    fig_radar.add_trace(go.Scatterpolar(
-        r=target + [target[0]], theta=pillars_r + [pillars_r[0]],
-        fill="toself", name="Target Maturity",
-        line_color="#f0a500", fillcolor="rgba(240,165,0,0.1)"))
-    fig_radar.update_layout(
-        polar=dict(radialaxis=dict(visible=True, range=[0, 5])),
-        title="ZTA Pillar Maturity (1=Initial  5=Optimised)",
-        height=420)
-    st.plotly_chart(fig_radar, use_container_width=True)
-
-    st.markdown("#### ZTA Core Principles")
-    principles = [
-        ("Never Trust, Always Verify", "Treat every request as untrusted regardless of network location."),
-        ("Least-Privilege Access", "Grant minimum permissions necessary and expire them promptly."),
-        ("Assume Breach", "Design controls assuming attackers may already be inside the perimeter."),
-        ("Continuous Verification", "Re-evaluate trust on every transaction, not just at login."),
-        ("Micro-Segmentation", "Divide the network into small zones to contain lateral movement."),
-        ("Policy-as-Code", "Automate and version-control all security policies via REST APIs."),
-    ]
-    for title_p, desc in principles:
-        st.markdown(f'<div class="req-card"><b>{title_p}</b><br>{desc}</div>', unsafe_allow_html=True)
-
-
-# ── FUNCTIONAL REQUIREMENTS ───────────────────────────────────────────────────
-elif "Functional" in category:
-    st.markdown('<div class="section-header">Category 1 - Functional Requirements</div>', unsafe_allow_html=True)
-    show_all = st.checkbox("Expand all pillars", value=True)
-    for pillar, data in FUNCTIONAL_REQUIREMENTS.items():
-        with st.expander(f"{pillar}", expanded=show_all):
-            st.markdown(f'<div class="req-card"><b>Requirement:</b><br>{data["requirement"]}</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="sol-card"><b>Example:</b><br>{data["example"]}</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="sol-card"><b>Recommended Solution:</b><br>{data["solution"]}</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="rec-card"><b>Recommendation:</b><br>{data["recommendation"]}</div>', unsafe_allow_html=True)
-
-    st.markdown("---")
-    st.markdown("#### Pillar Coverage (Illustrative)")
-    coverage = {"Identity & Authentication": 85, "Health & Compliance": 70, "Authorization": 78,
-                "Accounting": 90, "Segmentation": 62, "Orchestration": 55}
-    fig_bar = px.bar(x=list(coverage.keys()), y=list(coverage.values()),
-                     labels={"x": "Pillar", "y": "Coverage (%)"},
-                     color=list(coverage.values()),
-                     color_continuous_scale=["#ff4444", "#f0a500", "#0047AB"],
-                     title="Estimated Pillar Implementation Coverage (%)")
-    fig_bar.update_layout(coloraxis_showscale=False, height=360)
-    st.plotly_chart(fig_bar, use_container_width=True)
-
-
-# ── USE CASES ─────────────────────────────────────────────────────────────────
-elif "Use Case" in category:
-    st.markdown('<div class="section-header">Category 2 - Proposed Use Cases</div>', unsafe_allow_html=True)
-    uc_choice = st.radio("Select Use Case", list(USE_CASES.keys()))
-    st.markdown(f"### {uc_choice}")
-    for i, step in enumerate(USE_CASES[uc_choice], 1):
-        st.markdown(f'<div class="req-card"><b>Step {i}:</b> {step}</div>', unsafe_allow_html=True)
-
-    st.markdown("---")
-    st.markdown("#### Use Case Flow Diagram")
-    try:
-        import graphviz
-        g = graphviz.Digraph(graph_attr={"rankdir": "TD"})
-        g.attr("node", shape="box", style="filled", fontname="Helvetica", fontsize="10")
-        steps_uc = USE_CASES[uc_choice]
-        for idx, step_text in enumerate(steps_uc):
-            label = step_text[:55] + "..." if len(step_text) > 55 else step_text
-            g.node(str(idx), label, fillcolor="#dce8ff", color="#0047AB")
-        for idx in range(len(steps_uc) - 1):
-            g.edge(str(idx), str(idx + 1))
-        st.graphviz_chart(g, use_container_width=True)
-    except Exception:
-        st.info("Install the graphviz system package for flow diagrams.")
-
-
-# ── ARCHITECTURAL REQUIREMENTS ────────────────────────────────────────────────
-elif "Architectural" in category:
-    st.markdown('<div class="section-header">Category 3 - Architectural Requirements</div>', unsafe_allow_html=True)
-    area_choice = st.selectbox("Select Requirement Area", list(ARCHITECTURAL_REQUIREMENTS.keys()))
-    st.markdown(f"### {area_choice}")
-    for req in ARCHITECTURAL_REQUIREMENTS[area_choice]:
-        st.markdown(f'<div class="req-card">{req}</div>', unsafe_allow_html=True)
-
-    st.markdown("---")
-    st.markdown("#### Requirement Count per Area")
-    counts = {k: len(v) for k, v in ARCHITECTURAL_REQUIREMENTS.items()}
-    fig_h = px.bar(x=list(counts.values()), y=list(counts.keys()), orientation="h",
-                   labels={"x": "# Requirements", "y": "Area"},
-                   color=list(counts.values()), color_continuous_scale=["#90caf9", "#0047AB"],
-                   title="Architectural Requirements Count by Area")
-    fig_h.update_layout(coloraxis_showscale=False, height=380, yaxis={"categoryorder": "total ascending"})
-    st.plotly_chart(fig_h, use_container_width=True)
-
-    st.markdown("#### Reference Standards")
-    refs = [
-        ("NIST SP 800-207", "Zero Trust Architecture - foundational ZTA standard."),
-        ("CISA ZT Maturity Model", "5-pillar model for assessing ZTA implementation progress."),
-        ("DoD ZT Strategy", "DoD mandate for ZT implementation across all components by FY27."),
-        ("DISA STIG Library", "Security Technical Implementation Guides for OS/app hardening."),
-        ("NIST SP 800-53 Rev 5", "Security and Privacy Controls - maps to ZTA control requirements."),
-    ]
-    for ref, desc in refs:
-        st.markdown(f'<div class="rec-card"><b>{ref}</b> - {desc}</div>', unsafe_allow_html=True)
-
-
-# ── EVALUATION CRITERIA ───────────────────────────────────────────────────────
-elif "Evaluation" in category:
-    st.markdown('<div class="section-header">Category 4 - Evaluation Criteria</div>', unsafe_allow_html=True)
-    for criterion, data in EVALUATION_CRITERIA.items():
-        with st.expander(f"{criterion}", expanded=True):
-            st.markdown(f'<div class="req-card"><b>Definition:</b> {data["definition"]}</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="sol-card"><b>Target:</b> {data["target"]}</div>', unsafe_allow_html=True)
-            st.markdown("<b>Key Metrics:</b>", unsafe_allow_html=True)
-            for m in data["metrics"]:
-                st.markdown(f'<div class="req-card">{m}</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="rec-card"><b>Recommendation:</b> {data["recommendation"]}</div>', unsafe_allow_html=True)
-
-    st.markdown("---")
-    st.markdown("#### Sample Evaluation Scores (Illustrative)")
-    gc1, gc2, gc3 = st.columns(3)
-    for col, (crit, score, color) in zip(
-        [gc1, gc2, gc3],
-        [("Effectiveness", 78, "#0047AB"), ("Suitability", 85, "#2e7d32"), ("Performance", 71, "#f0a500")]
-    ):
-        fig_g = go.Figure(go.Indicator(
-            mode="gauge+number", value=score, title={"text": crit},
-            gauge={"axis": {"range": [0, 100]}, "bar": {"color": color},
-                   "steps": [{"range": [0, 50], "color": "#ffcdd2"},
-                              {"range": [50, 75], "color": "#fff9c4"},
-                              {"range": [75, 100], "color": "#c8e6c9"}],
-                   "threshold": {"line": {"color": "black", "width": 3}, "thickness": 0.8, "value": 80}}))
-        fig_g.update_layout(height=260, margin=dict(t=40, b=10))
-        col.plotly_chart(fig_g, use_container_width=True)
-
-
-# ── SYNTHETIC DATA ────────────────────────────────────────────────────────────
-elif "Synthetic" in category or "Analytics" in category or "Data" in category:
-    st.markdown('<div class="section-header">Synthetic ZTA Compliance Data & Analytics</div>', unsafe_allow_html=True)
-    num_records = st.slider("Number of Synthetic Records", min_value=0, max_value=300, value=150, step=10)
-
-    if num_records == 0:
-        st.info("Move the slider above 0 to generate synthetic data.")
-    else:
-        df = generate_synthetic_data(num_records)
-        k1, k2, k3, k4, k5 = st.columns(5)
-        k1.metric("Total Records", num_records)
-        k2.metric("Compliant", int((df["Compliance_Status"] == "Compliant").sum()),
-                  f'{(df["Compliance_Status"]=="Compliant").mean()*100:.0f}%')
-        k3.metric("Non-Compliant", int((df["Compliance_Status"] == "Non-Compliant").sum()))
-        k4.metric("Avg STIG Score", f"{df['STIG_Score'].mean():.1f}")
-        k5.metric("Incidents Flagged", int(df["Incident_Flagged"].sum()))
-
-        st.markdown("---")
-        tab_a, tab_b, tab_c, tab_d = st.tabs(["Raw Data", "By Pillar", "By Department", "Trends"])
-
-        STATUS_COLORS = {"Compliant": "#2e7d32", "Non-Compliant": "#c62828",
-                         "Remediation": "#f0a500", "Pending Review": "#757575"}
-
-        with tab_a:
-            st.dataframe(df, use_container_width=True, height=380)
-            st.download_button("Download CSV", df.to_csv(index=False).encode(),
-                               "zt_synthetic_data.csv", "text/csv")
-
-        with tab_b:
-            c1, c2 = st.columns(2)
-            pillar_status = df.groupby(["Pillar", "Compliance_Status"]).size().reset_index(name="Count")
-            fig_ps = px.bar(pillar_status, x="Pillar", y="Count", color="Compliance_Status",
-                            barmode="group", color_discrete_map=STATUS_COLORS,
-                            title="Compliance Status by ZTA Pillar")
-            c1.plotly_chart(fig_ps, use_container_width=True)
-            stig_pillar = df.groupby("Pillar")["STIG_Score"].mean().reset_index()
-            fig_sp = px.bar(stig_pillar, x="Pillar", y="STIG_Score",
-                            color="STIG_Score", color_continuous_scale=["#ff4444", "#f0a500", "#2e7d32"],
-                            title="Average STIG Score by Pillar", range_y=[0, 100])
-            fig_sp.update_layout(coloraxis_showscale=False)
-            c2.plotly_chart(fig_sp, use_container_width=True)
-
-        with tab_c:
-            dept_status = df.groupby(["Department", "Compliance_Status"]).size().reset_index(name="Count")
-            fig_ds = px.bar(dept_status, x="Department", y="Count", color="Compliance_Status",
-                            barmode="stack", color_discrete_map=STATUS_COLORS,
-                            title="Compliance Status by Department")
-            st.plotly_chart(fig_ds, use_container_width=True)
-            dev_counts = df["Device_Type"].value_counts().reset_index()
-            dev_counts.columns = ["Device_Type", "Count"]
-            fig_pie = px.pie(dev_counts, values="Count", names="Device_Type",
-                             title="Device Type Distribution",
-                             color_discrete_sequence=px.colors.qualitative.Bold)
-            st.plotly_chart(fig_pie, use_container_width=True)
-
-        with tab_d:
-            df["Month"] = pd.to_datetime(df["Timestamp"]).dt.to_period("M").astype(str)
-            trend = df.groupby(["Month", "Compliance_Status"]).size().reset_index(name="Count")
-            fig_trend = px.line(trend, x="Month", y="Count", color="Compliance_Status",
-                                markers=True, color_discrete_map=STATUS_COLORS,
-                                title="Compliance Trend Over Time")
-            st.plotly_chart(fig_trend, use_container_width=True)
-            fig_sc = px.scatter(df, x="STIG_Score", y="Auth_Latency_ms",
-                                color="Compliance_Status", opacity=0.7,
-                                color_discrete_map=STATUS_COLORS,
-                                title="STIG Score vs Authentication Latency",
-                                labels={"STIG_Score": "STIG Compliance Score",
-                                        "Auth_Latency_ms": "Auth Latency (ms)"})
-            st.plotly_chart(fig_sc, use_container_width=True)
+with col_export4:
+    if st.button("Download Word Report"):
+        docx_bytes = build_docx_bytes(category, export_payload)
+        if docx_bytes:
+            st.download_button(
+                "Save as .docx",
+                data=docx_bytes,
+                file_name=f"zero_trust_{category.replace(' ', '_').lower()}.docx",
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            )
+        else:
+            st.info("Word export not available (python-docx not installed).")
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  FOOTER
 # ══════════════════════════════════════════════════════════════════════════════
-st.markdown("---")
 st.markdown(
-    '<div style="text-align:center;color:#888;font-size:0.8rem;">'
-    'Zero-Trust Framework Application &nbsp;|&nbsp; '
-    'Developed by Randy Singh &nbsp;|&nbsp; '
-    'KalSnet (KNet) Consulting Group &nbsp;|&nbsp; '
-    f'DISA / BDE5 Technology Innovation Team &nbsp;|&nbsp; {datetime.now().year}'
-    '</div>',
+    """
+<div style="text-align:center;color:#888;font-size:0.8rem;margin-top:20px;">
+Zero-Trust Framework Application | Developed by Randy Singh | KalSnet (KNet) Consulting Group |
+DISA / BDE5 Technology Innovation Team | {year}
+</div>
+""".format(year=datetime.now().year),
     unsafe_allow_html=True,
 )
-PYEOF
-echo "Done — $(wc -l < /mnt/user-data/outputs/zero_trust_framework.py) lines written"
