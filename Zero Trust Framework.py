@@ -57,9 +57,9 @@ st.markdown(
 
   .section-header {
       background: linear-gradient(90deg, #003087 0%, #1a6fe8 100%);
-      color: white; padding: 14px 22px; border-radius: 10px;
-      font-weight: 800; font-size: 1.25rem; margin: 18px 0 12px 0;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.20);
+      color: white; padding: 12px 20px; border-radius: 10px;
+      font-weight: 800; font-size: 1.2rem; margin: 16px 0 12px 0;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.22);
   }
 
   .req-card {
@@ -86,6 +86,8 @@ st.markdown(
 
   section[data-testid="stSidebar"] {
       background: #001a6b;
+      overflow-y: auto;
+      max-height: 100vh;
   }
   section[data-testid="stSidebar"] * {
       color: #e8f0ff !important;
@@ -105,12 +107,6 @@ st.markdown(
       color: #cbd4ff;
       text-align: center;
       margin-top: 10px;
-  }
-
-  /* Make radio labels clearly visible */
-  div[role="radiogroup"] label {
-      color: #e8f0ff !important;
-      font-size: 0.9rem;
   }
 </style>
 """,
@@ -477,8 +473,12 @@ def build_pdf_bytes(selected_category: str, content: dict) -> bytes:
         pdf.set_auto_page_break(auto=True, margin=15)
         pdf.add_page()
 
+        # Styled header bar (Option C feel)
+        pdf.set_fill_color(0, 48, 135)
+        pdf.rect(0, 0, 210, 20, "F")
+
         pdf.set_font("Helvetica", "B", 16)
-        pdf.set_text_color(0, 71, 171)
+        pdf.set_text_color(255, 255, 255)
         pdf.cell(
             0,
             10,
@@ -498,6 +498,7 @@ def build_pdf_bytes(selected_category: str, content: dict) -> bytes:
             align="C",
         )
 
+        pdf.ln(4)
         pdf.set_font("Helvetica", "", 9)
         pdf.set_text_color(80, 80, 80)
         ts = _pdf_safe(
@@ -521,7 +522,7 @@ def build_pdf_bytes(selected_category: str, content: dict) -> bytes:
 
             if isinstance(val, list):
                 for item in val:
-                    pdf.multi_cell(0, 6, _pdf_safe(f"  * {item}"))
+                    pdf.multi_cell(0, 6, _pdf_safe(f"  • {item}"))
             elif isinstance(val, dict):
                 for k2, v2 in val.items():
                     pdf.set_font("Helvetica", "B", 9)
@@ -548,18 +549,8 @@ def build_pdf_bytes(selected_category: str, content: dict) -> bytes:
             return bytes(raw)
         return raw.encode("latin-1")
 
-    except Exception as exc:
-        try:
-            fallback = FPDF()
-            fallback.add_page()
-            fallback.set_font("Helvetica", "", 11)
-            fallback.multi_cell(0, 8, _pdf_safe(f"PDF error: {exc}"))
-            raw = fallback.output()
-            if isinstance(raw, (bytes, bytearray)):
-                return bytes(raw)
-            return raw.encode("latin-1")
-        except Exception:
-            return b""
+    except Exception:
+        return b""
 
 
 def build_docx_bytes(selected_category: str, content: dict) -> bytes:
@@ -612,21 +603,15 @@ def build_docx_bytes(selected_category: str, content: dict) -> bytes:
         doc.save(buf)
         return buf.getvalue()
 
-    except Exception as exc:
-        try:
-            doc = DocxDocument()
-            doc.add_paragraph(f"Word export error: {exc}")
-            buf = io.BytesIO()
-            doc.save(buf)
-            return buf.getvalue()
-        except Exception:
-            return b""
+    except Exception:
+        return b""
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  SIDEBAR — NAVIGATION & ABOUT (RADIO BUTTONS)
 # ══════════════════════════════════════════════════════════════════════════════
 with st.sidebar:
     st.markdown("## ZTA Navigator")
+    st.markdown("---")
 
     category = st.radio(
         "Select Framework Category",
@@ -644,9 +629,7 @@ with st.sidebar:
 
     st.markdown('<div class="sidebar-box">', unsafe_allow_html=True)
     st.markdown("**About**")
-    st.markdown(
-        "Randy Singh  \nComputer Scientist  \nDISA / BDE5  \nKalSnet (KNet) Consulting"
-    )
+    st.markdown("Randy Singh  \nComputer Scientist  \nDISA / BDE5  \nKalSnet (KNet) Consulting")
     st.markdown("`(301) 225-9535`")
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -711,8 +694,8 @@ providing a practical mapping from mission requirements to deployable technical 
                 "NAC / EDR",
                 "PAM / JIT",
             ],
-            textposition="bottom center",
-            marker=dict(size=18, color="#0047AB"),
+            textposition="top center",
+            marker=dict(size=26, color="#0047AB"),
         )
     )
 
@@ -722,8 +705,8 @@ providing a practical mapping from mission requirements to deployable technical 
             y=[2, 2, 2],
             mode="markers+text",
             text=["SDN / Micro-Segmentation", "Policy Engine", "SIEM / UEBA"],
-            textposition="bottom center",
-            marker=dict(size=18, color="#f0a500"),
+            textposition="top center",
+            marker=dict(size=26, color="#f0a500"),
         )
     )
 
@@ -731,10 +714,11 @@ providing a practical mapping from mission requirements to deployable technical 
         xaxis=dict(visible=False),
         yaxis=dict(visible=False),
         showlegend=False,
-        height=360,
-        margin=dict(l=10, r=10, t=10, b=10),
-        plot_bgcolor="#f4f7fc",
-        paper_bgcolor="#f4f7fc",
+        height=520,
+        margin=dict(l=20, r=20, t=20, b=20),
+        plot_bgcolor="#e3e9f7",
+        paper_bgcolor="#e3e9f7",
+        font=dict(size=12),
     )
 
     st.plotly_chart(arch_fig, use_container_width=True)
@@ -849,7 +833,7 @@ elif category == "Synthetic Data & Analytics":
         mfa_pct = df["MFA_Enabled"].mean() * 100
         st.metric("MFA Coverage", f"{mfa_pct:.1f} %")
     with top_row[3]:
-        incidents = int(df["Incident_Flagged"].sum())
+        incidents = df["Incident_Flagged"].sum()
         st.metric("Incidents Flagged", str(incidents))
 
     col_chart1, col_chart2 = st.columns(2)
@@ -898,59 +882,66 @@ elif category == "Synthetic Data & Analytics":
             "compliant_pct": compliant_pct,
             "avg_stig_score": avg_stig,
             "mfa_coverage_pct": mfa_pct,
-            "incidents_flagged": incidents,
+            "incidents_flagged": int(incidents),
         },
         "sample": df.head(50).to_dict(orient="records"),
     }
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  SIDEBAR — EXPORT THIS VIEW (ONLY)
+#  SIDEBAR — EXPORT THIS VIEW (RADIO + SINGLE BUTTON)
 # ══════════════════════════════════════════════════════════════════════════════
 with st.sidebar:
     st.markdown('<div class="sidebar-box">', unsafe_allow_html=True)
     st.markdown("**Export This View**")
 
-    text_report = build_text_report(category, export_payload)
-    st.download_button(
-        "Download Text (.txt)",
-        data=text_report,
-        file_name=f"zero_trust_{category.replace(' ', '_').lower()}.txt",
-        mime="text/plain",
-        key="dl_txt",
+    export_format = st.radio(
+        "Select export format",
+        ["Text (.txt)", "JSON (.json)", "PDF (.pdf)", "Word (.docx)"],
+        index=0,
+        key="export_format_radio",
     )
 
-    json_report = build_json_report(category, export_payload)
-    st.download_button(
-        "Download JSON (.json)",
-        data=json_report,
-        file_name=f"zero_trust_{category.replace(' ', '_').lower()}.json",
-        mime="application/json",
-        key="dl_json",
-    )
+    base_name = f"zero_trust_{category.replace(' ', '_').replace('.', '').lower()}"
 
-    pdf_bytes = build_pdf_bytes(category, export_payload)
-    if pdf_bytes:
-        st.download_button(
-            "Download PDF (.pdf)",
-            data=pdf_bytes,
-            file_name=f"zero_trust_{category.replace(' ', '_').lower()}.pdf",
-            mime="application/pdf",
-            key="dl_pdf",
-        )
-    else:
-        st.caption("PDF export not available — install `fpdf2` in the environment.")
+    data_bytes = None
+    mime_type = "text/plain"
+    file_name = base_name + ".txt"
 
-    docx_bytes = build_docx_bytes(category, export_payload)
-    if docx_bytes:
+    if export_format.startswith("Text"):
+        text_report = build_text_report(category, export_payload)
+        data_bytes = text_report
+        mime_type = "text/plain"
+        file_name = base_name + ".txt"
+    elif export_format.startswith("JSON"):
+        json_report = build_json_report(category, export_payload)
+        data_bytes = json_report
+        mime_type = "application/json"
+        file_name = base_name + ".json"
+    elif export_format.startswith("PDF"):
+        pdf_bytes = build_pdf_bytes(category, export_payload)
+        if pdf_bytes:
+            data_bytes = pdf_bytes
+            mime_type = "application/pdf"
+            file_name = base_name + ".pdf"
+        else:
+            st.caption("PDF export not available — install `fpdf2` in the environment.")
+    elif export_format.startswith("Word"):
+        docx_bytes = build_docx_bytes(category, export_payload)
+        if docx_bytes:
+            data_bytes = docx_bytes
+            mime_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            file_name = base_name + ".docx"
+        else:
+            st.caption("Word export not available — install `python-docx` in the environment.")
+
+    if data_bytes:
         st.download_button(
-            "Download Word (.docx)",
-            data=docx_bytes,
-            file_name=f"zero_trust_{category.replace(' ', '_').lower()}.docx",
-            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            key="dl_docx",
+            "Download Selected Format",
+            data=data_bytes,
+            file_name=file_name,
+            mime=mime_type,
+            key="dl_selected",
         )
-    else:
-        st.caption("Word export not available — install `python-docx` in the environment.")
 
     st.markdown("</div>", unsafe_allow_html=True)
     st.markdown(
