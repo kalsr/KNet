@@ -1,16 +1,13 @@
 
-
-
-#=============================================================================
-  # ZERO-TRUST FRAMEWORK APPLICATION
- #  Developed by Randy Singh | KalSnet (KNet) Consulting Group
-  #Original Java code: April 2019 — Python/Streamlit conversion: 2024
-#=============================================================================
+# =============================================================================
+ # ZERO-TRUST FRAMEWORK APPLICATION
+ # Developed by Randy Singh | KalSnet (KNet) Consulting Group
+# Original Java code: April 2019 — Python/Streamlit conversion: 2024
+# =============================================================================
 # Run with:
-#   pip install streamlit plotly pandas fpdf2 python-docx
-# streamlit run zero_trust_framework.py
-#=============================================================================
-
+ #   pip install streamlit plotly pandas fpdf2 python-docx
+ #   streamlit run zero_trust_framework.py
+# =============================================================================
 
 import streamlit as st
 import pandas as pd
@@ -395,49 +392,95 @@ def build_json_report(selected_category: str, content: dict) -> str:
     }
     return json.dumps(payload, indent=2, default=str)
 
+def _pdf_safe(text: str) -> str:
+    """
+    Convert a string so it contains only characters that FPDF's built-in
+    Latin-1 fonts can encode.  Strategy:
+      1. Replace common Unicode punctuation / symbols with ASCII equivalents.
+      2. Drop any remaining non-latin-1 characters (including emoji).
+    """
+    replacements = {
+        "\u2013": "-",   # en-dash
+        "\u2014": "--",  # em-dash
+        "\u2018": "'",   # left single quote
+        "\u2019": "'",   # right single quote
+        "\u201c": '"',   # left double quote
+        "\u201d": '"',   # right double quote
+        "\u2026": "...", # ellipsis
+        "\u2022": "*",   # bullet
+        "\u00a0": " ",   # non-breaking space
+        "\u2265": ">=",  # >=
+        "\u2264": "<=",  # <=
+        "\u00ae": "(R)", # registered trademark
+        "\u2122": "(TM)",# trademark
+        "\u00e9": "e",   # é
+        "\u00e8": "e",   # è
+        "\u00e0": "a",   # à
+        "\u00fc": "u",   # ü
+        "\u00f6": "o",   # ö
+        "\u00e4": "a",   # ä
+        "&": "&",        # keep plain ampersand (latin-1 safe)
+    }
+    for char, replacement in replacements.items():
+        text = text.replace(char, replacement)
+    # Final pass: drop anything that still can't encode to latin-1
+    return text.encode("latin-1", errors="ignore").decode("latin-1")
+
+
 def build_pdf_bytes(selected_category: str, content: dict) -> bytes:
     if not FPDF_AVAILABLE:
         return b""
+
     pdf = FPDF()
     pdf.add_page()
+
+    # ── Header ────────────────────────────────────────────────────────────────
     pdf.set_font("Helvetica", "B", 16)
     pdf.set_text_color(0, 71, 171)
-    pdf.cell(0, 10, "ZERO-TRUST FRAMEWORK APPLICATION", ln=True, align="C")
+    pdf.cell(0, 10, _pdf_safe("ZERO-TRUST FRAMEWORK APPLICATION"), ln=True, align="C")
+
     pdf.set_font("Helvetica", "B", 11)
-    pdf.cell(0, 7, "Developed by Randy Singh | KalSnet (KNet) Consulting Group", ln=True, align="C")
+    pdf.cell(0, 7, _pdf_safe("Developed by Randy Singh | KalSnet (KNet) Consulting Group"), ln=True, align="C")
+
     pdf.set_font("Helvetica", "", 9)
     pdf.set_text_color(80, 80, 80)
-    pdf.cell(0, 6, f"Category: {selected_category}   |   Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}", ln=True, align="C")
+    pdf.cell(
+        0, 6,
+        _pdf_safe(f"Category: {selected_category}   |   Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}"),
+        ln=True, align="C",
+    )
+
     pdf.set_draw_color(0, 71, 171)
     pdf.set_line_width(0.8)
     pdf.line(10, pdf.get_y() + 2, 200, pdf.get_y() + 2)
     pdf.ln(6)
 
+    # ── Content ───────────────────────────────────────────────────────────────
     for key, val in content.items():
         pdf.set_font("Helvetica", "B", 11)
         pdf.set_text_color(0, 71, 171)
-        pdf.cell(0, 8, key, ln=True)
+        pdf.cell(0, 8, _pdf_safe(str(key)), ln=True)
+
         pdf.set_font("Helvetica", "", 9)
         pdf.set_text_color(30, 30, 30)
+
         if isinstance(val, list):
             for item in val:
-                safe = item.encode("latin-1", "replace").decode("latin-1")
-                pdf.multi_cell(0, 6, f"  * {safe}")
+                pdf.multi_cell(0, 6, _pdf_safe(f"  * {item}"))
+
         elif isinstance(val, dict):
             for k2, v2 in val.items():
                 pdf.set_font("Helvetica", "B", 9)
-                pdf.cell(0, 6, f"  {k2}:", ln=True)
+                pdf.cell(0, 6, _pdf_safe(f"  {k2}:"), ln=True)
                 pdf.set_font("Helvetica", "", 9)
                 if isinstance(v2, list):
                     for item in v2:
-                        safe = str(item).encode("latin-1", "replace").decode("latin-1")
-                        pdf.multi_cell(0, 5, f"    - {safe}")
+                        pdf.multi_cell(0, 5, _pdf_safe(f"    - {item}"))
                 else:
-                    safe = str(v2).encode("latin-1", "replace").decode("latin-1")
-                    pdf.multi_cell(0, 6, f"    {safe}")
+                    pdf.multi_cell(0, 6, _pdf_safe(f"    {v2}"))
         else:
-            safe = str(val).encode("latin-1", "replace").decode("latin-1")
-            pdf.multi_cell(0, 6, f"  {safe}")
+            pdf.multi_cell(0, 6, _pdf_safe(f"  {val}"))
+
         pdf.ln(2)
 
     return bytes(pdf.output())
