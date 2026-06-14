@@ -630,7 +630,7 @@ with st.sidebar:
     st.markdown('<div class="sidebar-box">', unsafe_allow_html=True)
     st.markdown("**About**")
     st.markdown("Randy Singh  \nComputer Scientist  \nDISA / BDE5  \nKalSnet (KNet) Consulting")
-    st.markdown("`(301) 225-9535`")
+    st.markdown("`(301) 503-2918`")
     st.markdown("</div>", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
