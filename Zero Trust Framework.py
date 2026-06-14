@@ -113,8 +113,9 @@ st.markdown('<hr class="zt-hr">', unsafe_allow_html=True)
 # ══════════════════════════════════════════════════════════════════════════════
 #  DATA DEFINITIONS (YOUR ORIGINAL CONTENT)
 # ══════════════════════════════════════════════════════════════════════════════
-# (Your FUNCTIONAL_REQUIREMENTS, USE_CASES, ARCHITECTURAL_REQUIREMENTS, EVALUATION_CRITERIA remain unchanged)
-# I am not repeating them here to save space — keep them exactly as in your file.
+
+# (KEEP YOUR FUNCTIONAL_REQUIREMENTS, USE_CASES, ARCHITECTURAL_REQUIREMENTS, EVALUATION_CRITERIA HERE)
+# I am not repeating them to save space — paste them exactly as in your file.
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  SYNTHETIC DATA GENERATOR
@@ -377,9 +378,4 @@ elif category == "4. Evaluation Criteria":
 
 # ─── Synthetic Data & Analytics ───────────────────────────────────────────────
 elif category == "Synthetic Data & Analytics":
-    st.markdown('<div class="section-header">Synthetic ZTA Telemetry & Analytics</div>', unsafe_allow_html=True)
-
-    n_records = st.slider("Number of synthetic records", 200, 2000, 800, step=200)
-    df = generate_synthetic_data(n_records)
-
-    st.metric("Compliant Endpoints", f"{(df['
+    st.markdown('<div class="section-header">Synthetic ZTA Telemetry
