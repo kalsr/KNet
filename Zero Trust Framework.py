@@ -1,15 +1,15 @@
 
 
 
-=============================================================================
+#=============================================================================
   # ZERO-TRUST FRAMEWORK APPLICATION
  #  Developed by Randy Singh | KalSnet (KNet) Consulting Group
   #Original Java code: April 2019 — Python/Streamlit conversion: 2024
-=============================================================================
+#=============================================================================
 # Run with:
 #   pip install streamlit plotly pandas fpdf2 python-docx
 # streamlit run zero_trust_framework.py
-=============================================================================
+#=============================================================================
 
 
 import streamlit as st
