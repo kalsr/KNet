@@ -617,13 +617,13 @@ def build_docx_bytes(selected_category: str, content: dict) -> bytes:
             return b""
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  SIDEBAR — NAVIGATION & EXPORT
+#  SIDEBAR — NAVIGATION & ABOUT (RADIO BUTTONS)
 # ══════════════════════════════════════════════════════════════════════════════
 with st.sidebar:
     st.markdown("## ZTA Navigator")
     st.markdown("---")
 
-    category = st.selectbox(
+    category = st.radio(
         "Select Framework Category",
         [
             "Overview & Architecture Diagram",
@@ -633,35 +633,20 @@ with st.sidebar:
             "4. Evaluation Criteria",
             "Synthetic Data & Analytics",
         ],
+        index=0,
+        key="category_radio",
     )
 
-    st.markdown("---")
     st.markdown('<div class="sidebar-box">', unsafe_allow_html=True)
     st.markdown("**About**")
     st.markdown("Randy Singh  \nComputer Scientist  \nDISA / BDE5  \nKalSnet (KNet) Consulting")
     st.markdown("`(301) 225-9535`")
     st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown('<div class="sidebar-box">', unsafe_allow_html=True)
-    st.markdown("**Export Current View**")
-
-    export_format = st.radio(
-        "Format",
-        ["Text", "JSON", "PDF", "Word"],
-        index=0,
-        key="export_format",
-    )
-
-    st.markdown("</div>", unsafe_allow_html=True)
-    st.markdown(
-        '<div class="sidebar-footer">Zero-Trust Framework | DISA / BDE5 | KalSnet (KNet) Consulting</div>',
-        unsafe_allow_html=True,
-    )
-
 # ══════════════════════════════════════════════════════════════════════════════
 #  MAIN CONTENT RENDERING
 # ══════════════════════════════════════════════════════════════════════════════
-export_payload = {}
+export_payload: dict = {}
 
 # ─── Overview & Architecture Diagram ──────────────────────────────────────────
 if category == "Overview & Architecture Diagram":
@@ -764,8 +749,14 @@ elif category == "1. Functional Requirements":
     for pillar, details in FUNCTIONAL_REQUIREMENTS.items():
         st.markdown(f"### {pillar}")
 
-        st.markdown(f'<div class="req-card"><b>Requirement:</b> {details["requirement"]}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="sol-card"><b>Solution Pattern:</b> {details["solution"]}</div>', unsafe_allow_html=True)
+        st.markdown(
+            f'<div class="req-card"><b>Requirement:</b> {details["requirement"]}</div>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f'<div class="sol-card"><b>Solution Pattern:</b> {details["solution"]}</div>',
+            unsafe_allow_html=True,
+        )
         st.markdown(
             f'<div class="rec-card"><b>Recommendation:</b> {details["recommendation"]}</div>',
             unsafe_allow_html=True,
@@ -842,15 +833,13 @@ elif category == "Synthetic Data & Analytics":
 
     top_row = st.columns(4)
     with top_row[0]:
-        compliant_pct = (
-            (df["Compliance_Status"] == "Compliant").mean() * 100
-        )
+        compliant_pct = (df["Compliance_Status"] == "Compliant").mean() * 100
         st.metric("Compliant Endpoints", f"{compliant_pct:.1f} %")
     with top_row[1]:
         avg_stig = df["STIG_Score"].mean()
         st.metric("Average STIG Score", f"{avg_stig:.1f}")
     with top_row[2]:
-        mfa_pct = (df["MFA_Enabled"].mean() * 100)
+        mfa_pct = df["MFA_Enabled"].mean() * 100
         st.metric("MFA Coverage", f"{mfa_pct:.1f} %")
     with top_row[3]:
         incidents = df["Incident_Flagged"].sum()
@@ -877,9 +866,7 @@ elif category == "Synthetic Data & Analytics":
         st.plotly_chart(fig_status, use_container_width=True)
 
     with col_chart2:
-        pillar_scores = (
-            df.groupby("Pillar")["STIG_Score"].mean().reset_index()
-        )
+        pillar_scores = df.groupby("Pillar")["STIG_Score"].mean().reset_index()
         fig_pillar = px.line(
             pillar_scores,
             x="Pillar",
@@ -910,58 +897,63 @@ elif category == "Synthetic Data & Analytics":
     }
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  EXPORT ACTIONS (BOTTOM OF MAIN AREA)
+#  SIDEBAR — EXPORT THIS VIEW (ONLY)
 # ══════════════════════════════════════════════════════════════════════════════
-st.markdown("---")
-st.markdown("### Export This View")
+with st.sidebar:
+    st.markdown('<div class="sidebar-box">', unsafe_allow_html=True)
+    st.markdown("**Export This View**")
 
-col_export1, col_export2, col_export3, col_export4 = st.columns(4)
+    # Text
+    text_report = build_text_report(category, export_payload)
+    st.download_button(
+        "Download Text (.txt)",
+        data=text_report,
+        file_name=f"zero_trust_{category.replace(' ', '_').lower()}.txt",
+        mime="text/plain",
+        key="dl_txt",
+    )
 
-with col_export1:
-    if st.button("Download Text Report"):
-        text_report = build_text_report(category, export_payload)
+    # JSON
+    json_report = build_json_report(category, export_payload)
+    st.download_button(
+        "Download JSON (.json)",
+        data=json_report,
+        file_name=f"zero_trust_{category.replace(' ', '_').lower()}.json",
+        mime="application/json",
+        key="dl_json",
+    )
+
+    # PDF
+    pdf_bytes = build_pdf_bytes(category, export_payload)
+    if pdf_bytes:
         st.download_button(
-            "Save as .txt",
-            data=text_report,
-            file_name=f"zero_trust_{category.replace(' ', '_').lower()}.txt",
-            mime="text/plain",
+            "Download PDF (.pdf)",
+            data=pdf_bytes,
+            file_name=f"zero_trust_{category.replace(' ', '_').lower()}.pdf",
+            mime="application/pdf",
+            key="dl_pdf",
         )
+    else:
+        st.caption("PDF export not available — install `fpdf2` in the environment.")
 
-with col_export2:
-    if st.button("Download JSON Report"):
-        json_report = build_json_report(category, export_payload)
+    # Word
+    docx_bytes = build_docx_bytes(category, export_payload)
+    if docx_bytes:
         st.download_button(
-            "Save as .json",
-            data=json_report,
-            file_name=f"zero_trust_{category.replace(' ', '_').lower()}.json",
-            mime="application/json",
+            "Download Word (.docx)",
+            data=docx_bytes,
+            file_name=f"zero_trust_{category.replace(' ', '_').lower()}.docx",
+            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            key="dl_docx",
         )
+    else:
+        st.caption("Word export not available — install `python-docx` in the environment.")
 
-with col_export3:
-    if st.button("Download PDF Report"):
-        pdf_bytes = build_pdf_bytes(category, export_payload)
-        if pdf_bytes:
-            st.download_button(
-                "Save as .pdf",
-                data=pdf_bytes,
-                file_name=f"zero_trust_{category.replace(' ', '_').lower()}.pdf",
-                mime="application/pdf",
-            )
-        else:
-            st.info("PDF export not available (fpdf not installed).")
-
-with col_export4:
-    if st.button("Download Word Report"):
-        docx_bytes = build_docx_bytes(category, export_payload)
-        if docx_bytes:
-            st.download_button(
-                "Save as .docx",
-                data=docx_bytes,
-                file_name=f"zero_trust_{category.replace(' ', '_').lower()}.docx",
-                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            )
-        else:
-            st.info("Word export not available (python-docx not installed).")
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown(
+        '<div class="sidebar-footer">Zero-Trust Framework | DISA / BDE5 | KalSnet (KNet) Consulting</div>',
+        unsafe_allow_html=True,
+    )
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  FOOTER
