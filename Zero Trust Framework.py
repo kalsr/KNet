@@ -27,7 +27,7 @@ except ImportError:
 # ══════════════════════════════════════════════════════════════════════════════
 st.set_page_config(
     page_title="Zero-Trust Framework | KNet Consulting",
-    page_icon="🔒",
+    page_icon="",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -125,7 +125,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 st.markdown(
-    '<p class="zt-tagline">Based on DISA/BDE5 ZTA Working Group Requirements &amp; Use Cases &nbsp;|&nbsp; Originally authored April 2019</p>',
+    '<p class="zt-tagline">Based on Kalsnet(KNet) Consulting Group Studies</p>',
     unsafe_allow_html=True,
 )
 st.markdown('<hr class="zt-hr">', unsafe_allow_html=True)
