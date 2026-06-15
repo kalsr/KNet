@@ -1,6 +1,3 @@
-
-
-
 #=============================================================================
 # CYBERSECURITY FRAMEWORK APPLICATION FOR DoD CRITICAL INFRASTRUCTURE
 # @Developed by Randy Singh | KalSnet (KNet) Consulting Group
@@ -9,7 +6,7 @@
 # Run with:
 #   pip install streamlit plotly pandas python-docx
 #   (optional) pip install fpdf2
-#   streamlit run cybersecurity_framework.py
+#   streamlit run cybersecurity_framework_v2.py
 #=============================================================================
 
 import streamlit as st
@@ -136,7 +133,7 @@ st.markdown(
 st.markdown('<hr class="cs-hr">', unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  FRAMEWORK DATA (sample 12 items; extend to 21 as needed)
+#  FRAMEWORK DATA (12 items; extend to 21 if desired)
 # ══════════════════════════════════════════════════════════════════════════════
 FRAMEWORK_ITEMS = {
     1: {
@@ -636,12 +633,12 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ─── Mermaid diagram per function ─────────────────────────────────────────────
+# ─── Mermaid diagram per function (no f-string) ───────────────────────────────
 st.markdown("#### Mermaid Flow Diagram (Function View)")
-mermaid_diagram = f"""
+mermaid_diagram = """
 ```mermaid
 flowchart LR
-    A[Start] --> B[{selected_item['function']} Function]
+    A[Start] --> B[FUNCTION_NAME Function]
     B --> C[Policy & Governance]
     C --> D[Controls Implemented]
     D --> E[Monitoring & Detection]
