@@ -62,7 +62,7 @@ if "nodes" not in st.session_state:
 # -----------------------------
 # SIDEBAR - CLOUD BUILDER
 # -----------------------------
-st.sidebar.header("☁ Cloud Builder Node Input")
+st.sidebar.header(" Cloud Builder Node Input")
 
 st.sidebar.markdown("""
 **Node Name:** Logical identifier for cloud component  
@@ -118,7 +118,7 @@ if st.sidebar.button("➕ Add Cloud Node"):
         })
         st.success(f"Node '{node_name}' added successfully!")
 
-if st.sidebar.button("🔄 Reset All Nodes"):
+if st.sidebar.button(" Reset All Nodes"):
     st.session_state.nodes = []
 
 # -----------------------------
@@ -126,7 +126,7 @@ if st.sidebar.button("🔄 Reset All Nodes"):
 # -----------------------------
 df = pd.DataFrame(st.session_state.nodes)
 
-st.subheader("📊 Cloud Nodes Overview")
+st.subheader(" Cloud Nodes Overview")
 if not df.empty:
     st.dataframe(df, use_container_width=True)
 
@@ -148,7 +148,7 @@ def ai_recommend(nodes):
 
     if avg_risk > 70:
         return """
-🔴 HIGH RISK DETECTED  
+ HIGH RISK DETECTED  
 AI Recommendation:
 - Enforce Zero Trust everywhere
 - Migrate critical workloads to PaaS
@@ -156,7 +156,7 @@ AI Recommendation:
 """
     elif avg_risk > 40:
         return """
-🟠 MEDIUM RISK  
+ MEDIUM RISK  
 AI Recommendation:
 - Strengthen identity layer
 - Add network segmentation
@@ -164,14 +164,14 @@ AI Recommendation:
 """
     else:
         return """
-🟢 LOW RISK  
+ LOW RISK  
 AI Recommendation:
 - Optimize SaaS usage
 - Consolidate workloads
 - Improve monitoring
 """
 
-st.subheader("🤖 AI Recommendation Engine (How it works)")
+st.subheader(" AI Recommendation Engine (How it works)")
 st.info(ai_recommend(st.session_state.nodes))
 
 st.markdown("""
@@ -185,7 +185,7 @@ st.markdown("""
 # -----------------------------
 # NETWORK GRAPH
 # -----------------------------
-st.subheader("🌐 Cloud Architecture Graph")
+st.subheader(" Cloud Architecture Graph")
 
 def build_graph(data):
     G = nx.Graph()
@@ -230,7 +230,7 @@ if not df.empty:
 # -----------------------------
 # DRAG & DROP EXPLANATION (REAL CLARITY)
 # -----------------------------
-st.subheader("🧩 Cloud Builder Explanation")
+st.subheader(" Cloud Builder Explanation")
 
 st.markdown("""
 ### What is Cloud Builder Node?
@@ -286,7 +286,7 @@ def to_ppt(data):
 # -----------------------------
 # EXPORT SECTION (FIXED DOWNLOAD BUTTONS)
 # -----------------------------
-st.subheader("📄 Export Reports (Fixed)")
+st.subheader(" Export Reports (Fixed)")
 
 pdf_data = to_pdf(st.session_state.nodes)
 st.download_button("⬇ Download PDF", pdf_data, file_name="cloud_report.pdf")
