@@ -635,7 +635,7 @@ st.markdown(
 
 # ─── Mermaid diagram per function (no f-string) ───────────────────────────────
 st.markdown("#### Mermaid Flow Diagram (Function View)")
-mermaid_diagram = """
+mermaid_diagram = ""
 ```mermaid
 flowchart LR
     A[Start] --> B[FUNCTION_NAME Function]
