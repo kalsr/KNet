@@ -29,7 +29,7 @@ text-align:center;
 color:white;
 font-size:26px;
 font-weight:bold;">
-KNet Cloud Intelligence Platform
+KNet Cloud Computing Framework
 </div>
 <div style="
 background-color:#0B3D91;
