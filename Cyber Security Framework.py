@@ -43,7 +43,7 @@ except ImportError:
 # ══════════════════════════════════════════════════════════════════════════════
 st.set_page_config(
     page_title="CyberSecurity Framework | KNet Consulting",
-    page_icon="🛡️",
+    page_icon="",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -98,9 +98,9 @@ st.markdown("""
 #  HEADER
 # ══════════════════════════════════════════════════════════════════════════════
 st.markdown('<p class="cs-title">CYBERSECURITY FRAMEWORK APPLICATION</p>', unsafe_allow_html=True)
-st.markdown('<p class="cs-subtitle">FOR DoD CRITICAL INFRASTRUCTURE</p>', unsafe_allow_html=True)
+st.markdown('<p class="cs-subtitle">FOR US CRITICAL INFRASTRUCTURE</p>', unsafe_allow_html=True)
 st.markdown('<p class="cs-subtitle">Developed by Randy Singh | KalSnet (KNet) Consulting Group</p>', unsafe_allow_html=True)
-st.markdown('<p class="cs-tagline">Helping Security Analysts, Planners & Administrators address IoT Security Vulnerabilities in DISA, DoD & USA Critical Infrastructure &nbsp;|&nbsp; Originally authored September 2017</p>', unsafe_allow_html=True)
+st.markdown('<p class="cs-tagline">Helping Security Analysts, Planners & Administrators address IoT Security Vulnerabilities in DISA, DoD & USA Critical Infrastructure &nbsp;|&nbsp; Originally authored June 2026</p>', unsafe_allow_html=True)
 st.markdown('<hr class="cs-hr">', unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
