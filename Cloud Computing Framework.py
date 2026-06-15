@@ -265,7 +265,7 @@ def to_pdf(data):
 
 def to_word(data):
     doc = Document()
-    doc.add_heading("Cloud Intelligence Report", 0)
+    doc.add_heading("Cloud Computing Framework Report", 0)
     doc.add_paragraph(str(data))
     buffer = BytesIO()
     doc.save(buffer)
@@ -275,7 +275,7 @@ def to_word(data):
 def to_ppt(data):
     prs = Presentation()
     slide = prs.slides.add_slide(prs.slide_layouts[1])
-    slide.shapes.title.text = "Cloud Intelligence Report"
+    slide.shapes.title.text = "Cloud Computing Framework Report"
     slide.placeholders[1].text = str(data)
 
     buffer = BytesIO()
