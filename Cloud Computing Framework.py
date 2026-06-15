@@ -15,7 +15,7 @@ from pptx import Presentation
 # -----------------------------
 # PAGE CONFIG
 # -----------------------------
-st.set_page_config(page_title="KNet Cloud Intelligence Platform", layout="wide")
+st.set_page_config(page_title="KNet Cloud Computing Framework", layout="wide")
 
 # -----------------------------
 # TOP BLUE HEADER BAR (FIXED)
