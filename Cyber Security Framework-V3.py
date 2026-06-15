@@ -1,6 +1,3 @@
-
-
-
 #=============================================================================
 # CYBERSECURITY FRAMEWORK APPLICATION FOR DoD CRITICAL INFRASTRUCTURE
 # @Developed by Randy Singh | KalSnet (KNet) Consulting Group
@@ -9,7 +6,7 @@
 # Run with:
 #   pip install streamlit plotly pandas python-docx
 #   (optional) pip install fpdf2
-#   streamlit run cybersecurity_framework_v2.py
+#   streamlit run cybersecurity_framework_v3.py
 #=============================================================================
 
 import streamlit as st
@@ -636,13 +633,61 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ─── Mermaid diagram per function (no f-string) ───────────────────────────────
+# ─── Mermaid diagram per function (shown as code, no backtick fences) ─────────
 st.markdown("#### Mermaid Flow Diagram (Function View)")
-mermaid_diagram = """
-```mermaid
-flowchart LR
-    A[Start] --> B[FUNCTION_NAME Function]
-    B --> C[Policy & Governance]
-    C --> D[Controls Implemented]
-    D --> E[Monitoring & Detection]
-    E --> F[Response & Improvement]
+mermaid_diagram = (
+    "flowchart LR\n"
+    f"    A[Start] --> B[{selected_item['function']} Function]\n"
+    "    B --> C[Policy & Governance]\n"
+    "    C --> D[Controls Implemented]\n"
+    "    D --> E[Monitoring & Detection]\n"
+    "    E --> F[Response & Improvement]\n"
+)
+st.code(mermaid_diagram, language="mermaid")
+
+# ─── Plotly flow-style diagram (conceptual) ───────────────────────────────────
+st.markdown("#### Visual Flow Diagram (Conceptual)")
+nodes = ["Start", selected_item["function"], "Controls", "Monitoring", "Response"]
+x = [0, 1, 2, 3, 4]
+y = [0, 0, 0, 0, 0]
+
+fig = go.Figure()
+fig.add_trace(
+    go.Scatter(
+        x=x,
+        y=y,
+        mode="markers+text",
+        text=nodes,
+        textposition="bottom center",
+        marker=dict(size=18, color="#0047AB"),
+    )
+)
+fig.add_shape(type="line", x0=0, y0=0, x1=1, y1=0, line=dict(color="#0047AB", width=2))
+fig.add_shape(type="line", x0=1, y0=0, x1=2, y1=0, line=dict(color="#2e7d32", width=2))
+fig.add_shape(type="line", x0=2, y0=0, x1=3, y1=0, line=dict(color="#f0a500", width=2))
+fig.add_shape(type="line", x0=3, y0=0, x1=4, y1=0, line=dict(color="#c62828", width=2))
+
+fig.update_layout(
+    xaxis=dict(visible=False),
+    yaxis=dict(visible=False),
+    showlegend=False,
+    height=260,
+    margin=dict(l=10, r=10, t=10, b=10),
+    plot_bgcolor="#f4f7fc",
+    paper_bgcolor="#f4f7fc",
+)
+
+st.plotly_chart(fig, use_container_width=True)
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  FOOTER
+# ══════════════════════════════════════════════════════════════════════════════
+st.markdown(
+    """
+<div style="text-align:center;color:#888;font-size:0.8rem;margin-top:20px;">
+CyberSecurity Framework Application | Developed by Randy Singh | KalSnet (KNet) Consulting Group |
+{year}
+</div>
+""".format(year=datetime.now().year),
+    unsafe_allow_html=True,
+)
