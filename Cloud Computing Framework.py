@@ -1,56 +1,103 @@
-# Cloud Computing Framework
-
-
 import streamlit as st
 import pandas as pd
 import networkx as nx
 from pyvis.network import Network
 import plotly.express as px
-import random
 import json
+import base64
+from io import BytesIO
 
-# Export libs
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 from docx import Document
 from pptx import Presentation
 
 # -----------------------------
-# CONFIG
+# PAGE CONFIG
 # -----------------------------
 st.set_page_config(page_title="KNet Cloud Intelligence Platform", layout="wide")
 
-st.title("☁ KNet Cloud Intelligence Platform")
-st.markdown("### Enterprise Cloud Taxonomy | MITRE | Zero Trust | AI Engine")
+# -----------------------------
+# TOP BLUE HEADER BAR (FIXED)
+# -----------------------------
+st.markdown("""
+<div style="
+background-color:#0B3D91;
+padding:18px;
+border-radius:10px;
+text-align:center;
+color:white;
+font-size:26px;
+font-weight:bold;">
+KNet Cloud Intelligence Platform
+</div>
+<div style="
+background-color:#0B3D91;
+padding:10px;
+border-radius:10px;
+text-align:center;
+color:white;
+font-size:14px;
+font-weight:bold;
+margin-top:5px;">
+Enterprise Cloud Taxonomy | MITRE | Zero Trust | AI Engine
+</div>
+
+<div style="
+text-align:center;
+color:#0B3D91;
+font-size:14px;
+font-weight:bold;
+margin-top:5px;">
+Developed by Randy Singh from Kalsnet (KNet) Consulting Group
+</div>
+""", unsafe_allow_html=True)
 
 # -----------------------------
-# ROLES
-# -----------------------------
-role = st.sidebar.selectbox("Select Role", ["Admin", "Analyst", "Viewer"])
-
-st.sidebar.markdown("### Role Permissions")
-st.sidebar.write(f"Current Role: {role}")
-
-# -----------------------------
-# DATA STORE
+# SESSION STATE
 # -----------------------------
 if "nodes" not in st.session_state:
     st.session_state.nodes = []
 
 # -----------------------------
-# CLOUD NODE INPUT
+# SIDEBAR - CLOUD BUILDER
 # -----------------------------
-st.sidebar.header("Cloud Builder")
+st.sidebar.header("☁ Cloud Builder Node Input")
+
+st.sidebar.markdown("""
+**Node Name:** Logical identifier for cloud component  
+Example: `Auth-Service`, `Storage-Layer`, `Web-App`
+""")
 
 node_name = st.sidebar.text_input("Node Name")
+
+st.sidebar.markdown("""
+**Cloud Type Explanation:**
+- IaaS → Infrastructure (VMs, storage, networks)
+- PaaS → Application runtime (APIs, Kubernetes, middleware)
+- SaaS → End-user applications (email, CRM, Office tools)
+""")
+
 cloud_type = st.sidebar.selectbox("Cloud Type", ["IaaS", "PaaS", "SaaS"])
+
+st.sidebar.markdown("""
+**MITRE Techniques:**
+- T1078 → Valid accounts (stolen credentials)
+- T1190 → Exploit public-facing application
+- T1059 → Command execution via scripts
+""")
 
 mitre = st.sidebar.selectbox(
     "MITRE Technique",
     ["T1078 - Valid Accounts", "T1190 - Exploit Public App", "T1059 - Command Execution"]
 )
 
-risk = st.sidebar.slider("Risk Score", 0, 100, 50)
+risk = st.sidebar.slider("Risk Score (0-100)", 0, 100, 50)
+
+st.sidebar.markdown("""
+**Zero Trust Layers:**
+Identity → Device → Network → Application → Data
+""")
 
 zero_trust = st.sidebar.selectbox(
     "Zero Trust Layer",
@@ -58,53 +105,85 @@ zero_trust = st.sidebar.selectbox(
 )
 
 # -----------------------------
-# ADD NODE
+# ADD NODE (MULTI NODE SUPPORT FIX)
 # -----------------------------
-if st.sidebar.button("➕ Add Node"):
-    st.session_state.nodes.append({
-        "name": node_name,
-        "type": cloud_type,
-        "mitre": mitre,
-        "risk": risk,
-        "zt": zero_trust
-    })
+if st.sidebar.button("➕ Add Cloud Node"):
+    if node_name:
+        st.session_state.nodes.append({
+            "name": node_name,
+            "type": cloud_type,
+            "mitre": mitre,
+            "risk": risk,
+            "zt": zero_trust
+        })
+        st.success(f"Node '{node_name}' added successfully!")
 
-# -----------------------------
-# RESET
-# -----------------------------
-if st.sidebar.button("🔄 Reset"):
+if st.sidebar.button("🔄 Reset All Nodes"):
     st.session_state.nodes = []
 
 # -----------------------------
-# AI RECOMMENDATION ENGINE
-# -----------------------------
-def ai_recommend(nodes):
-    if not nodes:
-        return "No data"
-
-    avg_risk = sum(n["risk"] for n in nodes) / len(nodes)
-
-    if avg_risk > 70:
-        return "High Risk: Recommend Zero Trust Hardening + PaaS migration"
-    elif avg_risk > 40:
-        return "Medium Risk: Add IAM + Network segmentation"
-    else:
-        return "Low Risk: Optimize SaaS consolidation"
-
-st.subheader("🤖 AI Recommendation Engine")
-st.info(ai_recommend(st.session_state.nodes))
-
-# -----------------------------
-# TABLE VIEW
+# DATAFRAME
 # -----------------------------
 df = pd.DataFrame(st.session_state.nodes)
 
-st.subheader("📊 Cloud Nodes")
+st.subheader("📊 Cloud Nodes Overview")
 if not df.empty:
     st.dataframe(df, use_container_width=True)
 
 # -----------------------------
-# NETWORK GRAPH (REAL ARCHITECTURE)
+# AI RECOMMENDATION ENGINE (EXPLAINED)
+# -----------------------------
+def ai_recommend(nodes):
+    """
+    AI engine logic:
+    1. Aggregates risk scores
+    2. Detects system-wide exposure
+    3. Suggests architecture changes
+    """
+
+    if not nodes:
+        return "No cloud nodes detected."
+
+    avg_risk = sum(n["risk"] for n in nodes) / len(nodes)
+
+    if avg_risk > 70:
+        return """
+🔴 HIGH RISK DETECTED  
+AI Recommendation:
+- Enforce Zero Trust everywhere
+- Migrate critical workloads to PaaS
+- Enable IAM + MFA + micro-segmentation
+"""
+    elif avg_risk > 40:
+        return """
+🟠 MEDIUM RISK  
+AI Recommendation:
+- Strengthen identity layer
+- Add network segmentation
+- Reduce exposed SaaS services
+"""
+    else:
+        return """
+🟢 LOW RISK  
+AI Recommendation:
+- Optimize SaaS usage
+- Consolidate workloads
+- Improve monitoring
+"""
+
+st.subheader("🤖 AI Recommendation Engine (How it works)")
+st.info(ai_recommend(st.session_state.nodes))
+
+st.markdown("""
+**How AI Engine Works:**
+- Collects all node risk scores
+- Calculates average exposure
+- Maps MITRE + Zero Trust + Cloud type
+- Generates risk-based architecture guidance
+""")
+
+# -----------------------------
+# NETWORK GRAPH
 # -----------------------------
 st.subheader("🌐 Cloud Architecture Graph")
 
@@ -112,8 +191,7 @@ def build_graph(data):
     G = nx.Graph()
 
     for n in data:
-        G.add_node(n["name"], label=n["type"])
-
+        G.add_node(n["name"])
         G.add_edge(n["name"], n["type"])
         G.add_edge(n["name"], n["mitre"])
         G.add_edge(n["name"], n["zt"])
@@ -122,11 +200,11 @@ def build_graph(data):
 
 if st.button("📡 Generate Network Graph"):
     if df.empty:
-        st.warning("No nodes")
+        st.warning("No nodes available")
     else:
         G = build_graph(st.session_state.nodes)
 
-        net = Network(height="500px", width="100%", bgcolor="#0b1a2f", font_color="white")
+        net = Network(height="600px", width="100%", bgcolor="#0b1a2f", font_color="white")
 
         for node in G.nodes:
             net.add_node(node)
@@ -137,78 +215,87 @@ if st.button("📡 Generate Network Graph"):
         net.save_graph("graph.html")
 
         with open("graph.html", "r", encoding="utf-8") as f:
-            st.components.v1.html(f.read(), height=500)
+            st.components.v1.html(f.read(), height=600)
 
 # -----------------------------
-# DRAG & DROP BUILDER SIMULATION
+# MITRE + ZERO TRUST VISUALIZATION
 # -----------------------------
-st.subheader("🧩 Drag & Drop Cloud Builder (Simulated)")
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.button("☁ Add IaaS Block")
-with col2:
-    st.button("⚙ Add PaaS Block")
-with col3:
-    st.button("📦 Add SaaS Block")
-
-st.info("Drag & Drop UI can be upgraded using Streamlit components or React frontend.")
-
-# -----------------------------
-# MITRE + ZERO TRUST VIEW
-# -----------------------------
-st.subheader("🛡 MITRE + Zero Trust Mapping")
+st.subheader("🛡 MITRE + Zero Trust Distribution")
 
 if not df.empty:
-    fig = px.histogram(df, x="zt", color="type", title="Zero Trust Distribution")
+    fig = px.histogram(df, x="zt", color="type",
+                       title="Zero Trust Layer Distribution Across Cloud Types")
     st.plotly_chart(fig, use_container_width=True)
 
 # -----------------------------
-# EXPORT FUNCTIONS
+# DRAG & DROP EXPLANATION (REAL CLARITY)
 # -----------------------------
+st.subheader("🧩 Cloud Builder Explanation")
 
-def export_pdf(data):
-    doc = SimpleDocTemplate("cloud_report.pdf")
+st.markdown("""
+### What is Cloud Builder Node?
+
+A **Node** represents a cloud component:
+
+Examples:
+- Auth-Service (Identity layer)
+- Storage Cluster (IaaS)
+- API Gateway (PaaS)
+- Email System (SaaS)
+
+You can add MULTIPLE nodes to simulate real architectures.
+
+Each node connects to:
+- Cloud Type (IaaS / PaaS / SaaS)
+- MITRE Attack Mapping
+- Zero Trust Security Layer
+""")
+
+# -----------------------------
+# EXPORT HELPERS (FIXED DOWNLOAD)
+# -----------------------------
+def to_pdf(data):
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer)
     styles = getSampleStyleSheet()
-    content = [Paragraph(str(data), styles["Normal"])]
-    doc.build(content)
+    text = Paragraph(str(data), styles["Normal"])
+    doc.build([text])
+    buffer.seek(0)
+    return buffer
 
-def export_word(data):
+def to_word(data):
     doc = Document()
-    doc.add_heading("Cloud Report", 0)
+    doc.add_heading("Cloud Intelligence Report", 0)
     doc.add_paragraph(str(data))
-    doc.save("cloud_report.docx")
+    buffer = BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
+    return buffer
 
-def export_ppt(data):
+def to_ppt(data):
     prs = Presentation()
     slide = prs.slides.add_slide(prs.slide_layouts[1])
-    slide.shapes.title.text = "Cloud Report"
+    slide.shapes.title.text = "Cloud Intelligence Report"
     slide.placeholders[1].text = str(data)
-    prs.save("cloud_report.pptx")
+
+    buffer = BytesIO()
+    prs.save(buffer)
+    buffer.seek(0)
+    return buffer
 
 # -----------------------------
-# EXPORT BUTTONS
+# EXPORT SECTION (FIXED DOWNLOAD BUTTONS)
 # -----------------------------
-st.subheader("📄 Export Reports")
+st.subheader("📄 Export Reports (Fixed)")
 
-if st.button("Export PDF"):
-    export_pdf(st.session_state.nodes)
-    st.success("PDF generated")
+pdf_data = to_pdf(st.session_state.nodes)
+st.download_button("⬇ Download PDF", pdf_data, file_name="cloud_report.pdf")
 
-if st.button("Export Word"):
-    export_word(st.session_state.nodes)
-    st.success("Word doc generated")
+word_data = to_word(st.session_state.nodes)
+st.download_button("⬇ Download Word", word_data, file_name="cloud_report.docx")
 
-if st.button("Export PowerPoint"):
-    export_ppt(st.session_state.nodes)
-    st.success("PPT generated")
+ppt_data = to_ppt(st.session_state.nodes)
+st.download_button("⬇ Download PowerPoint", ppt_data, file_name="cloud_report.pptx")
 
-# -----------------------------
-# JSON EXPORT
-# -----------------------------
-st.download_button(
-    "⬇ Export JSON",
-    json.dumps(st.session_state.nodes, indent=2),
-    file_name="cloud_intelligence.json"
-)
+json_data = json.dumps(st.session_state.nodes, indent=2)
+st.download_button("⬇ Download JSON", json_data, file_name="cloud_data.json")
