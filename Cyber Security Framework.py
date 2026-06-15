@@ -783,8 +783,8 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown("**About**")
-    st.markdown("Randy Singh  \nComputer Scientist  \nDISA / BDE5  \nKalSnet (KNet) Consulting")
-    st.markdown("`(301) 225-9535`")
+    st.markdown("Randy Singh  \nComputer Scientist \nKalSnet (KNet) Consulting")
+    st.markdown(" (301) 503-2918 ")
 
 # ── Export sidebar ────────────────────────────────────────────────────────────
 with st.sidebar:
@@ -1062,7 +1062,7 @@ st.markdown(
     'CyberSecurity Framework Application for DoD Critical Infrastructure &nbsp;|&nbsp; '
     'Developed by Randy Singh &nbsp;|&nbsp; '
     'KalSnet (KNet) Consulting Group &nbsp;|&nbsp; '
-    f'DISA / BDE5 Technology Innovation Team &nbsp;|&nbsp; {datetime.now().year}'
+    f'KNet/Technology Innovation Team &nbsp;|&nbsp; {datetime.now().year}'
     '</div>',
     unsafe_allow_html=True,
 )
