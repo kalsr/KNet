@@ -220,7 +220,7 @@ if st.button("📡 Generate Network Graph"):
 # -----------------------------
 # MITRE + ZERO TRUST VISUALIZATION
 # -----------------------------
-st.subheader("🛡 MITRE + Zero Trust Distribution")
+st.subheader(" MITRE + Zero Trust Distribution")
 
 if not df.empty:
     fig = px.histogram(df, x="zt", color="type",
