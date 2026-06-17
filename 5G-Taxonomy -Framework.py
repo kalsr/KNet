@@ -1,4 +1,4 @@
-# 5G Taxonomy & Framework
+
 
 
 import streamlit as st
@@ -546,27 +546,112 @@ def generate_synthetic_5g_data(n_records: int, seed: int = 42) -> pd.DataFrame:
 # =============================================================================
 # MERMAID RENDER HELPER
 # =============================================================================
+MERMAID_FONT_STACK = "Segoe UI, Helvetica, Arial, sans-serif"
+
+
 def render_mermaid(mermaid_code: str, height: int = 480):
-    """Renders a Mermaid.js diagram inside the Streamlit app via an HTML component."""
+    """Renders a Mermaid.js diagram inside the Streamlit app via an HTML component.
+
+    Uses the classic UMD <script src="..."> build (global `mermaid` object) rather
+    than an ES-module dynamic `import`. The ESM-import approach is unreliable inside
+    the sandboxed `srcdoc` iframe that `components.html` renders into — the import
+    can silently fail, leaving the raw diagram text visible in the browser's default
+    monospace fallback font. The UMD approach below avoids that failure mode and
+    explicitly forces a consistent sans-serif font on every diagram element so the
+    rendered text always matches the rest of the app, regardless of which fonts are
+    installed on the viewer's machine.
+    """
     html_code = f"""
-    <div style="background:white; border:1px solid #E3E8F0; border-radius:10px; padding:14px;">
-      <pre class="mermaid" style="display:flex; justify-content:center;">
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8" />
+      <style>
+        html, body {{
+          margin: 0; padding: 0;
+          background: #FFFFFF;
+          font-family: {MERMAID_FONT_STACK};
+        }}
+        .mermaid-wrap {{
+          background: #FFFFFF;
+          border: 1px solid #E3E8F0;
+          border-radius: 10px;
+          padding: 16px;
+          overflow-x: auto;
+          overflow-y: hidden;
+          box-sizing: border-box;
+        }}
+        .mermaid {{
+          display: flex;
+          justify-content: center;
+          font-family: {MERMAID_FONT_STACK} !important;
+        }}
+        /* Force the font on every text element Mermaid generates, including
+           foreignObject HTML labels and raw SVG <text>/<tspan> nodes, so the
+           diagram never falls back to a mismatched serif/monospace font. */
+        .mermaid svg {{
+          max-width: 100%;
+          height: auto;
+          font-family: {MERMAID_FONT_STACK} !important;
+        }}
+        .mermaid svg text,
+        .mermaid svg tspan,
+        .mermaid .nodeLabel,
+        .mermaid .edgeLabel,
+        .mermaid .label,
+        .mermaid .messageText,
+        .mermaid .actor {{
+          font-family: {MERMAID_FONT_STACK} !important;
+        }}
+        #fallback-msg {{
+          display: none;
+          color: #B42318;
+          font-size: 0.85rem;
+          padding: 10px 4px;
+        }}
+      </style>
+    </head>
+    <body>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
 {mermaid_code}
-      </pre>
-    </div>
-    <script type="module">
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-      mermaid.initialize({{ startOnLoad: true, theme: 'base',
-        themeVariables: {{
-          primaryColor: '#EAF1FC',
-          primaryTextColor: '#0B2E5E',
-          primaryBorderColor: '#1357C7',
-          lineColor: '#1357C7',
-          secondaryColor: '#0E8F8F',
-          tertiaryColor: '#FFFFFF'
-        }} }});
-      mermaid.run();
-    </script>
+        </div>
+        <div id="fallback-msg">
+          Diagram engine did not load (no network access in this environment).
+          The Mermaid source for this diagram is still included in the PDF / Word / Text exports.
+        </div>
+      </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"
+              onerror="document.getElementById('fallback-msg').style.display='block';"></script>
+      <script>
+        (function () {{
+          if (typeof mermaid === "undefined") {{
+            document.getElementById('fallback-msg').style.display = 'block';
+            return;
+          }}
+          mermaid.initialize({{
+            startOnLoad: true,
+            securityLevel: "loose",
+            theme: "base",
+            fontFamily: "{MERMAID_FONT_STACK}",
+            themeVariables: {{
+              fontFamily: "{MERMAID_FONT_STACK}",
+              primaryColor: "#EAF1FC",
+              primaryTextColor: "#0B2E5E",
+              primaryBorderColor: "#1357C7",
+              lineColor: "#1357C7",
+              secondaryColor: "#0E8F8F",
+              tertiaryColor: "#FFFFFF",
+              fontSize: "15px"
+            }},
+            flowchart: {{ htmlLabels: true, useMaxWidth: true, curve: "basis" }},
+            sequence: {{ useMaxWidth: true, wrap: true }}
+          }});
+        }})();
+      </script>
+    </body>
+    </html>
     """
     components.html(html_code, height=height, scrolling=True)
 
@@ -837,7 +922,7 @@ with tab_diagrams:
     st.markdown('<div class="section-heading">1. Taxonomy Structure Diagram</div>', unsafe_allow_html=True)
     st.markdown("A top-down view of how the 7 layers branch into their core categories.")
     st.markdown('</div>', unsafe_allow_html=True)
-    render_mermaid(MERMAID_TAXONOMY_TREE, height=520)
+    render_mermaid(MERMAID_TAXONOMY_TREE, height=560)
 
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-heading">2. Connection Establishment Flow (Sequence Diagram)</div>', unsafe_allow_html=True)
@@ -846,7 +931,7 @@ with tab_diagrams:
         "data session, from radio connection through to the data network."
     )
     st.markdown('</div>', unsafe_allow_html=True)
-    render_mermaid(MERMAID_DATA_FLOW, height=460)
+    render_mermaid(MERMAID_DATA_FLOW, height=500)
 
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-heading">3. Network Slicing Flow</div>', unsafe_allow_html=True)
@@ -855,7 +940,7 @@ with tab_diagrams:
         "into the three core slice types, each serving distinct use-cases."
     )
     st.markdown('</div>', unsafe_allow_html=True)
-    render_mermaid(MERMAID_SLICING, height=420)
+    render_mermaid(MERMAID_SLICING, height=460)
 
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-heading">4. Identity & Security Flow</div>', unsafe_allow_html=True)
@@ -864,7 +949,7 @@ with tab_diagrams:
         "zero trust, and how inter-operator signaling is filtered through the SEPP."
     )
     st.markdown('</div>', unsafe_allow_html=True)
-    render_mermaid(MERMAID_SECURITY, height=420)
+    render_mermaid(MERMAID_SECURITY, height=460)
 
     st.info(
         "💡 Diagrams are rendered live using **Mermaid.js**. If a diagram does not render (e.g., no internet "
