@@ -270,25 +270,25 @@ with st.sidebar:
 
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("🔄 Generate", use_container_width=True):
+        if st.button(" Generate", use_container_width=True):
             st.session_state.df = generate_data(n_records, seed=seed_val)
             st.session_state.n_records = n_records
             st.rerun()
     with col2:
-        if st.button("🗑️ Reset", use_container_width=True):
+        if st.button(" Reset", use_container_width=True):
             st.session_state.df = generate_data(300)
             st.session_state.n_records = 300
             st.rerun()
 
     st.markdown("---")
-    st.markdown("### 🔍 Filters")
+    st.markdown("###  Filters")
     df_all = st.session_state.df
     sel_region  = st.multiselect("Region",    REGIONS,   default=REGIONS)
     sel_band    = st.multiselect("Freq Band", BANDS,     default=BANDS)
     sel_usecase = st.multiselect("Use Case",  USE_CASES, default=USE_CASES)
 
     st.markdown("---")
-    st.markdown("### 📤 Export")
+    st.markdown("###  Export")
     export_fmt = st.selectbox("Format", ["PDF","Word (.docx)","Text (.txt)","JSON"])
 
 df = st.session_state.df
@@ -307,7 +307,7 @@ st.markdown("""
 <div class="knet-hero">
   <p class="knet-title">📡 KNet 5G Intelligence Framework</p>
   <p class="knet-subtitle">Advanced 5G Network Analytics, Taxonomy & Diagnostics Platform</p>
-  <span class="knet-badge">🏢 Developed by Randy Singh &nbsp;|&nbsp; Kalsnet (KNet) Consulting Group</span>
+  <span class="knet-badge"> Developed by Randy Singh &nbsp;|&nbsp; Kalsnet (KNet) Consulting Group</span>
 </div>
 """, unsafe_allow_html=True)
 
@@ -315,12 +315,12 @@ st.markdown("""
 # TABS
 # ════════════════════════════════════════════════════════════════════════════
 tabs = st.tabs([
-    "🏠 Framework Overview",
-    "📊 Data Explorer",
-    "📈 Analytics",
-    "🗺️ Diagrams & Flowcharts",
-    "📖 Field Dictionary",
-    "📤 Export",
+    " Framework Overview",
+    " Data Explorer",
+    " Analytics",
+    " Diagrams & Flowcharts",
+    " Field Dictionary",
+    " Export",
 ])
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -509,11 +509,11 @@ MERMAID_HTML = """
 <h3>① 5G Architecture Layers</h3>
 <div class="mermaid">
 graph TB
-  UE[📱 User Equipment]-->RAN[🗼 5G RAN\nNext-Gen NodeB gNB]
-  RAN-->CN[⚙️ 5G Core\nService-Based Architecture]
-  CN-->DN[🌐 Data Networks\nInternet / MEC / Slices]
-  CN-->OAM[🛠️ OAM\nNetwork Management]
-  RAN-->MEC[🖥️ Multi-Access Edge\nComputing MEC]
+  UE[ User Equipment]-->RAN[🗼 5G RAN\nNext-Gen NodeB gNB]
+  RAN-->CN[ 5G Core\nService-Based Architecture]
+  CN-->DN[ Data Networks\nInternet / MEC / Slices]
+  CN-->OAM[ OAM\nNetwork Management]
+  RAN-->MEC[ Multi-Access Edge\nComputing MEC]
 </div>
 
 <h3>② Network Slicing Flow</h3>
@@ -532,7 +532,7 @@ flowchart LR
 <h3>③ KNet Framework Decision Flowchart</h3>
 <div class="mermaid">
 flowchart TD
-  START([🚀 New 5G Deployment])-->UC{Use Case?}
+  START([ New 5G Deployment])-->UC{Use Case?}
   UC-->|Video / AR / VR|eMBB[eMBB Path\nSub-6 or mmWave\nSA Mode]
   UC-->|Autonomous / Surgery|URLLC[URLLC Path\nFR1 + MEC\nSA + Network Slice]
   UC-->|IoT / Smart City|mMTC[mMTC Path\nSub-6 GHz\nNB-IoT / RedCap]
@@ -543,7 +543,7 @@ flowchart TD
   mMTC-->LPWA[Use Low Power\nNarrow Band IoT]
   mmWave & Sub6 & MEC2 & LPWA-->KPI[Measure KPIs\nThroughput / Latency\nQoS / Energy]
   KPI-->PASS{KPI ≥ ITU Target?}
-  PASS-->|Yes|DEPLOY([✅ Deploy])
+  PASS-->|Yes|DEPLOY([ Deploy])
   PASS-->|No|OPT[Optimise:\nBeamforming\nSON\nSlice reconfig]
   OPT-->KPI
 </div>
@@ -593,7 +593,7 @@ quadrantChart
 with tabs[3]:
     st.markdown('<p class="section-hdr">5G Architecture & KNet Framework Diagrams</p>',
                 unsafe_allow_html=True)
-    st.info("ℹ️ Mermaid diagrams render via embedded HTML below. All 6 diagrams included.")
+    st.info(" Mermaid diagrams render via embedded HTML below. All 6 diagrams included.")
     st.components.v1.html(MERMAID_HTML, height=2800, scrolling=True)
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -618,7 +618,7 @@ with tabs[5]:
                 unsafe_allow_html=True)
     st.info(f"Will export **{len(df_f)}** records in **{export_fmt}** format.")
 
-    if st.button("⬇️ Generate & Download", use_container_width=True):
+    if st.button(" Generate & Download", use_container_width=True):
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
 
         # ── JSON ──────────────────────────────────────────────────────────
@@ -639,7 +639,7 @@ with tabs[5]:
                 "data": df_f.to_dict(orient="records"),
             }
             buf = io.BytesIO(json.dumps(payload, indent=2).encode())
-            st.download_button("⬇️ Download JSON", buf, f"KNet5G_{ts}.json",
+            st.download_button(" Download JSON", buf, f"KNet5G_{ts}.json",
                                "application/json")
 
         # ── TEXT ──────────────────────────────────────────────────────────
@@ -663,7 +663,7 @@ with tabs[5]:
             ]
             lines.append(df_f.to_string(index=False))
             buf = io.BytesIO("\n".join(lines).encode())
-            st.download_button("⬇️ Download TXT", buf, f"KNet5G_{ts}.txt", "text/plain")
+            st.download_button(" Download TXT", buf, f"KNet5G_{ts}.txt", "text/plain")
 
         # ── WORD ──────────────────────────────────────────────────────────
         elif export_fmt == "Word (.docx)":
@@ -704,7 +704,7 @@ with tabs[5]:
                 buf = io.BytesIO()
                 doc.save(buf)
                 buf.seek(0)
-                st.download_button("⬇️ Download DOCX", buf, f"KNet5G_{ts}.docx",
+                st.download_button(" Download DOCX", buf, f"KNet5G_{ts}.docx",
                                    "application/vnd.openxmlformats-officedocument"
                                    ".wordprocessingml.document")
 
@@ -760,7 +760,7 @@ with tabs[5]:
                 story.append(t)
                 doc.build(story)
                 buf.seek(0)
-                st.download_button("⬇️ Download PDF", buf, f"KNet5G_{ts}.pdf",
+                st.download_button(" Download PDF", buf, f"KNet5G_{ts}.pdf",
                                    "application/pdf")
 
     st.markdown("---")
