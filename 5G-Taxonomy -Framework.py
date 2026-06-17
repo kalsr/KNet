@@ -773,24 +773,24 @@ with st.sidebar:
 
     col_gen, col_reset = st.columns(2)
     with col_gen:
-        generate_clicked = st.button("🔄 Generate", use_container_width=True, type="primary")
+        generate_clicked = st.button(" Generate", use_container_width=True, type="primary")
     with col_reset:
-        reset_clicked = st.button("🗑️ Reset Data", use_container_width=True)
+        reset_clicked = st.button(" Reset Data", use_container_width=True)
 
     if generate_clicked:
         if record_count == 0:
             st.session_state.synthetic_df = pd.DataFrame()
         else:
             st.session_state.synthetic_df = generate_synthetic_5g_data(record_count, st.session_state.data_seed)
-        st.toast(f"Generated {record_count} synthetic 5G records.", icon="✅")
+        st.toast(f"Generated {record_count} synthetic 5G records.", icon="")
 
     if reset_clicked:
         reset_all_data()
-        st.toast("Sample data and controls have been reset.", icon="🗑️")
+        st.toast("Sample data and controls have been reset.", icon="")
         st.rerun()
 
     st.divider()
-    st.markdown("#### 📤 Export Center")
+    st.markdown("####  Export Center")
     st.caption("Use the **Export & Reports** tab to download the full framework in PDF, Word, Text, or JSON format.")
 
     st.divider()
@@ -805,12 +805,12 @@ with st.sidebar:
 # MAIN NAVIGATION TABS
 # =============================================================================
 tab_overview, tab_taxonomy, tab_diagrams, tab_data, tab_glossary, tab_export = st.tabs([
-    "📘 Overview & Concepts",
-    "🧩 Taxonomy Framework",
-    "🔀 Flow & Architecture Diagrams",
-    "📊 Sample 5G Data",
-    "📖 Glossary & Formulas",
-    "📤 Export & Reports",
+    " Overview & Concepts",
+    " Taxonomy Framework",
+    " Flow & Architecture Diagrams",
+    " Sample 5G Data",
+    " Glossary & Formulas",
+    " Export & Reports",
 ])
 
 
@@ -842,13 +842,13 @@ framework removes that ambiguity by assigning every concept a precise place in t
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.markdown('<div class="layer-badge">🗂️ 7 Structural Layers</div>', unsafe_allow_html=True)
+        st.markdown('<div class="layer-badge"> 7 Structural Layers</div>', unsafe_allow_html=True)
         st.caption("From physical spectrum to business services")
     with col2:
-        st.markdown('<div class="layer-badge">🧱 28 Core Categories</div>', unsafe_allow_html=True)
+        st.markdown('<div class="layer-badge"> 28 Core Categories</div>', unsafe_allow_html=True)
         st.caption("Concrete technologies & functions per layer")
     with col3:
-        st.markdown('<div class="layer-badge">📐 6 Quantitative Formulas</div>', unsafe_allow_html=True)
+        st.markdown('<div class="layer-badge"> 6 Quantitative Formulas</div>', unsafe_allow_html=True)
         st.caption("The math underlying 5G performance claims")
 
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
@@ -892,10 +892,10 @@ with tab_taxonomy:
     )
     st.markdown('</div>', unsafe_allow_html=True)
 
-    layer_icons = {"L1": "📶", "L2": "📡", "L3": "🧠", "L4": "🧬", "L5": "⚙️", "L6": "🔐", "L7": "🏭"}
+    layer_icons = {"L1": "", "L2": "", "L3": "", "L4": "", "L5": "", "L6": "", "L7": ""}
 
     for key, layer in TAXONOMY.items():
-        icon = layer_icons.get(key, "▶️")
+        icon = layer_icons.get(key, "")
         with st.expander(f"{icon}  **{layer['layer']}**", expanded=(key == "L1")):
             st.markdown(f"*{layer['description']}*")
             st.write("")
@@ -952,9 +952,9 @@ with tab_diagrams:
     render_mermaid(MERMAID_SECURITY, height=460)
 
     st.info(
-        "💡 Diagrams are rendered live using **Mermaid.js**. If a diagram does not render (e.g., no internet "
+        " Diagrams are rendered live using **Mermaid.js**. If a diagram does not render (e.g., no internet "
         "access in your environment), the Mermaid source is also included in the exported reports for reference.",
-        icon="💡"
+        icon=""
     )
 
 
@@ -970,7 +970,7 @@ session records, modeled on the taxonomy's structural concepts (spectrum band, R
 This data does **not** represent any real network, operator, or subscriber — it exists purely to demonstrate
 how the taxonomy's fields map to real-world telemetry.
 
-Click **🔄 Generate** in the sidebar to create records, or **🗑️ Reset Data** to clear everything back to a
+Click ** Generate** in the sidebar to create records, or **🗑️ Reset Data** to clear everything back to a
 blank state.
 """)
     st.markdown('</div>', unsafe_allow_html=True)
@@ -987,9 +987,9 @@ blank state.
     df = st.session_state.synthetic_df
 
     if df is None:
-        st.warning("No sample data generated yet. Use the sidebar to set a record count (0–300) and click **Generate**.", icon="ℹ️")
+        st.warning("No sample data generated yet. Use the sidebar to set a record count (0–300) and click **Generate**.", icon="")
     elif df.empty:
-        st.warning("Record count is set to 0 — no rows to display. Increase the slider and click **Generate**.", icon="ℹ️")
+        st.warning("Record count is set to 0 — no rows to display. Increase the slider and click **Generate**.", icon="")
     else:
         st.markdown('<div class="section-card">', unsafe_allow_html=True)
         st.markdown('<div class="section-heading">Generated Records</div>', unsafe_allow_html=True)
@@ -1036,7 +1036,7 @@ with tab_glossary:
     st.markdown('<div class="section-heading">Glossary of Key Terms</div>', unsafe_allow_html=True)
     st.markdown("A quick-reference dictionary for every acronym and concept used throughout the framework.")
     gdf = pd.DataFrame(GLOSSARY_TERMS).rename(columns={"term": "Term", "def": "Definition"})
-    search_term = st.text_input("🔎 Search glossary", placeholder="e.g., URLLC, SUCI, slicing...")
+    search_term = st.text_input(" Search glossary", placeholder="e.g., URLLC, SUCI, slicing...")
     if search_term:
         mask = gdf["Term"].str.contains(search_term, case=False) | gdf["Definition"].str.contains(search_term, case=False)
         st.dataframe(gdf[mask], use_container_width=True, hide_index=True, height=400)
@@ -1609,10 +1609,10 @@ in your preferred format. Every export carries the **{BRAND_NAME}** title block 
             "No sample data is currently generated — exports will still include the full taxonomy, glossary, "
             "and formulas, but the sample-records section will be empty. Generate data from the sidebar first "
             "if you'd like it included.",
-            icon="ℹ️"
+            icon=""
         )
     else:
-        st.success(f"{n_preview} synthetic 5G record(s) currently in memory will be included in your export.", icon="✅")
+        st.success(f"{n_preview} synthetic 5G record(s) currently in memory will be included in your export.", icon="")
     st.markdown('</div>', unsafe_allow_html=True)
 
     payload = build_export_payload()
@@ -1623,7 +1623,7 @@ in your preferred format. Every export carries the **{BRAND_NAME}** title block 
     colA, colB, colC, colD = st.columns(4)
 
     with colA:
-        st.markdown("**📕 PDF Report**")
+        st.markdown("** PDF Report**")
         st.caption("Polished, print-ready document with title page, tables, and formulas.")
         try:
             pdf_bytes = export_pdf(payload)
@@ -1636,7 +1636,7 @@ in your preferred format. Every export carries the **{BRAND_NAME}** title block 
             st.error(f"PDF generation error: {e}")
 
     with colB:
-        st.markdown("**📄 Word (DOCX)**")
+        st.markdown("** Word (DOCX)**")
         st.caption("Fully editable Word document with styled headings and tables.")
         try:
             docx_bytes = export_docx(payload)
@@ -1650,7 +1650,7 @@ in your preferred format. Every export carries the **{BRAND_NAME}** title block 
             st.error(f"DOCX generation error: {e}")
 
     with colC:
-        st.markdown("**📝 Plain Text**")
+        st.markdown("** Plain Text**")
         st.caption("Lightweight, universally readable .txt summary of everything.")
         try:
             txt_bytes = export_txt(payload)
@@ -1663,7 +1663,7 @@ in your preferred format. Every export carries the **{BRAND_NAME}** title block 
             st.error(f"Text generation error: {e}")
 
     with colD:
-        st.markdown("**🗂️ JSON**")
+        st.markdown("** JSON**")
         st.caption("Fully structured, machine-readable export for integration/reuse.")
         try:
             json_bytes = export_json(payload)
@@ -1677,7 +1677,7 @@ in your preferred format. Every export carries the **{BRAND_NAME}** title block 
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-    with st.expander("🔍 Preview export payload structure (JSON)"):
+    with st.expander(" Preview export payload structure (JSON)"):
         preview_payload = dict(payload)
         preview_payload["sample_5g_records"] = preview_payload["sample_5g_records"][:5]
         st.json(preview_payload)
