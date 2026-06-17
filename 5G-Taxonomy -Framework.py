@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -449,19 +448,77 @@ GLOSSARY_TERMS = [
 # =============================================================================
 # SESSION STATE INIT
 # =============================================================================
-if "synthetic_df" not in st.session_state:
+# Defensive defaults: setdefault() never overwrites an existing value, so this
+# block is always safe to re-run on every script pass, even mid-reset, and can
+# never raise a KeyError/AttributeError downstream even if a key is missing.
+DEFAULT_RECORD_COUNT = 100
+DEFAULT_SEED = 42
+
+st.session_state.setdefault("synthetic_df", None)
+st.session_state.setdefault("record_count", DEFAULT_RECORD_COUNT)
+st.session_state.setdefault("data_seed", DEFAULT_SEED)
+# Separate keys for the widgets themselves (kept distinct from the canonical
+# "record_count" / "data_seed" values above on purpose). Mutating a widget's
+# own key is only safe from inside an on_click callback, which runs *before*
+# the widget is re-instantiated on the next script pass — mutating it from
+# the main body after the widget has already rendered is what raises
+# Streamlit's "cannot be modified after widget instantiated" error, which is
+# the most common cause of a reset button breaking.
+st.session_state.setdefault("rc_slider", DEFAULT_RECORD_COUNT)
+st.session_state.setdefault("seed_input", DEFAULT_SEED)
+st.session_state.setdefault("action_message", None)  # (kind, text) tuple shown after a rerun
+
+
+def _safe_toast(message: str, icon: str = "✅"):
+    """Calls st.toast if available; silently no-ops on older Streamlit versions
+    instead of raising AttributeError (st.toast was added in Streamlit 1.27)."""
+    toast_fn = getattr(st, "toast", None)
+    if callable(toast_fn):
+        try:
+            toast_fn(message, icon=icon)
+        except Exception:
+            pass  # never let a cosmetic toast failure break the app
+
+
+def _safe_rerun():
+    """Triggers a script rerun across Streamlit versions. Modern Streamlit
+    (>=1.27) uses st.rerun(); older versions use st.experimental_rerun().
+    Falls back to a no-op if neither exists rather than raising."""
+    rerun_fn = getattr(st, "rerun", None) or getattr(st, "experimental_rerun", None)
+    if callable(rerun_fn):
+        rerun_fn()
+
+
+def _on_generate_click():
+    """on_click callback for the Generate button. Callbacks run BEFORE the
+    rest of the script on the next pass, so it is always safe to mutate any
+    session_state key here — including keys bound to widgets."""
+    n = int(st.session_state.rc_slider)
+    seed = int(st.session_state.seed_input)
+    st.session_state.record_count = n
+    st.session_state.data_seed = seed
+    if n == 0:
+        st.session_state.synthetic_df = pd.DataFrame()
+    else:
+        st.session_state.synthetic_df = generate_synthetic_5g_data(n, seed)
+    st.session_state.action_message = ("success", f"Generated {n} synthetic 5G record(s).", "✅")
+
+
+def _on_reset_click():
+    """on_click callback for the Reset Data button. Resets both the
+    underlying data and the widgets' own displayed values."""
     st.session_state.synthetic_df = None
-if "record_count" not in st.session_state:
-    st.session_state.record_count = 100
-if "data_seed" not in st.session_state:
-    st.session_state.data_seed = 42
+    st.session_state.record_count = DEFAULT_RECORD_COUNT
+    st.session_state.data_seed = DEFAULT_SEED
+    st.session_state.rc_slider = DEFAULT_RECORD_COUNT
+    st.session_state.seed_input = DEFAULT_SEED
+    st.session_state.action_message = ("info", "Sample data and controls have been reset.", "🗑️")
 
 
 def reset_all_data():
-    """Clears generated synthetic data and resets controls to defaults."""
-    st.session_state.synthetic_df = None
-    st.session_state.record_count = 100
-    st.session_state.data_seed = 42
+    """Kept for backward compatibility / programmatic use elsewhere in the
+    app; simply delegates to the same logic used by the Reset button."""
+    _on_reset_click()
 
 
 # =============================================================================
@@ -752,43 +809,48 @@ with st.sidebar:
     st.divider()
 
     st.markdown("#### 🎛️ Sample Data Controls")
-    record_count = st.slider(
+    st.slider(
         "Number of synthetic 5G records to generate",
         min_value=0, max_value=300,
-        value=st.session_state.record_count,
         step=10,
+        key="rc_slider",
         help="Generates fully synthetic, illustrative 5G session records. No real subscriber or network data is used."
     )
-    st.session_state.record_count = record_count
 
-    seed_val = st.number_input(
+    st.number_input(
         "Random seed (for reproducibility)",
         min_value=0, max_value=99999,
-        value=st.session_state.data_seed,
-        step=1
+        step=1,
+        key="seed_input"
     )
-    st.session_state.data_seed = int(seed_val)
 
     col_gen, col_reset = st.columns(2)
     with col_gen:
-        generate_clicked = st.button(" Generate", use_container_width=True, type="primary")
+        st.button(
+            "🔄 Generate", use_container_width=True, type="primary",
+            on_click=_on_generate_click
+        )
     with col_reset:
-        reset_clicked = st.button(" Reset Data", use_container_width=True)
+        st.button(
+            "🗑️ Reset Data", use_container_width=True,
+            on_click=_on_reset_click
+        )
 
-    if generate_clicked:
-        if record_count == 0:
-            st.session_state.synthetic_df = pd.DataFrame()
+    # Render any pending feedback from the last button click. This is stored
+    # in session_state by the callbacks above so it survives the rerun that
+    # every button click triggers, and works on every Streamlit version even
+    # if st.toast isn't available.
+    if st.session_state.action_message:
+        kind, text, icon = st.session_state.action_message
+        if kind == "success":
+            st.success(text, icon=icon)
         else:
-            st.session_state.synthetic_df = generate_synthetic_5g_data(record_count, st.session_state.data_seed)
-        st.toast(f"Generated {record_count} synthetic 5G records.", icon="✅")
-
-    if reset_clicked:
-        reset_all_data()
-        st.toast("Sample data and controls have been reset.", icon="🗑️")
-        st.rerun()
+            st.info(text, icon=icon)
+        _safe_toast(text, icon=icon)
+        st.session_state.action_message = None
 
     st.divider()
-    st.markdown("####  Export Center")
+    st.markdown("#### 📤 Export Center")
     st.caption("Use the **Export & Reports** tab to download the full framework in PDF, Word, Text, or JSON format.")
 
     st.divider()
@@ -803,12 +865,12 @@ with st.sidebar:
 # MAIN NAVIGATION TABS
 # =============================================================================
 tab_overview, tab_taxonomy, tab_diagrams, tab_data, tab_glossary, tab_export = st.tabs([
-    " Overview & Concepts",
-    " Taxonomy Framework",
-    " Flow & Architecture Diagrams",
-    " Sample 5G Data",
-    " Glossary & Formulas",
-    " Export & Reports",
+    "📘 Overview & Concepts",
+    "🧩 Taxonomy Framework",
+    "🔀 Flow & Architecture Diagrams",
+    "📊 Sample 5G Data",
+    "📖 Glossary & Formulas",
+    "📤 Export & Reports",
 ])
 
 
@@ -950,7 +1012,7 @@ with tab_diagrams:
     render_mermaid(MERMAID_SECURITY, height=460)
 
     st.info(
-        " Diagrams are rendered live using **Mermaid.js**. If a diagram does not render (e.g., no internet "
+        "💡 Diagrams are rendered live using **Mermaid.js**. If a diagram does not render (e.g., no internet "
         "access in your environment), the Mermaid source is also included in the exported reports for reference.",
         icon="💡"
     )
@@ -968,7 +1030,7 @@ session records, modeled on the taxonomy's structural concepts (spectrum band, R
 This data does **not** represent any real network, operator, or subscriber — it exists purely to demonstrate
 how the taxonomy's fields map to real-world telemetry.
 
-Click ** Generate** in the sidebar to create records, or ** Reset Data** to clear everything back to a
+Click **🔄 Generate** in the sidebar to create records, or **🗑️ Reset Data** to clear everything back to a
 blank state.
 """)
     st.markdown('</div>', unsafe_allow_html=True)
@@ -985,9 +1047,9 @@ blank state.
     df = st.session_state.synthetic_df
 
     if df is None:
-        st.warning("No sample data generated yet. Use the sidebar to set a record count (0–300) and click **Generate**.", icon="")
+        st.warning("No sample data generated yet. Use the sidebar to set a record count (0–300) and click **Generate**.", icon="ℹ️")
     elif df.empty:
-        st.warning("Record count is set to 0 — no rows to display. Increase the slider and click **Generate**.", icon="")
+        st.warning("Record count is set to 0 — no rows to display. Increase the slider and click **Generate**.", icon="ℹ️")
     else:
         st.markdown('<div class="section-card">', unsafe_allow_html=True)
         st.markdown('<div class="section-heading">Generated Records</div>', unsafe_allow_html=True)
@@ -1034,7 +1096,7 @@ with tab_glossary:
     st.markdown('<div class="section-heading">Glossary of Key Terms</div>', unsafe_allow_html=True)
     st.markdown("A quick-reference dictionary for every acronym and concept used throughout the framework.")
     gdf = pd.DataFrame(GLOSSARY_TERMS).rename(columns={"term": "Term", "def": "Definition"})
-    search_term = st.text_input(" Search glossary", placeholder="e.g., URLLC, SUCI, slicing...")
+    search_term = st.text_input("🔎 Search glossary", placeholder="e.g., URLLC, SUCI, slicing...")
     if search_term:
         mask = gdf["Term"].str.contains(search_term, case=False) | gdf["Definition"].str.contains(search_term, case=False)
         st.dataframe(gdf[mask], use_container_width=True, hide_index=True, height=400)
@@ -1607,7 +1669,7 @@ in your preferred format. Every export carries the **{BRAND_NAME}** title block 
             "No sample data is currently generated — exports will still include the full taxonomy, glossary, "
             "and formulas, but the sample-records section will be empty. Generate data from the sidebar first "
             "if you'd like it included.",
-            icon=""
+            icon="ℹ️"
         )
     else:
         st.success(f"{n_preview} synthetic 5G record(s) currently in memory will be included in your export.", icon="✅")
@@ -1621,7 +1683,7 @@ in your preferred format. Every export carries the **{BRAND_NAME}** title block 
     colA, colB, colC, colD = st.columns(4)
 
     with colA:
-        st.markdown("** PDF Report**")
+        st.markdown("**📕 PDF Report**")
         st.caption("Polished, print-ready document with title page, tables, and formulas.")
         try:
             pdf_bytes = export_pdf(payload)
@@ -1634,7 +1696,7 @@ in your preferred format. Every export carries the **{BRAND_NAME}** title block 
             st.error(f"PDF generation error: {e}")
 
     with colB:
-        st.markdown("** Word (DOCX)**")
+        st.markdown("**📄 Word (DOCX)**")
         st.caption("Fully editable Word document with styled headings and tables.")
         try:
             docx_bytes = export_docx(payload)
@@ -1648,7 +1710,7 @@ in your preferred format. Every export carries the **{BRAND_NAME}** title block 
             st.error(f"DOCX generation error: {e}")
 
     with colC:
-        st.markdown("** Plain Text**")
+        st.markdown("**📝 Plain Text**")
         st.caption("Lightweight, universally readable .txt summary of everything.")
         try:
             txt_bytes = export_txt(payload)
@@ -1661,7 +1723,7 @@ in your preferred format. Every export carries the **{BRAND_NAME}** title block 
             st.error(f"Text generation error: {e}")
 
     with colD:
-        st.markdown("** JSON**")
+        st.markdown("**🗂️ JSON**")
         st.caption("Fully structured, machine-readable export for integration/reuse.")
         try:
             json_bytes = export_json(payload)
@@ -1675,7 +1737,7 @@ in your preferred format. Every export carries the **{BRAND_NAME}** title block 
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-    with st.expander(" Preview export payload structure (JSON)"):
+    with st.expander("🔍 Preview export payload structure (JSON)"):
         preview_payload = dict(payload)
         preview_payload["sample_5g_records"] = preview_payload["sample_5g_records"][:5]
         st.json(preview_payload)
