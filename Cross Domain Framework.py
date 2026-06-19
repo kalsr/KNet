@@ -1,7 +1,4 @@
-
 # CROSS-DOMAIN-SOLUTION-FRAMEWORK
-
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -9,7 +6,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 import json, io, random
 from datetime import datetime
-
 try:
     from reportlab.lib.pagesizes import letter, landscape
     from reportlab.lib import colors
@@ -20,14 +16,12 @@ try:
     REPORTLAB_OK = True
 except ImportError:
     REPORTLAB_OK = False
-
 try:
     from docx import Document
     from docx.shared import Pt, RGBColor, Inches
     DOCX_OK = True
 except ImportError:
     DOCX_OK = False
-
 # ── Page Config ─────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="KNet CDS Intelligence Framework",
@@ -35,13 +29,11 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-
 # ── CSS ─────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
   html,body,[class*="css"]{font-family:'Inter',sans-serif;}
-
   .knet-hero{background:linear-gradient(135deg,#0A1628 0%,#0D2B6B 55%,#1565C0 100%);
     border-radius:16px;padding:38px 44px 30px;margin-bottom:28px;
     box-shadow:0 8px 40px rgba(21,101,192,.45);}
@@ -50,31 +42,25 @@ st.markdown("""
   .knet-badge{display:inline-block;background:rgba(30,144,255,.18);
     border:1px solid #1E90FF;color:#64B5F6;padding:5px 16px;border-radius:20px;
     font-size:.82rem;font-weight:700;margin-top:14px;letter-spacing:.5px;}
-
   .metric-card{background:linear-gradient(135deg,#0D2B6B,#1565C0);border-radius:12px;
     padding:18px 16px;text-align:center;box-shadow:0 4px 16px rgba(21,101,192,.3);
     border:1px solid rgba(30,144,255,.3);}
   .metric-val{font-size:1.75rem;font-weight:900;color:#1E90FF;}
   .metric-lbl{font-size:.75rem;color:#90CAF9;margin-top:4px;}
-
   .sh{font-size:1.2rem;font-weight:700;color:#1E90FF;
     border-left:4px solid #1E90FF;padding-left:12px;margin:28px 0 14px;}
-
   .tax{background:#0A1628;border:1px solid #1565C0;border-radius:10px;
     padding:20px 24px;line-height:1.75;color:#CFE2FF;font-size:.9rem;margin-bottom:18px;}
   .tax b{color:#64B5F6;}
   .tax ul,ol{margin-left:20px;margin-top:6px;}
-
   .risk-high{color:#FF4444;font-weight:700;}
   .risk-med {color:#FFA726;font-weight:700;}
   .risk-low {color:#66BB6A;font-weight:700;}
-
   .field{background:#0D2148;border-left:3px solid #1E90FF;border-radius:6px;
     padding:13px 16px;margin-bottom:10px;font-size:.875rem;color:#B0C4DE;}
   .field-name{color:#1E90FF;font-weight:700;font-size:.95rem;}
   .formula{background:rgba(30,144,255,.12);color:#64B5F6;padding:2px 8px;
     border-radius:4px;font-family:monospace;font-size:.8rem;}
-
   .guard-card{background:#0D2148;border:1px solid #1565C030;border-radius:8px;
     padding:14px 16px;margin-bottom:10px;}
   .guard-name{color:#1E90FF;font-weight:700;}
@@ -82,7 +68,6 @@ st.markdown("""
     color:#90CAF9;padding:2px 8px;border-radius:12px;font-size:.75rem;margin:2px;}
 </style>
 """, unsafe_allow_html=True)
-
 # ════════════════════════════════════════════════════════════════════════════
 # CONSTANTS
 # ════════════════════════════════════════════════════════════════════════════
@@ -104,7 +89,6 @@ CERTS       = ["NIAP CC EAL4+","NIAP CC EAL6+","DISA APL","NSA Suite B","FIPS 14
 STATUS_OPTS = ["Approved","Pending","Denied","Under Review"]
 ORGS        = ["DoD","IC Community","NATO","Five Eyes","Federal Civilian",
                "State Dept","DHS","NSA","GCHQ","CSE Canada"]
-
 # Guard detail catalogue
 GUARD_DETAIL = {
     "Forcepoint CDS": {
@@ -158,7 +142,6 @@ GUARD_DETAIL = {
         "notes":"Cloud-native CDS service for federal agencies. Integrates with Verizon Managed Security for continuous threat monitoring."
     },
 }
-
 FIELD_DOCS = {
     "Record_ID":               ("Unique CDS session/transfer record identifier.",
                                 "CDS-{NNNN} sequential"),
@@ -203,7 +186,6 @@ FIELD_DOCS = {
     "Year":                    ("Year of transfer session record.",
                                 "Choice from [2022, 2023, 2024, 2025, 2026]"),
 }
-
 # ════════════════════════════════════════════════════════════════════════════
 # DATA GENERATION
 # ════════════════════════════════════════════════════════════════════════════
@@ -216,10 +198,8 @@ def generate_cds_data(n: int = 300, seed: int = 42) -> pd.DataFrame:
         dst = random.choice(dst_pool)
         src_lvl, dst_lvl = DOMAIN_LVL[src], DOMAIN_LVL[dst]
         direction = "Low-to-High" if dst_lvl > src_lvl else "High-to-Low"
-
         risk_mu = 68 if direction == "High-to-Low" else 28
         risk = round(float(np.clip(np.random.normal(risk_mu, 12), 0, 100)), 1)
-
         n_filt = random.randint(2, 8)
         latency = round(abs(float(np.random.normal(n_filt * 8, 15))), 1)
         tput = round(max(0.1, float(np.random.normal(500, 200))), 2)
@@ -228,7 +208,6 @@ def generate_cds_data(n: int = 300, seed: int = 42) -> pd.DataFrame:
         compliance = round(
             (insp / 10 * 40) + ((100 - risk) / 100 * 35) + (1 - min(1.0, fpr)) * 25, 1
         )
-
         rows.append({
             "Record_ID":               f"CDS-{i:04d}",
             "Source_Domain":           src,
@@ -254,7 +233,6 @@ def generate_cds_data(n: int = 300, seed: int = 42) -> pd.DataFrame:
             "Year":                    random.choice([2022, 2023, 2024, 2025, 2026]),
         })
     return pd.DataFrame(rows)
-
 # ════════════════════════════════════════════════════════════════════════════
 # SESSION STATE
 # ════════════════════════════════════════════════════════════════════════════
@@ -262,7 +240,6 @@ if "cds_df" not in st.session_state:
     st.session_state.cds_df = generate_cds_data(300)
 if "cds_n" not in st.session_state:
     st.session_state.cds_n = 300
-
 # ════════════════════════════════════════════════════════════════════════════
 # SIDEBAR
 # ════════════════════════════════════════════════════════════════════════════
@@ -270,7 +247,6 @@ with st.sidebar:
     st.markdown("## ⚙️ Controls")
     n_rec  = st.slider("Records (0–300)", 0, 300, st.session_state.cds_n, step=10)
     seed_v = st.number_input("Random Seed", 0, 9999, 42)
-
     c1, c2 = st.columns(2)
     with c1:
         if st.button("🔄 Generate", use_container_width=True):
@@ -282,7 +258,6 @@ with st.sidebar:
             st.session_state.cds_df = generate_cds_data(300)
             st.session_state.cds_n = 300
             st.rerun()
-
     st.markdown("---")
     st.markdown("### 🔍 Filters")
     df_all = st.session_state.cds_df
@@ -291,11 +266,9 @@ with st.sidebar:
     sel_src    = st.multiselect("Source Domain",  DOMAINS, default=DOMAINS)
     sel_dst    = st.multiselect("Dest Domain",    DOMAINS, default=DOMAINS)
     sel_status = st.multiselect("Status",         STATUS_OPTS, default=STATUS_OPTS)
-
     st.markdown("---")
     st.markdown("### 📤 Export Format")
     export_fmt = st.selectbox("Format", ["PDF","Word (.docx)","Text (.txt)","JSON","CSV"])
-
 df = st.session_state.cds_df
 if len(df):
     mask = (df["Direction"].isin(sel_dir) &
@@ -306,7 +279,6 @@ if len(df):
     df_f = df[mask].copy()
 else:
     df_f = df.copy()
-
 # ════════════════════════════════════════════════════════════════════════════
 # HERO
 # ════════════════════════════════════════════════════════════════════════════
@@ -317,7 +289,6 @@ st.markdown("""
   <span class="knet-badge">🏢 Developed by Randy Singh &nbsp;|&nbsp; Kalsnet (KNet) Consulting Group</span>
 </div>
 """, unsafe_allow_html=True)
-
 # ════════════════════════════════════════════════════════════════════════════
 # TABS
 # ════════════════════════════════════════════════════════════════════════════
@@ -330,7 +301,6 @@ tabs = st.tabs([
     "📖 Field Dictionary",
     "📤 Export",
 ])
-
 # ─────────────────────────────────────────────────────────────────────────────
 # TAB 0 — OVERVIEW
 # ─────────────────────────────────────────────────────────────────────────────
@@ -344,7 +314,6 @@ ability to manually or automatically access and/or transfer information between 
 differing security domains. CDSs enforce a security policy that prevents information from
 flowing between domains unless explicitly authorised — protecting classified and sensitive
 government and defence networks.<br><br>
-
 <b>Security Domain Hierarchy (U.S. Classification):</b>
 <ul>
   <li><b>Unclassified (U)</b> — Level 1: Public or non-sensitive information</li>
@@ -376,7 +345,6 @@ government and defence networks.<br><br>
 </ul>
 </div>
 """, unsafe_allow_html=True)
-
     st.markdown('<p class="sh">🏢 KNet CDS Framework Pillars</p>', unsafe_allow_html=True)
     st.markdown("""
 <div class="tax">
@@ -392,7 +360,6 @@ compliance monitoring across five pillars:
 </ol>
 </div>
 """, unsafe_allow_html=True)
-
     # KPI Cards
     st.markdown('<p class="sh">📊 Live KPI Summary</p>', unsafe_allow_html=True)
     if len(df_f):
@@ -416,20 +383,17 @@ compliance monitoring across five pillars:
                   <div class="metric-val">{val}</div>
                   <div class="metric-lbl">{lbl}</div></div>""",
                             unsafe_allow_html=True)
-
 # ─────────────────────────────────────────────────────────────────────────────
 # TAB 1 — DATA EXPLORER
 # ─────────────────────────────────────────────────────────────────────────────
 with tabs[1]:
     st.markdown('<p class="sh">📋 CDS Transfer Dataset</p>', unsafe_allow_html=True)
     st.info(f"Showing **{len(df_f)}** of **{len(df)}** records after filters.")
-
     # Colour risk score column
     def colour_risk(val):
         if val >= 70: return "color:#FF4444;font-weight:700"
         elif val >= 40: return "color:#FFA726;font-weight:700"
         return "color:#66BB6A;font-weight:700"
-
     st.dataframe(df_f, use_container_width=True, height=500,
                  column_config={
                      "Risk_Score": st.column_config.ProgressColumn(
@@ -437,12 +401,10 @@ with tabs[1]:
                      "Compliance_Score": st.column_config.ProgressColumn(
                          "Compliance Score", min_value=0, max_value=100, format="%.1f"),
                  })
-
     st.markdown('<p class="sh">📈 Descriptive Statistics</p>', unsafe_allow_html=True)
     num_c = df_f.select_dtypes(include=np.number).columns.tolist()
     st.dataframe(df_f[num_c].describe().T.style.format("{:.3f}"),
                  use_container_width=True)
-
 # ─────────────────────────────────────────────────────────────────────────────
 # TAB 2 — ANALYTICS
 # ─────────────────────────────────────────────────────────────────────────────
@@ -451,7 +413,6 @@ with tabs[2]:
         st.warning("No data — adjust filters.")
     else:
         DARK = dict(paper_bgcolor="#0A1628", plot_bgcolor="#0D2148")
-
         # Risk Distribution L→H vs H→L
         st.markdown('<p class="sh">Risk Score Distribution: Low→High vs High→Low</p>',
                     unsafe_allow_html=True)
@@ -462,7 +423,6 @@ with tabs[2]:
                             template="plotly_dark")
         fig1.update_layout(**DARK)
         st.plotly_chart(fig1, use_container_width=True)
-
         col_a, col_b = st.columns(2)
         with col_a:
             st.markdown('<p class="sh">Risk by Guard Product</p>', unsafe_allow_html=True)
@@ -471,7 +431,6 @@ with tabs[2]:
                           template="plotly_dark")
             fig2.update_layout(**DARK, xaxis_tickangle=-35)
             st.plotly_chart(fig2, use_container_width=True)
-
         with col_b:
             st.markdown('<p class="sh">Transfer Status Breakdown</p>',
                         unsafe_allow_html=True)
@@ -482,7 +441,6 @@ with tabs[2]:
                           template="plotly_dark")
             fig3.update_layout(**DARK)
             st.plotly_chart(fig3, use_container_width=True)
-
         st.markdown('<p class="sh">Compliance Score vs Risk Score (by Direction)</p>',
                     unsafe_allow_html=True)
         fig4 = px.scatter(df_f, x="Risk_Score", y="Compliance_Score",
@@ -492,7 +450,6 @@ with tabs[2]:
                           template="plotly_dark")
         fig4.update_layout(**DARK)
         st.plotly_chart(fig4, use_container_width=True)
-
         col_c, col_d = st.columns(2)
         with col_c:
             st.markdown('<p class="sh">Avg Throughput by Data Type</p>',
@@ -504,16 +461,30 @@ with tabs[2]:
                           template="plotly_dark")
             fig5.update_layout(**DARK, xaxis_tickangle=-35, showlegend=False)
             st.plotly_chart(fig5, use_container_width=True)
-
         with col_d:
             st.markdown('<p class="sh">Latency vs Num Filters</p>', unsafe_allow_html=True)
             fig6 = px.scatter(df_f, x="Num_Filters", y="Latency_ms",
-                              color="Direction", trendline="ols",
+                              color="Direction",
                               color_discrete_map={"Low-to-High":"#1E90FF","High-to-Low":"#FF4444"},
                               template="plotly_dark")
+            # Manual OLS trendline (avoids the "statsmodels" dependency that
+            # px.scatter(..., trendline="ols") requires and that caused the
+            # ModuleNotFoundError on Streamlit Cloud).
+            for _dir, _color in [("Low-to-High", "#1E90FF"), ("High-to-Low", "#FF4444")]:
+                _sub = df_f[df_f["Direction"] == _dir]
+                if len(_sub) >= 2:
+                    _x = _sub["Num_Filters"].to_numpy(dtype=float)
+                    _y = _sub["Latency_ms"].to_numpy(dtype=float)
+                    _slope, _intercept = np.polyfit(_x, _y, 1)
+                    _x_line = np.linspace(_x.min(), _x.max(), 50)
+                    _y_line = _slope * _x_line + _intercept
+                    fig6.add_trace(go.Scatter(
+                        x=_x_line, y=_y_line, mode="lines",
+                        name=f"{_dir} OLS trend",
+                        line=dict(color=_color, dash="dash", width=2),
+                    ))
             fig6.update_layout(**DARK)
             st.plotly_chart(fig6, use_container_width=True)
-
         st.markdown('<p class="sh">Heatmap: Avg Risk Score (Source → Destination Domain)</p>',
                     unsafe_allow_html=True)
         pivot = df_f.pivot_table(values="Risk_Score",
@@ -524,7 +495,6 @@ with tabs[2]:
                          text_auto=".1f", template="plotly_dark")
         fig7.update_layout(**DARK)
         st.plotly_chart(fig7, use_container_width=True)
-
         st.markdown('<p class="sh">Guard Usage Count</p>', unsafe_allow_html=True)
         gc = df_f["Guard_Product"].value_counts().reset_index()
         gc.columns = ["Guard","Count"]
@@ -532,7 +502,6 @@ with tabs[2]:
                       color_continuous_scale="Blues", template="plotly_dark")
         fig8.update_layout(**DARK, xaxis_tickangle=-30, showlegend=False)
         st.plotly_chart(fig8, use_container_width=True)
-
 # ─────────────────────────────────────────────────────────────────────────────
 # TAB 3 — DIAGRAMS (Mermaid via HTML component)
 # ─────────────────────────────────────────────────────────────────────────────
@@ -546,7 +515,6 @@ MERMAID_HTML = """<!DOCTYPE html><html><head>
 <script>mermaid.initialize({theme:'dark',themeVariables:{primaryColor:'#1E90FF',
   primaryTextColor:'#E3F2FD',primaryBorderColor:'#1565C0',lineColor:'#64B5F6',
   background:'#0D2148',nodeBorder:'#1E90FF'}});</script>
-
 <h3>① CDS Reference Architecture</h3>
 <div class="m"><div class="mermaid">
 graph LR
@@ -558,7 +526,6 @@ graph LR
   GW-->ML[AI/ML Anomaly\nDetection]
   GW-->LOG[Audit Log\nSIEM]
 </div></div>
-
 <h3>② Low-to-High Data Flow</h3>
 <div class="m"><div class="mermaid">
 flowchart LR
@@ -573,7 +540,6 @@ flowchart LR
   BLOCK-->LOG2[Audit Trail]
   DELIV-->LOG2
 </div></div>
-
 <h3>③ High-to-Low Data Flow (Critical Path)</h3>
 <div class="m"><div class="mermaid">
 flowchart LR
@@ -589,7 +555,6 @@ flowchart LR
   PASS2-->|No|BLOCK2[🚫 Deny &\nQuarantine]
   DELIV2 & BLOCK2 --> AUDIT[📋 SIEM Audit\nFIPS-compliant]
 </div></div>
-
 <h3>④ KNet CDS Guard Selection Flowchart</h3>
 <div class="m"><div class="mermaid">
 flowchart TD
@@ -609,7 +574,6 @@ flowchart TD
   TUNE-->KPI2
   ACCRED-->DEPLOY([✅ Operational Deployment])
 </div></div>
-
 <h3>⑤ Compliance Score Formula</h3>
 <div class="m"><div class="mermaid">
 flowchart LR
@@ -618,7 +582,6 @@ flowchart LR
   C[False Positive\nRate %]-->|1-min1-FPR ×25|W3[25% Weight]
   W1 & W2 & W3-->SUM[Σ Compliance\nScore 0–100]
 </div></div>
-
 <h3>⑥ Domain Classification Hierarchy</h3>
 <div class="m"><div class="mermaid">
 graph BT
@@ -632,7 +595,6 @@ graph BT
   style TS fill:#E65100,color:#fff
   style SCI fill:#B71C1C,color:#fff
 </div></div>
-
 <h3>⑦ CDS Deployment Lifecycle</h3>
 <div class="m"><div class="mermaid">
 timeline
@@ -653,16 +615,13 @@ timeline
            : Annual Re-accreditation
            : AI/ML Tuning
 </div></div>
-
 </body></html>"""
-
 with tabs[3]:
     st.markdown('<p class="sh">CDS Architecture Diagrams & Flowcharts</p>',
                 unsafe_allow_html=True)
     st.info("ℹ️ 7 Mermaid diagrams — architecture, L→H & H→L flows, guard selection, "
             "compliance formula, classification hierarchy, and deployment lifecycle.")
     st.components.v1.html(MERMAID_HTML, height=3200, scrolling=True)
-
 # ─────────────────────────────────────────────────────────────────────────────
 # TAB 4 — GUARD CATALOGUE
 # ─────────────────────────────────────────────────────────────────────────────
@@ -688,7 +647,6 @@ with tabs[4]:
                     m2.metric("Avg Comply",  f"{gdf['Compliance_Score'].mean():.1f}")
                     m3.metric("Avg Tput",    f"{gdf['Throughput_Mbps'].mean():.0f} Mbps")
                     m4.metric("Records",     len(gdf))
-
 # ─────────────────────────────────────────────────────────────────────────────
 # TAB 5 — FIELD DICTIONARY
 # ─────────────────────────────────────────────────────────────────────────────
@@ -702,24 +660,20 @@ with tabs[5]:
   {desc}<br>
   <span class="formula">📐 {formula}</span>
 </div>""", unsafe_allow_html=True)
-
 # ─────────────────────────────────────────────────────────────────────────────
 # TAB 6 — EXPORT
 # ─────────────────────────────────────────────────────────────────────────────
 with tabs[6]:
     st.markdown('<p class="sh">📤 Export Filtered Dataset</p>', unsafe_allow_html=True)
     st.info(f"Exporting **{len(df_f)}** records in **{export_fmt}** format.")
-
     if st.button("⬇️ Generate & Download", use_container_width=True):
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-
         # ── CSV ──────────────────────────────────────────────────────────────
         if export_fmt == "CSV":
             buf = io.StringIO()
             df_f.to_csv(buf, index=False)
             st.download_button("⬇️ Download CSV", buf.getvalue().encode(),
                                f"KNetCDS_{ts}.csv", "text/csv")
-
         # ── JSON ─────────────────────────────────────────────────────────────
         elif export_fmt == "JSON":
             payload = {
@@ -740,7 +694,6 @@ with tabs[6]:
             buf = io.BytesIO(json.dumps(payload, indent=2).encode())
             st.download_button("⬇️ Download JSON", buf, f"KNetCDS_{ts}.json",
                                "application/json")
-
         # ── TEXT ─────────────────────────────────────────────────────────────
         elif export_fmt == "Text (.txt)":
             lines = [
@@ -765,7 +718,6 @@ with tabs[6]:
             buf = io.BytesIO("\n".join(lines).encode())
             st.download_button("⬇️ Download TXT", buf, f"KNetCDS_{ts}.txt",
                                "text/plain")
-
         # ── WORD ─────────────────────────────────────────────────────────────
         elif export_fmt == "Word (.docx)":
             if not DOCX_OK:
@@ -777,7 +729,6 @@ with tabs[6]:
                 doc.add_paragraph("Developed by Randy Singh | Kalsnet (KNet) Consulting Group")
                 doc.add_paragraph(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}"
                                   f" | Records: {len(df_f)}")
-
                 doc.add_heading("CDS Taxonomy", level=1)
                 for line in [
                     "Low-to-High: Data from lower classification to higher — lower inherent risk.",
@@ -785,11 +736,9 @@ with tabs[6]:
                     "Bidirectional: Both directions on independent filter stacks.",
                 ]:
                     doc.add_paragraph(line, style="List Bullet")
-
                 doc.add_heading("Domain Levels", level=1)
                 for d, l in DOMAIN_LVL.items():
                     doc.add_paragraph(f"Level {l}: {d}", style="List Bullet")
-
                 doc.add_heading("Field Definitions", level=1)
                 for fname, (desc, formula) in FIELD_DOCS.items():
                     p = doc.add_paragraph()
@@ -797,13 +746,11 @@ with tabs[6]:
                     r.bold = True
                     r.font.color.rgb = RGBColor(0x1E, 0x90, 0xFF)
                     p.add_run(f"{desc}  [Formula: {formula}]")
-
                 doc.add_heading("Guard Catalogue Summary", level=1)
                 for gname, info in GUARD_DETAIL.items():
                     p = doc.add_paragraph()
                     p.add_run(gname + ": ").bold = True
                     p.add_run(f"{info['notes']} Certs: {info['cert']}. Direction: {info['direction']}.")
-
                 doc.add_heading("Filtered Transfer Data", level=1)
                 show_c = ["Record_ID","Source_Domain","Destination_Domain","Direction",
                           "Guard_Product","Risk_Score","Compliance_Score",
@@ -821,7 +768,6 @@ with tabs[6]:
                 st.download_button("⬇️ Download DOCX", buf, f"KNetCDS_{ts}.docx",
                                    "application/vnd.openxmlformats-officedocument"
                                    ".wordprocessingml.document")
-
         # ── PDF ──────────────────────────────────────────────────────────────
         elif export_fmt == "PDF":
             if not REPORTLAB_OK:
@@ -876,7 +822,6 @@ with tabs[6]:
                 buf.seek(0)
                 st.download_button("⬇️ Download PDF", buf, f"KNetCDS_{ts}.pdf",
                                    "application/pdf")
-
     st.markdown("---")
     st.markdown("**© KNet CDS Intelligence Framework | Randy Singh | "
                 "Kalsnet (KNet) Consulting Group**")
