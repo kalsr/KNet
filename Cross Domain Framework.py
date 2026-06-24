@@ -244,22 +244,22 @@ if "cds_n" not in st.session_state:
 # SIDEBAR
 # ════════════════════════════════════════════════════════════════════════════
 with st.sidebar:
-    st.markdown("## ⚙️ Controls")
+    st.markdown("##  Controls")
     n_rec  = st.slider("Records (0–300)", 0, 300, st.session_state.cds_n, step=10)
     seed_v = st.number_input("Random Seed", 0, 9999, 42)
     c1, c2 = st.columns(2)
     with c1:
-        if st.button("🔄 Generate", use_container_width=True):
+        if st.button(" Generate", use_container_width=True):
             st.session_state.cds_df = generate_cds_data(n_rec, seed=seed_v)
             st.session_state.cds_n = n_rec
             st.rerun()
     with c2:
-        if st.button("🗑️ Reset", use_container_width=True):
+        if st.button(" Reset", use_container_width=True):
             st.session_state.cds_df = generate_cds_data(300)
             st.session_state.cds_n = 300
             st.rerun()
     st.markdown("---")
-    st.markdown("### 🔍 Filters")
+    st.markdown("###  Filters")
     df_all = st.session_state.cds_df
     sel_dir    = st.multiselect("Direction",   DIRECTIONS[:2], default=DIRECTIONS[:2])
     sel_guard  = st.multiselect("Guard",       GUARDS, default=GUARDS)
@@ -267,7 +267,7 @@ with st.sidebar:
     sel_dst    = st.multiselect("Dest Domain",    DOMAINS, default=DOMAINS)
     sel_status = st.multiselect("Status",         STATUS_OPTS, default=STATUS_OPTS)
     st.markdown("---")
-    st.markdown("### 📤 Export Format")
+    st.markdown("###  Export Format")
     export_fmt = st.selectbox("Format", ["PDF","Word (.docx)","Text (.txt)","JSON","CSV"])
 df = st.session_state.cds_df
 if len(df):
@@ -284,22 +284,22 @@ else:
 # ════════════════════════════════════════════════════════════════════════════
 st.markdown("""
 <div class="knet-hero">
-  <p class="knet-title">🔐 KNet Cross Domain Solution (CDS) Intelligence Framework</p>
+  <p class="knet-title"> KNet Cross Domain Solution (CDS) Intelligence Framework</p>
   <p class="knet-sub">Cross-Domain Security Analytics · Guard Catalogue · Risk Scoring · Policy Compliance</p>
-  <span class="knet-badge">🏢 Developed by Randy Singh &nbsp;|&nbsp; Kalsnet (KNet) Consulting Group</span>
+  <span class="knet-badge"> Developed by Randy Singh &nbsp;|&nbsp; Kalsnet (KNet) Consulting Group</span>
 </div>
 """, unsafe_allow_html=True)
 # ════════════════════════════════════════════════════════════════════════════
 # TABS
 # ════════════════════════════════════════════════════════════════════════════
 tabs = st.tabs([
-    "🏠 Framework Overview",
-    "📊 Data Explorer",
-    "📈 Analytics",
-    "🗺️ Diagrams & Flowcharts",
-    "🛡️ Guard Catalogue",
-    "📖 Field Dictionary",
-    "📤 Export",
+    " Framework Overview",
+    " Data Explorer",
+    " Analytics",
+    " Diagrams & Flowcharts",
+    " Guard Catalogue",
+    " Field Dictionary",
+    " Export",
 ])
 # ─────────────────────────────────────────────────────────────────────────────
 # TAB 0 — OVERVIEW
@@ -345,7 +345,7 @@ government and defence networks.<br><br>
 </ul>
 </div>
 """, unsafe_allow_html=True)
-    st.markdown('<p class="sh">🏢 KNet CDS Framework Pillars</p>', unsafe_allow_html=True)
+    st.markdown('<p class="sh"> KNet CDS Framework Pillars</p>', unsafe_allow_html=True)
     st.markdown("""
 <div class="tax">
 The <b>KNet CDS Intelligence Framework</b> by <b>Randy Singh</b> at
@@ -361,7 +361,7 @@ compliance monitoring across five pillars:
 </div>
 """, unsafe_allow_html=True)
     # KPI Cards
-    st.markdown('<p class="sh">📊 Live KPI Summary</p>', unsafe_allow_html=True)
+    st.markdown('<p class="sh"> Live KPI Summary</p>', unsafe_allow_html=True)
     if len(df_f):
         approved  = len(df_f[df_f["Transfer_Status"]=="Approved"])
         denied    = len(df_f[df_f["Transfer_Status"]=="Denied"])
@@ -387,7 +387,7 @@ compliance monitoring across five pillars:
 # TAB 1 — DATA EXPLORER
 # ─────────────────────────────────────────────────────────────────────────────
 with tabs[1]:
-    st.markdown('<p class="sh">📋 CDS Transfer Dataset</p>', unsafe_allow_html=True)
+    st.markdown('<p class="sh"> CDS Transfer Dataset</p>', unsafe_allow_html=True)
     st.info(f"Showing **{len(df_f)}** of **{len(df)}** records after filters.")
     # Colour risk score column
     def colour_risk(val):
@@ -401,7 +401,7 @@ with tabs[1]:
                      "Compliance_Score": st.column_config.ProgressColumn(
                          "Compliance Score", min_value=0, max_value=100, format="%.1f"),
                  })
-    st.markdown('<p class="sh">📈 Descriptive Statistics</p>', unsafe_allow_html=True)
+    st.markdown('<p class="sh"> Descriptive Statistics</p>', unsafe_allow_html=True)
     num_c = df_f.select_dtypes(include=np.number).columns.tolist()
     st.dataframe(df_f[num_c].describe().T.style.format("{:.3f}"),
                  use_container_width=True)
@@ -518,8 +518,8 @@ MERMAID_HTML = """<!DOCTYPE html><html><head>
 <h3>① CDS Reference Architecture</h3>
 <div class="m"><div class="mermaid">
 graph LR
-  LO[🟢 Low Domain\nUnclassified/Confidential]-->GW[🔐 Cross Domain Guard\nFilter Stack]
-  GW-->HI[🔴 High Domain\nSecret / TS / TS-SCI]
+  LO[ Low Domain\nUnclassified/Confidential]-->GW[ Cross Domain Guard\nFilter Stack]
+  GW-->HI[ High Domain\nSecret / TS / TS-SCI]
   GW-->AV[Anti-Virus\nEngine]
   GW-->DLP[Data Loss\nPrevention DLP]
   GW-->CT[Content\nInspection]
@@ -529,21 +529,21 @@ graph LR
 <h3>② Low-to-High Data Flow</h3>
 <div class="m"><div class="mermaid">
 flowchart LR
-  SRC[📄 Source\nLow Domain\nUnclassified]-->REQ{Transfer\nRequest}
+  SRC[ Source\nLow Domain\nUnclassified]-->REQ{Transfer\nRequest}
   REQ-->P1[Format\nValidation]
   P1-->P2[Whitelist\nCheck]
   P2-->P3[Anti-Virus\nScan]
   P3-->P4[Content\nInspection]
   P4-->PASS{Pass?}
-  PASS-->|Yes|DELIV[✅ Deliver to\nHigh Domain]
-  PASS-->|No|BLOCK[🚫 Block &\nAlert]
+  PASS-->|Yes|DELIV[ Deliver to\nHigh Domain]
+  PASS-->|No|BLOCK[ Block &\nAlert]
   BLOCK-->LOG2[Audit Trail]
   DELIV-->LOG2
 </div></div>
 <h3>③ High-to-Low Data Flow (Critical Path)</h3>
 <div class="m"><div class="mermaid">
 flowchart LR
-  SRC2[🔴 Source\nHigh Domain\nTS or TS-SCI]-->REQ2{Transfer\nRequest}
+  SRC2[ Source\nHigh Domain\nTS or TS-SCI]-->REQ2{Transfer\nRequest}
   REQ2-->P10[Classification\nLabel Check]
   P10-->P11[Redaction\nEngine]
   P11-->P12[Steganography\nDetection]
@@ -551,14 +551,14 @@ flowchart LR
   P13-->P14[AI/ML\nAnomaly Score]
   P14-->P15[Human\nReview Queue]
   P15-->PASS2{Approved?}
-  PASS2-->|Yes|DELIV2[✅ Deliver to\nLow Domain]
-  PASS2-->|No|BLOCK2[🚫 Deny &\nQuarantine]
-  DELIV2 & BLOCK2 --> AUDIT[📋 SIEM Audit\nFIPS-compliant]
+  PASS2-->|Yes|DELIV2[ Deliver to\nLow Domain]
+  PASS2-->|No|BLOCK2[ Deny &\nQuarantine]
+  DELIV2 & BLOCK2 --> AUDIT[ SIEM Audit\nFIPS-compliant]
 </div></div>
 <h3>④ KNet CDS Guard Selection Flowchart</h3>
 <div class="m"><div class="mermaid">
 flowchart TD
-  START([🚀 CDS Requirement])-->DIR{Direction?}
+  START([ CDS Requirement])-->DIR{Direction?}
   DIR-->|Low-to-High|L2H[eMBB/File Transfer\nLower Risk Profile]
   DIR-->|High-to-Low|H2L[High Risk\nRequires deep filters]
   L2H-->CERT1{Certification\nNeeded?}
@@ -572,7 +572,7 @@ flowchart TD
   PASS3-->|Yes|ACCRED[Submit for\nNCDSMO Accreditation]
   PASS3-->|No|TUNE[Tune Filter Stack:\nIncrease depth\nAdjust whitelist\nEnable AI-ML]
   TUNE-->KPI2
-  ACCRED-->DEPLOY([✅ Operational Deployment])
+  ACCRED-->DEPLOY([ Operational Deployment])
 </div></div>
 <h3>⑤ Compliance Score Formula</h3>
 <div class="m"><div class="mermaid">
@@ -585,10 +585,10 @@ flowchart LR
 <h3>⑥ Domain Classification Hierarchy</h3>
 <div class="m"><div class="mermaid">
 graph BT
-  U[🟢 Unclassified\nLevel 1]-->C[🔵 Confidential\nLevel 2]
-  C-->S[🟡 Secret\nLevel 3]
-  S-->TS[🟠 Top Secret\nLevel 4]
-  TS-->SCI[🔴 TS/SCI\nLevel 5\nHighest]
+  U[ Unclassified\nLevel 1]-->C[ Confidential\nLevel 2]
+  C-->S[ Secret\nLevel 3]
+  S-->TS[ Top Secret\nLevel 4]
+  TS-->SCI[ TS/SCI\nLevel 5\nHighest]
   style U fill:#1B5E20,color:#fff
   style C fill:#0D47A1,color:#fff
   style S fill:#F9A825,color:#000
@@ -619,19 +619,19 @@ timeline
 with tabs[3]:
     st.markdown('<p class="sh">CDS Architecture Diagrams & Flowcharts</p>',
                 unsafe_allow_html=True)
-    st.info("ℹ️ 7 Mermaid diagrams — architecture, L→H & H→L flows, guard selection, "
+    st.info(" 7 Mermaid diagrams — architecture, L→H & H→L flows, guard selection, "
             "compliance formula, classification hierarchy, and deployment lifecycle.")
     st.components.v1.html(MERMAID_HTML, height=3200, scrolling=True)
 # ─────────────────────────────────────────────────────────────────────────────
 # TAB 4 — GUARD CATALOGUE
 # ─────────────────────────────────────────────────────────────────────────────
 with tabs[4]:
-    st.markdown('<p class="sh">🛡️ Commercial CDS Guard Catalogue</p>',
+    st.markdown('<p class="sh"> Commercial CDS Guard Catalogue</p>',
                 unsafe_allow_html=True)
-    search = st.text_input("🔍 Search guard name or vendor…", "")
+    search = st.text_input(" Search guard name or vendor…", "")
     for gname, info in GUARD_DETAIL.items():
         if search.lower() in gname.lower() or search.lower() in info["vendor"].lower():
-            with st.expander(f"🛡️ {gname}  —  {info['vendor']}"):
+            with st.expander(f" {gname}  —  {info['vendor']}"):
                 c1, c2 = st.columns([2, 1])
                 with c1:
                     st.markdown(f"**Description:** {info['notes']}")
@@ -651,7 +651,7 @@ with tabs[4]:
 # TAB 5 — FIELD DICTIONARY
 # ─────────────────────────────────────────────────────────────────────────────
 with tabs[5]:
-    st.markdown('<p class="sh">📖 Field Definitions & Formulas</p>',
+    st.markdown('<p class="sh"> Field Definitions & Formulas</p>',
                 unsafe_allow_html=True)
     for fname, (desc, formula) in FIELD_DOCS.items():
         st.markdown(f"""
@@ -664,15 +664,15 @@ with tabs[5]:
 # TAB 6 — EXPORT
 # ─────────────────────────────────────────────────────────────────────────────
 with tabs[6]:
-    st.markdown('<p class="sh">📤 Export Filtered Dataset</p>', unsafe_allow_html=True)
+    st.markdown('<p class="sh"> Export Filtered Dataset</p>', unsafe_allow_html=True)
     st.info(f"Exporting **{len(df_f)}** records in **{export_fmt}** format.")
-    if st.button("⬇️ Generate & Download", use_container_width=True):
+    if st.button(" Generate & Download", use_container_width=True):
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         # ── CSV ──────────────────────────────────────────────────────────────
         if export_fmt == "CSV":
             buf = io.StringIO()
             df_f.to_csv(buf, index=False)
-            st.download_button("⬇️ Download CSV", buf.getvalue().encode(),
+            st.download_button(" Download CSV", buf.getvalue().encode(),
                                f"KNetCDS_{ts}.csv", "text/csv")
         # ── JSON ─────────────────────────────────────────────────────────────
         elif export_fmt == "JSON":
@@ -692,7 +692,7 @@ with tabs[6]:
                 "data": df_f.to_dict(orient="records"),
             }
             buf = io.BytesIO(json.dumps(payload, indent=2).encode())
-            st.download_button("⬇️ Download JSON", buf, f"KNetCDS_{ts}.json",
+            st.download_button(" Download JSON", buf, f"KNetCDS_{ts}.json",
                                "application/json")
         # ── TEXT ─────────────────────────────────────────────────────────────
         elif export_fmt == "Text (.txt)":
@@ -716,7 +716,7 @@ with tabs[6]:
                 lines.append(f"  Level {l}: {d}")
             lines += ["", "DATA", "-" * 40, df_f.to_string(index=False)]
             buf = io.BytesIO("\n".join(lines).encode())
-            st.download_button("⬇️ Download TXT", buf, f"KNetCDS_{ts}.txt",
+            st.download_button(" Download TXT", buf, f"KNetCDS_{ts}.txt",
                                "text/plain")
         # ── WORD ─────────────────────────────────────────────────────────────
         elif export_fmt == "Word (.docx)":
@@ -765,7 +765,7 @@ with tabs[6]:
                         cells[i].text = str(row[c])
                 buf = io.BytesIO()
                 doc.save(buf); buf.seek(0)
-                st.download_button("⬇️ Download DOCX", buf, f"KNetCDS_{ts}.docx",
+                st.download_button(" Download DOCX", buf, f"KNetCDS_{ts}.docx",
                                    "application/vnd.openxmlformats-officedocument"
                                    ".wordprocessingml.document")
         # ── PDF ──────────────────────────────────────────────────────────────
@@ -820,7 +820,7 @@ with tabs[6]:
                 story.append(ptbl)
                 pdoc.build(story)
                 buf.seek(0)
-                st.download_button("⬇️ Download PDF", buf, f"KNetCDS_{ts}.pdf",
+                st.download_button(" Download PDF", buf, f"KNetCDS_{ts}.pdf",
                                    "application/pdf")
     st.markdown("---")
     st.markdown("**© KNet CDS Intelligence Framework | Randy Singh | "
