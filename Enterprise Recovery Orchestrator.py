@@ -575,7 +575,7 @@ def render_status_badge(confidence: str):
 def main():
     st.set_page_config(
         page_title="KNet Enterprise Recovery Orchestrator",
-        page_icon="🛡️",
+        page_icon="",
         layout="wide",
     )
 
@@ -644,7 +644,7 @@ def main():
 
     # ---------------- Tabs ----------------
     tab_results, tab_charts, tab_ai, tab_export, tab_history = st.tabs(
-        ["📊 Results", "📈 Charts", "🤖 AI Recovery Advisor", "💾 Export", "🕘 History"]
+        [" Results", " Charts", " AI Recovery Advisor", " Export", " History"]
     )
 
     # ===== Results tab =====
