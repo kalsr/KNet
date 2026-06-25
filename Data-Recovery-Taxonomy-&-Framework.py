@@ -17,8 +17,8 @@
  #  • DATA DICTIONARY  -> every field used in the underlying data model, with
                         # type, meaning, and example values
  # • FORMULAS         -> every calculation used (Recovery Probability,
-                         #Confidence Level, Estimated Time, etc.), explained
-                        # and made interactive so users can test their own numbers
+                        #Confidence Level, Estimated Time, etc.), explained
+                        #and made interactive so users can test their own numbers
  # • GLOSSARY         -> plain-English definitions of every technical term used
 
 
@@ -373,7 +373,7 @@ def render_header():
         """
         <div style="background:linear-gradient(135deg,#0B3D91,#3D63B8);padding:18px 26px;
                     border-radius:10px;margin-bottom:18px;">
-            <h1 style="color:white;margin:0;font-size:28px;"> Data Recovery — Taxonomy &amp; Framework Explorer</h1>
+            <h1 style="color:white;margin:0;font-size:28px;">📚 Data Recovery — Taxonomy &amp; Framework Explorer</h1>
             <p style="color:#D7E3FF;margin:4px 0 0 0;font-size:14px;">
                 Developed by <b>Randy Singh</b> &nbsp;|&nbsp; Kalsnet (KNet) Consulting Group
                 &nbsp;•&nbsp; companion reference to the Enterprise Recovery Orchestrator
@@ -488,12 +488,12 @@ def build_json_reference() -> dict:
 # ==========================================================================
 
 def main():
-    st.set_page_config(page_title="KNet Taxonomy & Framework Explorer", page_icon="", layout="wide")
+    st.set_page_config(page_title="KNet Taxonomy & Framework Explorer", page_icon="📚", layout="wide")
     render_header()
 
     tabs = st.tabs(
-        [" Overview", " Taxonomy", " Framework", " Data Dictionary",
-         " Formulas (Interactive)", " Glossary", " Export Reference"]
+        ["🏠 Overview", "🧬 Taxonomy", "🧭 Framework", "📋 Data Dictionary",
+         "🧮 Formulas (Interactive)", "📖 Glossary", "💾 Export Reference"]
     )
 
     # ---------------- Overview ----------------
@@ -509,22 +509,22 @@ def main():
         st.markdown("### How the pieces fit together")
         c1, c2, c3, c4 = st.columns(4)
         with c1:
-            st.markdown("** Taxonomy**")
+            st.markdown("**🧬 Taxonomy**")
             st.caption("Classifies *what* a recovery record is: domain, technique, outcome, confidence, tool.")
         with c2:
-            st.markdown("** Framework**")
+            st.markdown("**🧭 Framework**")
             st.caption("Describes *the process* a recovery case moves through, end to end.")
         with c3:
-            st.markdown("** Data Dictionary**")
+            st.markdown("**📋 Data Dictionary**")
             st.caption("Defines *every field* recorded about a recovery attempt.")
         with c4:
-            st.markdown("** Formulas**")
+            st.markdown("**🧮 Formulas**")
             st.caption("Shows *the math* that turns raw records into run-level scores and plans.")
 
         st.info(
-            " Tip: start with **Taxonomy** to learn the vocabulary, then **Framework** to see the "
+            "💡 Tip: start with **Taxonomy** to learn the vocabulary, then **Framework** to see the "
             "process those terms apply to, then try the **Formulas** tab's calculator with your own numbers.",
-            icon="",
+            icon="💡",
         )
 
     # ---------------- Taxonomy ----------------
@@ -580,7 +580,7 @@ def main():
 
         st.markdown("---")
         dl = fw["decision_layer"]
-        st.markdown(f"####  {dl['name']}")
+        st.markdown(f"#### 🤖 {dl['name']}")
         st.caption(f"Runs during: {dl['runs_during']}")
         pipeline_html = " &nbsp;→&nbsp; ".join(dl["pipeline"])
         st.markdown(
@@ -597,7 +597,7 @@ def main():
         df = data_dictionary_df()
         st.dataframe(df, use_container_width=True, height=560)
         st.download_button(
-            " Download Data Dictionary (CSV)",
+            "⬇️ Download Data Dictionary (CSV)",
             data=df.to_csv(index=False).encode("utf-8"),
             file_name="data_dictionary.csv",
             mime="text/csv",
@@ -619,7 +619,7 @@ def main():
                     st.markdown(f"- `{v}` — {d}")
             st.markdown("---")
 
-        st.markdown("###  Try it yourself: live calculator")
+        st.markdown("### 🧮 Try it yourself: live calculator")
         st.caption("Enter record counts to see Formulas F1–F3 computed live, with the rule that fired highlighted.")
         cc1, cc2, cc3 = st.columns(3)
         r = cc1.number_input("Recovered (R)", min_value=0, value=61, step=1)
@@ -664,7 +664,7 @@ def main():
         e1, e2 = st.columns(2)
         with e1:
             st.download_button(
-                " Download as Markdown",
+                "⬇️ Download as Markdown",
                 data=md_doc.encode("utf-8"),
                 file_name="data_recovery_taxonomy_framework.md",
                 mime="text/markdown",
@@ -672,7 +672,7 @@ def main():
             )
         with e2:
             st.download_button(
-                " Download as JSON",
+                "⬇️ Download as JSON",
                 data=json.dumps(json_doc, indent=2).encode("utf-8"),
                 file_name="data_recovery_taxonomy_framework.json",
                 mime="application/json",
