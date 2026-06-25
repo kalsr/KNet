@@ -9,7 +9,7 @@
  #Organization: Kalsnet (KNet) Consulting Group
 
 # DESCRIPTION
- --------------------------------------------------------------------------
+# --------------------------------------------------------------------------
  #A single-pane-of-glass Streamlit demonstration application that simulates
  #an Enterprise Recovery Orchestrator across five recovery domains:
 
