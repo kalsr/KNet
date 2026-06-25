@@ -31,8 +31,8 @@ import streamlit as st
 # PAGE CONFIG
 # =========================================================================
 st.set_page_config(
-    page_title="CrossGuard AI | Cross-Domain Data Filter",
-    page_icon="🛡️",
+    page_title="CrossDomainGuard AI | Cross-Domain Data Filter",
+    page_icon="",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -82,7 +82,7 @@ st.markdown(
 # =========================================================================
 st.markdown(
     """
-    <div class="title-line-1">🛡️ CrossGuard AI — Cross-Domain Data Filter</div>
+    <div class="title-line-1"> CrossGuard AI — Cross-Domain Data Filter</div>
     <div class="title-line-2">Developed by Randy Singh from Kalsnet (KNet) Consulting</div>
     <div class="subtle-divider"></div>
     """,
@@ -164,7 +164,7 @@ def log_audit(action, direction, records, findings_count, engine):
 # SIDEBAR — LLM CONFIGURATION
 # =========================================================================
 with st.sidebar:
-    st.header("🔑 LLM Configuration")
+    st.header(" LLM Configuration")
 
     provider = st.radio("LLM Provider", ["Claude (Anthropic)", "Groq"], index=0)
 
@@ -190,7 +190,7 @@ with st.sidebar:
              "embedded in free text).",
     )
 
-    with st.expander("📘 How do I get an API key?"):
+    with st.expander(" How do I get an API key?"):
         st.markdown(
             """
 **Claude (Anthropic) API key**
@@ -538,7 +538,7 @@ def export_block(data, base_filename, title, key_prefix):
 # MAIN TABS
 # =========================================================================
 tab_synth, tab_real, tab_audit = st.tabs(
-    ["🧪 Synthetic Data Demo", "📤 Real Data Upload", "🧾 Audit Log"]
+    ["🧪 Synthetic Data Demo", " Real Data Upload", "🧾 Audit Log"]
 )
 
 # -------------------------------------------------------------------------
@@ -561,11 +561,11 @@ with tab_synth:
     with col_c:
         st.write("")
         st.write("")
-        gen_clicked = st.button("🔄 Generate", use_container_width=True)
+        gen_clicked = st.button(" Generate", use_container_width=True)
 
     reset_col, _ = st.columns([1, 5])
     with reset_col:
-        if st.button("🗑️ Reset Data", use_container_width=True):
+        if st.button(" Reset Data", use_container_width=True):
             st.session_state.synthetic_df = None
             st.session_state.synthetic_filtered_df = None
             st.session_state.synthetic_findings = []
@@ -585,7 +585,7 @@ with tab_synth:
         st.markdown("**Raw synthetic data (unfiltered):**")
         st.dataframe(st.session_state.synthetic_df, use_container_width=True, height=260)
 
-        run_filter = st.button("🛡️ Run Cross-Domain Filter", type="primary")
+        run_filter = st.button(" Run Cross-Domain Filter", type="primary")
         if run_filter:
             df = st.session_state.synthetic_df
             with st.spinner("Running deterministic rule-based filter..."):
@@ -621,7 +621,7 @@ with tab_synth:
         st.dataframe(st.session_state.synthetic_filtered_df, use_container_width=True, height=260)
 
         if st.session_state.synthetic_findings:
-            with st.expander("🔍 Findings detail"):
+            with st.expander(" Findings detail"):
                 st.json(st.session_state.synthetic_findings)
 
         st.markdown("**Download filtered data:**")
@@ -652,7 +652,7 @@ with tab_real:
 
     reset_col2, _ = st.columns([1, 5])
     with reset_col2:
-        if st.button("🗑️ Reset Real Data", use_container_width=True):
+        if st.button(" Reset Real Data", use_container_width=True):
             st.session_state.real_raw = None
             st.session_state.real_kind = None
             st.session_state.real_filtered = None
@@ -686,7 +686,7 @@ with tab_real:
         else:
             st.text_area("Raw text", st.session_state.real_raw, height=200, disabled=True)
 
-        if st.button("🛡️ Run Cross-Domain Filter", type="primary", key="real_filter_btn"):
+        if st.button(" Run Cross-Domain Filter", type="primary", key="real_filter_btn"):
             if st.session_state.real_kind == "table":
                 df = st.session_state.real_raw
                 with st.spinner("Running deterministic rule-based filter..."):
@@ -753,7 +753,7 @@ with tab_real:
             st.text_area("Filtered text", st.session_state.real_filtered, height=200, disabled=True)
 
         if st.session_state.real_findings:
-            with st.expander("🔍 Findings detail"):
+            with st.expander(" Findings detail"):
                 st.json(st.session_state.real_findings)
 
         st.markdown("**Download filtered data:**")
@@ -778,7 +778,7 @@ with tab_audit:
             file_name="crossguard_audit_log.csv",
             mime="text/csv",
         )
-        if st.button("🗑️ Clear Audit Log"):
+        if st.button(" Clear Audit Log"):
             st.session_state.audit_log = []
             st.rerun()
     else:
