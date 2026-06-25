@@ -11,14 +11,14 @@
 # --------------------------------------------------------------------------
  
  # • TAXONOMY        -> how recovery work is classified (domains, techniques,
-                         outcome states, confidence bands, tooling)
+                        # outcome states, confidence bands, tooling)
  #  • FRAMEWORK        -> the end-to-end process model (KDRF: KNet Data
-                         Recovery Framework) and the Agentic AI decision layer
+                        # Recovery Framework) and the Agentic AI decision layer
  #  • DATA DICTIONARY  -> every field used in the underlying data model, with
-                         type, meaning, and example values
+                        # type, meaning, and example values
  # • FORMULAS         -> every calculation used (Recovery Probability,
-                         Confidence Level, Estimated Time, etc.), explained
-                         and made interactive so users can test their own numbers
+                         #Confidence Level, Estimated Time, etc.), explained
+                        # and made interactive so users can test their own numbers
  # • GLOSSARY         -> plain-English definitions of every technical term used
 
 
