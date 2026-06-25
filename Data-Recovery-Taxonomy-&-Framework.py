@@ -492,8 +492,8 @@ def main():
     render_header()
 
     tabs = st.tabs(
-        [" Overview", " Taxonomy", " Framework", " Data Dictionary",
-         " Formulas (Interactive)", "📖 Glossary", " Export Reference"]
+        ["🏠 Overview", "🧬 Taxonomy", "🧭 Framework", "📋 Data Dictionary",
+         "🧮 Formulas (Interactive)", "📖 Glossary", "💾 Export Reference"]
     )
 
     # ---------------- Overview ----------------
@@ -522,9 +522,9 @@ def main():
             st.caption("Shows *the math* that turns raw records into run-level scores and plans.")
 
         st.info(
-            " Tip: start with **Taxonomy** to learn the vocabulary, then **Framework** to see the "
+            "💡 Tip: start with **Taxonomy** to learn the vocabulary, then **Framework** to see the "
             "process those terms apply to, then try the **Formulas** tab's calculator with your own numbers.",
-            icon="",
+            icon="💡",
         )
 
     # ---------------- Taxonomy ----------------
