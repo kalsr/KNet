@@ -10,11 +10,10 @@
 
 #Developed by Randy Singh | Kalsnet (KNet) Consulting
 
-#IMPORTANT: This is an educational / business-document redaction demonstration
-#tool. It is NOT an accredited Cross-Domain Solution (CDS) and must not be used
-#to move real classified national-security information between security
-#domains. Real CDS deployments require hardware-enforced guards and formal
-#accreditation (e.g. via the appropriate national CDS authority).
+# IMPORTANT: At this point It is a demonstration tool on How CDS Filter works from Low to High & High to Low 
+# It is NOT an accredited Cross-Domain Solution (CDS) and must not be used
+# to move real classified national-security information between security
+#domains Require formal accreditation (e.g. via the appropriate national CDS authority).
 
 
 import io
@@ -90,7 +89,7 @@ st.markdown(
 )
 st.caption(
     "Demonstration / educational tool for AI-assisted sensitive-data filtering. "
-    "Not an accredited Cross-Domain Solution — do not use with real classified data."
+    "At this point it is Not an accredited Cross-Domain Solution — Please do not use with real classified data."
 )
 
 # =========================================================================
