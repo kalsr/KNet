@@ -25,7 +25,7 @@ import streamlit as st
 # =========================================================================
 st.set_page_config(
     page_title="CrossGuard AI | Cross-Domain Data Filter",
-    page_icon="🛡️",
+    page_icon="",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -75,7 +75,7 @@ st.markdown(
 # =========================================================================
 st.markdown(
     """
-    <div class="title-line-1">🛡️ CrossGuard AI — Cross-Domain Data Filter</div>
+    <div class="title-line-1"> CrossGuard AI — Cross-Domain Data Filter</div>
     <div class="title-line-2">Developed by Randy Singh from Kalsnet (KNet) Consulting</div>
     <div class="subtle-divider"></div>
     """,
@@ -230,7 +230,7 @@ def render_direction_policy_note(direction):
     info = DIRECTION_NOTES.get(direction)
     if not info:
         return
-    with st.expander(f"ℹ️ DoD filter & policy requirements — {direction}"):
+    with st.expander(f" DoD filter & policy requirements — {direction}"):
         st.markdown(f"**Primary risk:** {info['risk']}")
         st.markdown("**Required filter behaviors (Raise-the-Bar style):**")
         for f in info["filters"]:
@@ -272,7 +272,7 @@ def log_audit(action, direction, records, findings_count, engine):
 # SIDEBAR — LLM CONFIGURATION
 # =========================================================================
 with st.sidebar:
-    st.header("🔑 LLM Configuration")
+    st.header(" LLM Configuration")
 
     provider = st.radio("LLM Provider", ["Claude (Anthropic)", "Groq"], index=0)
 
@@ -298,7 +298,7 @@ with st.sidebar:
              "embedded in free text).",
     )
 
-    with st.expander("📘 How do I get an API key?"):
+    with st.expander(" How do I get an API key?"):
         st.markdown(
             """
 **Claude (Anthropic) API key**
@@ -320,7 +320,7 @@ with st.sidebar:
 4. Paste the key into the field above.
 
 ---
-⚠️ Treat both keys like passwords. Do not commit them to source control,
+NOTE: Treat both keys like passwords. Do not commit them to source control,
 and rotate/revoke them from the respective console if you suspect exposure.
             """
         )
@@ -646,7 +646,7 @@ def export_block(data, base_filename, title, key_prefix):
 # MAIN TABS
 # =========================================================================
 tab_synth, tab_real, tab_audit, tab_policy = st.tabs(
-    ["🧪 Synthetic Data Demo", "📤 Real Data Upload", "🧾 Audit Log", "📜 DoD Policy & Approval"]
+    [" Synthetic Data Demo", " Real Data Upload", " Audit Log", "📜 DoD POLICy & APPROVAL PROCESS"]
 )
 
 # -------------------------------------------------------------------------
@@ -669,13 +669,13 @@ with tab_synth:
     with col_c:
         st.write("")
         st.write("")
-        gen_clicked = st.button("🔄 Generate", use_container_width=True)
+        gen_clicked = st.button(" Generate", use_container_width=True)
 
     render_direction_policy_note(synth_direction)
 
     reset_col, _ = st.columns([1, 5])
     with reset_col:
-        if st.button("🗑️ Reset Data", use_container_width=True):
+        if st.button(" Reset Data", use_container_width=True):
             st.session_state.synthetic_df = None
             st.session_state.synthetic_filtered_df = None
             st.session_state.synthetic_findings = []
@@ -695,7 +695,7 @@ with tab_synth:
         st.markdown("**Raw synthetic data (unfiltered):**")
         st.dataframe(st.session_state.synthetic_df, use_container_width=True, height=260)
 
-        run_filter = st.button("🛡️ Run Cross-Domain Filter", type="primary")
+        run_filter = st.button(" Run Cross-Domain Filter", type="primary")
         if run_filter:
             df = st.session_state.synthetic_df
             with st.spinner("Running deterministic rule-based filter..."):
@@ -731,7 +731,7 @@ with tab_synth:
         st.dataframe(st.session_state.synthetic_filtered_df, use_container_width=True, height=260)
 
         if st.session_state.synthetic_findings:
-            with st.expander("🔍 Findings detail"):
+            with st.expander(" Findings detail"):
                 st.json(st.session_state.synthetic_findings)
 
         st.markdown("**Download filtered data:**")
@@ -748,7 +748,7 @@ with tab_synth:
 with tab_real:
     st.subheader("Real Data Upload & Filter")
     st.warning(
-        "⚠️ This demo tool is not an accredited Cross-Domain Solution. Do not upload real classified, "
+        "IMPORTANT NOTE: This demo tool is not an accredited Cross-Domain Solution. Do not upload real classified, "
         "regulated, or production personal data here. Use synthetic/test data only when evaluating this app."
     )
 
@@ -763,7 +763,7 @@ with tab_real:
 
     reset_col2, _ = st.columns([1, 5])
     with reset_col2:
-        if st.button("🗑️ Reset Real Data", use_container_width=True):
+        if st.button(" Reset Real Data", use_container_width=True):
             st.session_state.real_raw = None
             st.session_state.real_kind = None
             st.session_state.real_filtered = None
@@ -797,7 +797,7 @@ with tab_real:
         else:
             st.text_area("Raw text", st.session_state.real_raw, height=200, disabled=True)
 
-        if st.button("🛡️ Run Cross-Domain Filter", type="primary", key="real_filter_btn"):
+        if st.button(" Run Cross-Domain Filter", type="primary", key="real_filter_btn"):
             if st.session_state.real_kind == "table":
                 df = st.session_state.real_raw
                 with st.spinner("Running deterministic rule-based filter..."):
@@ -864,7 +864,7 @@ with tab_real:
             st.text_area("Filtered text", st.session_state.real_filtered, height=200, disabled=True)
 
         if st.session_state.real_findings:
-            with st.expander("🔍 Findings detail"):
+            with st.expander(" Findings detail"):
                 st.json(st.session_state.real_findings)
 
         st.markdown("**Download filtered data:**")
@@ -889,7 +889,7 @@ with tab_audit:
             file_name="crossguard_audit_log.csv",
             mime="text/csv",
         )
-        if st.button("🗑️ Clear Audit Log"):
+        if st.button(" Clear Audit Log"):
             st.session_state.audit_log = []
             st.rerun()
     else:
