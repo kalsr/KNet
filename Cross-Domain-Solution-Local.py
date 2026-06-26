@@ -60,7 +60,7 @@ DEPLOY_ENV = os.environ.get("CROSSGUARD_ENV", "production")  # "production" | "s
 # =========================================================================
 st.set_page_config(
     page_title="CrossGuard AI | Cross-Domain Data Filter",
-    page_icon="🛡️",
+    page_icon="",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -111,7 +111,7 @@ st.markdown(
 _env_badge_color = {"production": "#1a8a3e", "staging": "#b8860b", "dev": "#6e6e73"}.get(DEPLOY_ENV, "#1a8a3e")
 st.markdown(
     f"""
-    <div class="title-line-1">🛡️ CrossGuard AI — Cross-Domain Data Filter</div>
+    <div class="title-line-1"> CrossGuard AI — Cross-Domain Data Filter</div>
     <div class="title-line-2">Developed by Randy Singh from Kalsnet (KNet) Consulting</div>
     <div style="text-align:center;margin-top:4px;">
         <span style="background:{_env_badge_color};color:white;border-radius:10px;padding:2px 10px;
@@ -121,7 +121,7 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-with st.expander("🔒 Deployment Scope & Compliance Notice", expanded=False):
+with st.expander(" Deployment Scope & Compliance Notice", expanded=False):
     st.markdown(
         "**What this system is:** an internal, fully local sensitive-data redaction and "
         "pre-screening utility for business data, Controlled Unclassified Information (CUI) "
@@ -286,7 +286,7 @@ def render_direction_policy_note(direction):
     info = DIRECTION_NOTES.get(direction)
     if not info:
         return
-    with st.expander(f"ℹ️ DoD filter & policy requirements — {direction}"):
+    with st.expander(f" DoD filter & policy requirements — {direction}"):
         st.markdown(f"**Primary risk:** {info['risk']}")
         st.markdown("**Required filter behaviors (Raise-the-Bar style):**")
         for f in info["filters"]:
@@ -333,7 +333,7 @@ def log_audit(action, direction, records, findings_count, engine):
 # SIDEBAR — FILTER ENGINE CONFIGURATION (fully local, no LLM dependency)
 # =========================================================================
 with st.sidebar:
-    st.header("🛡️ Filter Engine Configuration")
+    st.header(" Filter Engine Configuration")
     st.success("Local deterministic + heuristic engine — no outbound network calls, no third-party LLM dependency.")
 
     enable_name_heuristic = st.checkbox(
@@ -364,7 +364,7 @@ with st.sidebar:
     )
     skip_phrases = {t.strip() for t in skip_phrases_raw.splitlines() if t.strip()}
 
-    with st.expander("⚙️ How the filter engine works"):
+    with st.expander(" How the filter engine works"):
         st.markdown(
             "1. **Exact-pattern pass** — regex match on SSNs, emails, phone numbers, "
             "card-like numbers, and classification banner words (TOP SECRET / SECRET / "
@@ -627,7 +627,7 @@ def export_block(data, base_filename, title, key_prefix):
 # MAIN TABS
 # =========================================================================
 tab_synth, tab_real, tab_audit, tab_policy = st.tabs(
-    ["🧪 Synthetic Data Demo", "📤 Real Data Upload", "🧾 Audit Log", "📜 DoD Policy & Approval"]
+    [" Synthetic Data Demo", " Real Data Upload", " Audit Log", " DoD Policy & Approval"]
 )
 
 # -------------------------------------------------------------------------
@@ -650,7 +650,7 @@ with tab_synth:
     with col_c:
         st.write("")
         st.write("")
-        gen_clicked = st.button("🔄 Generate", use_container_width=True)
+        gen_clicked = st.button(" Generate", use_container_width=True)
 
     render_direction_policy_note(synth_direction)
 
@@ -676,7 +676,7 @@ with tab_synth:
         st.markdown("**Raw synthetic data (unfiltered):**")
         st.dataframe(st.session_state.synthetic_df, use_container_width=True, height=260)
 
-        run_filter = st.button("🛡️ Run Cross-Domain Filter", type="primary")
+        run_filter = st.button(" Run Cross-Domain Filter", type="primary")
         if run_filter:
             df = st.session_state.synthetic_df
             with st.spinner("Running local filter engine (PII + classification + name heuristic + custom terms)..."):
@@ -702,7 +702,7 @@ with tab_synth:
         st.dataframe(st.session_state.synthetic_filtered_df, use_container_width=True, height=260)
 
         if st.session_state.synthetic_findings:
-            with st.expander("🔍 Findings detail"):
+            with st.expander(" Findings detail"):
                 st.json(st.session_state.synthetic_findings)
 
         st.markdown("**Download filtered data:**")
@@ -719,7 +719,7 @@ with tab_synth:
 with tab_real:
     st.subheader("Real Data Upload & Filter")
     st.warning(
-        "⚠️ This system is approved for business data, Controlled Unclassified Information (CUI), and "
+        "IMPORTANT-NOTE: This system is approved for business data, Controlled Unclassified Information (CUI), and "
         "other sensitive-but-unclassified records. It is **not** an accredited Cross-Domain Solution — "
         "do not upload actual classified national-security information here. See *DoD Policy & Approval* "
         "and `ACCREDITATION_GUIDE.md` if your use case involves classified data or a national security system."
@@ -736,7 +736,7 @@ with tab_real:
 
     reset_col2, _ = st.columns([1, 5])
     with reset_col2:
-        if st.button("🗑️ Reset Real Data", use_container_width=True):
+        if st.button(" Reset Real Data", use_container_width=True):
             st.session_state.real_raw = None
             st.session_state.real_kind = None
             st.session_state.real_filtered = None
@@ -780,7 +780,7 @@ with tab_real:
         else:
             st.text_area("Raw text", st.session_state.real_raw, height=200, disabled=True)
 
-        if st.button("🛡️ Run Cross-Domain Filter", type="primary", key="real_filter_btn"):
+        if st.button(" Run Cross-Domain Filter", type="primary", key="real_filter_btn"):
             if st.session_state.real_kind == "table":
                 df = st.session_state.real_raw
                 with st.spinner("Running local filter engine..."):
@@ -824,7 +824,7 @@ with tab_real:
             st.text_area("Filtered text", st.session_state.real_filtered, height=200, disabled=True)
 
         if st.session_state.real_findings:
-            with st.expander("🔍 Findings detail"):
+            with st.expander(" Findings detail"):
                 st.json(st.session_state.real_findings)
 
         st.markdown("**Download filtered data:**")
@@ -849,7 +849,7 @@ with tab_audit:
             file_name="crossguard_audit_log.csv",
             mime="text/csv",
         )
-        if st.button("🗑️ Clear Audit Log"):
+        if st.button(" Clear Audit Log"):
             st.session_state.audit_log = []
             st.rerun()
     else:
@@ -867,7 +867,7 @@ with tab_policy:
         "pathway and engagement contacts."
     )
 
-    with st.expander("🧭 Do you need full CDS accreditation for your use case? (start here)", expanded=True):
+    with st.expander(" Do you need full CDS accreditation for your use case? (start here)", expanded=True):
         st.markdown(
             "**Full DoDI 8540.01 / NCDSMO accreditation is required if *any* of these are true:**\n"
             "- The system moves data between two different classification levels, or between domains "
@@ -900,7 +900,7 @@ with tab_policy:
     steps_df = pd.DataFrame(APPROVAL_STEPS, columns=["Step", "What happens"])
     st.table(steps_df)
 
-    with st.expander("📦 What goes into a CDSA package (typical artifacts)"):
+    with st.expander(" What goes into a CDSA package (typical artifacts)"):
         st.markdown(
             "- System Security Plan (SSP) describing the CDS architecture and data flows\n"
             "- Security control implementation evidence (NIST SP 800-53 + CNSSI 1253 CDS Overlay)\n"
@@ -925,7 +925,7 @@ with tab_policy:
                 st.markdown(f"- {f}")
             st.info(info["approval_note"])
 
-    with st.expander("🧩 Where CrossGuard AI fits — and where it doesn't", expanded=False):
+    with st.expander(" Where CrossGuard AI fits — and where it doesn't", expanded=False):
         st.markdown(
             "This application's filter engine runs entirely locally with no outbound network "
             "calls, which removes the specific disclosure risk an LLM-API-based design would "
