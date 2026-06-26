@@ -538,7 +538,7 @@ def export_block(data, base_filename, title, key_prefix):
 # MAIN TABS
 # =========================================================================
 tab_synth, tab_real, tab_audit = st.tabs(
-    ["🧪 Synthetic Data Demo", " Real Data Upload", "🧾 Audit Log"]
+    [" Synthetic Data Demo", " Real Data Upload", " Audit Log"]
 )
 
 # -------------------------------------------------------------------------
