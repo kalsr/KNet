@@ -88,7 +88,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 st.caption(
-    "Demonstration / educational tool for AI-assisted sensitive-data filtering. "
+    "CDS Filter Demonstration / tool for AI-assisted sensitive-data filtering. "
     "At this point it is Not an accredited Cross-Domain Solution — Please do not use with real classified data."
 )
 
