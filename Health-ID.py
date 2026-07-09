@@ -41,7 +41,7 @@ np.random.seed(42)
 # ══════════════════════════════════════════════════════════════════════════════
 st.set_page_config(
     page_title="HealthID Pro — Healthcare Identity Management",
-    page_icon="",
+    page_icon="🏥",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -433,7 +433,7 @@ def _log_audit(action: str):
 def show_header():
     st.markdown("""
     <div class="header-wrap">
-        <p class="app-title"> HealthID Pro — Healthcare Identity Management System</p>
+        <p class="app-title">🏥 HealthID Pro — Healthcare Identity Management System</p>
         <p class="app-subtitle">Developed By Randy Singh from Kalsnet (KNet) Consulting</p>
     </div>""", unsafe_allow_html=True)
 def section_header(text: str):
@@ -457,7 +457,7 @@ def page_login():
     _, col, _ = st.columns([1, 1.4, 1])
     with col:
         st.markdown('<div class="login-card">', unsafe_allow_html=True)
-        st.markdown("###  Secure Staff Login")
+        st.markdown("### 🔐 Secure Staff Login")
         uname = st.text_input("Username", placeholder="e.g. dr.smith")
         pwd   = st.text_input("Password", type="password")
         c1, c2 = st.columns(2)
@@ -493,20 +493,20 @@ def page_login():
 def build_sidebar() -> str:
     role  = st.session_state.user["role"]
     perms = st.session_state.permissions_db[role]
-    icons = {"Doctor":"","Nurse":"","Receptionist":"","Admin":""}
+    icons = {"Doctor":"🟢","Nurse":"🔵","Receptionist":"🟠","Admin":"🟣"}
     with st.sidebar:
-        st.markdown("##  HealthID Pro")
+        st.markdown("## 🏥 HealthID Pro")
         st.divider()
         user = st.session_state.user
-        st.markdown(f"**{icons.get(role,'')} {user['name']}**\n\n*{role} · {user['dept']}*")
+        st.markdown(f"**{icons.get(role,'⚪')} {user['name']}**\n\n*{role} · {user['dept']}*")
         st.divider()
-        pages = [" Dashboard", " Patient Records", " Appointments",
-                 " Analytics", " Data Management", " Export"]
+        pages = ["📊 Dashboard", "👤 Patient Records", "📅 Appointments",
+                 "📈 Analytics", "⬆️ Data Management", "📤 Export"]
         if role == "Admin":
-            pages.append(" User Management")
+            pages.append("🧑‍⚕️ User Management")
         selected = st.radio("Navigation", pages, label_visibility="collapsed")
         st.divider()
-        st.markdown("** Role Permissions**")
+        st.markdown("**🔑 Role Permissions**")
         perm_labels = [
             ("view_records",      "View Patient Records"),
             ("view_confidential", "View Medical Notes"),
@@ -528,7 +528,7 @@ def build_sidebar() -> str:
 # DASHBOARD
 # ══════════════════════════════════════════════════════════════════════════════
 def page_dashboard():
-    section_header(" Dashboard Overview")
+    section_header("📊 Dashboard Overview")
     df   = st.session_state.patient_df
     appt = st.session_state.appt_df
     n_pat   = len(df)   if df   is not None else 0
@@ -536,8 +536,8 @@ def page_dashboard():
     n_sched = len(appt[appt.Status=="Scheduled"])   if appt is not None else 0
     n_done  = len(appt[appt.Status=="Completed"])   if appt is not None else 0
     c1,c2,c3,c4 = st.columns(4)
-    _kpi(c1, " Total Patients",      n_pat,  "#002B7F")
-    _kpi(c2, " Total Appointments",  n_appt, "#00796B")
+    _kpi(c1, "👥 Total Patients",      n_pat,  "#002B7F")
+    _kpi(c2, "📅 Total Appointments",  n_appt, "#00796B")
     _kpi(c3, "🗓 Scheduled",           n_sched,"#E65100")
     _kpi(c4, "✅ Completed",           n_done, "#4A148C")
     st.markdown("<br>", unsafe_allow_html=True)
@@ -546,13 +546,13 @@ def page_dashboard():
         with r1c1:
             dc = df["Department"].value_counts()
             fig = px.pie(values=dc.values, names=dc.index,
-                         title=" Patients by Department",
+                         title="🏥 Patients by Department",
                          color_discrete_sequence=px.colors.qualitative.Bold)
             fig.update_layout(height=320, margin=dict(t=40,b=10))
             st.plotly_chart(fig, use_container_width=True)
         with r1c2:
             fig = px.histogram(df, x="Age", nbins=20,
-                               title=" Patient Age Distribution",
+                               title="👥 Patient Age Distribution",
                                color_discrete_sequence=["#1565C0"])
             fig.update_layout(height=320, margin=dict(t=40,b=10),
                               xaxis_title="Age", yaxis_title="Count")
@@ -577,7 +577,7 @@ def page_dashboard():
             fig.update_layout(height=320, margin=dict(t=40,b=10))
             st.plotly_chart(fig, use_container_width=True)
     if appt is not None and not appt.empty:
-        st.markdown("** Appointment Status Overview**")
+        st.markdown("**📅 Appointment Status Overview**")
         sc = appt["Status"].value_counts()
         cmap = {"Scheduled":"#1565C0","Completed":"#2E7D32",
                 "Cancelled":"#C62828","No-show":"#F57F17","Rescheduled":"#7B1FA2"}
@@ -593,7 +593,7 @@ def page_dashboard():
 # PATIENT RECORDS
 # ══════════════════════════════════════════════════════════════════════════════
 def page_records():
-    section_header(" Patient Records")
+    section_header("👤 Patient Records")
     df   = st.session_state.patient_df
     role = st.session_state.user["role"]
     can_see_conf = st.session_state.permissions_db[role]["view_confidential"]
@@ -621,7 +621,7 @@ def page_records():
         st.markdown('<div class="notice-hipaa">⚠️ <b>HIPAA Notice</b>: '
                     'You are viewing confidential medical data. Handle per institutional policy.</div>',
                     unsafe_allow_html=True)
-        t1, t2 = st.tabs([" Patient Information", " Confidential Records"])
+        t1, t2 = st.tabs(["📋 Patient Information", "🔒 Confidential Records"])
         with t1:
             st.dataframe(fdf[PUBLIC_COLS].reset_index(drop=True),
                          use_container_width=True, height=420)
@@ -631,10 +631,10 @@ def page_records():
                          use_container_width=True, height=420)
             if can_see_conf and st.session_state.permissions_db[role]["edit_notes"]:
                 st.markdown("---")
-                st.markdown("** Edit Medical Note**")
+                st.markdown("**✏️ Edit Medical Note**")
                 pid = st.text_input("Patient ID to update notes", placeholder="PAT-10000")
                 new_note = st.text_area("Updated medical note")
-                if st.button(" Save Note"):
+                if st.button("💾 Save Note"):
                     mask2 = st.session_state.patient_df["Patient ID"] == pid
                     if mask2.any():
                         st.session_state.patient_df.loc[mask2, "Medical Notes"] = new_note
@@ -644,7 +644,7 @@ def page_records():
                         st.error("Patient ID not found.")
     else:
         # ── Receptionist view ──────────────────────────────────────────────
-        st.markdown('<div class="notice-restricted"> <b>Access Restricted</b>: '
+        st.markdown('<div class="notice-restricted">🔒 <b>Access Restricted</b>: '
                     'Confidential medical information is hidden for your role (Receptionist). '
                     'This complies with HIPAA Privacy Rule §164.502.</div>',
                     unsafe_allow_html=True)
@@ -658,10 +658,10 @@ def page_records():
 # APPOINTMENTS
 # ══════════════════════════════════════════════════════════════════════════════
 def page_appointments():
-    section_header(" Appointment Management")
+    section_header("📅 Appointment Management")
     appt = st.session_state.appt_df
     role = st.session_state.user["role"]
-    t1, t2 = st.tabs([" View Appointments", "➕ Schedule New"])
+    t1, t2 = st.tabs(["📋 View Appointments", "➕ Schedule New"])
     with t1:
         fc1, fc2, fc3 = st.columns(3)
         with fc1: date_f = st.date_input("Filter by date", value=None)
@@ -722,14 +722,14 @@ def page_appointments():
 # ANALYTICS
 # ══════════════════════════════════════════════════════════════════════════════
 def page_analytics():
-    section_header(" Analytics & Insights")
+    section_header("📈 Analytics & Insights")
     df   = st.session_state.patient_df
     appt = st.session_state.appt_df
     role = st.session_state.user["role"]
     if df is None or df.empty:
         st.warning("No patient data. Please load data first.")
         return
-    t1, t2, t3 = st.tabs([" Patient Analytics", " Appointment Analytics", " Audit Log"])
+    t1, t2, t3 = st.tabs(["👥 Patient Analytics", "📅 Appointment Analytics", "🔐 Audit Log"])
     with t1:
         c1, c2 = st.columns(2)
         with c1:
