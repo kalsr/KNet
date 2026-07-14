@@ -39,7 +39,7 @@ except ImportError:
 # ════════════════════════════════════════════════════════════════════════════
 st.set_page_config(
     page_title="CyberGuard Pro — Cybersecurity Assessment Framework",
-    page_icon="🛡️",
+    page_icon="",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -365,7 +365,7 @@ def export_pdf(df: pd.DataFrame):
     nS  = styles["Normal"]
 
     story = [
-        Paragraph("🛡️ CyberGuard Pro — Cybersecurity Domain Assessment Report", tS),
+        Paragraph(" CyberGuard Pro — Cybersecurity Domain Assessment Report", tS),
         Paragraph("Aligned with NIST CSF 2.0 &amp; CIS Controls v8  |  Developed by Randy Singh — Kalsnet (KNet) Consulting", sS),
         HRFlowable(width="100%", thickness=1.2, color=rl_colors.HexColor("#1565C0")),
         Spacer(1, 10),
@@ -500,7 +500,7 @@ def export_word(df: pd.DataFrame):
 # ════════════════════════════════════════════════════════════════════════════
 st.markdown("""
 <div class="header-wrap">
-  <p class="app-title">🛡️ CyberGuard Pro — Enterprise Cybersecurity Domain Assessment Framework</p>
+  <p class="app-title"> CyberGuard Pro — Enterprise Cybersecurity Domain Assessment Framework</p>
   <p class="app-subtitle">Developed By Randy Singh from Kalsnet (KNet) Consulting  ·  NIST CSF 2.0  ·  CIS Controls v8  ·  108 Security Domains</p>
 </div>
 """, unsafe_allow_html=True)
@@ -509,19 +509,19 @@ st.markdown("""
 # SIDEBAR
 # ════════════════════════════════════════════════════════════════════════════
 with st.sidebar:
-    st.markdown("## 🛡️ CyberGuard Pro")
+    st.markdown("##  CyberGuard Pro")
     st.divider()
-    st.session_state.org_name = st.text_input("🏢 Organization Name", st.session_state.org_name)
-    st.session_state.assessor = st.text_input("👤 Assessor Name", st.session_state.assessor)
+    st.session_state.org_name = st.text_input(" Organization Name", st.session_state.org_name)
+    st.session_state.assessor = st.text_input(" Assessor Name", st.session_state.assessor)
     st.divider()
 
     page = st.radio("Navigation", [
-        "📊 Executive Dashboard",
-        "📋 Domain Assessment",
-        "📈 Gap Analysis",
-        "🗺️ Framework Explorer",
-        "🎯 Roadmap Builder",
-        "📤 Export Reports",
+        " Executive Dashboard",
+        " Domain Assessment",
+        " Gap Analysis",
+        " Framework Explorer",
+        " Roadmap Builder",
+        " Export Reports",
     ], label_visibility="collapsed")
 
     st.divider()
@@ -542,7 +542,7 @@ with st.sidebar:
             st.rerun()
 
     st.divider()
-    st.markdown("**📖 Maturity Scale**")
+    st.markdown("** Maturity Scale**")
     for lvl, (name, color, _) in MATURITY_LEVELS.items():
         st.markdown(f'<span class="maturity-{lvl}">{lvl} — {name}</span>', unsafe_allow_html=True)
         st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
@@ -552,8 +552,8 @@ df = get_assessment_df()
 # ════════════════════════════════════════════════════════════════════════════
 # PAGE: EXECUTIVE DASHBOARD
 # ════════════════════════════════════════════════════════════════════════════
-if page == "📊 Executive Dashboard":
-    st.subheader("📊 Executive Dashboard")
+if page == " Executive Dashboard":
+    st.subheader(" Executive Dashboard")
 
     overall = df["Current Maturity"].mean()
     total_gap = int(df["Gap"].sum())
@@ -619,7 +619,7 @@ if page == "📊 Executive Dashboard":
         st.plotly_chart(fig, use_container_width=True)
 
     # Heatmap of all domains
-    st.markdown("**🗺️ Full Domain Heatmap (all 108 domains)**")
+    st.markdown("** Full Domain Heatmap (all 108 domains)**")
     heat_df = df.copy()
     heat_df["Row"] = heat_df.groupby("Function").cumcount()
     fig = px.scatter(heat_df, x="Row", y="Function", color="Current Maturity",
