@@ -581,8 +581,8 @@ with st.sidebar:
     st.divider()
     st.markdown("** Maturity Scale**")
     for lvl, (name, color, _) in MATURITY_LEVELS.items():
-        st.markdown(f'<span class="maturity-{lvl}">{lvl} — {name}</span>', unsafe_allow_html=True, key=f"matlbl_{lvl}")
-        st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True, key=f"matsp_{lvl}")
+        st.markdown(f'<span class="maturity-{lvl}">{lvl} — {name}</span>', unsafe_allow_html=True)
+        st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
 df = get_assessment_df()
 # ════════════════════════════════════════════════════════════════════════════
 # PAGE: EXECUTIVE DASHBOARD
@@ -606,7 +606,7 @@ if page =="Executive Dashboard":
         col.markdown(
             f'<div class="kpi-card" style="background:linear-gradient(135deg,{color},{color}bb)">'
             f'<div class="kpi-lbl">{lbl}</div><div class="kpi-val">{val}</div></div>',
-            unsafe_allow_html=True, key=f"kpi_{lbl}")
+            unsafe_allow_html=True)
     with st.expander("How are these KPIs calculated?"):
         st.markdown("** Overall Maturity** — the average Current Maturity score across every domain in the framework.")
         st.markdown('<div class="formula-box">Overall Maturity = SUM(Current Maturity, all domains) ÷ Total Domains</div>', unsafe_allow_html=True)
@@ -699,12 +699,12 @@ elif page =="Domain Assessment":
         with tab:
             f = FRAMEWORK[fname]
             st.markdown(f"**{fname}** — {f['description']} ({len(f['domains'])} domains)")
-            with st.expander(f"Guidance — how to assess {fname} domains", expanded=False, key=f"guidance_{fname}"):
+            with st.expander(f"Guidance — how to assess {fname} domains", expanded=False):
                 st.markdown(FUNCTION_GUIDANCE[fname])
             st.divider()
             for d in f["domains"]:
                 did, name, nist, cis, desc = d
-                with st.expander(f"**{did}** — {name} `NIST: {nist}` `CIS: {cis}`", key=f"exp_{did}"):
+                with st.expander(f"**{did}** — {name} `NIST: {nist}` `CIS: {cis}`"):
                     st.caption(desc)
                     c1, c2 = st.columns(2)
                     with c1:
@@ -807,7 +807,7 @@ elif page =="Framework Explorer":
         sub = fdf[fdf["Function"] == fname]
         if not len(sub): continue
         color = FRAMEWORK[fname]["color"]
-        st.markdown(f'<h4 style="color:{color};border-bottom:2px solid {color};padding-bottom:4px">{fname} ({len(sub)} domains)</h4>', unsafe_allow_html=True, key=f"fnhdr_{fname}")
+        st.markdown(f'<h4 style="color:{color};border-bottom:2px solid {color};padding-bottom:4px">{fname} ({len(sub)} domains)</h4>', unsafe_allow_html=True)
         for _, r in sub.iterrows():
             lvl = r["Current Maturity"]
             st.markdown(
@@ -815,7 +815,7 @@ elif page =="Framework Explorer":
                 f'<b>{r["Domain ID"]} — {r["Domain"]}</b> &nbsp;'
                 f'<span class="maturity-{lvl}">{lvl} · {r["Maturity Label"]}</span>'
                 f'<br><small style="color:#5A7A9A">NIST CSF: {r["NIST CSF 2.0"]} &nbsp;|&nbsp; CIS: {r["CIS Controls"]} &nbsp;|&nbsp; {r["Description"]}</small></div>',
-                unsafe_allow_html=True, key=f"card_{r['Domain ID']}")
+                unsafe_allow_html=True)
 # ════════════════════════════════════════════════════════════════════════════
 # PAGE: ROADMAP BUILDER
 # ════════════════════════════════════════════════════════════════════════════
@@ -876,7 +876,7 @@ elif page =="Roadmap Builder":
             st.plotly_chart(fig, use_container_width=True)
             st.caption("**How to read this:** each horizontal bar is one domain's planned remediation window. Bar color shows which phase it belongs to; bar position/length shows the scheduled start and planning duration described above.")
         for pkey, pname, pdf_, color, pdesc in phases:
-            st.markdown(f'<h4 style="color:{color}">{pname} - {len(pdf_)} domains</h4>', unsafe_allow_html=True, key=f"phasehdr_{pkey}")
+            st.markdown(f'<h4 style="color:{color}">{pname} - {len(pdf_)} domains</h4>', unsafe_allow_html=True)
             st.caption(pdesc)
             if len(pdf_):
                 st.markdown(
