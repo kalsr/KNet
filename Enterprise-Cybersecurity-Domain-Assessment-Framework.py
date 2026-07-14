@@ -940,8 +940,8 @@ elif page =="Export Reports":
                      "Current Maturity","Target Maturity","Gap"]].reset_index(drop=True),
                  use_container_width=True, height=420)
 # ── Footer ───────────────────────────────────────────────────────────────────
-st.markdown("---")
-st.markdown(
-    '<p style="text-align:center;color:#7A9ABB;font-size:.8rem">'
-    'CyberGuard Pro · 108 Security Domains · NIST CSF 2.0 · CIS Controls v8<br>'
+#st.markdown("---")
+#st.markdown(
+  #  '<p style="text-align:center;color:#7A9ABB;font-size:.8rem">'
+  #  'CyberGuard Pro · 108 Security Domains · NIST CSF 2.0 · CIS Controls v8<br>'
    # '© 2025 Kalsnet (KNet) Consulting — Developed by Ran
