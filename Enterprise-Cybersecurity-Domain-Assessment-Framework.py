@@ -1,3 +1,5 @@
+
+
 #CyberGuard Pro — Enterprise Cybersecurity Domain Assessment Framework
 #100+ Security Domains aligned with NIST CSF 2.0 & CIS Controls v8
 #Developed by Randy Singh from Kalsnet (KNet) Consulting
@@ -32,7 +34,7 @@ except ImportError:
 # ════════════════════════════════════════════════════════════════════════════
 st.set_page_config(
     page_title="CyberGuard Pro — Cybersecurity Assessment Framework",
-    page_icon=None,
+    page_icon="",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -426,7 +428,7 @@ def export_pdf(df: pd.DataFrame):
     if len(gaps):
         gdata = [["ID","Domain","Function","Current","Target","Gap"]]
         for _, r in gaps.iterrows():
-            gdata.append([r["Domain ID"], r["Domain"][:38], r["Function"].split(" ")[0], str(r["Current Maturity"]), str(r["Target Maturity"]), str(r["Gap"])])
+            gdata.append([r["Domain ID"], r["Domain"][:38], r["Function"].split("")[0], str(r["Current Maturity"]), str(r["Target Maturity"]), str(r["Gap"])])
         gt = Table(gdata, colWidths=[0.6*inch, 2.9*inch, 1.0*inch, 0.7*inch, 0.65*inch, 0.5*inch], repeatRows=1)
         gt.setStyle(TableStyle([
             ("BACKGROUND", (0,0),(-1,0), rl_colors.HexColor("#C62828")),
@@ -604,7 +606,7 @@ if page =="Executive Dashboard":
     ]
     for col, lbl, val, color in kpis:
         col.markdown(
-            f'<div class="kpi-card" style="background:linear-gradient(135deg,{color},{color}bb)">'
+            f'<div class="kpi-card"style="background:linear-gradient(135deg,{color},{color}bb)">'
             f'<div class="kpi-lbl">{lbl}</div><div class="kpi-val">{val}</div></div>',
             unsafe_allow_html=True)
     with st.expander("How are these KPIs calculated?"):
@@ -628,7 +630,7 @@ if page =="Executive Dashboard":
     with r1c1:
         # Radar chart per NIST function
         fs = function_scores(df)
-        categories = [f.split(" ")[0] for f in fs["Function"]]
+        categories = [f.split("")[0] for f in fs["Function"]]
         fig = go.Figure()
         fig.add_trace(go.Scatterpolar(
             r=fs["Avg_Current"].tolist() + [fs["Avg_Current"].iloc[0]],
@@ -694,7 +696,7 @@ elif page =="Domain Assessment":
     st.subheader("Domain Maturity Assessment")
     st.markdown("Rate each domain's **current maturity** (0–5) and set a **target**. Add notes for context.")
     st.info("**Scoring scale reminder:** 0 = Not Performed, 1 = Initial/Ad-hoc, 2 = Developing, 3 = Defined, 4 = Managed, 5 = Optimized. See the sidebar for the full definitions of each level.")
-    fn_tabs = st.tabs([f.split(" ")[0] for f in FUNCTION_LIST])
+    fn_tabs = st.tabs([f.split("")[0] for f in FUNCTION_LIST])
     for tab, fname in zip(fn_tabs, FUNCTION_LIST):
         with tab:
             f = FRAMEWORK[fname]
@@ -942,5 +944,4 @@ st.markdown("---")
 st.markdown(
     '<p style="text-align:center;color:#7A9ABB;font-size:.8rem">'
     'CyberGuard Pro · 108 Security Domains · NIST CSF 2.0 · CIS Controls v8<br>'
-    'Copyright 2025 Kalsnet (KNet) Consulting - Developed by Randy Singh. All rights reserved.</p>',
-    unsafe_allow_html=True)
+    '© 2025 Kalsnet (KNet) Consulting — Developed by Ran
