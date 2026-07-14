@@ -944,4 +944,4 @@ st.markdown("---")
 st.markdown(
     '<p style="text-align:center;color:#7A9ABB;font-size:.8rem">'
     'CyberGuard Pro · 108 Security Domains · NIST CSF 2.0 · CIS Controls v8<br>'
-    '© 2025 Kalsnet (KNet) Consulting — Developed by Ran
+   # '© 2025 Kalsnet (KNet) Consulting — Developed by Ran
