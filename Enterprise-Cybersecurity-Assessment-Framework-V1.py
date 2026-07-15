@@ -32,7 +32,7 @@ except ImportError:
 # ════════════════════════════════════════════════════════════════════════════
 st.set_page_config(
     page_title="CyberGuard Pro — Cybersecurity Assessment Framework",
-    page_icon="",
+    page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -232,53 +232,53 @@ TOTAL_DOMAINS = sum(len(f["domains"]) for f in FRAMEWORK.values())
 # ════════════════════════════════════════════════════════════════════════════
 FUNCTION_GUIDANCE = {
     "GOVERN (GV)": (
-        "**What it covers:** GOVERN is the foundation function — it sets the cybersecurity risk management"
-        "strategy, expectations, and policy that everything else operates under. It answers: *who is accountable,"
+        "**What it covers:** GOVERN is the foundation function — it sets the cybersecurity risk management "
+        "strategy, expectations, and policy that everything else operates under. It answers: *who is accountable, "
         "what is our risk appetite, and how do we oversee third parties and the supply chain?*\n\n"
-        "**How to score it:** Look for a documented and board-approved security strategy, a named risk owner (e.g."
-        "CISO) with clear reporting lines, current and enforced policies, a formal risk register, active third-party/"
-        "supply-chain due diligence, and regular metrics reporting to leadership. Score low (0-1) if governance is"
+        "**How to score it:** Look for a documented and board-approved security strategy, a named risk owner (e.g. "
+        "CISO) with clear reporting lines, current and enforced policies, a formal risk register, active third-party/ "
+        "supply-chain due diligence, and regular metrics reporting to leadership. Score low (0-1) if governance is "
         "informal or undocumented; score high (4-5) if it is measured, board-visible, and continuously improved."
     ),
     "IDENTIFY (ID)": (
-        "**What it covers:** IDENTIFY builds the organization's understanding of its assets, data, systems, risks,"
+        "**What it covers:** IDENTIFY builds the organization's understanding of its assets, data, systems, risks, "
         "and vulnerabilities — you cannot protect what you don't know you have.\n\n"
-        "**How to score it:** Look for a current, automated hardware/software/cloud/identity asset inventory, data"
-        "classification, an active vulnerability management and penetration testing program, threat intelligence"
-        "consumption, and business impact analysis (RTO/RPO). Score low if inventories are manual or stale; score"
+        "**How to score it:** Look for a current, automated hardware/software/cloud/identity asset inventory, data "
+        "classification, an active vulnerability management and penetration testing program, threat intelligence "
+        "consumption, and business impact analysis (RTO/RPO). Score low if inventories are manual or stale; score "
         "high if discovery is continuous/automated and feeds risk-based prioritization."
     ),
     "PROTECT (PR)": (
-        "**What it covers:** PROTECT is the largest function (35 domains) — the preventive safeguards that reduce"
-        "the likelihood or impact of a cybersecurity event: identity & access management, endpoint and network"
+        "**What it covers:** PROTECT is the largest function (35 domains) — the preventive safeguards that reduce "
+        "the likelihood or impact of a cybersecurity event: identity & access management, endpoint and network "
         "security, data protection/encryption, secure development, and security training.\n\n"
-        "**How to score it:** Look for enforced MFA and least-privilege access, encryption at rest/in transit,"
-        "endpoint protection (EDR) on all assets, network segmentation, secure SDLC gates, and measurable security"
-        "awareness training. Score low if controls are partial or optional; score high if controls are enforced"
+        "**How to score it:** Look for enforced MFA and least-privilege access, encryption at rest/in transit, "
+        "endpoint protection (EDR) on all assets, network segmentation, secure SDLC gates, and measurable security "
+        "awareness training. Score low if controls are partial or optional; score high if controls are enforced "
         "org-wide, automated, and regularly tested."
     ),
     "DETECT (DE)": (
-        "**What it covers:** DETECT is the organization's ability to identify that a cybersecurity event is"
+        "**What it covers:** DETECT is the organization's ability to identify that a cybersecurity event is "
         "happening — monitoring, logging, and analysis across endpoint, network, cloud, and identity layers.\n\n"
-        "**How to score it:** Look for 24×7 monitoring (SOC/SIEM), centralized log retention, EDR/NDR/XDR"
-        "telemetry, tuned detection content mapped to MITRE ATT&CK, and tracked mean-time-to-detect (MTTD). Score"
-        "low if detection is manual/reactive; score high if there is continuous automated monitoring with proactive"
+        "**How to score it:** Look for 24×7 monitoring (SOC/SIEM), centralized log retention, EDR/NDR/XDR "
+        "telemetry, tuned detection content mapped to MITRE ATT&CK, and tracked mean-time-to-detect (MTTD). Score "
+        "low if detection is manual/reactive; score high if there is continuous automated monitoring with proactive "
         "threat hunting."
     ),
     "RESPOND (RS)": (
-        "**What it covers:** RESPOND is the organization's capability to act once an incident is detected —"
+        "**What it covers:** RESPOND is the organization's capability to act once an incident is detected — "
         "containment, communication, forensics, and coordinated execution of the incident response plan.\n\n"
-        "**How to score it:** Look for a documented and tested IR plan with scenario playbooks, a staffed CSIRT,"
-        "forensics capability, crisis communication templates, breach notification procedures, and SOAR automation."
-        "Score low if response is ad-hoc with no rehearsed plan; score high if playbooks are automated, tested via"
+        "**How to score it:** Look for a documented and tested IR plan with scenario playbooks, a staffed CSIRT, "
+        "forensics capability, crisis communication templates, breach notification procedures, and SOAR automation. "
+        "Score low if response is ad-hoc with no rehearsed plan; score high if playbooks are automated, tested via "
         "tabletop exercises, and continuously improved from post-incident reviews."
     ),
     "RECOVER (RC)": (
-        "**What it covers:** RECOVER is the organization's ability to restore systems, data, and services after an"
+        "**What it covers:** RECOVER is the organization's ability to restore systems, data, and services after an "
         "incident and rebuild stakeholder trust — business continuity, disaster recovery, and clean-room recovery.\n\n"
-        "**How to score it:** Look for documented BCP/DR plans with validated RTO/RPO, regularly tested backup"
-        "restoration, immutable/air-gapped recovery copies, a defined recovery sequencing/prioritization order, and"
-        "post-incident hardening. Score low if recovery has never been tested; score high if recovery is rehearsed,"
+        "**How to score it:** Look for documented BCP/DR plans with validated RTO/RPO, regularly tested backup "
+        "restoration, immutable/air-gapped recovery copies, a defined recovery sequencing/prioritization order, and "
+        "post-incident hardening. Score low if recovery has never been tested; score high if recovery is rehearsed, "
         "measured (MTTR), and continuously improved."
     ),
 }
@@ -286,21 +286,21 @@ FUNCTION_GUIDANCE = {
 # SESSION STATE
 # ════════════════════════════════════════════════════════════════════════════
 def _init_state():
-    if"scores"not in st.session_state:
-        st.session_state.scores = {} # domain_id -> maturity 0-5
+    if "scores" not in st.session_state:
+        st.session_state.scores = {}  # domain_id -> maturity 0-5
         for f in FRAMEWORK.values():
             for d in f["domains"]:
                 st.session_state.scores[d[0]] = 0
-    if"targets"not in st.session_state:
+    if "targets" not in st.session_state:
         st.session_state.targets = {}
         for f in FRAMEWORK.values():
             for d in f["domains"]:
                 st.session_state.targets[d[0]] = 3
-    if"org_name"not in st.session_state:
-        st.session_state.org_name ="My Organization"
-    if"assessor"not in st.session_state:
-        st.session_state.assessor =""
-    if"notes"not in st.session_state:
+    if "org_name" not in st.session_state:
+        st.session_state.org_name = "My Organization"
+    if "assessor" not in st.session_state:
+        st.session_state.assessor = ""
+    if "notes" not in st.session_state:
         st.session_state.notes = {}
 _init_state()
 # ════════════════════════════════════════════════════════════════════════════
@@ -314,36 +314,36 @@ def get_assessment_df() -> pd.DataFrame:
             score = st.session_state.scores.get(did, 0)
             target = st.session_state.targets.get(did, 3)
             rows.append({
-                "Domain ID": did,"Domain": name,"Function": fname,
-                "NIST CSF 2.0": nist,"CIS Controls": cis,
+                "Domain ID": did, "Domain": name, "Function": fname,
+                "NIST CSF 2.0": nist, "CIS Controls": cis,
                 "Current Maturity": score,
                 "Maturity Label": MATURITY_LEVELS[score][0],
                 "Target Maturity": target,
                 "Gap": max(0, target - score),
                 "Description": desc,
-                "Notes": st.session_state.notes.get(did,""),
+                "Notes": st.session_state.notes.get(did, ""),
             })
     return pd.DataFrame(rows)
 def gap_priority(gap: int) -> str:
-    if gap >= 3: return"Critical"
-    if gap == 2: return"High"
-    if gap == 1: return"Medium"
-    return"None"
+    if gap >= 3: return "Critical"
+    if gap == 2: return "High"
+    if gap == 1: return "Medium"
+    return "None"
 def function_scores(df: pd.DataFrame) -> pd.DataFrame:
     return df.groupby("Function").agg(
-        Avg_Current=("Current Maturity","mean"),
-        Avg_Target=("Target Maturity","mean"),
-        Domains=("Domain ID","count"),
-        Total_Gap=("Gap","sum"),
+        Avg_Current=("Current Maturity", "mean"),
+        Avg_Target=("Target Maturity", "mean"),
+        Domains=("Domain ID", "count"),
+        Total_Gap=("Gap", "sum"),
     ).reset_index()
 # ════════════════════════════════════════════════════════════════════════════
 # EXPORT FUNCTIONS
 # ════════════════════════════════════════════════════════════════════════════
 def export_json(df: pd.DataFrame):
     payload = {
-        "framework":"CyberGuard Pro — Cybersecurity Domain Assessment Framework",
-        "aligned_standards": ["NIST CSF 2.0","CIS Controls v8"],
-        "developed_by":"Randy Singh — Kalsnet (KNet) Consulting",
+        "framework": "CyberGuard Pro — Cybersecurity Domain Assessment Framework",
+        "aligned_standards": ["NIST CSF 2.0", "CIS Controls v8"],
+        "developed_by": "Randy Singh — Kalsnet (KNet) Consulting",
         "organization": st.session_state.org_name,
         "assessor": st.session_state.assessor,
         "assessment_date": datetime.now().isoformat(),
@@ -353,10 +353,10 @@ def export_json(df: pd.DataFrame):
         "function_summary": function_scores(df).to_dict(orient="records"),
         "domains": df.to_dict(orient="records"),
     }
-    return json.dumps(payload, indent=2).encode(),"cyberguard_assessment.json","application/json"
+    return json.dumps(payload, indent=2).encode(), "cyberguard_assessment.json", "application/json"
 def export_text(df: pd.DataFrame):
     ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    sep ="="* 90
+    sep = "=" * 90
     lines = [
         sep,
         "CYBERGUARD PRO — CYBERSECURITY DOMAIN ASSESSMENT REPORT",
@@ -364,16 +364,16 @@ def export_text(df: pd.DataFrame):
         "Developed by Randy Singh | Kalsnet (KNet) Consulting",
         sep,
         f"Organization : {st.session_state.org_name}",
-        f"Assessor : {st.session_state.assessor or'N/A'}",
+        f"Assessor : {st.session_state.assessor or 'N/A'}",
         f"Date : {ts}",
         f"Domains : {TOTAL_DOMAINS}",
         f"Overall Maturity: {df['Current Maturity'].mean():.2f} / 5.00",
-        sep,"",
-        "FUNCTION SUMMARY","-"* 60,
+        sep, "",
+        "FUNCTION SUMMARY", "-" * 60,
     ]
     for _, r in function_scores(df).iterrows():
         lines.append(f"{r['Function']:<18} Current: {r['Avg_Current']:.2f} Target: {r['Avg_Target']:.2f} Gap Total: {int(r['Total_Gap'])}")
-    lines += ["","DOMAIN DETAIL","-"* 60]
+    lines += ["", "DOMAIN DETAIL", "-" * 60]
     for fname in FUNCTION_LIST:
         lines.append(f"\n### {fname} ###")
         fdf = df[df["Function"] == fname]
@@ -382,8 +382,8 @@ def export_text(df: pd.DataFrame):
             lines.append(f"NIST: {r['NIST CSF 2.0']} | CIS: {r['CIS Controls']} | Current: {r['Current Maturity']} ({r['Maturity Label']}) | Target: {r['Target Maturity']} | Gap: {r['Gap']} ({gap_priority(r['Gap'])})")
             if r["Notes"]:
                 lines.append(f"Notes: {r['Notes']}")
-    lines += ["", sep,"END OF REPORT — © Kalsnet (KNet) Consulting", sep]
-    return"\n".join(lines).encode(),"cyberguard_assessment.txt","text/plain"
+    lines += ["", sep, "END OF REPORT — © Kalsnet (KNet) Consulting", sep]
+    return "\n".join(lines).encode(), "cyberguard_assessment.txt", "text/plain"
 def export_pdf(df: pd.DataFrame):
     if not REPORTLAB_OK:
         return None, None, None
@@ -401,21 +401,21 @@ def export_pdf(df: pd.DataFrame):
         Paragraph("Aligned with NIST CSF 2.0 &amp; CIS Controls v8 | Developed by Randy Singh — Kalsnet (KNet) Consulting", sS),
         HRFlowable(width="100%", thickness=1.2, color=rl_colors.HexColor("#1565C0")),
         Spacer(1, 10),
-        Paragraph(f"<b>Organization:</b> {st.session_state.org_name} &nbsp;&nbsp; <b>Assessor:</b> {st.session_state.assessor or'N/A'} &nbsp;&nbsp; <b>Date:</b> {datetime.now():%Y-%m-%d %H:%M}", nS),
+        Paragraph(f"<b>Organization:</b> {st.session_state.org_name} &nbsp;&nbsp; <b>Assessor:</b> {st.session_state.assessor or 'N/A'} &nbsp;&nbsp; <b>Date:</b> {datetime.now():%Y-%m-%d %H:%M}", nS),
         Paragraph(f"<b>Domains Assessed:</b> {TOTAL_DOMAINS} &nbsp;&nbsp; <b>Overall Maturity:</b> {df['Current Maturity'].mean():.2f} / 5.00 &nbsp;&nbsp; <b>Total Gap Points:</b> {int(df['Gap'].sum())}", nS),
         Spacer(1, 14),
         Paragraph("Executive Summary — Function Maturity", h2S),
     ]
     # Function summary table
     fs = function_scores(df)
-    fdata = [["Function","Domains","Avg Current","Avg Target","Total Gap"]]
+    fdata = [["Function", "Domains", "Avg Current", "Avg Target", "Total Gap"]]
     for _, r in fs.iterrows():
         fdata.append([r["Function"], str(r["Domains"]), f"{r['Avg_Current']:.2f}", f"{r['Avg_Target']:.2f}", str(int(r["Total_Gap"]))])
     ft = Table(fdata, colWidths=[2.2*inch, 0.9*inch, 1.1*inch, 1.05*inch, 1.0*inch], repeatRows=1)
     ft.setStyle(TableStyle([
         ("BACKGROUND", (0,0),(-1,0), rl_colors.HexColor("#002B7F")),
         ("TEXTCOLOR", (0,0),(-1,0), rl_colors.white),
-        ("FONTNAME", (0,0),(-1,0),"Helvetica-Bold"),
+        ("FONTNAME", (0,0),(-1,0), "Helvetica-Bold"),
         ("FONTSIZE", (0,0),(-1,-1), 8.5),
         ("ROWBACKGROUNDS",(0,1),(-1,-1),[rl_colors.white, rl_colors.HexColor("#EEF4FF")]),
         ("GRID", (0,0),(-1,-1), .4, rl_colors.grey),
@@ -424,14 +424,14 @@ def export_pdf(df: pd.DataFrame):
     story += [ft, Spacer(1, 14), Paragraph("Top Priority Gaps (Critical &amp; High)", h2S)]
     gaps = df[df["Gap"] >= 2].sort_values("Gap", ascending=False).head(20)
     if len(gaps):
-        gdata = [["ID","Domain","Function","Current","Target","Gap"]]
+        gdata = [["ID", "Domain", "Function", "Current", "Target", "Gap"]]
         for _, r in gaps.iterrows():
-            gdata.append([r["Domain ID"], r["Domain"][:38], r["Function"].split("")[0], str(r["Current Maturity"]), str(r["Target Maturity"]), str(r["Gap"])])
+            gdata.append([r["Domain ID"], r["Domain"][:38], r["Function"].split(" ")[0], str(r["Current Maturity"]), str(r["Target Maturity"]), str(r["Gap"])])
         gt = Table(gdata, colWidths=[0.6*inch, 2.9*inch, 1.0*inch, 0.7*inch, 0.65*inch, 0.5*inch], repeatRows=1)
         gt.setStyle(TableStyle([
             ("BACKGROUND", (0,0),(-1,0), rl_colors.HexColor("#C62828")),
             ("TEXTCOLOR", (0,0),(-1,0), rl_colors.white),
-            ("FONTNAME", (0,0),(-1,0),"Helvetica-Bold"),
+            ("FONTNAME", (0,0),(-1,0), "Helvetica-Bold"),
             ("FONTSIZE", (0,0),(-1,-1), 8),
             ("ROWBACKGROUNDS",(0,1),(-1,-1),[rl_colors.white, rl_colors.HexColor("#FFF5F5")]),
             ("GRID", (0,0),(-1,-1), .4, rl_colors.grey),
@@ -441,7 +441,7 @@ def export_pdf(df: pd.DataFrame):
     else:
         story.append(Paragraph("No critical or high gaps identified.", nS))
     story += [PageBreak(), Paragraph("Full Domain Assessment Detail", h2S), Spacer(1, 6)]
-    ddata = [["ID","Domain","NIST","CIS","Cur","Tgt","Gap"]]
+    ddata = [["ID", "Domain", "NIST", "CIS", "Cur", "Tgt", "Gap"]]
     for _, r in df.iterrows():
         ddata.append([r["Domain ID"], r["Domain"][:42], r["NIST CSF 2.0"], r["CIS Controls"][:8],
                       str(r["Current Maturity"]), str(r["Target Maturity"]), str(r["Gap"])])
@@ -449,7 +449,7 @@ def export_pdf(df: pd.DataFrame):
     dt.setStyle(TableStyle([
         ("BACKGROUND", (0,0),(-1,0), rl_colors.HexColor("#002B7F")),
         ("TEXTCOLOR", (0,0),(-1,0), rl_colors.white),
-        ("FONTNAME", (0,0),(-1,0),"Helvetica-Bold"),
+        ("FONTNAME", (0,0),(-1,0), "Helvetica-Bold"),
         ("FONTSIZE", (0,0),(-1,-1), 7),
         ("ROWBACKGROUNDS",(0,1),(-1,-1),[rl_colors.white, rl_colors.HexColor("#EEF4FF")]),
         ("GRID", (0,0),(-1,-1), .3, rl_colors.grey),
@@ -460,7 +460,7 @@ def export_pdf(df: pd.DataFrame):
               Paragraph("<i>© 2025 Kalsnet (KNet) Consulting. This assessment is confidential and intended solely for the named organization.</i>", nS)]
     doc.build(story)
     buf.seek(0)
-    return buf.read(),"cyberguard_assessment.pdf","application/pdf"
+    return buf.read(), "cyberguard_assessment.pdf", "application/pdf"
 def export_word(df: pd.DataFrame):
     if not DOCX_OK:
         return None, None, None
@@ -472,12 +472,12 @@ def export_word(df: pd.DataFrame):
     s.alignment = WD_ALIGN_PARAGRAPH.CENTER
     for run in s.runs:
         run.font.bold = True; run.font.size = Pt(10.5); run.font.color.rgb = RGBColor(21,101,192)
-    doc.add_paragraph(f"Organization: {st.session_state.org_name} Assessor: {st.session_state.assessor or'N/A'} Date: {datetime.now():%Y-%m-%d %H:%M}")
-    doc.add_paragraph(f"Domains Assessed: {TOTAL_DOMAINS} Overall Maturity: {df['Current Maturity'].mean():.2f} / 5.00 Total Gap Points: {int(df['Gap'].sum())}")
+    doc.add_paragraph(f"Organization: {st.session_state.org_name}   Assessor: {st.session_state.assessor or 'N/A'}   Date: {datetime.now():%Y-%m-%d %H:%M}")
+    doc.add_paragraph(f"Domains Assessed: {TOTAL_DOMAINS}   Overall Maturity: {df['Current Maturity'].mean():.2f} / 5.00   Total Gap Points: {int(df['Gap'].sum())}")
     doc.add_heading("Executive Summary — Function Maturity", 1)
     fs = function_scores(df)
-    t = doc.add_table(rows=1, cols=5); t.style ="Table Grid"
-    for i, htxt in enumerate(["Function","Domains","Avg Current","Avg Target","Total Gap"]):
+    t = doc.add_table(rows=1, cols=5); t.style = "Table Grid"
+    for i, htxt in enumerate(["Function", "Domains", "Avg Current", "Avg Target", "Total Gap"]):
         c = t.rows[0].cells[i]; c.text = htxt
         c.paragraphs[0].runs[0].font.bold = True
         c.paragraphs[0].runs[0].font.color.rgb = RGBColor(0,43,127)
@@ -491,7 +491,7 @@ def export_word(df: pd.DataFrame):
     if len(gaps):
         for _, r in gaps.head(25).iterrows():
             p = doc.add_paragraph(style="List Bullet")
-            run = p.add_run(f"[{r['Domain ID']}] {r['Domain']} —")
+            run = p.add_run(f"[{r['Domain ID']}] {r['Domain']} — ")
             run.font.bold = True
             p.add_run(f"Current {r['Current Maturity']} → Target {r['Target Maturity']} (Gap {r['Gap']}, {gap_priority(r['Gap'])} priority). {r['Description']}")
     else:
@@ -500,8 +500,8 @@ def export_word(df: pd.DataFrame):
     for fname in FUNCTION_LIST:
         doc.add_heading(fname, 2)
         fdf = df[df["Function"] == fname]
-        t2 = doc.add_table(rows=1, cols=6); t2.style ="Table Grid"
-        for i, htxt in enumerate(["ID","Domain","NIST CSF","CIS","Current","Gap"]):
+        t2 = doc.add_table(rows=1, cols=6); t2.style = "Table Grid"
+        for i, htxt in enumerate(["ID", "Domain", "NIST CSF", "CIS", "Current", "Gap"]):
             c = t2.rows[0].cells[i]; c.text = htxt
             c.paragraphs[0].runs[0].font.bold = True
         for _, r in fdf.iterrows():
@@ -514,14 +514,14 @@ def export_word(df: pd.DataFrame):
     fin = doc.add_paragraph("© 2025 Kalsnet (KNet) Consulting. Confidential.")
     fin.alignment = WD_ALIGN_PARAGRAPH.CENTER
     buf = BytesIO(); doc.save(buf); buf.seek(0)
-    return buf.read(),"cyberguard_assessment.docx", \
+    return buf.read(), "cyberguard_assessment.docx", \
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 # ════════════════════════════════════════════════════════════════════════════
 # HEADER
 # ════════════════════════════════════════════════════════════════════════════
 st.markdown("""
 <div class="header-wrap">
-  <p class="app-title"> CyberGuard Pro — Enterprise Cybersecurity Domain Assessment Framework</p>
+  <p class="app-title">🛡️ CyberGuard Pro — Enterprise Cybersecurity Domain Assessment Framework</p>
   <p class="app-subtitle">Developed By Randy Singh from Kalsnet (KNet) Consulting · NIST CSF 2.0 · CIS Controls v8 · 108 Security Domains</p>
 </div>
 """, unsafe_allow_html=True)
@@ -530,20 +530,18 @@ with st.expander("About This Application — How It Works", expanded=True):
 CyberGuard Pro is a self-assessment tool that helps an organization measure its cybersecurity maturity across
 **{TOTAL_DOMAINS} security domains**, organized into the **6 NIST Cybersecurity Framework (CSF) 2.0 functions** —
 GOVERN, IDENTIFY, PROTECT, DETECT, RESPOND, RECOVER — and cross-mapped to **CIS Controls v8**. It works as follows:
-
-1. ** Domain Assessment** — for every domain, you rate your **Current Maturity** (0–5) and set a **Target
+1. **Domain Assessment** — for every domain, you rate your **Current Maturity** (0–5) and set a **Target
    Maturity**. This is the only data-entry step; every other page is calculated automatically from these scores.
-2. ** Executive Dashboard** — summarizes your overall posture with KPIs and charts, so leadership can see the
+2. **Executive Dashboard** — summarizes your overall posture with KPIs and charts, so leadership can see the
    big picture at a glance.
-3. ** Gap Analysis** — automatically calculates the gap (Target − Current) for every domain and prioritizes it as
+3. **Gap Analysis** — automatically calculates the gap (Target − Current) for every domain and prioritizes it as
    Critical, High, or Medium so you know what to fix first.
-4. ** Framework Explorer** — lets you browse and search all {TOTAL_DOMAINS} domains with their NIST/CIS mappings
+4. **Framework Explorer** — lets you browse and search all {TOTAL_DOMAINS} domains with their NIST/CIS mappings
    and descriptions.
-5. ** Roadmap Builder** — auto-generates a phased remediation plan (0–3, 3–9, 9–18 months) based on gap severity.
-6. ** Export Reports** — produces PDF, Word, Text, or JSON reports of the full assessment for stakeholders or
+5. **Roadmap Builder** — auto-generates a phased remediation plan (0–3, 3–9, 9–18 months) based on gap severity.
+6. **Export Reports** — produces PDF, Word, Text, or JSON reports of the full assessment for stakeholders or
    GRC tooling.
-
-Use the ** Demo Data** button in the sidebar to populate sample scores instantly, or ** Reset All** to start over.
+Use the **Demo Data** button in the sidebar to populate sample scores instantly, or **Reset All** to start over.
 """)
 # ════════════════════════════════════════════════════════════════════════════
 # SIDEBAR
@@ -563,7 +561,7 @@ with st.sidebar:
         "Export Reports",
     ], label_visibility="collapsed")
     st.divider()
-    st.markdown("** Quick Actions**")
+    st.markdown("**Quick Actions**")
     c1, c2 = st.columns(2)
     with c1:
         if st.button("Demo Data", use_container_width=True):
@@ -579,7 +577,7 @@ with st.sidebar:
                     st.session_state.scores[d[0]] = 0
             st.rerun()
     st.divider()
-    st.markdown("** Maturity Scale**")
+    st.markdown("**Maturity Scale**")
     for lvl, (name, color, _) in MATURITY_LEVELS.items():
         st.markdown(f'<span class="maturity-{lvl}">{lvl} — {name}</span>', unsafe_allow_html=True)
         st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
@@ -587,7 +585,7 @@ df = get_assessment_df()
 # ════════════════════════════════════════════════════════════════════════════
 # PAGE: EXECUTIVE DASHBOARD
 # ════════════════════════════════════════════════════════════════════════════
-if page =="Executive Dashboard":
+if page == "Executive Dashboard":
     st.subheader("Executive Dashboard")
     st.caption("A leadership-level summary of cybersecurity maturity across all domains, calculated live from the scores entered on the Domain Assessment page.")
     overall = df["Current Maturity"].mean()
@@ -596,39 +594,39 @@ if page =="Executive Dashboard":
     assessed = len(df[df["Current Maturity"] > 0])
     c1, c2, c3, c4, c5 = st.columns(5)
     kpis = [
-        (c1,"Overall Maturity", f"{overall:.2f}/5","#002B7F"),
-        (c2,"Total Domains", TOTAL_DOMAINS,"#1565C0"),
-        (c3,"Assessed", assessed,"#2E7D32"),
-        (c4,"Gap Points", total_gap,"#E65100"),
-        (c5,"Critical Gaps", critical,"#C62828"),
+        (c1, "Overall Maturity", f"{overall:.2f}/5", "#002B7F"),
+        (c2, "Total Domains", TOTAL_DOMAINS, "#1565C0"),
+        (c3, "Assessed", assessed, "#2E7D32"),
+        (c4, "Gap Points", total_gap, "#E65100"),
+        (c5, "Critical Gaps", critical, "#C62828"),
     ]
     for col, lbl, val, color in kpis:
         col.markdown(
-            f'<div class="kpi-card"style="background:linear-gradient(135deg,{color},{color}bb)">'
+            f'<div class="kpi-card" style="background:linear-gradient(135deg,{color},{color}bb)">'
             f'<div class="kpi-lbl">{lbl}</div><div class="kpi-val">{val}</div></div>',
             unsafe_allow_html=True)
     with st.expander("How are these KPIs calculated?"):
-        st.markdown("** Overall Maturity** — the average Current Maturity score across every domain in the framework.")
+        st.markdown("**Overall Maturity** — the average Current Maturity score across every domain in the framework.")
         st.markdown('<div class="formula-box">Overall Maturity = SUM(Current Maturity, all domains) ÷ Total Domains</div>', unsafe_allow_html=True)
         st.markdown(f"Right now: SUM of all Current Maturity scores ÷ {TOTAL_DOMAINS} domains = **{overall:.2f} / 5.00**")
         st.markdown("---")
-        st.markdown("** Total Domains** — the fixed number of security domains in the framework (does not change with scoring).")
+        st.markdown("**Total Domains** — the fixed number of security domains in the framework (does not change with scoring).")
         st.markdown('<div class="formula-box">Total Domains = COUNT(all domains across all 6 NIST CSF functions)</div>', unsafe_allow_html=True)
         st.markdown("---")
-        st.markdown("** Assessed** — the number of domains that have been given a Current Maturity score greater than 0 (i.e. touched by the assessor). A domain left at 0 is treated as'not yet assessed / not performed'.")
+        st.markdown("**Assessed** — the number of domains that have been given a Current Maturity score greater than 0 (i.e. touched by the assessor). A domain left at 0 is treated as 'not yet assessed / not performed'.")
         st.markdown('<div class="formula-box">Assessed = COUNT(domains WHERE Current Maturity > 0)</div>', unsafe_allow_html=True)
         st.markdown("---")
-        st.markdown("** Gap Points** — the sum of every domain's individual gap, where a gap is how far the Current Maturity is below the Target Maturity (gaps can never be negative — a domain that already exceeds its target contributes 0).")
+        st.markdown("**Gap Points** — the sum of every domain's individual gap, where a gap is how far the Current Maturity is below the Target Maturity (gaps can never be negative — a domain that already exceeds its target contributes 0).")
         st.markdown('<div class="formula-box">Gap (per domain) = MAX(0, Target Maturity − Current Maturity)\nGap Points (total) = SUM(Gap, all domains)</div>', unsafe_allow_html=True)
         st.markdown("---")
-        st.markdown("** Critical Gaps** — the count of domains whose individual Gap is 3 or more (i.e. Current Maturity is at least 3 levels below Target). See the Gap Analysis page for the full priority scale (Critical / High / Medium).")
+        st.markdown("**Critical Gaps** — the count of domains whose individual Gap is 3 or more (i.e. Current Maturity is at least 3 levels below Target). See the Gap Analysis page for the full priority scale (Critical / High / Medium).")
         st.markdown('<div class="formula-box">Critical Gaps = COUNT(domains WHERE Gap >= 3)</div>', unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
     r1c1, r1c2 = st.columns([1.1, 1])
     with r1c1:
         # Radar chart per NIST function
         fs = function_scores(df)
-        categories = [f.split("")[0] for f in fs["Function"]]
+        categories = [f.split(" ")[0] for f in fs["Function"]]
         fig = go.Figure()
         fig.add_trace(go.Scatterpolar(
             r=fs["Avg_Current"].tolist() + [fs["Avg_Current"].iloc[0]],
@@ -643,7 +641,7 @@ if page =="Executive Dashboard":
         st.plotly_chart(fig, use_container_width=True)
         st.caption("**How to read this:** each spoke is one of the 6 NIST CSF functions. The blue shape plots the average Current Maturity of all domains in that function; the orange shape plots the average Target. The bigger the gap between the two shapes on a spoke, the further that function is from its goal.")
     with r1c2:
-        fig = px.bar(fs, x="Function", y=["Avg_Current","Avg_Target"],
+        fig = px.bar(fs, x="Function", y=["Avg_Current", "Avg_Target"],
                      barmode="group", title="Current vs Target by Function",
                      color_discrete_map={"Avg_Current":"#1565C0","Avg_Target":"#F9A825"})
         fig.update_layout(height=400, xaxis_tickangle=25, legend_title="")
@@ -670,31 +668,31 @@ if page =="Executive Dashboard":
         st.plotly_chart(fig, use_container_width=True)
         st.caption("**How to read this:** sums the Gap (Target − Current, floored at 0) of every domain within each function. Longer/darker bars mean that function has the most remediation work outstanding — a good place to focus budget and staffing.")
     # Heatmap of all domains
-    st.markdown("** Full Domain Heatmap (all 108 domains)**")
+    st.markdown("**Full Domain Heatmap (all 108 domains)**")
     st.caption("**How to read this:** every single domain plotted as one dot, grouped by function (row) and colored by Current Maturity (red = 0/Not Performed, blue = 5/Optimized). Hover a dot to see the domain name, ID, and gap. This is the most granular view on the dashboard — use it to spot clusters of weak domains within a function.")
     heat_df = df.copy()
     heat_df["Row"] = heat_df.groupby("Function").cumcount()
     fig = px.scatter(heat_df, x="Row", y="Function", color="Current Maturity",
                      size=[14]*len(heat_df), hover_name="Domain",
-                     hover_data={"Domain ID":True,"Current Maturity":True,"Gap":True,"Row":False},
+                     hover_data={"Domain ID":True, "Current Maturity":True, "Gap":True, "Row":False},
                      color_continuous_scale=["#C62828","#E65100","#F9A825","#7CB342","#2E7D32","#1565C0"],
                      range_color=[0,5])
     fig.update_layout(height=320, xaxis_title="Domain Index", yaxis_title="")
     st.plotly_chart(fig, use_container_width=True)
-    st.markdown("** All Domains — Assessed Status (scrollable)**")
+    st.markdown("**All Domains — Assessed Status (scrollable)**")
     st.caption(f"Every one of the {TOTAL_DOMAINS} domains with its current status. Scroll inside the table to see all rows — this is not limited to the first 10.")
     st.dataframe(
-        df[["Domain ID","Domain","Function","NIST CSF 2.0","CIS Controls",
-            "Current Maturity","Maturity Label","Target Maturity","Gap"]].reset_index(drop=True),
+        df[["Domain ID", "Domain", "Function", "NIST CSF 2.0", "CIS Controls",
+            "Current Maturity", "Maturity Label", "Target Maturity", "Gap"]].reset_index(drop=True),
         use_container_width=True, height=420)
 # ════════════════════════════════════════════════════════════════════════════
 # PAGE: DOMAIN ASSESSMENT
 # ════════════════════════════════════════════════════════════════════════════
-elif page =="Domain Assessment":
+elif page == "Domain Assessment":
     st.subheader("Domain Maturity Assessment")
     st.markdown("Rate each domain's **current maturity** (0–5) and set a **target**. Add notes for context.")
     st.info("**Scoring scale reminder:** 0 = Not Performed, 1 = Initial/Ad-hoc, 2 = Developing, 3 = Defined, 4 = Managed, 5 = Optimized. See the sidebar for the full definitions of each level.")
-    fn_tabs = st.tabs([f.split("")[0] for f in FUNCTION_LIST])
+    fn_tabs = st.tabs([f.split(" ")[0] for f in FUNCTION_LIST])
     for tab, fname in zip(fn_tabs, FUNCTION_LIST):
         with tab:
             f = FRAMEWORK[fname]
@@ -704,7 +702,7 @@ elif page =="Domain Assessment":
             st.divider()
             for d in f["domains"]:
                 did, name, nist, cis, desc = d
-                with st.expander(f"**{did}** — {name} `NIST: {nist}` `CIS: {cis}`"):
+                with st.expander(f"**{did}** — {name}  `NIST: {nist}`  `CIS: {cis}`"):
                     st.caption(desc)
                     c1, c2 = st.columns(2)
                     with c1:
@@ -720,32 +718,32 @@ elif page =="Domain Assessment":
                             format_func=lambda x: f"{x} — {MATURITY_LEVELS[x][0]}",
                             key=f"tgt_{did}")
                     st.session_state.notes[did] = st.text_input(
-                        "Notes / evidence", st.session_state.notes.get(did,""), key=f"note_{did}")
+                        "Notes / evidence", st.session_state.notes.get(did, ""), key=f"note_{did}")
 # ════════════════════════════════════════════════════════════════════════════
 # PAGE: GAP ANALYSIS
 # ════════════════════════════════════════════════════════════════════════════
-elif page =="Gap Analysis":
+elif page == "Gap Analysis":
     st.subheader("Gap Analysis & Prioritization")
     st.markdown(
-        "This page calculates the **Gap** for every domain — how far Current Maturity is below Target Maturity —"
+        "This page calculates the **Gap** for every domain — how far Current Maturity is below Target Maturity — "
         "and sorts that work into priority tiers so remediation effort goes where it matters most."
     )
     with st.expander("How Gap and Priority are calculated", expanded=True):
         st.markdown('<div class="formula-box">Gap = MAX(0, Target Maturity − Current Maturity)</div>', unsafe_allow_html=True)
         st.markdown(
-            "A domain scored Current=1 with Target=4 has a Gap of 3. A domain already at or above its target has a"
+            "A domain scored Current=1 with Target=4 has a Gap of 3. A domain already at or above its target has a "
             "Gap of 0 and drops out of this page entirely (there is nothing to remediate)."
         )
         st.markdown("**Priority tiers — how they differ:**")
         st.markdown(
-            "- ** Critical (Gap ≥ 3):** the domain is at least 3 maturity levels behind its target — typically"
-            "close to non-existent capability against a moderate-to-high target. These pose the most material risk"
+            "- **Critical (Gap ≥ 3):** the domain is at least 3 maturity levels behind its target — typically "
+            "close to non-existent capability against a moderate-to-high target. These pose the most material risk "
             "and should be addressed with executive sponsorship within 0–3 months.\n"
-            "- ** High (Gap = 2):** two levels behind target — a meaningful capability shortfall that should be"
+            "- **High (Gap = 2):** two levels behind target — a meaningful capability shortfall that should be "
             "budgeted and resourced in the near term (3–9 months).\n"
-            "- ** Medium (Gap = 1):** one level behind target — a smaller, often quick-to-close gap suited to"
+            "- **Medium (Gap = 1):** one level behind target — a smaller, often quick-to-close gap suited to "
             "longer-term continuous improvement (9–18 months).\n\n"
-            "In short: the **size of the number** (3, 2, or 1) is simply how many maturity levels separate where"
+            "In short: the **size of the number** (3, 2, or 1) is simply how many maturity levels separate where "
             "the organization is today from where it wants to be — the larger the gap, the more urgent the fix."
         )
     gaps = df[df["Gap"] > 0].copy()
@@ -759,39 +757,39 @@ elif page =="Gap Analysis":
         with fc1:
             fn_filter = st.multiselect("Filter by Function", FUNCTION_LIST, default=FUNCTION_LIST)
         with fc2:
-            pr_filter = st.multiselect("Filter by Priority", ["Critical","High","Medium"], default=["Critical","High","Medium"])
+            pr_filter = st.multiselect("Filter by Priority", ["Critical", "High", "Medium"], default=["Critical", "High", "Medium"])
         fgaps = gaps[gaps["Function"].isin(fn_filter) & gaps["Priority"].isin(pr_filter)] \
-                    .sort_values(["Gap","Function"], ascending=[False, True])
+                    .sort_values(["Gap", "Function"], ascending=[False, True])
         fig = px.bar(fgaps.head(25), x="Gap", y="Domain", orientation="h",
                      color="Priority", title="Top 25 Domain Gaps",
                      color_discrete_map={"Critical":"#C62828","High":"#E65100","Medium":"#F9A825"},
-                     hover_data=["Domain ID","Function","NIST CSF 2.0","CIS Controls"])
+                     hover_data=["Domain ID", "Function", "NIST CSF 2.0", "CIS Controls"])
         fig.update_layout(height=620, yaxis=dict(autorange="reversed"))
         st.plotly_chart(fig, use_container_width=True)
         st.caption("**How to read this:** the 25 domains with the largest gaps, longest bar first. Color shows priority tier (red=Critical, orange=High, yellow=Medium).")
-        st.markdown("** Gap Register**")
+        st.markdown("**Gap Register**")
         st.dataframe(
-            fgaps[["Domain ID","Domain","Function","NIST CSF 2.0","CIS Controls",
-                   "Current Maturity","Target Maturity","Gap","Priority","Notes"]].reset_index(drop=True),
+            fgaps[["Domain ID", "Domain", "Function", "NIST CSF 2.0", "CIS Controls",
+                   "Current Maturity", "Target Maturity", "Gap", "Priority", "Notes"]].reset_index(drop=True),
             use_container_width=True, height=380)
     else:
         st.success("No gaps — all domains meet or exceed their targets!")
 # ════════════════════════════════════════════════════════════════════════════
 # PAGE: FRAMEWORK EXPLORER
 # ════════════════════════════════════════════════════════════════════════════
-elif page =="Framework Explorer":
+elif page == "Framework Explorer":
     st.subheader(f"Framework Explorer — All {TOTAL_DOMAINS} Domains")
     st.markdown(
-        f"Browse or search every domain in the CyberGuard Pro framework. All {TOTAL_DOMAINS} domains are organized"
-        "under the 6 NIST CSF 2.0 functions (GOVERN, IDENTIFY, PROTECT, DETECT, RESPOND, RECOVER) and each is"
-        "cross-mapped to its NIST CSF 2.0 category and CIS Controls v8 control group, with a short description of"
-        "what the domain covers. Use the sunburst chart below to visually navigate by function, or use the search"
-        "box and per-function lists to find and review specific domains — colors reflect the Current Maturity score"
+        f"Browse or search every domain in the CyberGuard Pro framework. All {TOTAL_DOMAINS} domains are organized "
+        "under the 6 NIST CSF 2.0 functions (GOVERN, IDENTIFY, PROTECT, DETECT, RESPOND, RECOVER) and each is "
+        "cross-mapped to its NIST CSF 2.0 category and CIS Controls v8 control group, with a short description of "
+        "what the domain covers. Use the sunburst chart below to visually navigate by function, or use the search "
+        "box and per-function lists to find and review specific domains — colors reflect the Current Maturity score "
         "entered on the Domain Assessment page."
     )
     search = st.text_input("Search domains", placeholder="e.g. encryption, MFA, cloud, ransomware …")
     sunburst_df = df.copy()
-    fig = px.sunburst(sunburst_df, path=["Function","Domain"], values=None,
+    fig = px.sunburst(sunburst_df, path=["Function", "Domain"], values=None,
                       color="Current Maturity",
                       color_continuous_scale=["#C62828","#F9A825","#2E7D32","#1565C0"],
                       range_color=[0,5], title="Framework Structure (click to zoom)")
@@ -802,7 +800,7 @@ elif page =="Framework Explorer":
     if search:
         mask = fdf.apply(lambda r: r.astype(str).str.contains(search, case=False).any(), axis=1)
         fdf = fdf[mask]
-        st.markdown(f"**{len(fdf)} domains match'{search}'**")
+        st.markdown(f"**{len(fdf)} domains match '{search}'**")
     for fname in FUNCTION_LIST:
         sub = fdf[fdf["Function"] == fname]
         if not len(sub): continue
@@ -811,7 +809,7 @@ elif page =="Framework Explorer":
         for _, r in sub.iterrows():
             lvl = r["Current Maturity"]
             st.markdown(
-                f'<div class="domain-card gap-{"critical"if r["Gap"]>=3 else"high"if r["Gap"]==2 else"medium"if r["Gap"]==1 else"low"}">'
+                f'<div class="domain-card gap-{"critical" if r["Gap"]>=3 else "high" if r["Gap"]==2 else "medium" if r["Gap"]==1 else "low"}">'
                 f'<b>{r["Domain ID"]} — {r["Domain"]}</b> &nbsp;'
                 f'<span class="maturity-{lvl}">{lvl} · {r["Maturity Label"]}</span>'
                 f'<br><small style="color:#5A7A9A">NIST CSF: {r["NIST CSF 2.0"]} &nbsp;|&nbsp; CIS: {r["CIS Controls"]} &nbsp;|&nbsp; {r["Description"]}</small></div>',
@@ -819,23 +817,23 @@ elif page =="Framework Explorer":
 # ════════════════════════════════════════════════════════════════════════════
 # PAGE: ROADMAP BUILDER
 # ════════════════════════════════════════════════════════════════════════════
-elif page =="Roadmap Builder":
+elif page == "Roadmap Builder":
     st.subheader("Remediation Roadmap Builder")
     st.markdown("Auto-generated remediation phases based on gap severity and NIST function priority.")
     with st.expander("How the roadmap is built", expanded=True):
         st.markdown(
-            "Every domain with a Gap greater than 0 (Current Maturity below Target) is automatically bucketed into"
-            "one of three phases based on its Gap value, matching the same priority tiers used on the Gap Analysis"
+            "Every domain with a Gap greater than 0 (Current Maturity below Target) is automatically bucketed into "
+            "one of three phases based on its Gap value, matching the same priority tiers used on the Gap Analysis "
             "page:\n\n"
-            "- ** Phase 1 — Immediate (0–3 months):** domains with Gap ≥ 3 (Critical). These represent the"
+            "- **Phase 1 — Immediate (0–3 months):** domains with Gap ≥ 3 (Critical). These represent the "
             "largest shortfalls and are scheduled first, with executive sponsorship.\n"
-            "- ** Phase 2 — Near-Term (3–9 months):** domains with Gap = 2 (High). Scheduled to start once Phase"
+            "- **Phase 2 — Near-Term (3–9 months):** domains with Gap = 2 (High). Scheduled to start once Phase "
             "1 is underway, budgeted in the current fiscal cycle.\n"
-            "- ** Phase 3 — Strategic (9–18 months):** domains with Gap = 1 (Medium). Longer-horizon continuous"
+            "- **Phase 3 — Strategic (9–18 months):** domains with Gap = 1 (Medium). Longer-horizon continuous "
             "improvement items.\n\n"
-            "The ** Remediation Timeline** chart below turns those three phases into a Gantt-style view: each bar"
-            "is one domain, its start date is the beginning of its phase window, and its length is a fixed"
-            "planning duration per phase (3 months for Phase 1, 6 months for Phase 2, 9 months for Phase 3). Only"
+            "The **Remediation Timeline** chart below turns those three phases into a Gantt-style view: each bar "
+            "is one domain, its start date is the beginning of its phase window, and its length is a fixed "
+            "planning duration per phase (3 months for Phase 1, 6 months for Phase 2, 9 months for Phase 3). Only "
             "the 30 highest-gap domains are plotted to keep the chart readable."
         )
     gaps = df[df["Gap"] > 0].copy()
@@ -847,15 +845,15 @@ elif page =="Roadmap Builder":
         phase2 = gaps[gaps["Gap"] == 2]
         phase3 = gaps[gaps["Gap"] == 1]
         phases = [
-            ("Phase 1","Phase 1 - Immediate (0-3 months)", phase1,"#C62828",
+            ("Phase 1", "Phase 1 - Immediate (0-3 months)", phase1, "#C62828",
              "Critical gaps posing material risk. Address urgently with executive sponsorship."),
-            ("Phase 2","Phase 2 - Near-Term (3-9 months)", phase2,"#E65100",
+            ("Phase 2", "Phase 2 - Near-Term (3-9 months)", phase2, "#E65100",
              "High-priority improvements. Budget and resource in the current fiscal cycle."),
-            ("Phase 3","Phase 3 - Strategic (9-18 months)", phase3,"#F9A825",
+            ("Phase 3", "Phase 3 - Strategic (9-18 months)", phase3, "#F9A825",
              "Continuous improvement items to reach target maturity across the framework."),
         ]
-        PHASE_START = {"Phase 1": 0,"Phase 2": 3,"Phase 3": 9}
-        PHASE_DUR = {"Phase 1": 3,"Phase 2": 6,"Phase 3": 9}
+        PHASE_START = {"Phase 1": 0, "Phase 2": 3, "Phase 3": 9}
+        PHASE_DUR = {"Phase 1": 3, "Phase 2": 6, "Phase 3": 9}
         # Gantt-style timeline
         timeline_rows = []
         for pkey, pname, pdf_, color, _ in phases:
@@ -863,7 +861,7 @@ elif page =="Roadmap Builder":
                 start = PHASE_START[pkey]
                 dur = PHASE_DUR[pkey]
                 timeline_rows.append({"Domain": f"{r['Domain ID']} {r['Domain'][:30]}",
-                                      "Start": start,"Finish": start+dur,"Phase": pkey})
+                                      "Start": start, "Finish": start+dur, "Phase": pkey})
         if timeline_rows:
             tdf = pd.DataFrame(timeline_rows).head(30)
             fig = px.timeline(tdf.assign(
@@ -880,19 +878,19 @@ elif page =="Roadmap Builder":
             st.caption(pdesc)
             if len(pdf_):
                 st.markdown(
-                    "Table columns: **Current Maturity** (score today), **Target Maturity** (goal score), and"
+                    "Table columns: **Current Maturity** (score today), **Target Maturity** (goal score), and "
                     "**Gap** (Target − Current) — the same values that placed this domain into this phase."
                 )
-                st.dataframe(pdf_[["Domain ID","Domain","Function","Current Maturity","Target Maturity","Gap"]]
+                st.dataframe(pdf_[["Domain ID", "Domain", "Function", "Current Maturity", "Target Maturity", "Gap"]]
                              .sort_values("Gap", ascending=False).reset_index(drop=True),
                              use_container_width=True, height=min(280, 45+len(pdf_)*36))
 # ════════════════════════════════════════════════════════════════════════════
 # PAGE: EXPORT
 # ════════════════════════════════════════════════════════════════════════════
-elif page =="Export Reports":
+elif page == "Export Reports":
     st.subheader("Export Professional Assessment Reports")
-    st.markdown(f"**Organization:** {st.session_state.org_name} &nbsp;·&nbsp;"
-                f"**Overall Maturity:** {df['Current Maturity'].mean():.2f}/5.00 &nbsp;·&nbsp;"
+    st.markdown(f"**Organization:** {st.session_state.org_name} &nbsp;·&nbsp; "
+                f"**Overall Maturity:** {df['Current Maturity'].mean():.2f}/5.00 &nbsp;·&nbsp; "
                 f"**{TOTAL_DOMAINS} domains** &nbsp;·&nbsp; **{int(df['Gap'].sum())} gap points**",
                 unsafe_allow_html=True)
     st.divider()
@@ -934,8 +932,8 @@ elif page =="Export Reports":
     st.dataframe(function_scores(df), use_container_width=True)
     st.markdown(f"**Preview — All {TOTAL_DOMAINS} Domains (scrollable)**")
     st.caption("Scroll inside the table below to view every domain — this preview is no longer limited to the first 10 rows.")
-    st.dataframe(df[["Domain ID","Domain","Function","NIST CSF 2.0","CIS Controls",
-                     "Current Maturity","Target Maturity","Gap"]].reset_index(drop=True),
+    st.dataframe(df[["Domain ID", "Domain", "Function", "NIST CSF 2.0", "CIS Controls",
+                     "Current Maturity", "Target Maturity", "Gap"]].reset_index(drop=True),
                  use_container_width=True, height=420)
 # ── Footer ───────────────────────────────────────────────────────────────────
 st.markdown("---")
