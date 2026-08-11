@@ -62,9 +62,4 @@ google-generativeai>=0.8.3
 fpdf2 
 python-docx
 graphviz
-fastapi==0.115.0
-uvicorn==0.30.6
-streamlit==1.38.0
-requests==2.32.3
-pandas==2.2.2
-pydantic==2.9.2
+
