@@ -46,7 +46,7 @@ if not logger.handlers:
 # =========================================================================
 st.set_page_config(
     page_title="CyberSentinel Intelligence Platform",
-    page_icon="🛡️",
+    page_icon="",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -113,7 +113,7 @@ st.markdown(
 # =========================================================================
 # TITLE BAR
 # =========================================================================
-st.markdown('<div class="main-title">🛡️ CyberSentinel Intelligence Platform</div>', unsafe_allow_html=True)
+st.markdown('<div class="main-title"> CyberSentinel Intelligence Platform</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle-line">Developed by Randy Singh from Kalsnet (KNet) Consulting</div>', unsafe_allow_html=True)
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 st.markdown(
