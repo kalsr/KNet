@@ -1,6 +1,4 @@
-
-
-# CyberGuard-AI-Updated
+# CyberGuard AI
 # Developed by Randy Singh from Kalsnet (KNet) Consulting group
 # -----------------------------------------------------------
 # A unified Streamlit application demonstrating 5 AI/ML-driven
@@ -216,6 +214,28 @@ def metric_row(items):
         )
 
 
+def normalize_columns(df: pd.DataFrame, schema: dict) -> pd.DataFrame:
+    """
+    Makes column matching forgiving of the most common CSV round-trip issues:
+    stray whitespace, a byte-order-mark on the first header, and different
+    casing (e.g. "Timestamp" / "TIMESTAMP" instead of "timestamp"). Any column
+    that matches a required schema field once trimmed/lower-cased is renamed
+    to the canonical name the analysis code expects.
+    """
+    df = df.copy()
+    df.columns = [str(c).replace("﻿", "").strip() for c in df.columns]
+    lower_map = {c.lower(): c for c in df.columns}
+    rename = {}
+    for required in schema.keys():
+        if required in df.columns:
+            continue
+        if required.lower() in lower_map:
+            rename[lower_map[required.lower()]] = required
+    if rename:
+        df = df.rename(columns=rename)
+    return df
+
+
 def validate_schema(df: pd.DataFrame, schema: dict, module_label: str) -> bool:
     """
     Confirms the loaded/uploaded dataframe actually contains every column the
@@ -234,6 +254,8 @@ def validate_schema(df: pd.DataFrame, schema: dict, module_label: str) -> bool:
         )
         with st.expander("Required columns for this module"):
             st.write(required)
+        with st.expander("Columns found in your uploaded file"):
+            st.write(list(df.columns))
         return False
     return True
 
@@ -396,7 +418,15 @@ def data_source_controls(key_prefix, schema, gen_func, default_n=200, template_c
             )
         up = st.file_uploader("Upload CSV file", type=["csv"], key=f"{key_prefix}_upload")
         if up is not None:
-            df = pd.read_csv(up)
+            # utf-8-sig transparently strips a byte-order-mark if present.
+            # sep=None + engine="python" auto-detects the delimiter, so files
+            # saved by Excel with ";" instead of "," still parse correctly.
+            try:
+                df = pd.read_csv(up, encoding="utf-8-sig", sep=None, engine="python")
+            except Exception:
+                up.seek(0)
+                df = pd.read_csv(up)
+            df = normalize_columns(df, schema)
             st.session_state[f"{key_prefix}_upload_df"] = df
         if f"{key_prefix}_upload_df" in st.session_state:
             df = st.session_state[f"{key_prefix}_upload_df"]
@@ -530,7 +560,7 @@ def render_soc():
         axes[1].set_title("Events by Type")
         st.pyplot(fig)
 
-        raw["ts_hour"] = pd.to_datetime(raw["timestamp"]).dt.floor("H")
+        raw["ts_hour"] = pd.to_datetime(raw["timestamp"]).dt.floor("h")
         ts_counts = raw.groupby("ts_hour").size()
         fig2, ax2 = plt.subplots(figsize=(11, 3.5))
         ts_counts.plot(ax=ax2, color=ACCENT2)
