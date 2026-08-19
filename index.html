@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,14 +28,7 @@
             display:inline-block; margin-top:20px; padding:10px 20px; background:#007BFF; color:white; text-decoration:none; border-radius:5px;
         }
         .section { padding:40px 20px; max-width:1100px; margin:auto; }
-        .section h2 {
-            border-bottom:3px solid #00a8ff;
-            padding-bottom:10px;
-            margin-bottom:20px;
-            color:#ffffff;
-            font-weight:800;
-            letter-spacing:.2px;
-        }
+        .section h2 { border-bottom:2px solid #007BFF; padding-bottom:10px; margin-bottom:20px; }
         .columns { display:flex; justify-content:space-around; flex-wrap:wrap; }
         .column { flex:1; margin:10px; padding:20px; background:#1c2e4a; border-radius:8px; min-width:250px; }
         .about-container { display:flex; align-items:flex-start; }
@@ -45,28 +41,10 @@
 
         /* Hub content styling */
         .intro, .app-section, .brochure-section {
-            background:linear-gradient(145deg,#102744,#1b3d63);
-            color:#eef6ff;
-            padding:20px;
-            border:1px solid #356b9d;
-            border-radius:12px;
-            box-shadow:0 6px 18px rgba(0,0,0,.22);
-            margin:20px 0;
+            background:#ffffff; color:#333; padding:20px; border-radius:12px;
+            box-shadow:0 4px 12px rgba(0,0,0,0.1); margin:20px 0;
         }
-        .intro h2, .app-section h2, .brochure-section h2 {
-            color:#ffffff;
-            font-weight:800;
-            border-bottom:2px solid #00a8ff;
-            padding-bottom:8px;
-        }
-        .intro p, .app-section p, .brochure-section p {
-            color:#eef6ff;
-            line-height:1.7;
-        }
-        .app-section strong {
-            color:#ffffff;
-            font-weight:800;
-        }
+        .intro h2, .app-section h2, .brochure-section h2 { color:#0073e6; }
         .app-link {
             display:inline-block; margin-top:15px; padding:12px 20px; background:#0073e6; color:white; text-decoration:none; border-radius:8px; font-size:16px; transition:0.3s;
         }
@@ -77,7 +55,7 @@
 
         /* PDF Brochure */
         .pdf-container { margin-top:20px; }
-        .pdf-iframe { width:100%; height:600px; border:2px solid #3987c9; border-radius:8px; }
+        .pdf-iframe { width:100%; height:600px; border:2px solid #ccc; border-radius:8px; }
 
         .footer { text-align:center; padding:20px; background:#08111f; color:#ccc; margin-top:30px; }
 
@@ -85,123 +63,6 @@
             .columns { flex-direction:column; }
             header h1 { font-size:1.8rem; }
         }
-    
-        /* Professional Experience & Core Competencies */
-        #core-capabilities .column {
-            background:linear-gradient(145deg,#102744,#1b3d63);
-            border:1px solid #356b9d;
-            border-top:4px solid #00a8ff;
-            color:#f1f7ff;
-            box-shadow:0 6px 16px rgba(0,0,0,.22);
-        }
-        #core-capabilities .column h3 {
-            color:#ffffff;
-            font-weight:800;
-        }
-        #core-capabilities .column li {
-            color:#e9f3ff;
-            margin-bottom:6px;
-        }
-
-        .experience-grid {
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-            gap:20px;
-            margin-top:20px;
-        }
-        .experience-card {
-            background:linear-gradient(145deg,#102744,#1b3d63);
-            border:1px solid #356b9d;
-            border-left:6px solid #00a8ff;
-            border-radius:10px;
-            padding:22px;
-            box-shadow:0 5px 15px rgba(0,0,0,.18);
-        }
-        .experience-card h3 {
-            color:#ffffff;
-            font-weight:800;
-            margin:0 0 10px;
-            font-size:1.12rem;
-            letter-spacing:.15px;
-        }
-        .experience-card p {
-            line-height:1.65;
-            margin:0;
-            color:#e7eef7;
-        }
-        .experience-card ul {
-            margin:10px 0 0 18px;
-            padding:0;
-            color:#e7eef7;
-            line-height:1.6;
-        }
-        .experience-highlight {
-            background:linear-gradient(145deg,#102744,#1d4168);
-            color:#ffffff;
-            border:1px solid #2f5d8f;
-            border-left:6px solid #00a8ff;
-            border-radius:10px;
-            padding:24px;
-            margin:20px 0;
-            box-shadow:0 6px 18px rgba(0,0,0,.25);
-        }
-        .experience-highlight h3 {
-            color:#ffffff;
-            font-weight:800;
-            margin-top:0;
-            margin-bottom:12px;
-            letter-spacing:.2px;
-        }
-        .experience-highlight p {
-            color:#f1f7ff;
-            line-height:1.7;
-        }
-        .skill-tags {
-            display:flex;
-            flex-wrap:wrap;
-            gap:9px;
-            margin-top:15px;
-        }
-        .skill-tag {
-            background:#0b3157;
-            color:#ffffff;
-            border:1px solid #3987c9;
-            padding:7px 11px;
-            border-radius:20px;
-            font-size:.92rem;
-            font-weight:600;
-        }
-        .timeline {
-            border-left:3px solid #007BFF;
-            margin:25px 0 10px 10px;
-            padding-left:25px;
-        }
-        .timeline-item {
-            margin-bottom:25px;
-            position:relative;
-        }
-        .timeline-item::before {
-            content:"";
-            width:12px;
-            height:12px;
-            background:#007BFF;
-            border:3px solid #0e1a2b;
-            border-radius:50%;
-            position:absolute;
-            left:-33px;
-            top:5px;
-        }
-        .timeline-item h3 {
-            margin:0 0 6px;
-            color:#ffffff;
-            font-weight:800;
-        }
-        .timeline-item p {
-            margin:0;
-            line-height:1.6;
-            color:#e8f2ff;
-        }
-
     </style>
 </head>
 <body>
@@ -214,38 +75,24 @@
         <a href="#contact" class="cta-button">Schedule a Consultation</a>
     </header>
 
-    <!-- Executive Technical Profile -->
-    <section class="section" id="executive-profile">
-        <div class="experience-highlight">
-            <h3>Executive Technical Profile</h3>
-            <p>
-                KALSNET (KNet) Consulting Services combines decades of Federal and Defense Technology Experience with modern Cybersecurity, Artificial Intelligence, and Emerging-Technology  
-                Innovation. Our capabilities span Global Command & Control Systems (GCCS), Joint Operations Planning & Execution Systems (JOPES), Joint Certs Incidence Database (JCID) / 
-                DoD Certs Incidence Database (DCID) and other incident management environments, Cyber Defense, Agentic-AI and Graph-Based Threat Detection, Industrial Systems Management, 
-                Emerging-Technology Frameworks and Taxonomies, Automated Policy Engineering, and Data Recovery. Kalsnet (KNet)'s objective is to bridge proven Mission-Systems Expertise 
-                with Next-Generation Technologies to deliver Secure, Resilient, Intelligent, and Operationally useful Solutions.
-            </p>
-        </div>
-    </section>
-
     <!-- Our Services -->
     <section class="section">
         <h2>Our Services</h2>
         <div class="columns">
             <div class="column">
                 <h3>Cybersecurity Advisory</h3>
-                <p>Kalsnet Cyber Defense Advisory delivers AI-Driven, Zero Trust, and Threat Intelligence–Led Cybersecurity Solutions to proactively Defend Mission-Critical Systems and  
-                   Enterprise Environments. We specialize in Cyber Risk Management, SOC Optimization, Threat Hunting, and Incident Response, aligned with NIST, MITRE ATT&CK, FedRAMP, and  
-                   CMMC frameworks. Our approach integrates Predictive Analytics, Autonomous Security Operations, and Real-Time Monitoring to enable Resilient, Adaptive, and 
-                   Next-Generation Cyber Defense.</p>
+                <p>Kalsnet Cyber Defense Advisory delivers AI-Driven, Zero Trust, and Threat Intelligence–Led cybersecurity solutions to proactively defend mission-critical systems and  
+                   enterprise environments. We specialize in Cyber Risk Management, SOC Optimization, Threat Hunting, and Incident Response, aligned with NIST, MITRE ATT&CK, FedRAMP, and  
+                   CMMC frameworks.Our approach integrates Predictive Analytics, Autonomous Security Operations, and Real-Time Monitoring to enable resilient, adaptive, and 
+                   next-generation cyber defense.</p>
             </div>
             
             <div class="column">
                 <h3>AI/ML/Agentic-AI Solution Development</h3>
-                <p>We deliver advanced AI/ML and Agentic-AI Solutions leveraging Autonomous Decision-Making, Predictive Analytics, and Adaptive Learning Models 
-                   to drive Mission-Critical outcomes. Our platform integrates LLM-powered reasoning, Multi-Agent Orchestration, Real-Time Data Fusion, and Intelligent 
-                   Automation for Scalable, Enterprise-Grade Performance.Enabling Self-Healing Systems, Proactive Threat Detection, and Continuous Optimization, we Transform 
-                   data into Actionable Intelligence and Autonomous Operations.</p>
+                <p>We deliver advanced AI/ML and Agentic-AI solutions leveraging autonomous decision-making, predictive analytics, and adaptive learning models 
+                   to drive mission-critical outcomes. Our platform integrates LLM-powered reasoning, multi-agent orchestration, real-time data fusion, and intelligent 
+                   automation for scalable, enterprise-grade performance.Enabling self-healing systems, proactive threat detection, and continuous optimization, we transform 
+                   data into actionable intelligence and autonomous operations.</p>
             </div>
             
             <div class="column">
@@ -267,220 +114,15 @@
         </div>
     </section>
 
-
-    <!-- Professional Experience & Technical Expertise -->
-    <section class="section" id="professional-experience">
-        <h2>Professional Experience &amp; Technical Expertise</h2>
-
-        <div class="experience-highlight">
-            <h3>Mission-Focused Federal &amp; Defense Technology Experience</h3>
-            <p>
-                KALSNET (KNet) Consulting Services brings deep Mission-Focused experience in Defense Information
-                Systems, Command-and-Control Environments, Cybersecurity, Software Engineering, Emerging Technologies,
-                Artificial Intelligence, Data Management, and Enterprise Modernization. The firm's technical
-                foundation includes Development and Support of Mission-Critical Systems, Operational Databases,
-                Cyber Defense Capabilities, Technology Frameworks and Taxonomies, and Intelligent Applications
-                designed to turn Complex Operational data into Actionable Decision Support.
-            </p>
-            <div class="skill-tags">
-                <span class="skill-tag">GCCS</span>
-                <span class="skill-tag">JOPES</span>
-                <span class="skill-tag">JCID</span>
-                <span class="skill-tag">DCID</span>
-                <span class="skill-tag">Cyber Defense</span>
-                <span class="skill-tag">Agentic AI</span>
-                <span class="skill-tag">Graph Databases</span>
-                <span class="skill-tag">Emerging Technology Frameworks</span>
-                <span class="skill-tag">Policy Engineering</span>
-                <span class="skill-tag">Data Recovery</span>
-                <span class="skill-tag">Industrial Systems</span>
-                <span class="skill-tag">AI/ML</span>
-            </div>
-        </div>
-
-        <div class="experience-grid">
-            <div class="experience-card">
-                <h3>1. Global Command &amp; Control Systems (GCCS)</h3>
-                <p>
-                    Extensive experience with Global Command and Control System (GCCS) applications and
-                    mission-support environments. Expertise includes understanding complex operational workflows,
-                    Command-and-Control data, System Integration, Information Exchange, and Development of Software
-                    Capabilities Supporting Mission-Critical users and Decision Makers.
-                </p>
-            </div>
-
-            <div class="experience-card">
-                <h3>2. Joint Operations Planning &amp; Execution System (JOPES)</h3>
-                <p>
-                    Strong experience with Joint Operations Planning &amp; Execution System (JOPES) environments,
-                    including the data, processes, applications, and operational workflows supporting joint
-                    planning and execution. This background provides a strong foundation for building secure,
-                    Interoperable Applications for Complex Defense and Operational Missions.
-                </p>
-            </div>
-
-            <div class="experience-card">
-                <h3>3. Incident Management &amp; CERTS Systems</h3>
-                <p>
-                    Expert-level experience with Incident Management Systems and Cybersecurity Incident data
-                    Environments, including the Joint CERTS Incident Database (JCID) and DoD CERTS Incident
-                    Database (DCID). Experience encompasses Incident Data Management, Event Tracking, Analysis,
-                    Reporting, Operational Awareness, and Development of Capabilities that help security teams
-                    understand and respond to Cyber Incidents.
-                </p>
-            </div>
-
-            <div class="experience-card">
-                <h3>4. Emerging Technology Frameworks &amp; Taxonomies</h3>
-                <p>
-                    Proven capability in designing Emerging-Technology Frameworks, Reference Architectures,
-                    Taxonomies, Playbooks, and Technology Roadmaps. Areas include Cybersecurity, API Security,
-                    Cloud, IoT, Edge Computing, 5G/6G, Zero Trust, Agentic AI, MCP, Data Management, and other
-                    Rapidly Evolving Technologies. Kalsnet (KNet) Converts Complex Technologies into Structured,
-                    Understandable, and Reusable Enterprise Frameworks.
-                </p>
-            </div>
-
-            <div class="experience-card">
-                <h3>5. Cyber Defense, Threat Detection &amp; Agentic AI</h3>
-                <p>
-                    Development of Cyber Defense Applications and Cyber Threat Detection Solutions using
-                    Machine Learning, Graph-Based Analytics, Graph Databases, Network Relationships, and
-                    Agentic-AI Architectures. These Solutions Support Anomaly Detection, Threat Hunting,
-                    Attack-Path Analysis, MITRE ATT&amp;CK Mapping, Adaptive Incident Response, and
-                    Human-in-the-Loop Security Decision Support.
-                </p>
-            </div>
-
-            <div class="experience-card">
-                <h3>6. Industrial Systems Management</h3>
-                <p>
-                    Successfully Developed Applications Supporting Industrial Systems Management and Operational
-                    Environments. Capabilities include Structured Data Management, Monitoring, Analytics,
-                    Visualization, Operational Dashboards, and Decision-Support Functions designed to improve
-                    Visibility and Management of Complex Systems.
-                </p>
-            </div>
-
-            <div class="experience-card">
-                <h3>7. Policy Development &amp; Automated Policy Engineering</h3>
-                <p>
-                    Extensive expertise in Cybersecurity and Technology Policy Development, Governance,
-                    Compliance Mapping, and Policy Automation. Kalsnet (KNet) has developed an Automated Policy Developer
-                    Application Capable of helping users Generate Structured Policies Aligned with Organizational
-                    Requirements and Established Cybersecurity and Compliance Frameworks.
-                </p>
-            </div>
-
-            <div class="experience-card">
-                <h3>8. Data Recovery &amp; Information Restoration</h3>
-                <p>
-                    Expertise in Data Recovery Techniques and Information Restoration, including approaches for
-                    Recovering, Validating, Organizing, and Preserving data following System Failures, Corruption,
-                    Accidental Deletion, or other Disruptive Events. This capability complements Kalsnet (KNet)'s broader
-                    Data-Management, Cybersecurity, Continuity, and Resilience Services.
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Core Technical Capabilities -->
-    <section class="section" id="core-capabilities">
-        <h2>Core Technical Capabilities</h2>
-        <div class="columns">
-            <div class="column">
-                <h3>Defense &amp; Mission Systems</h3>
-                <ul>
-                    <li>GCCS application environments</li>
-                    <li>JOPES operational planning systems</li>
-                    <li>JCID and DCID incident management/data environments</li>
-                    <li>Command-and-control data integration</li>
-                    <li>Mission-critical application modernization</li>
-                </ul>
-            </div>
-            <div class="column">
-                <h3>Cyber Defense &amp; AI</h3>
-                <ul>
-                    <li>Agentic-AI Cyber Defense Applications</li>
-                    <li>Graph Database Threat Analytics</li>
-                    <li>AI/ML Anomaly and Threat Detection</li>
-                    <li>Threat Hunting and Adaptive Incident Response</li>
-                    <li>MITRE ATT&amp;CK and Zero Trust Alignment</li>
-                </ul>
-            </div>
-            <div class="column">
-                <h3>Frameworks, Policy &amp; Governance</h3>
-                <ul>
-                    <li>Emerging Technology Frameworks and Taxonomies</li>
-                    <li>Cybersecurity Policy Development</li>
-                    <li>Automated Policy Generation</li>
-                    <li>Technology Roadmaps and Reference Architectures</li>
-                    <li>Compliance and Governance Automation</li>
-                </ul>
-            </div>
-            <div class="column">
-                <h3>Data &amp; Operational Resilience</h3>
-                <ul>
-                    <li>Data Recovery and Restoration</li>
-                    <li>Industrial Systems Management Applications</li>
-                    <li>Data Engineering and Analytics</li>
-                    <li>Operational Dashboards and Visualization</li>
-                    <li>Resilience and Continuity Support</li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <!-- Technical Experience Timeline -->
-    <section class="section" id="technical-journey">
-        <h2>Technical Experience at a Glance</h2>
-        <div class="timeline">
-            <div class="timeline-item">
-                <h3>Mission-Critical Defense Systems</h3>
-                <p>
-                    Experience Supporting Command-and-Control, Joint Planning, Incident Management, and
-                    Mission-Support Applications in Complex Federal and Defense Environments.
-                </p>
-            </div>
-            <div class="timeline-item">
-                <h3>Cybersecurity &amp; Emerging Technologies</h3>
-                <p>
-                    Progression from Traditional Enterprise and Defense Systems into Cybersecurity, API Security,
-                    Cloud, IoT, Edge, 5G/6G, Zero Trust, AI/ML, Agentic AI, and Intelligent Cyber Defense.
-                </p>
-            </div>
-            <div class="timeline-item">
-                <h3>Framework &amp; Application Innovation</h3>
-                <p>
-                    Development of Reusable Frameworks, Taxonomies, Playbooks, Dashboards, Threat Detectors,
-                    Policy Automation Solutions, and Decision-Support Applications through Kalsnet (KNet) Consulting.
-                </p>
-            </div>
-            <div class="timeline-item">
-                <h3>Data Resilience &amp; Intelligent Automation</h3>
-                <p>
-                    Integration of Data Recovery, Data Analytics, Graph-Based Intelligence, Automated Policy
-                    Engineering, and Agentic-AI workflows to improve Resilience, Security, and Operational
-                    Decision-Making.
-                </p>
-            </div>
-        </div>
-    </section>
-
     <!-- About Us -->
     <section class="section" id="about">
         <h2>About Us</h2>
         <div class="about-container">
             <img src="Kalsnet_logo.png" alt="Kalsnet Logo">
             <div>
-                <p>KALSNET (KNet) Consulting Services is led by a veteran Computer Scientist with Extensive Federal and Defense Experience in Cybersecurity,
-                   Software Engineering, Mission-Critical Systems, Strategic IT Management, and Emerging Technologies. The firm's Technical Foundation Includes
-                   GCCS and JOPES environments, Cyber Incident Management Systems including JCID and DCID, and the Development of Emerging-Technology Frameworks,
-                   Taxonomies, Cyber Defense Applications, and Intelligent Decision-Support Capabilities.</p>
-                <p>Our Founder has developed and Modernized Mission-Focused Applications, Cyber Defense and Threat Detection Solutions using Graph Databases and
-                   Agentic AI, Industrial Systems Management Applications, Automated Policy Development Capabilities, and Data Recovery Solutions. Kalsnet(KNet) combines
-                   this Operational Experience with modern AI/ML, Zero Trust, API Security, Cloud, and Secure Application Engineering to deliver practical,
-                   Mission-Aligned Technology Solutions.</p>
+                <p>KALSNET (KNet) Consulting Services is led by a Veteran Computer Scientist with Several Years of Federal Experience in Cybersecurity, Software Engineering, and 
+                   Strategic IT management. Formerly at DISA, our Founder has led National-Scale API Security Initiatives, Developed C2 Protection Playbooks, and 
+                   Advised on AI Governance Policy.</p>
                 <p>We bring deep Technical Experience in Full-Stack Application Development, Legacy System Modernization, and Secure System Design using Industry-Standard Programming 
                    Languages and Development Methodologies. Deep Understanding of Federal Policies, NIST Frameworks, and Compliance Standards.</p>
             </div>
@@ -499,13 +141,6 @@
                 Real-Estate Pricing.</li>
             <li>Strong background in Teaching, Training, and Mentoring Technology Teams</li>
             <li>Design and Implementation of Cybersecurity Playbooks using Real & Synthetic Data</li>
-            <li>Global Command &amp; Control System (GCCS) and Joint Operations Planning &amp; Execution System (JOPES) experience</li>
-            <li>Incident management expertise including JCID and DoD CERTS Incident Database (DCID) environments</li>
-            <li>Emerging Technology Frameworks, taxonomies, reference architectures, and technology roadmaps</li>
-            <li>Graph Database and Agentic-AI based Cyber Threat Detection and Cyber Defense application development</li>
-            <li>Industrial Systems Management application development and operational analytics</li>
-            <li>Cybersecurity Policy Development and Automated Policy Developer solutions</li>
-            <li>Data Recovery, restoration, validation, and information-resilience techniques</li>
         </ul>
     </section>
 
@@ -542,19 +177,20 @@
         <a href="https://kalsr.github.io/EMERGING-TECHLOGIES-FRAMEWORKS/" target="_blank" class="hub-link">
                <strong> EMERGING-TECHNOLOGIES-FRAMEWORKS </strong> <br>
 
-      <a href="javascript:void(0)" onclick="toggleBrochure()" class="hub-link">KNet Brochure</a><br>
-          
+      <a href="javascript:void(0)" onclick="toggleBrochure()" class="hub-link">KNet Brochure</a> <br>
+        
+      
+         
     </section>
 
     <!-- BROCHURE -->
 <section id="knet-brochure-section" class="section">
 <h2>KNet Brochure</h2>
-<iframe src="KNet Brochure.pdf" width="100%" height="600">
-</iframe> src="Kalsnet (KNet) Price List 2026.pdf" width="100%" height="600"></iframe>
-<iframe src="Kalsnet (KNet) Price List India 2026 -2027.pdf" width="100%" height="600">
- </section>
+<iframe src="KNet Brochure.pdf" width="100%" height="600"></iframe>
+</section>
 
-    
+
+
     <!-- Programming Hub (Merged Full Index) -->
     <section id="programming-hub" class="section" aria-hidden="true">
         <!-- Merged content from the KNet Designed Applications index.html -->
@@ -926,8 +562,6 @@ With color-coded interactive buttons, a clean professional design, and Reset/Ref
             if (hub) { hub.style.display = 'none'; hub.setAttribute('aria-hidden','true'); }
             if (!isOpen) { brochure.style.display = 'block'; brochure.setAttribute('aria-hidden','false'); brochure.scrollIntoView({behavior:'smooth'}); }
         }
-       
-       
 
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
@@ -942,3 +576,5 @@ With color-coded interactive buttons, a clean professional design, and Reset/Ref
 
 
 </html>
+
+
