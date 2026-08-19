@@ -1,15 +1,10 @@
-
-
-
 # GCP Serverless Cyber Threat Detector
 # Developed by Randy Singh | Kalsnet (KNet) Consulting
-
 # A Streamlit demo application illustrating four serverless, GCP-style
 # cyber-threat-detection patterns. Each tab is self-contained: it explains
 # the use case and data schema, lets you generate synthetic data (or upload
 # your own CSV), runs a detection function, visualizes results, and lets you
 # export the findings to PDF, Word, TXT, or CSV.
-
 
 import io
 from datetime import datetime, timedelta
@@ -41,7 +36,6 @@ except Exception:
 # --------------------------------------------------------------------------
 st.set_page_config(
     page_title="GCP Serverless Cyber Threat Detector",
-    page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -50,26 +44,29 @@ st.markdown(
     """
     <style>
     .title-block {
-        padding: 18px 24px 14px 24px;
+        padding: 22px 24px 18px 24px;
         border-radius: 10px;
         background: linear-gradient(90deg, #eaf1ff 0%, #f5f9ff 100%);
         border: 1px solid #c9dbff;
         margin-bottom: 18px;
+        text-align: center;
     }
     .title-main {
         color: #0B3D91;
         font-weight: 800;
-        font-size: 40px;
+        font-size: 46px;
         letter-spacing: 0.3px;
         margin: 0;
         line-height: 1.15;
+        text-align: center;
     }
     .title-sub {
         color: #0B3D91;
         font-weight: 800;
-        font-size: 22px;
-        margin-top: 6px;
+        font-size: 24px;
+        margin-top: 8px;
         line-height: 1.2;
+        text-align: center;
     }
     .schema-box {
         background-color: #f7f9fc;
@@ -85,7 +82,7 @@ st.markdown(
     }
     </style>
     <div class="title-block">
-        <p class="title-main">🛡️ GCP Serverless Cyber Threat Detector</p>
+        <p class="title-main">GCP Serverless Cyber Threat Detector</p>
         <p class="title-sub">Developed by Randy Singh — Kalsnet (KNet) Consulting</p>
     </div>
     """,
@@ -101,7 +98,6 @@ st.caption(
 # --------------------------------------------------------------------------
 # EXPORT HELPERS (PDF / DOCX / TXT / CSV)
 # --------------------------------------------------------------------------
-
 def df_to_csv_bytes(df: pd.DataFrame) -> bytes:
     return df.to_csv(index=False).encode("utf-8")
 
@@ -135,7 +131,6 @@ def df_to_pdf_bytes(df: pd.DataFrame, title: str, summary: str = "") -> bytes:
         fontSize=11, spaceAfter=10, fontName="Helvetica-Bold",
     )
     body_style = styles["Normal"]
-
     elements = [
         Paragraph(title, title_style),
         Paragraph("Developed by Randy Singh | Kalsnet (KNet) Consulting", sub_style),
@@ -145,7 +140,6 @@ def df_to_pdf_bytes(df: pd.DataFrame, title: str, summary: str = "") -> bytes:
     if summary:
         elements.append(Paragraph(summary.replace("\n", "<br/>"), body_style))
         elements.append(Spacer(1, 12))
-
     # Limit columns/rows so the table fits reasonably on the page
     max_rows = 200
     show_df = df.head(max_rows)
@@ -170,21 +164,17 @@ def df_to_pdf_bytes(df: pd.DataFrame, title: str, summary: str = "") -> bytes:
 
 def df_to_docx_bytes(df: pd.DataFrame, title: str, summary: str = "") -> bytes:
     doc = Document()
-
     h = doc.add_heading(title, level=1)
     for run in h.runs:
         run.font.color.rgb = RGBColor(0x0B, 0x3D, 0x91)
-
     sub = doc.add_paragraph()
     sub_run = sub.add_run("Developed by Randy Singh | Kalsnet (KNet) Consulting")
     sub_run.bold = True
     sub_run.font.color.rgb = RGBColor(0x0B, 0x3D, 0x91)
     sub_run.font.size = Pt(13)
-
     doc.add_paragraph(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     if summary:
         doc.add_paragraph(summary)
-
     max_rows = 300
     show_df = df.head(max_rows)
     table = doc.add_table(rows=1, cols=len(show_df.columns))
@@ -195,15 +185,12 @@ def df_to_docx_bytes(df: pd.DataFrame, title: str, summary: str = "") -> bytes:
         for p in hdr_cells[i].paragraphs:
             for r in p.runs:
                 r.bold = True
-
     for _, row in show_df.iterrows():
         cells = table.add_row().cells
         for i, val in enumerate(row):
             cells[i].text = str(val)
-
     if len(df) > max_rows:
         doc.add_paragraph(f"Showing first {max_rows} of {len(df)} rows.")
-
     buf = io.BytesIO()
     doc.save(buf)
     return buf.getvalue()
@@ -217,26 +204,26 @@ def export_bar(df: pd.DataFrame, key_prefix: str, title: str, summary: str = "")
     c1, c2, c3, c4 = st.columns(4)
     with c1:
         st.download_button(
-            "📄 Export PDF", data=df_to_pdf_bytes(df, title, summary),
+            "Export PDF", data=df_to_pdf_bytes(df, title, summary),
             file_name=f"{key_prefix}_results.pdf", mime="application/pdf",
             use_container_width=True, key=f"{key_prefix}_pdf",
         )
     with c2:
         st.download_button(
-            "📝 Export Word", data=df_to_docx_bytes(df, title, summary),
+            "Export Word", data=df_to_docx_bytes(df, title, summary),
             file_name=f"{key_prefix}_results.docx",
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             use_container_width=True, key=f"{key_prefix}_docx",
         )
     with c3:
         st.download_button(
-            "🧾 Export TXT", data=df_to_txt_bytes(df, title, summary),
+            "Export TXT", data=df_to_txt_bytes(df, title, summary),
             file_name=f"{key_prefix}_results.txt", mime="text/plain",
             use_container_width=True, key=f"{key_prefix}_txt",
         )
     with c4:
         st.download_button(
-            "📊 Export CSV", data=df_to_csv_bytes(df),
+            "Export CSV", data=df_to_csv_bytes(df),
             file_name=f"{key_prefix}_results.csv", mime="text/csv",
             use_container_width=True, key=f"{key_prefix}_csv",
         )
@@ -253,7 +240,7 @@ def data_source_controls(key_prefix, generator_fn, gen_label="Generate Synthetic
     c1, c2 = st.columns([2, 1])
     with c1:
         n = st.slider("Number of synthetic events", 50, 2000, n_default, 50, key=f"{key_prefix}_n")
-        if st.button(f"🎲 {gen_label}", key=f"{key_prefix}_gen", use_container_width=True):
+        if st.button(gen_label, key=f"{key_prefix}_gen", use_container_width=True):
             st.session_state[f"{key_prefix}_data"] = generator_fn(n)
     with c2:
         up = st.file_uploader("Or upload your own CSV", type=["csv"], key=f"{key_prefix}_upload")
@@ -269,16 +256,13 @@ def data_source_controls(key_prefix, generator_fn, gen_label="Generate Synthetic
 # --------------------------------------------------------------------------
 # TAB 1 — BRUTE-FORCE LOGIN DETECTION
 # --------------------------------------------------------------------------
-
 def gen_login_data(n=400, seed=None):
     rng = np.random.default_rng(seed)
     users = [f"user{i}@company.com" for i in range(1, 26)]
     ips_normal = [f"10.0.{rng.integers(0,255)}.{rng.integers(0,255)}" for _ in range(30)]
     attacker_ips = ["203.0.113.7", "198.51.100.23", "185.220.101.5"]
-
     rows = []
     base_time = datetime.now() - timedelta(hours=6)
-
     # normal traffic
     for _ in range(int(n * 0.8)):
         t = base_time + timedelta(seconds=int(rng.integers(0, 6 * 3600)))
@@ -289,14 +273,13 @@ def gen_login_data(n=400, seed=None):
             "status": rng.choice(["SUCCESS", "SUCCESS", "SUCCESS", "FAILED"], p=[0.85, 0.05, 0.05, 0.05]),
             "country": rng.choice(["US", "CA", "US", "US"]),
         })
-
     # brute-force bursts from attacker IPs against a few target users
     targets = rng.choice(users, size=3, replace=False)
     for atk_ip in attacker_ips:
         target = rng.choice(targets)
         burst_start = base_time + timedelta(seconds=int(rng.integers(0, 6 * 3600)))
         for k in range(int(n * 0.2) // len(attacker_ips)):
-            t = burst_start + timedelta(seconds=k * rng.integers(2, 8))
+            t = burst_start + timedelta(seconds=int(k * rng.integers(2, 8)))
             rows.append({
                 "timestamp": t,
                 "user": target,
@@ -304,7 +287,6 @@ def gen_login_data(n=400, seed=None):
                 "status": "FAILED" if k < 15 else rng.choice(["FAILED", "SUCCESS"], p=[0.9, 0.1]),
                 "country": rng.choice(["RU", "CN", "NG", "BR"]),
             })
-
     df = pd.DataFrame(rows).sort_values("timestamp").reset_index(drop=True)
     return df
 
@@ -313,7 +295,6 @@ def detect_brute_force(df, fail_threshold=8, window_minutes=10):
     df = df.copy()
     df["timestamp"] = pd.to_datetime(df["timestamp"])
     fails = df[df["status"] == "FAILED"].sort_values("timestamp")
-
     flagged = []
     for (ip, user), grp in fails.groupby(["source_ip", "user"]):
         grp = grp.sort_values("timestamp")
@@ -337,13 +318,11 @@ def detect_brute_force(df, fail_threshold=8, window_minutes=10):
 # --------------------------------------------------------------------------
 # TAB 2 — ANOMALOUS API USAGE DETECTION
 # --------------------------------------------------------------------------
-
 def gen_api_data(n=400, seed=None):
     rng = np.random.default_rng(seed)
     services = ["billing-api", "user-api", "orders-api", "inventory-api"]
     accounts = [f"svc-account-{i}@project.iam.gserviceaccount.com" for i in range(1, 11)]
     base_time = datetime.now() - timedelta(hours=24)
-
     rows = []
     # normal hourly baseline per account/service
     for acct in accounts:
@@ -357,7 +336,6 @@ def gen_api_data(n=400, seed=None):
                     "call_count": calls,
                     "error_rate": round(float(rng.uniform(0, 0.05)), 3),
                 })
-
     # inject anomalies: sudden spikes / data-exfil-like patterns
     anomaly_acct = rng.choice(accounts)
     for hr in [6, 7, 14]:
@@ -368,7 +346,6 @@ def gen_api_data(n=400, seed=None):
             "call_count": int(rng.integers(400, 900)),
             "error_rate": round(float(rng.uniform(0.2, 0.5)), 3),
         })
-
     df = pd.DataFrame(rows)
     return df
 
@@ -390,7 +367,6 @@ def detect_api_anomalies(df, z_thresh=3.0):
 # --------------------------------------------------------------------------
 # TAB 3 — SUSPICIOUS NETWORK / IP TRAFFIC DETECTION
 # --------------------------------------------------------------------------
-
 THREAT_INTEL_IPS = {"203.0.113.7", "198.51.100.23", "185.220.101.5", "45.83.64.1"}
 HIGH_RISK_COUNTRIES = {"RU", "KP", "NG", "IR"}
 SENSITIVE_PORTS = {22, 3389, 1433, 3306, 5432, 27017}
@@ -401,7 +377,6 @@ def gen_network_data(n=400, seed=None):
     internal_ips = [f"10.0.{rng.integers(0,20)}.{rng.integers(0,255)}" for _ in range(15)]
     countries_normal = ["US", "US", "CA", "US", "DE"]
     ports_normal = [443, 443, 80, 8080, 443]
-
     rows = []
     base_time = datetime.now() - timedelta(hours=12)
     for _ in range(int(n * 0.85)):
@@ -413,7 +388,6 @@ def gen_network_data(n=400, seed=None):
             "country": rng.choice(countries_normal),
             "bytes_transferred": int(rng.normal(50000, 15000)),
         })
-
     for _ in range(int(n * 0.15)):
         bad_ip = rng.choice(list(THREAT_INTEL_IPS))
         rows.append({
@@ -424,7 +398,6 @@ def gen_network_data(n=400, seed=None):
             "country": rng.choice(list(HIGH_RISK_COUNTRIES)),
             "bytes_transferred": int(rng.integers(200000, 5_000_000)),
         })
-
     df = pd.DataFrame(rows).sort_values("timestamp").reset_index(drop=True)
     return df
 
@@ -432,6 +405,7 @@ def gen_network_data(n=400, seed=None):
 def detect_network_threats(df):
     df = df.copy()
     df["reason"] = ""
+
     def reasons(row):
         r = []
         if row["src_ip"] in THREAT_INTEL_IPS:
@@ -455,7 +429,6 @@ def detect_network_threats(df):
 # --------------------------------------------------------------------------
 # TAB 4 — ML BEHAVIORAL ANOMALY DETECTION (Isolation Forest)
 # --------------------------------------------------------------------------
-
 def gen_behavior_data(n=400, seed=None):
     rng = np.random.default_rng(seed)
     users = [f"user{i}" for i in range(1, 41)]
@@ -473,7 +446,6 @@ def gen_behavior_data(n=400, seed=None):
                 "distinct_locations": int(np.clip(rng.normal(base_locations, 0.3), 1, 5)),
                 "failed_logins": int(max(0, rng.normal(0.3, 0.5))),
             })
-
     # inject a handful of anomalous / insider-threat-like sessions
     anomalous_users = rng.choice(users, size=4, replace=False)
     for u in anomalous_users:
@@ -485,7 +457,6 @@ def gen_behavior_data(n=400, seed=None):
             "distinct_locations": int(rng.integers(3, 6)),
             "failed_logins": int(rng.integers(4, 12)),
         })
-
     return pd.DataFrame(rows)
 
 
@@ -497,7 +468,6 @@ def detect_behavior_anomalies(df, contamination=0.05):
         if f not in df.columns:
             st.error(f"Uploaded data is missing required column: {f}")
             return pd.DataFrame()
-
     X = df[features].fillna(0).values
     if SKLEARN_OK:
         model = IsolationForest(contamination=contamination, random_state=42)
@@ -512,7 +482,6 @@ def detect_behavior_anomalies(df, contamination=0.05):
         df["anomaly_score"] = score
         thresh = np.quantile(score, 1 - contamination)
         df["is_anomaly"] = score >= thresh
-
     flagged = df[df["is_anomaly"]].sort_values("anomaly_score", ascending=False)
     flagged["risk"] = np.where(
         flagged["anomaly_score"] >= flagged["anomaly_score"].quantile(0.7), "HIGH", "MEDIUM"
@@ -523,13 +492,12 @@ def detect_behavior_anomalies(df, contamination=0.05):
 # --------------------------------------------------------------------------
 # UI TABS
 # --------------------------------------------------------------------------
-
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "🔐 Brute-Force Login",
-    "🔌 Anomalous API Usage",
-    "🌐 Suspicious Network/IP",
-    "🤖 ML Behavioral Anomaly",
-    "☁️ Architecture",
+    "Brute-Force Login",
+    "Anomalous API Usage",
+    "Suspicious Network/IP",
+    "ML Behavioral Anomaly",
+    "Architecture",
 ])
 
 # ---------------- TAB 1 ----------------
@@ -540,7 +508,7 @@ with tab1:
         "against the same account within a short time window — the classic signature "
         "of credential-stuffing or brute-force attacks."
     )
-    with st.expander("📘 GCP Serverless Pattern & Function Logic", expanded=False):
+    with st.expander("GCP Serverless Pattern & Function Logic", expanded=False):
         st.markdown(
             "- **Ingestion:** Cloud Identity/Cloud Logging login events → **Pub/Sub** topic\n"
             "- **Processing:** A **Cloud Function** (or Cloud Run service) triggered per message "
@@ -559,38 +527,32 @@ with tab1:
         "status": "SUCCESS or FAILED",
         "country": "GeoIP-resolved origin country",
     })
-
     df1 = data_source_controls("bf", gen_login_data, "Generate Synthetic Login Events")
     c1, c2 = st.columns(2)
     with c1:
         fail_threshold = st.slider("Failed-attempt threshold", 3, 30, 8, key="bf_thresh")
     with c2:
         window_min = st.slider("Time window (minutes)", 1, 60, 10, key="bf_window")
-
     if df1 is not None:
         st.dataframe(df1.head(200), use_container_width=True, height=220)
-        if st.button("🔎 Run Brute-Force Detection", key="bf_run", type="primary"):
+        if st.button("Run Brute-Force Detection", key="bf_run", type="primary"):
             st.session_state["bf_results"] = detect_brute_force(df1, fail_threshold, window_min)
-
         results1 = st.session_state.get("bf_results")
         if results1 is not None and not results1.empty:
             st.success(f"Flagged {len(results1)} suspicious (IP, user) pair(s).")
             st.dataframe(results1, use_container_width=True)
-
             fig = px.bar(
                 results1, x="source_ip", y="failed_attempts", color="risk",
                 color_discrete_map={"HIGH": "#c0392b", "MEDIUM": "#e67e22"},
                 title="Failed Login Attempts by Attacking IP",
             )
             st.plotly_chart(fig, use_container_width=True)
-
             timeline = df1.copy()
             timeline["timestamp"] = pd.to_datetime(timeline["timestamp"])
             timeline["minute"] = timeline["timestamp"].dt.floor("15min")
             ts = timeline[timeline["status"] == "FAILED"].groupby("minute").size().reset_index(name="failed_count")
             fig2 = px.line(ts, x="minute", y="failed_count", title="Failed Logins Over Time (15-min bins)")
             st.plotly_chart(fig2, use_container_width=True)
-
             export_bar(results1, "brute_force", "Brute-Force Login Detection Results",
                        f"Threshold: {fail_threshold} failed attempts within {window_min} minutes.")
         elif results1 is not None:
@@ -606,7 +568,7 @@ with tab2:
         "usage deviates far beyond normal — indicative of a compromised service account, "
         "leaked API key, or automated data exfiltration."
     )
-    with st.expander("📘 GCP Serverless Pattern & Function Logic", expanded=False):
+    with st.expander("GCP Serverless Pattern & Function Logic", expanded=False):
         st.markdown(
             "- **Ingestion:** Cloud Audit Logs / API Gateway metrics streamed via **Pub/Sub**\n"
             "- **Processing:** **Cloud Run** job aggregates call counts per "
@@ -623,20 +585,16 @@ with tab2:
         "call_count": "Number of API calls in that hour",
         "error_rate": "Fraction of calls returning errors",
     })
-
     df2 = data_source_controls("api", gen_api_data, "Generate Synthetic API Logs")
     z_thresh = st.slider("Z-score threshold (standard deviations)", 1.5, 6.0, 3.0, 0.5, key="api_z")
-
     if df2 is not None:
         st.dataframe(df2.head(200), use_container_width=True, height=220)
-        if st.button("🔎 Run Anomaly Detection", key="api_run", type="primary"):
+        if st.button("Run Anomaly Detection", key="api_run", type="primary"):
             st.session_state["api_results"] = detect_api_anomalies(df2, z_thresh)
-
         results2 = st.session_state.get("api_results")
         if results2 is not None and not results2.empty:
             st.success(f"Flagged {len(results2)} anomalous usage hour(s).")
             st.dataframe(results2, use_container_width=True)
-
             fig = px.scatter(
                 df2.merge(
                     results2[["service_account", "api_service", "hour"]].assign(flag="ANOMALY"),
@@ -648,7 +606,6 @@ with tab2:
                 hover_data=["service_account", "api_service"],
             )
             st.plotly_chart(fig, use_container_width=True)
-
             export_bar(results2, "api_usage", "Anomalous API Usage Detection Results",
                        f"Z-score threshold: {z_thresh}")
         elif results2 is not None:
@@ -664,7 +621,7 @@ with tab3:
         "high-risk countries, sensitive destination ports, and abnormal transfer sizes — "
         "a lightweight rule-based network detector."
     )
-    with st.expander("📘 GCP Serverless Pattern & Function Logic", expanded=False):
+    with st.expander("GCP Serverless Pattern & Function Logic", expanded=False):
         st.markdown(
             "- **Ingestion:** VPC Flow Logs → **Pub/Sub**\n"
             "- **Processing:** **Cloud Function** enriches each flow with GeoIP + a threat-intel "
@@ -682,30 +639,24 @@ with tab3:
         "country": "GeoIP country of the source IP",
         "bytes_transferred": "Bytes transferred in the flow",
     })
-
     df3 = data_source_controls("net", gen_network_data, "Generate Synthetic Network Flows")
-
     if df3 is not None:
         st.dataframe(df3.head(200), use_container_width=True, height=220)
-        if st.button("🔎 Run Network Threat Detection", key="net_run", type="primary"):
+        if st.button("Run Network Threat Detection", key="net_run", type="primary"):
             st.session_state["net_results"] = detect_network_threats(df3)
-
         results3 = st.session_state.get("net_results")
         if results3 is not None and not results3.empty:
             st.success(f"Flagged {len(results3)} suspicious flow(s).")
             st.dataframe(results3, use_container_width=True)
-
             fig = px.bar(
                 results3.groupby("country").size().reset_index(name="flagged_flows"),
                 x="country", y="flagged_flows", title="Flagged Flows by Origin Country",
                 color="flagged_flows", color_continuous_scale="Reds",
             )
             st.plotly_chart(fig, use_container_width=True)
-
             fig2 = px.pie(results3, names="risk", title="Risk Level Distribution",
                           color="risk", color_discrete_map={"HIGH": "#c0392b", "MEDIUM": "#e67e22"})
             st.plotly_chart(fig2, use_container_width=True)
-
             export_bar(results3, "network_threats", "Suspicious Network/IP Traffic Detection Results")
         elif results3 is not None:
             st.info("No suspicious network flows detected.")
@@ -720,7 +671,7 @@ with tab4:
         "features simultaneously and flag sessions that don't fit the pattern — useful for "
         "insider-threat or account-takeover detection where no single rule would catch it."
     )
-    with st.expander("📘 GCP Serverless Pattern & Function Logic", expanded=False):
+    with st.expander("GCP Serverless Pattern & Function Logic", expanded=False):
         st.markdown(
             "- **Ingestion:** application/session logs → **Pub/Sub** → **BigQuery**\n"
             "- **Processing:** scheduled **Cloud Run job** (or Vertex AI Pipelines) retrains/"
@@ -742,20 +693,16 @@ with tab4:
     })
     if not SKLEARN_OK:
         st.warning("scikit-learn not available in this environment — using a statistical fallback (robust z-score) instead of Isolation Forest.")
-
     df4 = data_source_controls("beh", gen_behavior_data, "Generate Synthetic Behavior Sessions")
     contamination = st.slider("Expected anomaly fraction (contamination)", 0.01, 0.20, 0.05, 0.01, key="beh_cont")
-
     if df4 is not None:
         st.dataframe(df4.head(200), use_container_width=True, height=220)
-        if st.button("🔎 Run ML Anomaly Detection", key="beh_run", type="primary"):
+        if st.button("Run ML Anomaly Detection", key="beh_run", type="primary"):
             st.session_state["beh_results"] = detect_behavior_anomalies(df4, contamination)
-
         results4 = st.session_state.get("beh_results")
         if results4 is not None and not results4.empty:
             st.success(f"Flagged {len(results4)} anomalous session(s).")
             st.dataframe(results4, use_container_width=True)
-
             fig = px.scatter(
                 df4.assign(flagged=df4.index.isin(results4.index)),
                 x="files_accessed", y="data_downloaded_mb", color="flagged",
@@ -764,10 +711,8 @@ with tab4:
                 hover_data=["user"],
             )
             st.plotly_chart(fig, use_container_width=True)
-
             fig2 = px.histogram(results4, x="anomaly_score", nbins=20, title="Anomaly Score Distribution (flagged)")
             st.plotly_chart(fig2, use_container_width=True)
-
             export_bar(results4, "ml_behavior", "ML Behavioral Anomaly Detection Results",
                        f"Model: {'IsolationForest' if SKLEARN_OK else 'Robust z-score fallback'}, contamination={contamination}")
         elif results4 is not None:
@@ -804,7 +749,6 @@ with tab5:
         plot_bgcolor="white",
     )
     st.plotly_chart(fig, use_container_width=True)
-
     st.markdown(
         """
         | Stage | GCP Service | Role in this demo |
@@ -824,4 +768,4 @@ with tab5:
     )
 
 st.markdown("---")
-st.caption("© Kalsnet (KNet) Consulting — Demo application for educational purposes. Developed by Randy Singh.")
+st.caption("Kalsnet (KNet) Consulting — Demo application for educational purposes. Developed by Randy Singh.")
