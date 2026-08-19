@@ -544,8 +544,8 @@
 
       <a href="javascript:void(0)" onclick="toggleBrochure()" class="hub-link">KNet Brochure</a><br>
 
-      <a href="javascript:void(0)" onclick="toggleBrochure()" class="hub-link">KNet-Price-List-2026</a><br>
-      <a href="javascript:void(0)" onclick="toggleBrochure()" class="hub-link">India-Pricelist-2026-2027</a><br>
+      <a href="javascript:void(0)" onclick="togglePrice1()" class="hub-link">KNet-Price-List-2026</a><br>
+      <a href="javascript:void(0)" onclick="togglePrice2()" class="hub-link">India-Pricelist-2026-2027</a><br>
         
       
     </section>
@@ -941,6 +941,30 @@ With color-coded interactive buttons, a clean professional design, and Reset/Ref
             if (hub) { hub.style.display = 'none'; hub.setAttribute('aria-hidden','true'); }
             if (!isOpen) { brochure.style.display = 'block'; brochure.setAttribute('aria-hidden','false'); brochure.scrollIntoView({behavior:'smooth'}); }
         }
+       
+
+
+        function togglePrice1() {
+            var hub = document.getElementById('programming-hub');
+            var brochure = document.getElementById('knet-brochure-section');
+            if (!brochure) return;
+            var isOpen = (brochure.style.display === 'block');
+            brochure.style.display = 'none'; brochure.setAttribute('aria-hidden','true');
+            if (hub) { hub.style.display = 'none'; hub.setAttribute('aria-hidden','true'); }
+            if (!isOpen) { brochure.style.display = 'block'; brochure.setAttribute('aria-hidden','false'); brochure.scrollIntoView({behavior:'smooth'}); }
+        }
+
+        function togglePrice2() {
+            var hub = document.getElementById('programming-hub');
+            var brochure = document.getElementById('knet-brochure-section');
+            if (!brochure) return;
+            var isOpen = (brochure.style.display === 'block');
+            brochure.style.display = 'none'; brochure.setAttribute('aria-hidden','true');
+            if (hub) { hub.style.display = 'none'; hub.setAttribute('aria-hidden','true'); }
+            if (!isOpen) { brochure.style.display = 'block'; brochure.setAttribute('aria-hidden','false'); brochure.scrollIntoView({behavior:'smooth'}); }
+        }
+
+        
 
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
