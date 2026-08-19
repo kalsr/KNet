@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -543,19 +545,33 @@
                <strong> EMERGING-TECHNOLOGIES-FRAMEWORKS </strong> <br>
 
       <a href="javascript:void(0)" onclick="toggleBrochure()" class="hub-link">KNet Brochure</a><br>
+
+      <a href="javascript:void(0)" onclick="togglePrice1()" class="hub-link">KNet-Price-List-2026</a><br>
+      <a href="javascript:void(0)" onclick="togglePrice2()" class="hub-link">India-Pricelist-2026-2027</a><br>
         
       
-         
     </section>
 
     <!-- BROCHURE -->
 <section id="knet-brochure-section" class="section">
 <h2>KNet Brochure</h2>
-<iframe src="KNet Brochure.pdf" width="100%" height="600"></iframe>
+<iframe src="KNet Brochure.pdf" width="100%" height="600">
+</iframe> src="Kalsnet (KNet) Price List 2026.pdf" width="100%" height="600"></iframe>
+<iframe src="Kalsnet (KNet) Price List India 2026 -2027.pdf" width="100%" height="600">
+ </section>
+
+<!-- PRICE-LIST-USA -->
+<section id="KNet Price List USA-section" class="section">
+<h2>KNet-Price-List-2026</h2>
+<iframe src="Kalsnet (KNet) Price List 2026.pdf" width="100%" height="600"></iframe>
 </section>
 
-
-
+<!-- PRICE-LIST-INDIA -->
+<section id="India-Pricelist-2026-2027-section" class="section">
+<h2>India-Pricelist-2026-2027</h2>
+<iframe src="Kalsnet (KNet) Price List India 2026 -2027.pdf" width="100%" height="600"></iframe>
+</section>
+     
     <!-- Programming Hub (Merged Full Index) -->
     <section id="programming-hub" class="section" aria-hidden="true">
         <!-- Merged content from the KNet Designed Applications index.html -->
@@ -927,6 +943,30 @@ With color-coded interactive buttons, a clean professional design, and Reset/Ref
             if (hub) { hub.style.display = 'none'; hub.setAttribute('aria-hidden','true'); }
             if (!isOpen) { brochure.style.display = 'block'; brochure.setAttribute('aria-hidden','false'); brochure.scrollIntoView({behavior:'smooth'}); }
         }
+       
+
+
+        function togglePrice1() {
+            var hub = document.getElementById('programming-hub');
+            var brochure = document.getElementById('knet-brochure-section');
+            if (!brochure) return;
+            var isOpen = (brochure.style.display === 'block');
+            brochure.style.display = 'none'; brochure.setAttribute('aria-hidden','true');
+            if (hub) { hub.style.display = 'none'; hub.setAttribute('aria-hidden','true'); }
+            if (!isOpen) { brochure.style.display = 'block'; brochure.setAttribute('aria-hidden','false'); brochure.scrollIntoView({behavior:'smooth'}); }
+        }
+
+        function togglePrice2() {
+            var hub = document.getElementById('programming-hub');
+            var brochure = document.getElementById('knet-brochure-section');
+            if (!brochure) return;
+            var isOpen = (brochure.style.display === 'block');
+            brochure.style.display = 'none'; brochure.setAttribute('aria-hidden','true');
+            if (hub) { hub.style.display = 'none'; hub.setAttribute('aria-hidden','true'); }
+            if (!isOpen) { brochure.style.display = 'block'; brochure.setAttribute('aria-hidden','false'); brochure.scrollIntoView({behavior:'smooth'}); }
+        }
+
+        
 
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
