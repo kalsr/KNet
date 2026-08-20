@@ -1,25 +1,17 @@
-
-
-
 # GraphDB Insights Studio
 # Developed by Randy Singh - Kalsnet (KNet) Consulting
-
 # A Streamlit application demonstrating graph-database concepts using an
 # in-memory graph engine (NetworkX). Supports synthetic data generation,
 # real data upload, interactive visualization, graph queries, and export
 # of results to PDF, Word, TXT and CSV.
-
-
 import io
 import random
 from datetime import date, timedelta
-
 import pandas as pd
 import networkx as nx
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
-
 # Optional export libraries
 from docx import Document
 from docx.shared import Pt, RGBColor
@@ -27,44 +19,38 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
-
-st.set_page_config(page_title="GraphDB Insights Studio", layout="wide", page_icon="🕸️")
-
+st.set_page_config(page_title="GraphDB Insights Studio", layout="wide")
 # ----------------------------------------------------------------------------
 # TITLE BAR
 # ----------------------------------------------------------------------------
 st.markdown(
     """
     <style>
-    .title-bar {font-size:42px; font-weight:800; color:#0033CC; margin-bottom:0;}
-    .subtitle-bar {font-size:22px; font-weight:800; color:#0033CC; margin-top:0;}
+    .title-bar {font-size:54px; font-weight:900; color:#0033CC; margin-bottom:0; text-align:center;}
+    .subtitle-bar {font-size:24px; font-weight:900; color:#0033CC; margin-top:0; text-align:center;}
     .section-header {font-size:24px; font-weight:700; color:#0033CC; margin-top:25px;}
     </style>
-    <p class="title-bar">🕸️ GraphDB Insights Studio</p>
+    <p class="title-bar">GraphDB Insights Studio</p>
     <p class="subtitle-bar">Developed by Randy Singh from Kalsnet (KNet) Consulting</p>
     <hr style="border:2px solid #0033CC;">
     """,
     unsafe_allow_html=True,
 )
-
 REQUIRED_COLS = ["record_id", "source_type", "source_id", "source_name", "relationship",
                   "target_type", "target_id", "target_name", "weight", "record_date"]
-
 # ----------------------------------------------------------------------------
 # EXPLAINERS
 # ----------------------------------------------------------------------------
-with st.expander("📘 What is a Graph Database? (click to expand)", expanded=True):
+with st.expander("What is a Graph Database? (click to expand)", expanded=True):
     st.markdown("""
 A **graph database** stores data as a network of **nodes** (entities) and **edges**
 (relationships), instead of rows and tables like a relational database.
-
 | Concept | Relational DB | Graph DB |
 |---|---|---|
 | Core unit | Table / Row | Node / Edge |
 | Relationships | Foreign keys + JOINs | First-class edges, traversed directly |
 | Best for | Structured, tabular reporting | Highly connected data: social networks, fraud detection, recommendation engines, knowledge graphs |
 | Query style | SQL (`SELECT ... JOIN`) | Graph traversal (e.g. Cypher: `MATCH (a)-[:KNOWS]->(b)`) |
-
 **Why it matters:** relationships are stored *directly* on disk as pointers between
 nodes, so multi-hop questions ("who does my colleague's colleague know?") run in
 near-constant time per hop, instead of requiring expensive JOINs that slow down as
@@ -72,25 +58,20 @@ data grows. Popular graph databases include **Neo4j**, **Amazon Neptune**, **Ara
 and **TigerGraph**. This app simulates the same node/edge model in-memory using the
 Python library **NetworkX**, so the concepts transfer directly to a production graph DB.
 """)
-
-with st.expander("📐 Schema Used in This App (click to expand)"):
+with st.expander("Schema Used in This App (click to expand)"):
     st.markdown("""
 This app models a small **enterprise relationship graph** with three node types and
 four relationship (edge) types.
-
 **Node types**
 - **Person** — an individual employee/customer (`id`, `name`, `age`, `city`, `department`)
 - **Company** — an organization (`id`, `name`, `industry`)
 - **Product** — a good or service (`id`, `name`, `category`, `price`)
-
 **Relationship types (edges)**
 - `WORKS_AT` — Person → Company
 - `KNOWS` — Person → Person (social connection)
 - `PURCHASED` — Person → Product
 - `SUPPLIES` — Company → Product
-
 **CSV column meaning (each row = one relationship / edge):**
-
 | Column | Meaning |
 |---|---|
 | `record_id` | Unique identifier for the relationship record |
@@ -104,7 +85,6 @@ four relationship (edge) types.
 | `weight` | Numeric strength of the relationship (years employed, purchase price, friendship strength, quantity supplied) |
 | `record_date` | Date the relationship/event was recorded |
 """)
-
 # ----------------------------------------------------------------------------
 # SYNTHETIC DATA GENERATOR
 # ----------------------------------------------------------------------------
@@ -121,8 +101,6 @@ COMPANY_NAMES = ["Acme Corp","NovaTech","BlueRiver Inc","Summit Systems","Pinnac
 "Bright Path","Cedar Analytics","Horizon Labs","Vertex Solutions"]
 PRODUCT_NAMES = ["DataSync Pro","CloudVault","SecureShield","InsightBoard","AutoFlow","GraphLens",
 "StreamPipe","MetricHub","VisionAI","TeamSpace","CodeForge","NetGuard","PulseCRM","LedgerX","SwiftDeploy"]
-
-
 def generate_synthetic_data(n_persons=30, n_edges=150, seed=None):
     rng = random.Random(seed)
     persons = [{"id": f"P{i:03d}", "name": f"{rng.choice(FIRST_NAMES)} {rng.choice(LAST_NAMES)}",
@@ -132,11 +110,9 @@ def generate_synthetic_data(n_persons=30, n_edges=150, seed=None):
                  for i, name in enumerate(COMPANY_NAMES, start=1)]
     products = [{"id": f"PR{i:02d}", "name": name, "category": rng.choice(PRODUCT_CATS),
                  "price": round(rng.uniform(49, 4999), 2)} for i, name in enumerate(PRODUCT_NAMES, start=1)]
-
     def rand_date():
         start = date(2023, 1, 1)
         return (start + timedelta(days=rng.randint(0, 900))).isoformat()
-
     rows, rid = [], 1
     for p in persons:
         c = rng.choice(companies)
@@ -158,8 +134,6 @@ def generate_synthetic_data(n_persons=30, n_edges=150, seed=None):
                          rng.randint(1, 500), rand_date()])
         rid += 1
     return pd.DataFrame(rows, columns=REQUIRED_COLS)
-
-
 def build_graph(df):
     G = nx.DiGraph()
     for _, r in df.iterrows():
@@ -167,11 +141,7 @@ def build_graph(df):
         G.add_node(r["target_id"], label=r["target_name"], type=r["target_type"])
         G.add_edge(r["source_id"], r["target_id"], relationship=r["relationship"], weight=r["weight"])
     return G
-
-
 NODE_COLORS = {"Person": "#1f77b4", "Company": "#ff7f0e", "Product": "#2ca02c"}
-
-
 def plotly_network(G, max_nodes=120):
     if G.number_of_nodes() > max_nodes:
         nodes_subset = list(G.nodes)[:max_nodes]
@@ -199,23 +169,17 @@ def plotly_network(G, max_nodes=120):
                                        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                                        height=520, plot_bgcolor="white"))
     return fig
-
-
 # ----------------------------------------------------------------------------
 # EXPORT HELPERS
 # ----------------------------------------------------------------------------
 def to_csv_bytes(df):
     return df.to_csv(index=False).encode("utf-8")
-
-
 def to_txt_bytes(df, title):
     buf = io.StringIO()
     buf.write(f"{title}\nGenerated by GraphDB Insights Studio - Randy Singh, Kalsnet (KNet) Consulting\n")
     buf.write("=" * 80 + "\n\n")
     buf.write(df.to_string(index=False))
     return buf.getvalue().encode("utf-8")
-
-
 def to_docx_bytes(df, title):
     doc = Document()
     h = doc.add_heading(title, level=1)
@@ -226,7 +190,6 @@ def to_docx_bytes(df, title):
     p.runs[0].font.size = Pt(12)
     p.runs[0].font.color.rgb = RGBColor(0x00, 0x33, 0xCC)
     doc.add_paragraph(" ")
-
     cols = list(df.columns)
     table = doc.add_table(rows=1, cols=len(cols))
     table.style = "Light Grid Accent 1"
@@ -239,8 +202,6 @@ def to_docx_bytes(df, title):
     bio = io.BytesIO()
     doc.save(bio)
     return bio.getvalue()
-
-
 def to_pdf_bytes(df, title):
     bio = io.BytesIO()
     doc = SimpleDocTemplate(bio, pagesize=letter)
@@ -250,7 +211,6 @@ def to_pdf_bytes(df, title):
     elems = [Paragraph(title, title_style),
              Paragraph("Developed by Randy Singh from Kalsnet (KNet) Consulting", styles["Heading3"]),
              Spacer(1, 12)]
-
     max_cols = 6
     cols = list(df.columns)[:max_cols]
     data = [cols] + df[cols].astype(str).values.tolist()
@@ -266,36 +226,31 @@ def to_pdf_bytes(df, title):
     elems.append(t)
     doc.build(elems)
     return bio.getvalue()
-
-
 def export_block(df, key_prefix, title):
-    st.markdown("**⬇️ Export these results:**")
+    st.markdown("**Export these results:**")
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        st.download_button("📄 CSV", to_csv_bytes(df), f"{key_prefix}.csv", "text/csv", key=key_prefix + "csv")
+        st.download_button("CSV", to_csv_bytes(df), f"{key_prefix}.csv", "text/csv", key=key_prefix + "csv")
     with c2:
-        st.download_button("📝 TXT", to_txt_bytes(df, title), f"{key_prefix}.txt", "text/plain", key=key_prefix + "txt")
+        st.download_button("TXT", to_txt_bytes(df, title), f"{key_prefix}.txt", "text/plain", key=key_prefix + "txt")
     with c3:
-        st.download_button("📘 Word", to_docx_bytes(df, title), f"{key_prefix}.docx",
+        st.download_button("Word", to_docx_bytes(df, title), f"{key_prefix}.docx",
                             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                             key=key_prefix + "docx")
     with c4:
-        st.download_button("📕 PDF", to_pdf_bytes(df, title), f"{key_prefix}.pdf", "application/pdf",
+        st.download_button("PDF", to_pdf_bytes(df, title), f"{key_prefix}.pdf", "application/pdf",
                             key=key_prefix + "pdf")
-
-
 # ----------------------------------------------------------------------------
 # SIDEBAR — DATA SOURCE CONTROLS
 # ----------------------------------------------------------------------------
-st.sidebar.markdown("## ⚙️ Data Source")
-data_mode = st.sidebar.radio("Choose data source:", ["🎲 Synthetic Data", "📤 Upload Real Data"])
-
-if data_mode == "🎲 Synthetic Data":
+st.sidebar.markdown("## Data Source")
+data_mode = st.sidebar.radio("Choose data source:", ["Synthetic Data", "Upload Real Data"])
+if data_mode == "Synthetic Data":
     st.sidebar.markdown("### Synthetic Data Generator")
     n_persons = st.sidebar.slider("Number of Person nodes", 10, 80, 30)
     n_edges = st.sidebar.slider("Number of relationship records", 50, 300, 150)
     seed = st.sidebar.number_input("Random seed", value=42, step=1)
-    if st.sidebar.button("🔄 Generate Synthetic Data", type="primary"):
+    if st.sidebar.button("Generate Synthetic Data", type="primary"):
         st.session_state["df"] = generate_synthetic_data(n_persons, n_edges, seed)
     if "df" not in st.session_state:
         st.session_state["df"] = generate_synthetic_data(n_persons, n_edges, seed)
@@ -317,36 +272,31 @@ else:
     if "df" not in st.session_state:
         st.session_state["df"] = generate_synthetic_data(30, 150, 42)
         st.sidebar.info("No file uploaded yet — showing default synthetic data.")
-
 df = st.session_state["df"]
 G = build_graph(df)
-
 st.sidebar.markdown("---")
 st.sidebar.metric("Total Relationship Records", len(df))
 st.sidebar.metric("Total Nodes (entities)", G.number_of_nodes())
 st.sidebar.metric("Total Edges (relationships)", G.number_of_edges())
-
 # ----------------------------------------------------------------------------
 # TABS — USE CASES
 # ----------------------------------------------------------------------------
 tab1, tab2, tab3, tab4 = st.tabs([
-    "🕸️ 1. Network Explorer",
-    "🔎 2. Shortest Path Finder",
-    "🏆 3. Influence & Centrality",
-    "📊 4. Relationship Analytics",
+    "1. Network Explorer",
+    "2. Shortest Path Finder",
+    "3. Influence & Centrality",
+    "4. Relationship Analytics",
 ])
-
 # --- TAB 1: Network Explorer ---
 with tab1:
     st.markdown('<p class="section-header">Use Case 1: Interactive Network Explorer</p>', unsafe_allow_html=True)
-    st.write("""This view renders the raw graph — every **node** (Person 🔵, Company 🟠, Product 🟢) and
+    st.write("""This view renders the raw graph — every **node** (Person - blue, Company - orange, Product - green) and
     every **edge** (relationship) connecting them. In a real graph database this is equivalent to
     running `MATCH (n)-[r]-(m) RETURN n, r, m` and visualizing the result.""")
     fig1 = plotly_network(G)
     st.plotly_chart(fig1, use_container_width=True)
     st.dataframe(df, use_container_width=True, height=250)
     export_block(df, "network_explorer", "GraphDB Insights Studio - Network Explorer Results")
-
 # --- TAB 2: Shortest Path ---
 with tab2:
     st.markdown('<p class="section-header">Use Case 2: Shortest Path Finder</p>', unsafe_allow_html=True)
@@ -361,9 +311,8 @@ with tab2:
         dst_label = st.selectbox("To node:", list(node_options.keys()),
                                   index=min(1, len(node_options) - 1))
     src, dst = node_options[src_label], node_options[dst_label]
-
     path_df = pd.DataFrame()
-    if st.button("🔍 Find Shortest Path"):
+    if st.button("Find Shortest Path"):
         try:
             UG = G.to_undirected()
             path = nx.shortest_path(UG, src, dst)
@@ -382,12 +331,10 @@ with tab2:
             st.warning("No path exists between these two nodes in the current graph.")
         except Exception as e:
             st.error(f"Error: {e}")
-
     if not path_df.empty:
         export_block(path_df, "shortest_path", "GraphDB Insights Studio - Shortest Path Results")
     else:
         st.info("Run a search above to enable export of the path results.")
-
 # --- TAB 3: Centrality ---
 with tab3:
     st.markdown('<p class="section-header">Use Case 3: Influence & Centrality Analysis</p>', unsafe_allow_html=True)
@@ -395,7 +342,6 @@ with tab3:
     detection, key-influencer identification, and recommendation systems.
     - **Degree centrality**: how many direct connections a node has.
     - **Betweenness centrality**: how often a node sits on the shortest path between others (a "broker").""")
-
     UG = G.to_undirected()
     deg_cent = nx.degree_centrality(UG)
     bet_cent = nx.betweenness_centrality(UG)
@@ -405,24 +351,19 @@ with tab3:
          "connections": UG.degree(n)}
         for n in G.nodes()
     ]).sort_values("degree_centrality", ascending=False).reset_index(drop=True)
-
     top_n = st.slider("Show top N most-connected nodes", 5, 30, 10)
     top_df = cent_df.head(top_n)
-
     fig2 = px.bar(top_df, x="name", y="connections", color="type",
                   color_discrete_map=NODE_COLORS, title="Top Nodes by Number of Connections")
     fig2.update_layout(xaxis_tickangle=-40)
     st.plotly_chart(fig2, use_container_width=True)
-
     st.dataframe(cent_df, use_container_width=True, height=250)
     export_block(cent_df, "centrality_analysis", "GraphDB Insights Studio - Centrality Analysis Results")
-
 # --- TAB 4: Relationship Analytics ---
 with tab4:
     st.markdown('<p class="section-header">Use Case 4: Relationship Type Analytics</p>', unsafe_allow_html=True)
     st.write("""Aggregate view of relationship types across the graph — useful for understanding overall
     graph composition, e.g. how many `PURCHASED` vs `KNOWS` vs `WORKS_AT` edges exist.""")
-
     rel_counts = df["relationship"].value_counts().reset_index()
     rel_counts.columns = ["relationship", "count"]
     c1, c2 = st.columns(2)
@@ -436,13 +377,11 @@ with tab4:
         fig4 = px.bar(type_counts, x="node_type", y="count", title="Node Type Frequency in Relationships",
                        color="node_type", color_discrete_map=NODE_COLORS)
         st.plotly_chart(fig4, use_container_width=True)
-
     if "weight" in df.columns:
         purchase_df = df[df["relationship"] == "PURCHASED"]
         if not purchase_df.empty:
             fig5 = px.histogram(purchase_df, x="weight", nbins=20, title="Distribution of Purchase Amounts ($)")
             st.plotly_chart(fig5, use_container_width=True)
-
     summary_df = rel_counts.merge(
         df.groupby("relationship")["weight"].agg(["mean", "min", "max"]).reset_index(),
         on="relationship"
@@ -450,7 +389,6 @@ with tab4:
     summary_df.columns = ["relationship", "count", "avg_weight", "min_weight", "max_weight"]
     st.dataframe(summary_df, use_container_width=True)
     export_block(summary_df, "relationship_analytics", "GraphDB Insights Studio - Relationship Analytics Summary")
-
 st.markdown("---")
-st.caption("GraphDB Insights Studio · In-memory graph engine powered by NetworkX · "
+st.caption("GraphDB Insights Studio - In-memory graph engine powered by NetworkX - "
            "Developed by Randy Singh, Kalsnet (KNet) Consulting")
