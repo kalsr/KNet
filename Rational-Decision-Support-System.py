@@ -1,33 +1,24 @@
-
-
 # Rational Decision Support System (RDSS)
 # Developed by Randy Singh - Kalsnet (KNet) Consulting
-
 # A Streamlit application applying Rational Choice Theory / Multi-Attribute
 # Utility Theory (MAUT) and Expected Utility Theory to three decision domains:
- # 1. Strategic Decision-Making
- # 2. Resource Allocation
- # 3. Threat Assessment
-
+# 1. Strategic Decision-Making
+# 2. Resource Allocation
+# 3. Threat Assessment
 # Supports synthetic demo data generation, real data upload (CSV/XLSX),
 # interactive visualizations, and export to PDF, Word, TXT, and CSV.
 
-
 import io
 import datetime as dt
-
 import numpy as np
 import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-
 from scipy.optimize import linprog
-
 from docx import Document
 from docx.shared import Inches, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors as rl_colors
@@ -39,13 +30,13 @@ from reportlab.platypus import (
 # --------------------------------------------------------------------------
 # GLOBAL CONFIG / BRANDING
 # --------------------------------------------------------------------------
-
 BRAND_NAME = "Kalsnet (KNet) Consulting"
 DEVELOPER = "Randy Singh"
 NAVY = "#0A2F5C"
 BLUE = "#0E4C92"
 ACCENT_GOLD = "#C9A227"
 LIGHT_BG = "#F4F7FB"
+DEV_BLUE = "#3FA7FF"
 
 st.set_page_config(
     page_title="Rational Decision Support System | KNet Consulting",
@@ -77,6 +68,13 @@ CUSTOM_CSS = f"""
         margin: 4px 0 0 0;
         font-size: 15px;
         font-weight: 500;
+    }}
+    .knet-title-bar .knet-dev-credit {{
+        color: {DEV_BLUE};
+        font-weight: 800;
+        font-size: 14px;
+        margin: 8px 0 0 0;
+        letter-spacing: 0.3px;
     }}
     .knet-subheader {{
         background-color: #FFFFFF;
@@ -129,6 +127,7 @@ def title_bar(subtitle: str):
         <div class="knet-title-bar">
             <h1>RATIONAL DECISION SUPPORT SYSTEM</h1>
             <p>{subtitle}</p>
+            <p class="knet-dev-credit">Developed by Randy Singh from Kalsnet (KNet) Consulting Team</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -151,7 +150,6 @@ def footer():
 # --------------------------------------------------------------------------
 # EXPORT HELPERS
 # --------------------------------------------------------------------------
-
 def fig_to_png_buffer(fig) -> io.BytesIO:
     buf = io.BytesIO()
     fig.savefig(buf, format="png", dpi=160, bbox_inches="tight")
@@ -185,22 +183,17 @@ def df_to_txt_bytes(title: str, subtitle: str, notes: str, df: pd.DataFrame) -> 
 def build_word_report(title: str, subtitle: str, notes: str, df: pd.DataFrame,
                        chart_buf: io.BytesIO = None) -> io.BytesIO:
     doc = Document()
-
     heading = doc.add_heading(title, level=1)
     for run in heading.runs:
         run.font.color.rgb = RGBColor(0x0A, 0x2F, 0x5C)
-
     p = doc.add_paragraph(subtitle)
     p.runs[0].italic = True
-
     meta = doc.add_paragraph()
     meta.add_run(f"Generated: {dt.datetime.now():%Y-%m-%d %H:%M}\n").font.size = Pt(10)
     meta.add_run(f"Prepared by: {DEVELOPER} - {BRAND_NAME}").font.size = Pt(10)
-
     if notes:
         doc.add_heading("Summary & Rationale", level=2)
         doc.add_paragraph(notes)
-
     doc.add_heading("Supporting Data", level=2)
     table = doc.add_table(rows=1, cols=len(df.columns))
     table.style = "Light Grid Accent 1"
@@ -213,17 +206,14 @@ def build_word_report(title: str, subtitle: str, notes: str, df: pd.DataFrame,
         cells = table.add_row().cells
         for i, val in enumerate(row):
             cells[i].text = f"{val:.3f}" if isinstance(val, float) else str(val)
-
     if chart_buf is not None:
         doc.add_heading("Visualization", level=2)
         doc.add_picture(chart_buf, width=Inches(6.0))
-
     footer_p = doc.add_paragraph()
     footer_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     run = footer_p.add_run(f"{BRAND_NAME} - Confidential Analysis")
     run.font.size = Pt(9)
     run.font.color.rgb = RGBColor(0x80, 0x80, 0x80)
-
     out = io.BytesIO()
     doc.save(out)
     out.seek(0)
@@ -248,7 +238,6 @@ def build_pdf_report(title: str, subtitle: str, notes: str, df: pd.DataFrame,
         "KNetSection", parent=styles["Heading2"],
         textColor=rl_colors.HexColor(BLUE), fontSize=13, spaceBefore=10, spaceAfter=6
     )
-
     elements = [
         Paragraph(title, title_style),
         Paragraph(subtitle, sub_style),
@@ -256,12 +245,10 @@ def build_pdf_report(title: str, subtitle: str, notes: str, df: pd.DataFrame,
         Paragraph(f"Prepared by: {DEVELOPER} - {BRAND_NAME}", sub_style),
         Spacer(1, 10),
     ]
-
     if notes:
         elements.append(Paragraph("Summary &amp; Rationale", section_style))
         elements.append(Paragraph(notes, styles["Normal"]))
         elements.append(Spacer(1, 8))
-
     elements.append(Paragraph("Supporting Data", section_style))
     data = [list(df.columns)] + df.round(3).astype(str).values.tolist()
     tbl = Table(data, repeatRows=1)
@@ -275,13 +262,11 @@ def build_pdf_report(title: str, subtitle: str, notes: str, df: pd.DataFrame,
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
     ]))
     elements.append(tbl)
-
     if chart_buf is not None:
         elements.append(Spacer(1, 12))
         elements.append(Paragraph("Visualization", section_style))
         chart_buf.seek(0)
         elements.append(RLImage(chart_buf, width=440, height=260))
-
     doc.build(elements)
     buf.seek(0)
     return buf
@@ -331,7 +316,6 @@ def blue_bar_chart(categories, values, ylabel, title):
 # --------------------------------------------------------------------------
 # THEORY / FORMULA / SCHEMA EXPLAINER (educational panel shown atop each module)
 # --------------------------------------------------------------------------
-
 def render_explainer_section(icon: str, use_case_title: str, how_it_works_md: str,
                               formula_md: str, field_ref: pd.DataFrame,
                               schema_preview: pd.DataFrame, expanded: bool = True):
@@ -347,13 +331,10 @@ def render_explainer_section(icon: str, use_case_title: str, how_it_works_md: st
                       expanded=expanded):
         st.markdown("###### Plain-Language Explanation")
         st.markdown(how_it_works_md)
-
         st.markdown("###### Formula(s) Applied")
         st.markdown(formula_md)
-
         st.markdown("###### Field Reference and Relevance")
         st.dataframe(field_ref, use_container_width=True, hide_index=True)
-
         st.markdown("###### Sample Data Schema Scan (illustrative preview)")
         st.caption("A sample of demo records showing every field described above, populated with example values.")
         st.dataframe(schema_preview, use_container_width=True, hide_index=True)
@@ -362,7 +343,6 @@ def render_explainer_section(icon: str, use_case_title: str, how_it_works_md: st
 # --------------------------------------------------------------------------
 # DATA UPLOAD HELPER
 # --------------------------------------------------------------------------
-
 def data_source_selector(demo_generator, required_cols, key):
     mode = st.radio(
         "Data Source", ["Synthetic Demo Data", "Upload Real Data (CSV / XLSX)"],
@@ -392,7 +372,6 @@ def data_source_selector(demo_generator, required_cols, key):
 # --------------------------------------------------------------------------
 # PAGE 1: STRATEGIC DECISION-MAKING  (Multi-Attribute Utility Theory)
 # --------------------------------------------------------------------------
-
 CRITERIA = ["Market_Growth", "Cost_Efficiency", "Risk_Level_Inv", "Innovation", "Feasibility"]
 
 
@@ -407,7 +386,6 @@ def gen_strategy_demo(seed):
 
 def page_strategic():
     title_bar("Strategic Decision-Making - Multi-Attribute Utility Theory (MAUT)")
-
     strat_field_ref = pd.DataFrame([
         {"Field": "Alternative", "Type": "Text (identifier)",
          "Description": "The name of the candidate strategy being evaluated (e.g. 'Strategy A').",
@@ -437,7 +415,6 @@ def page_strategic():
     strat_schema_preview = gen_strategy_demo(42).assign(
         Rational_Utility_Score="(computed after weights are set)", Rank="(computed)"
     )
-
     render_explainer_section(
         icon="",
         use_case_title="Strategic Decision-Making",
@@ -468,7 +445,6 @@ def page_strategic():
         field_ref=strat_field_ref,
         schema_preview=strat_schema_preview,
     )
-
     st.markdown(
         """<div class="knet-subheader">
         Rational Choice Theory holds that an actor facing several strategic
@@ -478,10 +454,8 @@ def page_strategic():
         </div>""",
         unsafe_allow_html=True,
     )
-
     df = data_source_selector(gen_strategy_demo, ["Alternative"] + CRITERIA, "strat")
     criteria_present = [c for c in CRITERIA if c in df.columns]
-
     st.markdown('<div class="knet-card">', unsafe_allow_html=True)
     st.markdown("**Assign Criterion Weights** (rational preference structure - auto-normalized to sum to 1)")
     cols = st.columns(len(criteria_present))
@@ -494,22 +468,18 @@ def page_strategic():
     total_w = sum(raw_weights.values()) or 1
     weights = {c: w / total_w for c, w in raw_weights.items()}
     st.markdown("</div>", unsafe_allow_html=True)
-
     norm = df.copy()
     for c in criteria_present:
         col = df[c].astype(float)
         rng_ = (col.max() - col.min()) or 1
         norm[c] = (col - col.min()) / rng_
-
     norm["Rational_Utility_Score"] = sum(norm[c] * weights[c] for c in criteria_present)
     result = df.copy()
     result["Rational_Utility_Score"] = norm["Rational_Utility_Score"].round(3)
     result = result.sort_values("Rational_Utility_Score", ascending=False).reset_index(drop=True)
     result.insert(0, "Rank", result.index + 1)
-
     st.subheader("Ranked Alternatives")
     st.dataframe(result, use_container_width=True, hide_index=True)
-
     top = result.iloc[0]
     notes = (
         f"Based on the weighted-utility model, '{top['Alternative']}' is the rational choice "
@@ -520,12 +490,10 @@ def page_strategic():
     st.markdown('<div class="knet-card">', unsafe_allow_html=True)
     st.markdown(f"**Rational Recommendation:** {notes}")
     st.markdown("</div>", unsafe_allow_html=True)
-
     fig = blue_bar_chart(result["Alternative"], result["Rational_Utility_Score"],
                           "Utility Score", "Strategic Alternatives - Rational Utility Ranking")
     st.pyplot(fig)
     chart_buf = fig_to_png_buffer(fig)
-
     render_export_bar("strategic_decision", "Strategic Decision-Making Report",
                        "Multi-Attribute Utility Theory Analysis", notes, result, chart_buf)
     footer()
@@ -534,7 +502,6 @@ def page_strategic():
 # --------------------------------------------------------------------------
 # PAGE 2: RESOURCE ALLOCATION  (Constrained Utility Maximization)
 # --------------------------------------------------------------------------
-
 def gen_resource_demo(seed):
     rng = np.random.default_rng(seed)
     names = [f"Initiative {c}" for c in "PQRSTU"]
@@ -554,7 +521,6 @@ def gen_resource_demo(seed):
 
 def page_resource():
     title_bar("Resource Allocation - Constrained Rational Utility Maximization")
-
     res_field_ref = pd.DataFrame([
         {"Field": "Initiative", "Type": "Text (identifier)",
          "Description": "Name of the project, department, or initiative competing for funding.",
@@ -581,7 +547,6 @@ def page_resource():
     res_schema_preview = gen_resource_demo(42).assign(
         Allocated="(computed by optimizer)", **{"% of Budget": "(computed)"}
     )
-
     render_explainer_section(
         icon="",
         use_case_title="Resource Allocation",
@@ -612,7 +577,6 @@ def page_resource():
         field_ref=res_field_ref,
         schema_preview=res_schema_preview,
     )
-
     st.markdown(
         """<div class="knet-subheader">
         Under scarcity, rational actors allocate limited resources to maximize
@@ -622,31 +586,25 @@ def page_resource():
         </div>""",
         unsafe_allow_html=True,
     )
-
     req_cols = ["Initiative", "Expected_Utility", "Risk_Factor", "Min_Allocation", "Max_Allocation"]
     df = data_source_selector(gen_resource_demo, req_cols, "res")
-
     st.markdown('<div class="knet-card">', unsafe_allow_html=True)
     total_budget = st.slider("Total Available Budget (units)", 20, 500,
                               int(df["Min_Allocation"].sum() + df["Max_Allocation"].sum()) // 3, step=5)
     risk_aversion = st.slider("Risk Aversion Factor (penalizes risky initiatives)", 0.0, 1.0, 0.3, 0.05)
     st.markdown("</div>", unsafe_allow_html=True)
-
     n = len(df)
     adj_utility = df["Expected_Utility"] - risk_aversion * df["Risk_Factor"]
     c = -adj_utility.values  # linprog minimizes, so negate to maximize
     A_ub = [np.ones(n)]
     b_ub = [total_budget]
     bounds = list(zip(df["Min_Allocation"].values, df["Max_Allocation"].values))
-
     feasible_min = df["Min_Allocation"].sum()
     if feasible_min > total_budget:
         st.error(f"Budget ({total_budget}) is below the sum of minimum commitments "
                   f"({feasible_min}). Increase budget or adjust minimums.")
         return
-
     res_lp = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method="highs")
-
     result = df.copy()
     if res_lp.success:
         result["Allocated"] = np.round(res_lp.x, 2)
@@ -654,13 +612,10 @@ def page_resource():
         st.warning("Optimizer could not find an optimal solution; showing proportional fallback.")
         weights_fallback = adj_utility / adj_utility.sum()
         result["Allocated"] = np.round(weights_fallback * total_budget, 2)
-
     result["% of Budget"] = (result["Allocated"] / result["Allocated"].sum() * 100).round(1)
     result = result.sort_values("Allocated", ascending=False).reset_index(drop=True)
-
     st.subheader("Rational Resource Allocation Plan")
     st.dataframe(result, use_container_width=True, hide_index=True)
-
     top = result.iloc[0]
     notes = (
         f"Given a total budget of {total_budget} units and a risk-aversion factor of {risk_aversion}, "
@@ -672,13 +627,11 @@ def page_resource():
     st.markdown('<div class="knet-card">', unsafe_allow_html=True)
     st.markdown(f"**Rational Recommendation:** {notes}")
     st.markdown("</div>", unsafe_allow_html=True)
-
     fig, axes = plt.subplots(1, 2, figsize=(10, 4.2))
     axes[0].pie(result["Allocated"], labels=result["Initiative"], autopct="%1.0f%%",
                 colors=cm.Blues(np.linspace(0.4, 0.85, len(result))),
                 wedgeprops={"edgecolor": "white"})
     axes[0].set_title("Allocation Share", color=NAVY, fontweight="bold")
-
     x = np.arange(len(result))
     axes[1].bar(x - 0.2, result["Max_Allocation"], width=0.4, label="Max Requested", color="#B7C9E2")
     axes[1].bar(x + 0.2, result["Allocated"], width=0.4, label="Allocated", color=NAVY)
@@ -690,7 +643,6 @@ def page_resource():
     fig.tight_layout()
     st.pyplot(fig)
     chart_buf = fig_to_png_buffer(fig)
-
     render_export_bar("resource_allocation", "Resource Allocation Report",
                        "Constrained Utility-Maximization Analysis", notes, result, chart_buf)
     footer()
@@ -699,7 +651,6 @@ def page_resource():
 # --------------------------------------------------------------------------
 # PAGE 3: THREAT ASSESSMENT  (Expected-Value Risk Scoring)
 # --------------------------------------------------------------------------
-
 def gen_threat_demo(seed):
     rng = np.random.default_rng(seed)
     names = ["Cyber Intrusion", "Supply Chain Disruption", "Insider Threat",
@@ -722,7 +673,6 @@ def categorize_risk(score):
 
 def page_threat():
     title_bar("Threat Assessment - Expected-Value Risk Scoring")
-
     threat_field_ref = pd.DataFrame([
         {"Field": "Threat", "Type": "Text (identifier)",
          "Description": "Name or short description of the threat scenario being assessed.",
@@ -746,7 +696,6 @@ def page_threat():
     threat_schema_preview = gen_threat_demo(42).assign(
         Risk_Score="(computed = Likelihood x Impact)", Risk_Category="(computed)"
     )
-
     render_explainer_section(
         icon="",
         use_case_title="Threat Assessment",
@@ -777,7 +726,6 @@ def page_threat():
         field_ref=threat_field_ref,
         schema_preview=threat_schema_preview,
     )
-
     st.markdown(
         """<div class="knet-subheader">
         Rational threat assessment treats risk as an expected-value problem:
@@ -787,22 +735,28 @@ def page_threat():
         </div>""",
         unsafe_allow_html=True,
     )
-
     df = data_source_selector(gen_threat_demo, ["Threat", "Likelihood", "Impact"], "threat")
-
     result = df.copy()
     result["Risk_Score"] = result["Likelihood"] * result["Impact"]
     result["Risk_Category"] = result["Risk_Score"].apply(categorize_risk)
     result = result.sort_values("Risk_Score", ascending=False).reset_index(drop=True)
     result.insert(0, "Priority_Rank", result.index + 1)
-
     st.subheader("Prioritized Threat Register")
+
     def highlight_cat(val):
         colors_map = {"Low": "#D9F2D9", "Medium": "#FFF3C4",
                       "High": "#FFD9B3", "Critical": "#FFB3B3"}
         return f"background-color: {colors_map.get(val, '')}"
-    st.dataframe(result.style.applymap(highlight_cat, subset=["Risk_Category"]),
-                 use_container_width=True, hide_index=True)
+
+    # NOTE: pandas 2.1+ renamed Styler.applymap -> Styler.map, and pandas 3.x
+    # removed applymap entirely. Use .map when available, falling back to
+    # .applymap on older pandas so this keeps working either way.
+    styler = result.style
+    if hasattr(styler, "map"):
+        styler = styler.map(highlight_cat, subset=["Risk_Category"])
+    else:
+        styler = styler.applymap(highlight_cat, subset=["Risk_Category"])
+    st.dataframe(styler, use_container_width=True, hide_index=True)
 
     top = result.iloc[0]
     crit_count = (result["Risk_Category"] == "Critical").sum()
@@ -816,9 +770,7 @@ def page_threat():
     st.markdown('<div class="knet-card">', unsafe_allow_html=True)
     st.markdown(f"**Rational Recommendation:** {notes}")
     st.markdown("</div>", unsafe_allow_html=True)
-
     fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.4))
-
     cat_colors = {"Low": "#4CAF50", "Medium": "#E8B93B", "High": "#E8792B", "Critical": "#C62828"}
     for cat, sub in result.groupby("Risk_Category"):
         axes[0].scatter(sub["Likelihood"], sub["Impact"],
@@ -834,7 +786,6 @@ def page_threat():
     axes[0].set_ylim(0, 6)
     axes[0].legend(fontsize=7, loc="upper left")
     axes[0].spines[["top", "right"]].set_visible(False)
-
     bar_colors = [cat_colors[c] for c in result["Risk_Category"]]
     axes[1].barh(result["Threat"], result["Risk_Score"], color=bar_colors, edgecolor="white")
     axes[1].invert_yaxis()
@@ -844,7 +795,6 @@ def page_threat():
     fig.tight_layout()
     st.pyplot(fig)
     chart_buf = fig_to_png_buffer(fig)
-
     render_export_bar("threat_assessment", "Threat Assessment Report",
                        "Expected-Value Risk Scoring Analysis", notes, result, chart_buf)
     footer()
@@ -853,7 +803,6 @@ def page_threat():
 # --------------------------------------------------------------------------
 # PAGE 0: HOME / ABOUT
 # --------------------------------------------------------------------------
-
 def page_home():
     title_bar("Home - Overview of Rational Decision Theory")
     st.markdown(
@@ -884,7 +833,6 @@ def page_home():
         """,
         unsafe_allow_html=True,
     )
-
     st.markdown(
         """
         <div class="knet-card">
@@ -906,7 +854,6 @@ def page_home():
 # --------------------------------------------------------------------------
 # NAVIGATION
 # --------------------------------------------------------------------------
-
 def main():
     st.sidebar.markdown(
         f"""
@@ -926,7 +873,6 @@ def main():
     )
     st.sidebar.markdown("---")
     st.sidebar.caption(f"Developed by {DEVELOPER}\n{BRAND_NAME}")
-
     if page == "Home":
         page_home()
     elif page == "Strategic Decision-Making":
@@ -939,4 +885,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
