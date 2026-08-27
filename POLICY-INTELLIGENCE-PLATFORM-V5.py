@@ -3,24 +3,21 @@
 # Enterprise SaaS Dashboard (Enhanced + Traceability + Export)
 # Developed by Randy Singh from Kalsnet (KNet)
 # =========================================================
-
 import streamlit as st
 from groq import Groq
+import groq
 import json
 import pandas as pd
 from io import BytesIO
 from datetime import datetime
-
 # PDF + Word support
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
-
 from docx import Document
 
 # =========================================================
 # PAGE CONFIG
 # =========================================================
-
 st.set_page_config(
     page_title="AI Governance Platform",
     layout="wide",
@@ -30,18 +27,14 @@ st.set_page_config(
 # =========================================================
 # LIGHT MODE SIDEBAR
 # =========================================================
-
 st.markdown("""
 <style>
-
 .main { background-color: #f5f7fb; }
-
 section[data-testid="stSidebar"] {
     background-color: #ffffff !important;
     color: #111;
     border-right: 1px solid #e6e6e6;
 }
-
 .header {
     background: linear-gradient(90deg, #0B3D91, #1E90FF);
     padding: 18px;
@@ -49,26 +42,22 @@ section[data-testid="stSidebar"] {
     text-align: center;
     margin-bottom: 20px;
 }
-
 .title {
     font-size: 34px;
     font-weight: 900;
     color: white;
 }
-
 .subtitle {
     font-size: 16px;
     font-weight: 900;
     color: #00BFFF;
 }
-
 .card {
     background: white;
     padding: 18px;
     border-radius: 12px;
     border: 1px solid #e5e7eb;
 }
-
 .stButton>button {
     background-color: #1E90FF;
     color: white;
@@ -81,7 +70,6 @@ section[data-testid="stSidebar"] {
 # =========================================================
 # HEADER
 # =========================================================
-
 st.markdown("""
 <div class="header">
     <div class="title">AI GOVERNANCE & PUBLIC POLICY INTELLIGENCE PLATFORM</div>
@@ -94,7 +82,6 @@ st.markdown("""
 # =========================================================
 # NAVIGATION
 # =========================================================
-
 menu = st.sidebar.radio(
     "Navigation",
     ["Dashboard", "Policy Generator", "Compliance Auditor", "Reports", "Settings"]
@@ -103,34 +90,38 @@ menu = st.sidebar.radio(
 # =========================================================
 # GROQ CONFIG
 # =========================================================
-
 st.sidebar.header(" AI Configuration")
-
 api_key = st.sidebar.text_input("Groq API Key", type="password")
-
 st.sidebar.markdown("""
 ###  Get API Key
-- https://console.groq.com  
-- Create account  
-- Generate API key  
-- Paste here  
+- https://console.groq.com
+- Create account
+- Generate API key
+- Paste here
 """)
 
+# NOTE: "mixtral-8x7b-32768" was permanently decommissioned by Groq
+# (shut down March 2025). Requesting it now returns a 404
+# groq.NotFoundError, which is exactly the crash in the traceback.
+# Only currently-supported production model IDs are listed below.
 model = st.sidebar.selectbox(
     "Model",
-    ["llama-3.3-70b-versatile", "mixtral-8x7b-32768"]
+    [
+        "llama-3.3-70b-versatile",
+        "llama-3.1-8b-instant",
+        "gemma2-9b-it",
+        "mistral-saba-24b",
+    ]
 )
 
 # =========================================================
-# KPI TRACEABILITY ENGINE (NEW)
+# KPI TRACEABILITY ENGINE
 # =========================================================
-
 def get_metrics():
     policies = st.session_state.get("policy_count", 128)
     compliance = st.session_state.get("compliance_score", 92)
     risks = st.session_state.get("risk_count", 37)
     reports = st.session_state.get("report_count", 18)
-
     return {
         "Policies": {"value": policies, "source": "policy DB / session_state"},
         "Compliance": {"value": compliance, "source": "audit engine"},
@@ -139,24 +130,20 @@ def get_metrics():
     }
 
 # =========================================================
-# EXPORT FUNCTIONS (NEW)
+# EXPORT FUNCTIONS
 # =========================================================
-
 def export_pdf(text):
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer)
     styles = getSampleStyleSheet()
-
     content = [
         Paragraph("AI Governance Report", styles["Title"]),
         Spacer(1, 12),
         Paragraph(text.replace("\n", "<br/>"), styles["BodyText"])
     ]
-
     doc.build(content)
     buffer.seek(0)
     return buffer
-
 
 def export_word(text):
     doc = Document()
@@ -167,11 +154,9 @@ def export_word(text):
     buffer.seek(0)
     return buffer
 
-
 def export_csv(text):
     df = pd.DataFrame({"report": [text]})
     return df.to_csv(index=False).encode("utf-8")
-
 
 def export_json(text):
     return json.dumps(
@@ -182,19 +167,14 @@ def export_json(text):
 # =========================================================
 # DASHBOARD
 # =========================================================
-
 if menu == "Dashboard":
-
     metrics = get_metrics()
     col1, col2, col3, col4 = st.columns(4)
-
     col1.metric("Policies", metrics["Policies"]["value"], "↑ 12%")
     col2.metric("Compliance", f'{metrics["Compliance"]["value"]}%', "↑ 5%")
     col3.metric("Risks", metrics["Risks"]["value"], "↓ 3%")
     col4.metric("Reports", metrics["Reports"]["value"], "↑ 2")
-
     st.success("System Active — Ready for Policy Generation")
-
     with st.expander(" KPI Data Source Debug Panel"):
         for k, v in metrics.items():
             st.write(f"**{k}** → {v['value']} (Source: {v['source']})")
@@ -202,29 +182,21 @@ if menu == "Dashboard":
 # =========================================================
 # POLICY GENERATOR
 # =========================================================
-
 if menu == "Policy Generator":
-
     st.subheader(" Policy Generator")
-
     org = st.text_input("Organization Name")
     industry = st.selectbox("Industry", ["Government","Defense","Healthcare","Finance"])
     objective = st.selectbox("Objective", ["Cybersecurity Protection","AI Governance","Compliance"])
     risk = st.selectbox("Risk Level", ["Low","Medium","High","Critical"])
-
     extra = st.multiselect("Additional Requirements", [
         "Audit Logging","Encryption","RBAC","Zero Trust"
     ])
-
     req = st.text_area("Custom Requirement")
 
     if st.button("Generate Policy"):
-
         if not api_key:
             st.error("Enter API Key")
         else:
-            client = Groq(api_key=api_key)
-
             prompt = f"""
 Create enterprise policy:
 Org: {org}
@@ -234,19 +206,39 @@ Risk: {risk}
 Controls: {extra}
 Custom: {req}
 """
+            try:
+                client = Groq(api_key=api_key)
+                response = client.chat.completions.create(
+                    model=model,
+                    messages=[
+                        {"role": "system", "content": "Senior governance architect"},
+                        {"role": "user", "content": prompt}
+                    ]
+                )
+                st.session_state["result"] = response.choices[0].message.content
+                # update metrics dynamically
+                st.session_state["policy_count"] = st.session_state.get("policy_count", 128) + 1
 
-            response = client.chat.completions.create(
-                model=model,
-                messages=[
-                    {"role": "system", "content": "Senior governance architect"},
-                    {"role": "user", "content": prompt}
-                ]
-            )
-
-            st.session_state["result"] = response.choices[0].message.content
-
-            # update metrics dynamically
-            st.session_state["policy_count"] = st.session_state.get("policy_count", 128) + 1
+            except groq.NotFoundError:
+                st.error(
+                    f"Model '{model}' was not found on Groq's API. It may have been "
+                    "renamed or decommissioned — pick a different model from the "
+                    "sidebar (see https://console.groq.com/docs/models for the "
+                    "current list) and try again."
+                )
+            except groq.AuthenticationError:
+                st.error(
+                    "Groq rejected your API key. Double-check that you copied it "
+                    "correctly from https://console.groq.com/keys."
+                )
+            except groq.RateLimitError:
+                st.error("Groq rate limit reached. Wait a moment and try again.")
+            except groq.APIStatusError as e:
+                st.error(f"Groq API returned an error (status {e.status_code}): {e}")
+            except groq.APIConnectionError:
+                st.error("Could not reach the Groq API. Check your network connection and try again.")
+            except Exception as e:
+                st.error(f"Unexpected error while generating the policy: {e}")
 
     if "result" in st.session_state:
         st.markdown("### Generated Policy")
@@ -255,17 +247,12 @@ Custom: {req}
 # =========================================================
 # COMPLIANCE AUDITOR
 # =========================================================
-
 if menu == "Compliance Auditor":
-
     text = st.text_area("Paste Policy")
-
     if st.button("Run Audit"):
-
         score = 85
         st.session_state["compliance_score"] = score
         st.session_state["risk_count"] = 37
-
         st.success(f"Compliance Score: {score}%")
         st.write("✔ NIST Alignment")
         st.write("⚠ Improve logging depth")
@@ -273,33 +260,23 @@ if menu == "Compliance Auditor":
 # =========================================================
 # REPORTS (ENHANCED EXPORT)
 # =========================================================
-
 if menu == "Reports":
-
     st.subheader("Reports Dashboard")
-
     if "result" in st.session_state:
-
         report = st.session_state["result"]
-
         st.code(report[:2000])
-
         st.markdown("### Export Report")
-
         st.download_button(" PDF", export_pdf(report), "report.pdf")
         st.download_button(" Word", export_word(report), "report.docx")
         st.download_button(" CSV", export_csv(report), "report.csv")
         st.download_button(" JSON", export_json(report), "report.json")
-
     else:
         st.info("No policy generated yet")
 
 # =========================================================
 # SETTINGS
 # =========================================================
-
 if menu == "Settings":
-
     st.write("Model:", model)
     st.write("API Key:", "Configured" if api_key else "Not Configured")
     st.warning("Advanced settings coming soon")
