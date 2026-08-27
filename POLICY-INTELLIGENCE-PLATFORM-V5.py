@@ -100,17 +100,20 @@ st.sidebar.markdown("""
 - Paste here
 """)
 
-# NOTE: "mixtral-8x7b-32768" was permanently decommissioned by Groq
-# (shut down March 2025). Requesting it now returns a 404
-# groq.NotFoundError, which is exactly the crash in the traceback.
-# Only currently-supported production model IDs are listed below.
+# NOTE: Groq deprecates models on a rolling basis. As of this writing
+# (Aug 2026), "mixtral-8x7b-32768", "gemma2-9b-it", "mistral-saba-24b",
+# "llama-3.1-8b-instant" AND "llama-3.3-70b-versatile" have ALL been
+# shut down and now return a 404 groq.NotFoundError, which is exactly
+# what you hit. Only the models still marked "Production" on
+# https://console.groq.com/docs/models are listed below. If one of
+# these ever 404s again, check that page for the current list.
 model = st.sidebar.selectbox(
     "Model",
     [
-        "llama-3.3-70b-versatile",
-        "llama-3.1-8b-instant",
-        "gemma2-9b-it",
-        "mistral-saba-24b",
+        "openai/gpt-oss-120b",
+        "openai/gpt-oss-20b",
+        "groq/compound",
+        "groq/compound-mini",
     ]
 )
 
@@ -185,7 +188,7 @@ if menu == "Dashboard":
 if menu == "Policy Generator":
     st.subheader(" Policy Generator")
     org = st.text_input("Organization Name")
-    industry = st.selectbox("Industry", ["Government","Defense","Healthcare","Finance"])
+    industry = st.selectbox("Industry", ["Government","Defense","Healthcare","Finance","Manufacturing/Casting & Machining Units"])
     objective = st.selectbox("Objective", ["Cybersecurity Protection","AI Governance","Compliance"])
     risk = st.selectbox("Risk Level", ["Low","Medium","High","Critical"])
     extra = st.multiselect("Additional Requirements", [
