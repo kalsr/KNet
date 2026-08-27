@@ -10,6 +10,7 @@ import json
 import pandas as pd
 from io import BytesIO
 from datetime import datetime
+import html as html_lib
 # PDF + Word support
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
@@ -139,10 +140,23 @@ def export_pdf(text):
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer)
     styles = getSampleStyleSheet()
+
+    # ReportLab's Paragraph runs its own mini-HTML/XML parser on the text
+    # you pass it (that's how it supports tags like <br/>, <b>, <i>...).
+    # The Groq response is free-form LLM text, and if it happens to
+    # contain a raw "<" (e.g. "throughput < 100ms", "<policy_id>", a
+    # stray HTML/markdown fragment, etc.) the parser tries to read it as
+    # the start of a tag and raises "paraparser: syntax error" — that's
+    # the ValueError in the traceback. The fix is to HTML-escape the
+    # text first (so "<", ">", "&" become safe entities) and only THEN
+    # insert our own <br/> tags for line breaks.
+    safe_text = html_lib.escape(text)
+    safe_text = safe_text.replace("\n", "<br/>")
+
     content = [
         Paragraph("AI Governance Report", styles["Title"]),
         Spacer(1, 12),
-        Paragraph(text.replace("\n", "<br/>"), styles["BodyText"])
+        Paragraph(safe_text, styles["BodyText"])
     ]
     doc.build(content)
     buffer.seek(0)
@@ -269,17 +283,52 @@ if menu == "Reports":
         report = st.session_state["result"]
         st.code(report[:2000])
         st.markdown("### Export Report")
-        st.download_button(" PDF", export_pdf(report), "report.pdf")
-        st.download_button(" Word", export_word(report), "report.docx")
-        st.download_button(" CSV", export_csv(report), "report.csv")
-        st.download_button(" JSON", export_json(report), "report.json")
+
+        # Each export format is generated independently and wrapped in its
+        # own try/except so that, say, a PDF-generation edge case can't
+        # take down the CSV/JSON/Word buttons next to it (or the whole tab).
+        col1, col2, col3, col4 = st.columns(4)
+
+        with col1:
+            try:
+                st.download_button(" PDF", export_pdf(report), "report.pdf")
+            except Exception as e:
+                st.error(f"PDF export failed: {e}")
+
+        with col2:
+            try:
+                st.download_button(" Word", export_word(report), "report.docx")
+            except Exception as e:
+                st.error(f"Word export failed: {e}")
+
+        with col3:
+            try:
+                st.download_button(" CSV", export_csv(report), "report.csv")
+            except Exception as e:
+                st.error(f"CSV export failed: {e}")
+
+        with col4:
+            try:
+                st.download_button(" JSON", export_json(report), "report.json")
+            except Exception as e:
+                st.error(f"JSON export failed: {e}")
     else:
         st.info("No policy generated yet")
 
 # =========================================================
 # SETTINGS
 # =========================================================
+# Purpose: a read-only status/diagnostics panel. It doesn't configure
+# anything itself (the actual model + API key controls live in the
+# sidebar, since they need to be visible on every page) — it just lets
+# you confirm at a glance what the app is currently running with,
+# without ever displaying the key itself. It's also the natural home
+# for future app-wide preferences (default industry, export format,
+# theme, etc.) as this dashboard grows.
 if menu == "Settings":
+    st.subheader("Settings")
+    st.caption("Read-only view of the current session configuration. "
+               "Model and API key are set from the sidebar on any page.")
     st.write("Model:", model)
     st.write("API Key:", "Configured" if api_key else "Not Configured")
     st.warning("Advanced settings coming soon")
