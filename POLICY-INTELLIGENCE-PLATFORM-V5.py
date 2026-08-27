@@ -7,14 +7,18 @@ import streamlit as st
 from groq import Groq
 import groq
 import json
+import re
 import pandas as pd
 from io import BytesIO
 from datetime import datetime
 import html as html_lib
 # PDF + Word support
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.colors import HexColor
 from docx import Document
+from docx.shared import Pt, RGBColor
 
 # =========================================================
 # PAGE CONFIG
@@ -136,48 +140,104 @@ def get_metrics():
 # =========================================================
 # EXPORT FUNCTIONS
 # =========================================================
-def export_pdf(text):
+# Brand blue used for the header gradient/subtitle elsewhere in the app —
+# reused here so the report heading matches the app's own look.
+BRAND_BLUE = "#0B3D91"
+
+def clean_report_text(text):
+    """Strip markdown emphasis markers (**bold**, *italic*, "* bullet")
+    that the LLM tends to return, since PDF/Word don't render markdown —
+    left as-is, a raw "*" just looks like clutter in the exported file."""
+    if not text:
+        return ""
+    return re.sub(r"\*+", "", text).strip()
+
+def split_paragraphs(text):
+    """Break cleaned report text into readable paragraphs. Prefers
+    blank-line breaks; falls back to single newlines if the model didn't
+    separate sections with blank lines."""
+    paragraphs = [p.strip() for p in text.split("\n\n") if p.strip()]
+    if len(paragraphs) <= 1:
+        paragraphs = [p.strip() for p in text.split("\n") if p.strip()]
+    return paragraphs
+
+def export_pdf(text, industry="AI Governance Report"):
     buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer)
-    styles = getSampleStyleSheet()
+    doc = SimpleDocTemplate(
+        buffer, pagesize=letter,
+        topMargin=54, bottomMargin=54, leftMargin=54, rightMargin=54
+    )
+
+    # ReportLab has no built-in "Arial" — Helvetica is the standard,
+    # metric-compatible substitute every PDF viewer renders identically
+    # to Arial, without needing a font file bundled/installed on the
+    # server (which Streamlit Cloud doesn't have by default).
+    heading_style = ParagraphStyle(
+        "IndustryHeading",
+        fontName="Helvetica-Bold",
+        fontSize=26,
+        leading=30,
+        textColor=HexColor(BRAND_BLUE),
+        spaceAfter=16,
+    )
+    body_style = ParagraphStyle(
+        "Body",
+        fontName="Helvetica",
+        fontSize=12,
+        leading=18,
+        textColor=HexColor("#111111"),
+        spaceAfter=12,
+    )
 
     # ReportLab's Paragraph runs its own mini-HTML/XML parser on the text
     # you pass it (that's how it supports tags like <br/>, <b>, <i>...).
     # The Groq response is free-form LLM text, and if it happens to
     # contain a raw "<" (e.g. "throughput < 100ms", "<policy_id>", a
     # stray HTML/markdown fragment, etc.) the parser tries to read it as
-    # the start of a tag and raises "paraparser: syntax error" — that's
-    # the ValueError in the traceback. The fix is to HTML-escape the
-    # text first (so "<", ">", "&" become safe entities) and only THEN
-    # insert our own <br/> tags for line breaks.
-    safe_text = html_lib.escape(text)
-    safe_text = safe_text.replace("\n", "<br/>")
+    # the start of a tag and raises "paraparser: syntax error". The fix
+    # is to HTML-escape each paragraph before handing it to Paragraph().
+    cleaned = clean_report_text(text)
+    content = [Paragraph(html_lib.escape(industry or "AI Governance Report"), heading_style)]
+    for para in split_paragraphs(cleaned):
+        content.append(Paragraph(html_lib.escape(para), body_style))
 
-    content = [
-        Paragraph("AI Governance Report", styles["Title"]),
-        Spacer(1, 12),
-        Paragraph(safe_text, styles["BodyText"])
-    ]
     doc.build(content)
     buffer.seek(0)
     return buffer
 
-def export_word(text):
+def export_word(text, industry="AI Governance Report"):
     doc = Document()
-    doc.add_heading("AI Governance Report", 0)
-    doc.add_paragraph(text)
+
+    heading = doc.add_paragraph()
+    run = heading.add_run(industry or "AI Governance Report")
+    run.font.name = "Arial"
+    run.font.size = Pt(26)
+    run.font.bold = True
+    run.font.color.rgb = RGBColor(0x0B, 0x3D, 0x91)
+
+    doc.add_paragraph()  # spacing under the heading
+
+    cleaned = clean_report_text(text)
+    for para_text in split_paragraphs(cleaned):
+        p = doc.add_paragraph()
+        r = p.add_run(para_text)
+        r.font.name = "Arial"
+        r.font.size = Pt(12)
+
     buffer = BytesIO()
     doc.save(buffer)
     buffer.seek(0)
     return buffer
 
-def export_csv(text):
-    df = pd.DataFrame({"report": [text]})
+def export_csv(text, industry="AI Governance Report"):
+    cleaned = clean_report_text(text)
+    df = pd.DataFrame({"industry": [industry], "report": [cleaned]})
     return df.to_csv(index=False).encode("utf-8")
 
-def export_json(text):
+def export_json(text, industry="AI Governance Report"):
+    cleaned = clean_report_text(text)
     return json.dumps(
-        {"report": text, "timestamp": str(datetime.now())},
+        {"industry": industry, "report": cleaned, "timestamp": str(datetime.now())},
         indent=2
     ).encode("utf-8")
 
@@ -233,6 +293,9 @@ Custom: {req}
                     ]
                 )
                 st.session_state["result"] = response.choices[0].message.content
+                # remember which industry this report was generated for,
+                # so the Reports tab can print it as the report heading
+                st.session_state["result_industry"] = industry
                 # update metrics dynamically
                 st.session_state["policy_count"] = st.session_state.get("policy_count", 128) + 1
 
@@ -281,6 +344,7 @@ if menu == "Reports":
     st.subheader("Reports Dashboard")
     if "result" in st.session_state:
         report = st.session_state["result"]
+        report_industry = st.session_state.get("result_industry", "AI Governance Report")
         st.code(report[:2000])
         st.markdown("### Export Report")
 
@@ -291,25 +355,25 @@ if menu == "Reports":
 
         with col1:
             try:
-                st.download_button(" PDF", export_pdf(report), "report.pdf")
+                st.download_button(" PDF", export_pdf(report, report_industry), "report.pdf")
             except Exception as e:
                 st.error(f"PDF export failed: {e}")
 
         with col2:
             try:
-                st.download_button(" Word", export_word(report), "report.docx")
+                st.download_button(" Word", export_word(report, report_industry), "report.docx")
             except Exception as e:
                 st.error(f"Word export failed: {e}")
 
         with col3:
             try:
-                st.download_button(" CSV", export_csv(report), "report.csv")
+                st.download_button(" CSV", export_csv(report, report_industry), "report.csv")
             except Exception as e:
                 st.error(f"CSV export failed: {e}")
 
         with col4:
             try:
-                st.download_button(" JSON", export_json(report), "report.json")
+                st.download_button(" JSON", export_json(report, report_industry), "report.json")
             except Exception as e:
                 st.error(f"JSON export failed: {e}")
     else:
