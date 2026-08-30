@@ -1,9 +1,5 @@
-
-
-
 # CogniReason AI Suite
 # Developed by Randy Singh - Kalsnet (KNet) Consulting Group
-
 # A professional multi-tab Streamlit application demonstrating 20 real-world
 # Reasoning AI use cases, powered by live LLM reasoning (your choice of the
 # Groq API or the Google Gemini API). Each tab includes:
@@ -15,24 +11,19 @@
 # - A "Run AI Reasoning" button that sends a structured prompt + data
     # summary to the selected LLM and displays step-by-step reasoning
     # Export of the results to PDF, Word (.docx), Text (.txt) and CSV
-
-
 import io
 import os
 import json
 from datetime import datetime
-
 import numpy as np
 import pandas as pd
 import requests
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
-
 from docx import Document
 from docx.shared import Pt, Inches, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-
 from reportlab.lib.pagesizes import LETTER
 from reportlab.lib.units import inch
 from reportlab.lib import colors as rl_colors
@@ -40,7 +31,6 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
 )
-
 # --------------------------------------------------------------------------
 # PAGE CONFIG
 # --------------------------------------------------------------------------
@@ -49,10 +39,9 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-
 APP_NAME = "CogniReason AI Suite"
+DISPLAY_TITLE = "AI Reasoning Suite"
 DEVELOPER_LINE = "Developed by Randy Singh &nbsp;|&nbsp; Kalsnet (KNet) Consulting Group"
-
 # --------------------------------------------------------------------------
 # GLOBAL STYLE
 # --------------------------------------------------------------------------
@@ -111,31 +100,34 @@ st.markdown(
         background-color: #0B3D91 !important;
         color: white !important;
     }
+    section[data-testid="stSidebar"] .stRadio [role="radiogroup"] label {
+        background-color: #EEF3FC;
+        border-radius: 8px;
+        padding: 8px 10px;
+        margin-bottom: 4px;
+        width: 100%;
+    }
     hr {margin-top: 6px; margin-bottom: 6px;}
     </style>
     """,
     unsafe_allow_html=True,
 )
-
-st.markdown(f"<div class='main-title'>{APP_NAME}</div>", unsafe_allow_html=True)
+st.markdown(f"<div class='main-title'>{DISPLAY_TITLE}</div>", unsafe_allow_html=True)
 st.markdown(
     f"<div class='sub-title'>{DEVELOPER_LINE} &nbsp; "
     f"<span class='kn-badge'>Reasoning AI - Powered by Groq LLM</span></div>",
     unsafe_allow_html=True,
 )
 st.markdown("<hr>", unsafe_allow_html=True)
-
 # --------------------------------------------------------------------------
 # SIDEBAR - GLOBAL CONFIG
 # --------------------------------------------------------------------------
 with st.sidebar:
     st.markdown("## AI Engine Configuration")
-
     llm_provider = st.radio(
         "AI Provider", ["Groq", "Google Gemini"], horizontal=True,
         help="Pick whichever free API key you have (or want to create).",
     )
-
     if llm_provider == "Groq":
         groq_api_key = st.text_input(
             "Groq API Key",
@@ -147,12 +139,15 @@ with st.sidebar:
         groq_model = st.selectbox(
             "Reasoning Model",
             [
-                "llama-3.3-70b-versatile",
-                "llama-3.1-8b-instant",
-                "mixtral-8x7b-32768",
-                "gemma2-9b-it",
+                "openai/gpt-oss-120b",
+                "openai/gpt-oss-20b",
+                "qwen/qwen3.6-27b",
+                "groq/compound",
+                "groq/compound-mini",
             ],
             index=0,
+            help="Groq retired the older Llama 3.x / Mixtral / Gemma2 chat models. "
+                 "These are the current production/preview models on GroqCloud.",
         )
         gemini_model = None
     else:
@@ -173,22 +168,22 @@ with st.sidebar:
             index=0,
         )
         groq_model = None
-
     reasoning_depth = st.select_slider(
         "Reasoning Depth",
         options=["Concise", "Standard", "Deep Chain-of-Thought"],
         value="Standard",
     )
-
     with st.expander("How to get a FREE Groq or Gemini API key"):
         st.markdown(
             """
-**Option A - Groq (fast, free, Llama/Mixtral/Gemma models)**
+**Option A - Groq (fast, free, Llama/Qwen/GPT-OSS models)**
 1. Go to **console.groq.com** and sign up (Google/GitHub login works).
 2. Open **API Keys** in the left menu -> **Create API Key**.
 3. Copy the key (starts with `gsk_...`) and paste it above.
 4. Groq's free tier gives generous requests/minute - plenty for this app.
-
+5. Groq periodically retires older models - if a model in the dropdown
+   ever returns a "model_not_found" error, check **console.groq.com/docs/models**
+   for the current list and swap in a replacement.
 **Option B - Google Gemini (free, Google account)**
 1. Go to **aistudio.google.com** and sign in with a Google account.
 2. Click **Get API key** -> **Create API key** (choose a Google Cloud
@@ -197,25 +192,22 @@ with st.sidebar:
 3. Copy the key (starts with `AIza...`) and paste it above.
 4. The free tier covers the **Flash** / **Flash-Lite** models selected
    in the dropdown; quotas reset daily.
-
 You only need **one** of the two keys - pick the provider above that
 matches the key you have. Keys are used only in-memory for this
 session and are never written to disk.
             """
         )
-
     st.markdown("---")
     st.caption(
-        "Each tab below can run on **synthetic data** (generated instantly) "
+        "Each use case below can run on **synthetic data** (generated instantly) "
         "or on **your uploaded CSV** matching the documented schema."
     )
     st.markdown("---")
     st.markdown("### Export")
-    st.caption("Every tab has its own PDF / Word / Text / CSV export buttons "
+    st.caption("Every use case has its own PDF / Word / Text / CSV export buttons "
                 "once you've generated data and run AI reasoning.")
     st.markdown("---")
     st.caption("(c) " + str(datetime.now().year) + " Kalsnet (KNet) Consulting Group")
-
 # --------------------------------------------------------------------------
 # GROQ LLM CALL
 # --------------------------------------------------------------------------
@@ -243,11 +235,16 @@ def call_groq(system_prompt: str, user_prompt: str, api_key: str, model: str,
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]
     except requests.exceptions.HTTPError as e:
-        return f"Groq API error: {e} - {resp.text[:300]}"
+        detail = resp.text[:300]
+        if resp.status_code == 404 and "model_not_found" in resp.text:
+            detail += (
+                "\n\nThis Groq model has likely been retired. Pick a different "
+                "model from the sidebar dropdown (see console.groq.com/docs/models "
+                "for the current list)."
+            )
+        return f"Groq API error: {e} - {detail}"
     except Exception as e:
         return f"Error calling Groq API: {e}"
-
-
 def call_gemini(system_prompt: str, user_prompt: str, api_key: str, model: str,
                  max_tokens: int = 1400) -> str:
     if not api_key:
@@ -273,16 +270,12 @@ def call_gemini(system_prompt: str, user_prompt: str, api_key: str, model: str,
         return f"Gemini API error: {e} - {resp.text[:300]}"
     except Exception as e:
         return f"Error calling Gemini API: {e}"
-
-
 def call_llm(system_prompt: str, user_prompt: str) -> str:
     """Routes to whichever provider is selected in the sidebar."""
     if llm_provider == "Groq":
         return call_groq(system_prompt, user_prompt, groq_api_key, groq_model)
     else:
         return call_gemini(system_prompt, user_prompt, gemini_api_key, gemini_model)
-
-
 def depth_instruction(depth: str) -> str:
     return {
         "Concise": "Give a brief, bullet-point reasoning summary (5-8 bullets) and a final recommendation.",
@@ -293,14 +286,11 @@ def depth_instruction(depth: str) -> str:
                                   "(3) weigh conflicting signals, (4) state assumptions, "
                                   "(5) give a final recommendation with a confidence level and caveats.",
     }[depth]
-
 # --------------------------------------------------------------------------
 # EXPORT HELPERS
 # --------------------------------------------------------------------------
 def df_to_csv_bytes(df: pd.DataFrame) -> bytes:
     return df.to_csv(index=False).encode("utf-8")
-
-
 def text_bytes(title: str, description: str, reasoning: str) -> bytes:
     content = (
         f"{APP_NAME}\n{DEVELOPER_LINE.replace('&nbsp;', ' ')}\n"
@@ -309,8 +299,6 @@ def text_bytes(title: str, description: str, reasoning: str) -> bytes:
         f"AI REASONING OUTPUT\n{'-'*60}\n{reasoning}\n"
     )
     return content.encode("utf-8")
-
-
 def build_docx(title: str, description: str, df: pd.DataFrame, reasoning: str) -> bytes:
     doc = Document()
     h = doc.add_heading(APP_NAME, level=0)
@@ -321,7 +309,6 @@ def build_docx(title: str, description: str, df: pd.DataFrame, reasoning: str) -
     doc.add_paragraph(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
     doc.add_heading(title, level=1)
     doc.add_paragraph(description)
-
     if df is not None and len(df):
         doc.add_heading("Data Sample (first 15 rows)", level=2)
         sample = df.head(15)
@@ -334,16 +321,12 @@ def build_docx(title: str, description: str, df: pd.DataFrame, reasoning: str) -
             cells = table.add_row().cells
             for i, col in enumerate(sample.columns):
                 cells[i].text = str(row[col])
-
     doc.add_heading("AI Reasoning Output", level=2)
     for line in reasoning.split("\n"):
         doc.add_paragraph(line)
-
     buf = io.BytesIO()
     doc.save(buf)
     return buf.getvalue()
-
-
 def build_pdf(title: str, description: str, df: pd.DataFrame, reasoning: str) -> bytes:
     buf = io.BytesIO()
     doc = SimpleDocTemplate(buf, pagesize=LETTER,
@@ -362,7 +345,6 @@ def build_pdf(title: str, description: str, df: pd.DataFrame, reasoning: str) ->
         Paragraph(description, styles["Normal"]),
         Spacer(1, 10),
     ]
-
     if df is not None and len(df):
         story.append(Paragraph("Data Sample (first 12 rows)", styles["Heading2"]))
         sample = df.head(12)
@@ -377,22 +359,18 @@ def build_pdf(title: str, description: str, df: pd.DataFrame, reasoning: str) ->
         ]))
         story.append(tbl)
         story.append(Spacer(1, 14))
-
     story.append(Paragraph("AI Reasoning Output", styles["Heading2"]))
     for line in reasoning.split("\n"):
         if line.strip():
             story.append(Paragraph(line.replace("&", "&amp;").replace("<", "&lt;"), styles["Normal"]))
         else:
             story.append(Spacer(1, 6))
-
     doc.build(story)
     return buf.getvalue()
-
 # --------------------------------------------------------------------------
 # SYNTHETIC DATA GENERATORS  (one per use case)
 # --------------------------------------------------------------------------
 rng = np.random.default_rng()
-
 def gen_financial_risk(n):
     df = pd.DataFrame({
         "account_id": [f"ACCT-{1000+i}" for i in range(n)],
@@ -413,7 +391,6 @@ def gen_financial_risk(n):
     df["risk_category"] = pd.cut(df["risk_score"], bins=[-999, 20, 45, 999],
                                   labels=["Low", "Medium", "High"])
     return df
-
 def gen_rca_manufacturing(n):
     planned = rng.integers(400, 480, n)
     downtime = rng.integers(5, 120, n)
@@ -437,7 +414,6 @@ def gen_rca_manufacturing(n):
     df["quality"] = (df["good_units"] / df["actual_output_units"]).round(3)
     df["oee_pct"] = (df["availability"] * df["performance"] * df["quality"] * 100).round(1)
     return df
-
 def gen_medical_diagnosis(n):
     height = rng.uniform(1.5, 1.95, n)
     weight = rng.uniform(50, 130, n)
@@ -456,7 +432,6 @@ def gen_medical_diagnosis(n):
         "Elevated", "Normal"
     )
     return df
-
 def gen_legal_contract(n):
     clause_types = ["Indemnification", "Termination", "Limitation of Liability",
                      "Confidentiality", "Force Majeure", "Payment Terms"]
@@ -477,7 +452,6 @@ def gen_legal_contract(n):
         rating_weight * 1.2
     ).round(1)
     return df
-
 def gen_fraud_detection(n):
     df = pd.DataFrame({
         "txn_id": [f"TXN-{90000+i}" for i in range(n)],
@@ -496,7 +470,6 @@ def gen_fraud_detection(n):
     ).round(1)
     df["fraud_flag"] = np.where(df["fraud_score"] > 40, "Suspicious", "Normal")
     return df
-
 def gen_churn(n):
     tenure = rng.integers(1, 72, n)
     charges = rng.uniform(20, 150, n)
@@ -513,7 +486,6 @@ def gen_churn(n):
     })
     df["churn_probability_pct"] = (churn_prob * 100).round(1)
     return df
-
 def gen_supply_chain(n):
     df = pd.DataFrame({
         "supplier_id": [f"SUP-{300+i}" for i in range(n)],
@@ -530,7 +502,6 @@ def gen_supply_chain(n):
         df["inventory_days_cover"] * 0.3
     ).round(1)
     return df
-
 def gen_credit_underwriting(n):
     income = rng.integers(25000, 220000, n)
     loan = rng.integers(5000, 500000, n)
@@ -551,7 +522,6 @@ def gen_credit_underwriting(n):
         "Approve", "Refer for Manual Review"
     )
     return df
-
 def gen_hr_fit(n):
     exp = rng.integers(0, 20, n)
     skill = rng.uniform(30, 100, n)
@@ -569,7 +539,6 @@ def gen_hr_fit(n):
         0.3 * df["interview_score"]
     ).round(1)
     return df
-
 def gen_strategy_swot(n):
     units = [f"BU-{chr(65+i)}" for i in range(n)]
     growth = rng.uniform(-5, 25, n)
@@ -594,7 +563,6 @@ def gen_strategy_swot(n):
         (df["weaknesses_score"] + df["threats_score"])
     )
     return df
-
 def gen_cyber_incident(n):
     sources = ["Firewall", "EDR", "SIEM", "IDS", "Proxy", "Email Gateway"]
     tactics = ["Recon", "Initial Access", "Lateral Movement", "Exfiltration", "C2", "Privilege Escalation"]
@@ -615,7 +583,6 @@ def gen_cyber_incident(n):
     ).round(1).clip(upper=100)
     df["assessment"] = np.where(df["coordination_score"] > 60, "Likely Coordinated Attack", "Isolated Alert")
     return df
-
 def gen_api_security(n):
     endpoints = ["/api/login", "/api/users", "/api/payments", "/api/orders",
                  "/api/search", "/api/admin", "/api/tokens"]
@@ -634,7 +601,6 @@ def gen_api_security(n):
         df["requests_per_min"] / 50
     ).round(1).clip(upper=100)
     return df
-
 def gen_software_troubleshoot(n):
     modules = ["Auth Service", "Payment Gateway", "Order API", "Search Index",
                "Notification Worker", "Database Layer", "Frontend Bundle"]
@@ -653,7 +619,6 @@ def gen_software_troubleshoot(n):
         df["test_coverage_pct"] * 0.3
     ).round(1)
     return df
-
 def gen_medical_decision_support(n):
     symptoms = ["Fever + Cough", "Abdominal Pain", "Chest Pain", "Headache + Stiff Neck",
                 "Joint Pain + Rash", "Shortness of Breath"]
@@ -673,7 +638,6 @@ def gen_medical_decision_support(n):
         df["comorbidity_count"] * 5
     ).round(1)
     return df
-
 def gen_financial_fraud_investigation(n):
     df = pd.DataFrame({
         "customer_id": [f"CIF-{55000+i}" for i in range(n)],
@@ -691,7 +655,6 @@ def gen_financial_fraud_investigation(n):
         df["account_age_days"] / 200
     ).round(1)
     return df
-
 def gen_contract_policy_analysis(n):
     doc_types = ["Master Service Agreement", "Vendor Policy", "NDA", "SLA Addendum", "Compliance Policy"]
     df = pd.DataFrame({
@@ -710,7 +673,6 @@ def gen_contract_policy_analysis(n):
         (180 - df["compliance_deadline_days"]) * 0.1
     ).round(1)
     return df
-
 def gen_predictive_maintenance(n):
     df = pd.DataFrame({
         "equipment_id": [f"EQ-{700+i}" for i in range(n)],
@@ -728,7 +690,6 @@ def gen_predictive_maintenance(n):
         df["oil_particle_count_ppm"] * 0.1
     ).round(1).clip(0, 100)
     return df
-
 def gen_emergency_response(n):
     incident_types = ["Fire", "Medical", "HazMat", "Structural Collapse", "Flood"]
     df = pd.DataFrame({
@@ -746,7 +707,6 @@ def gen_emergency_response(n):
         df["resource_availability_pct"] * 0.2
     ).round(1)
     return df
-
 def gen_aiops(n):
     services = ["checkout-svc", "auth-svc", "inventory-svc", "recommendation-svc",
                 "payment-svc", "notification-svc"]
@@ -766,7 +726,6 @@ def gen_aiops(n):
         df["dependency_failure_count"] * 5
     ).round(1)
     return df
-
 def gen_autonomous_agents(n):
     df = pd.DataFrame({
         "task_id": [f"TASK-{900+i}" for i in range(n)],
@@ -783,7 +742,6 @@ def gen_autonomous_agents(n):
         df["fallback_triggered_flag"] * 10
     ).round(1).clip(0, 100)
     return df
-
 # --------------------------------------------------------------------------
 # USE CASE CONFIGURATION
 # --------------------------------------------------------------------------
@@ -1364,14 +1322,12 @@ USE_CASES = [
         ),
     },
 ]
-
 # --------------------------------------------------------------------------
-# GENERIC TAB RENDERER
+# GENERIC USE-CASE RENDERER
 # --------------------------------------------------------------------------
 def render_use_case(cfg: dict):
     st.subheader(cfg['title'])
     st.write(cfg["description"])
-
     with st.expander("Formulas, Fields & Business Relevance", expanded=False):
         for field, formula, relevance in cfg["fields"]:
             st.markdown(
@@ -1380,13 +1336,11 @@ def render_use_case(cfg: dict):
                 f"<span style='color:#555;'>{relevance}</span></div>",
                 unsafe_allow_html=True,
             )
-
     st.markdown("#### Step 1: Data Source")
     src = st.radio(
         "Choose data source", ["Generate Synthetic Data", "Upload Real Data (CSV)"],
         key=f"src_{cfg['id']}", horizontal=True,
     )
-
     df = None
     if src == "Generate Synthetic Data":
         n = st.slider("Number of synthetic records", 20, 500, 100, key=f"n_{cfg['id']}")
@@ -1403,21 +1357,17 @@ def render_use_case(cfg: dict):
             st.session_state[f"df_{cfg['id']}"] = df
         elif f"df_{cfg['id']}" in st.session_state:
             df = st.session_state[f"df_{cfg['id']}"]
-
     if df is None or len(df) == 0:
         st.info("Generate synthetic data or upload a CSV to continue.")
         return
-
     st.markdown("#### Step 2: Data Preview")
     st.dataframe(df.head(10), use_container_width=True)
-
     st.markdown("#### Step 3: Visualization")
     try:
         fig = cfg["chart"](df)
         st.plotly_chart(fig, use_container_width=True, key=f"chart_{cfg['id']}")
     except Exception as e:
         st.warning(f"Chart could not be rendered for this dataset (column mismatch?): {e}")
-
     st.markdown("#### Step 4: AI Reasoning")
     if st.button("Run AI Reasoning", key=f"run_{cfg['id']}"):
         summary = df.describe(include="all").to_string()
@@ -1430,7 +1380,6 @@ def render_use_case(cfg: dict):
         with st.spinner(f"Reasoning over the data with {llm_provider}..."):
             reasoning = call_llm(cfg["system_prompt"], user_prompt)
         st.session_state[f"reasoning_{cfg['id']}"] = reasoning
-
     reasoning_text = st.session_state.get(f"reasoning_{cfg['id']}", "")
     if reasoning_text:
         st.markdown("##### Reasoning Output")
@@ -1438,11 +1387,9 @@ def render_use_case(cfg: dict):
             f"<div class='section-card'>{reasoning_text}</div>",
             unsafe_allow_html=True,
         )
-
     st.markdown("#### Step 5: Export Results")
     c1, c2, c3, c4 = st.columns(4)
     reasoning_for_export = reasoning_text or "(No AI reasoning generated yet.)"
-
     with c1:
         st.download_button(
             "CSV", df_to_csv_bytes(df), file_name=f"{cfg['id']}_data.csv",
@@ -1467,16 +1414,23 @@ def render_use_case(cfg: dict):
             file_name=f"{cfg['id']}_report.pdf", mime="application/pdf",
             key=f"pdf_{cfg['id']}", use_container_width=True,
         )
-
 # --------------------------------------------------------------------------
-# MAIN TABS
+# LEFT-SIDE USE CASE NAVIGATION
 # --------------------------------------------------------------------------
-tab_labels = [c['title'] for c in USE_CASES]
-tabs = st.tabs(tab_labels)
-for tab, cfg in zip(tabs, USE_CASES):
-    with tab:
-        render_use_case(cfg)
-
+# All 20 use cases are selected from a menu on the left (in the sidebar,
+# beneath the AI Engine Configuration) instead of horizontal top tabs.
+with st.sidebar:
+    st.markdown("---")
+    st.markdown("## Use Cases")
+    use_case_titles = [c["title"] for c in USE_CASES]
+    selected_title = st.radio(
+        "Select a Reasoning AI use case",
+        use_case_titles,
+        key="selected_use_case",
+        label_visibility="collapsed",
+    )
+selected_cfg = next(c for c in USE_CASES if c["title"] == selected_title)
+render_use_case(selected_cfg)
 st.markdown("<hr>", unsafe_allow_html=True)
 st.caption(
     "CogniReason AI Suite - 20 embedded Reasoning AI use cases. "
