@@ -1482,4 +1482,4 @@ st.caption(
     "CogniReason AI Suite - 20 embedded Reasoning AI use cases. "
     "Reasoning is generated live via your choice of the Groq or Google Gemini LLM API. "
     "Synthetic data is generated locally; uploaded data never leaves this session. "
-    "Developed by Randy Singh, Kalsnet (KNet) Consulting Group."
+    "Developed by Randy Singh, Kalsnet (KNet) Consulting Group.")
