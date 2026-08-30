@@ -13,6 +13,7 @@
     # Export of the results to PDF, Word (.docx), Text (.txt) and CSV
 import io
 import os
+import re
 import json
 from datetime import datetime
 import numpy as np
@@ -291,6 +292,55 @@ def depth_instruction(depth: str) -> str:
 # --------------------------------------------------------------------------
 def df_to_csv_bytes(df: pd.DataFrame) -> bytes:
     return df.to_csv(index=False).encode("utf-8")
+def clean_reasoning_for_export(text: str) -> str:
+    """Strips Markdown syntax (headers, bold/italic, bullets, numbered
+    lists, links, code ticks, table pipes, horizontal rules) out of the
+    LLM's reasoning output so PDF/Word exports read as plain prose."""
+    if not text:
+        return ""
+    t = text
+    # Headers: "### Title" -> "Title"
+    t = re.sub(r"(?m)^\s{0,3}#{1,6}\s*", "", t)
+    # Bold/italic emphasis markers
+    t = re.sub(r"\*\*\*(.+?)\*\*\*", r"\1", t)
+    t = re.sub(r"\*\*(.+?)\*\*", r"\1", t)
+    t = re.sub(r"(?<!\w)\*(.+?)\*(?!\w)", r"\1", t)
+    t = re.sub(r"__(.+?)__", r"\1", t)
+    t = re.sub(r"(?<!\w)_(.+?)_(?!\w)", r"\1", t)
+    # Inline code
+    t = re.sub(r"`([^`]+)`", r"\1", t)
+    # Markdown links -> just the link text
+    t = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", t)
+    # Bullet markers at the start of a line (-, *, +, •)
+    t = re.sub(r"(?m)^\s*[\-\*\+•]\s+", "", t)
+    # Numbered/lettered list markers at the start of a line ("1.", "2)", "a.")
+    t = re.sub(r"(?m)^\s*(?:\d+|[a-zA-Z])[\.\)]\s+", "", t)
+    # Horizontal rules
+    t = re.sub(r"(?m)^\s*[-*_]{3,}\s*$", "", t)
+    # Leftover table pipes
+    t = t.replace("|", " ")
+    # Collapse excess blank lines
+    t = re.sub(r"\n{3,}", "\n\n", t)
+    return t.strip()
+def reasoning_to_paragraphs(text: str) -> list:
+    """Converts cleaned reasoning text into a list of flowing paragraph
+    strings: blank-line-separated blocks become paragraphs, and any
+    wrapped/bulleted lines inside a block are merged into one paragraph
+    of continuous prose (no bullet symbols, no line-break artifacts)."""
+    cleaned = clean_reasoning_for_export(text)
+    if not cleaned:
+        return []
+    blocks = re.split(r"\n\s*\n", cleaned)
+    paragraphs = []
+    for block in blocks:
+        lines = [ln.strip() for ln in block.split("\n") if ln.strip()]
+        if not lines:
+            continue
+        merged = " ".join(lines)
+        merged = re.sub(r"\s{2,}", " ", merged).strip()
+        if merged:
+            paragraphs.append(merged)
+    return paragraphs
 def text_bytes(title: str, description: str, reasoning: str) -> bytes:
     content = (
         f"{APP_NAME}\n{DEVELOPER_LINE.replace('&nbsp;', ' ')}\n"
@@ -322,8 +372,13 @@ def build_docx(title: str, description: str, df: pd.DataFrame, reasoning: str) -
             for i, col in enumerate(sample.columns):
                 cells[i].text = str(row[col])
     doc.add_heading("AI Reasoning Output", level=2)
-    for line in reasoning.split("\n"):
-        doc.add_paragraph(line)
+    paragraphs = reasoning_to_paragraphs(reasoning)
+    if paragraphs:
+        for para in paragraphs:
+            p = doc.add_paragraph(para)
+            p.paragraph_format.space_after = Pt(10)
+    else:
+        doc.add_paragraph("(No AI reasoning generated yet.)")
     buf = io.BytesIO()
     doc.save(buf)
     return buf.getvalue()
@@ -360,11 +415,16 @@ def build_pdf(title: str, description: str, df: pd.DataFrame, reasoning: str) ->
         story.append(tbl)
         story.append(Spacer(1, 14))
     story.append(Paragraph("AI Reasoning Output", styles["Heading2"]))
-    for line in reasoning.split("\n"):
-        if line.strip():
-            story.append(Paragraph(line.replace("&", "&amp;").replace("<", "&lt;"), styles["Normal"]))
-        else:
-            story.append(Spacer(1, 6))
+    body_style = ParagraphStyle(
+        "BodyProse", parent=styles["Normal"], spaceAfter=10, leading=15,
+    )
+    paragraphs = reasoning_to_paragraphs(reasoning)
+    if paragraphs:
+        for para in paragraphs:
+            safe = para.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            story.append(Paragraph(safe, body_style))
+    else:
+        story.append(Paragraph("(No AI reasoning generated yet.)", body_style))
     doc.build(story)
     return buf.getvalue()
 # --------------------------------------------------------------------------
@@ -1361,7 +1421,8 @@ def render_use_case(cfg: dict):
         st.info("Generate synthetic data or upload a CSV to continue.")
         return
     st.markdown("#### Step 2: Data Preview")
-    st.dataframe(df.head(10), use_container_width=True)
+    st.caption(f"Showing the full record set: {len(df)} rows.")
+    st.dataframe(df, use_container_width=True, height=420)
     st.markdown("#### Step 3: Visualization")
     try:
         fig = cfg["chart"](df)
