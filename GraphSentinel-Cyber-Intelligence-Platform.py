@@ -1369,7 +1369,7 @@ st.sidebar.markdown(
 # ---------------------------------------------------------------------------
 # Header
 # ---------------------------------------------------------------------------
-st.markdown("<div class='main-title'>GraphSentinel</div>", unsafe_allow_html=True)
+st.markdown("<div class='main-title'>GraphTheory</div>", unsafe_allow_html=True)
 st.markdown(
     "<div class='sub-title'>Defense and Cyber Intelligence Platform, "
     "Graph Theory Powered Analysis Across Thirteen Mission Critical Use Cases</div>",
