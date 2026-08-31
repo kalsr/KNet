@@ -1,45 +1,32 @@
-
-
-
 # Knowledge Graph AI Use Cases Application
 # Single File Streamlit Edition
-
 # Developed by Randy Singh from Kalsnet KNet Consulting Group
-
 # A professional Streamlit application that demonstrates fifteen Knowledge
 # Graph plus AI use cases. Each use case tab supports synthetic data
 # generation or real data upload, interactive graph visualization, AI
 # analysis powered by Groq or Gemini, and export of results to PDF, Word,
 # text and CSV formats.
-
 # The Fraud Detection and Anti Money Laundering use cases additionally
 # support loading genuine real world data directly from the live
 # OpenSanctions sanctions and PEP screening API, and from the published
 # Elliptic real world labeled Bitcoin AML transaction dataset.
-
 # This single file contains all configuration, data generation, graph
 # analytics, LLM integration, export utilities, real data source
 # integration, and the Streamlit interface.
-
 # How to run
 # 1. Install dependencies: pip install streamlit pandas networkx plotly python-docx reportlab requests
 # 2. Run the application: streamlit run knowledge_graph_ai_app.py
-
 # No special symbols are used anywhere in this source file.
-
-
 import io
 import json
 import random
 import string
 from datetime import datetime
-
 import requests
 import pandas as pd
 import networkx as nx
 import plotly.graph_objects as go
 import streamlit as st
-
 from docx import Document
 from docx.shared import Pt, RGBColor
 from reportlab.lib.pagesizes import letter
@@ -47,14 +34,10 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib.units import inch
-
-
 # =============================================================================
 # SECTION 1: USE CASE CONFIGURATION
 # =============================================================================
-
 USE_CASES = {
-
     "cybersecurity": {
         "order": 1,
         "title": "Cybersecurity Threat Intelligence",
@@ -96,7 +79,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "explain the attack path, likely intent of the threat actor, and containment recommendation",
     },
-
     "fraud": {
         "order": 2,
         "title": "Fraud Detection",
@@ -139,7 +121,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "identify suspicious clusters, explain the shared connections, and recommend an investigation priority",
     },
-
     "enterprise_knowledge": {
         "order": 3,
         "title": "Enterprise Knowledge Assistant",
@@ -180,7 +161,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "answer the enterprise question using only the retrieved graph facts and cite the entities used",
     },
-
     "rag_kg": {
         "order": 4,
         "title": "RAG plus Knowledge Graph",
@@ -221,7 +201,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "generate an answer grounded in the retrieved chunks and graph facts, and flag any unsupported claim",
     },
-
     "supply_chain": {
         "order": 5,
         "title": "Supply Chain Risk",
@@ -262,7 +241,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "explain the cascading impact of the disruption and recommend qualified alternative suppliers",
     },
-
     "healthcare": {
         "order": 6,
         "title": "Healthcare Intelligence",
@@ -304,7 +282,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "summarize clinically relevant relationships and potential interaction risks for clinician review, this is decision support not a diagnosis",
     },
-
     "financial_risk": {
         "order": 7,
         "title": "Financial Risk Analysis",
@@ -345,7 +322,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "explain hidden relationships driving concentration risk and quantify exposure",
     },
-
     "digital_twin": {
         "order": 8,
         "title": "Digital Twin",
@@ -386,7 +362,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "explain the likely failure cause, downstream impact, and recommended maintenance action",
     },
-
     "network_ops": {
         "order": 9,
         "title": "Network Operations",
@@ -427,7 +402,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "determine the most likely root cause node and explain the outage propagation path",
     },
-
     "compliance": {
         "order": 10,
         "title": "Compliance and Policy AI",
@@ -468,7 +442,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "identify broken regulation to evidence paths and explain the compliance gap and remediation priority",
     },
-
     "aml": {
         "order": 11,
         "title": "Fraud and Anti Money Laundering",
@@ -509,7 +482,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "explain the laundering network structure, key facilitators, and structuring pattern detected",
     },
-
     "defense": {
         "order": 12,
         "title": "Defense and Mission Intelligence",
@@ -550,7 +522,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "identify capability gaps and readiness risk for the mission and explain the reasoning",
     },
-
     "software_dependency": {
         "order": 13,
         "title": "Software Dependency Intelligence",
@@ -589,7 +560,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "explain vulnerability blast radius across applications and recommend a remediation order",
     },
-
     "customer_360": {
         "order": 14,
         "title": "Customer 360",
@@ -631,7 +601,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "assess churn risk from the connected record and recommend a specific retention action",
     },
-
     "root_cause": {
         "order": 15,
         "title": "AI Root Cause Analysis",
@@ -671,15 +640,10 @@ USE_CASES = {
         "ai_prompt_focus": "identify the single most likely root cause component and explain the dependency chain that produced the event cluster",
     },
 }
-
 USE_CASE_ORDER = [k for k, v in sorted(USE_CASES.items(), key=lambda kv: kv[1]["order"])]
-
-
 # =============================================================================
 # SECTION 2: SYNTHETIC DATA GENERATION AND GRAPH CONSTRUCTION
 # =============================================================================
-
-
 FIRST_NAMES = ["James", "Maria", "Wei", "Amara", "Liam", "Sofia", "Noah", "Priya",
                "Ethan", "Fatima", "Lucas", "Ingrid", "Omar", "Chen", "Ava", "Diego"]
 LAST_NAMES = ["Smith", "Garcia", "Chen", "Okafor", "Muller", "Rossi", "Kim", "Singh",
@@ -688,17 +652,11 @@ CITIES = ["New York", "London", "Singapore", "Toronto", "Mumbai", "Berlin",
           "Sydney", "Sao Paulo", "Dubai", "Tokyo", "Chicago", "Nairobi"]
 COUNTRIES = ["United States", "United Kingdom", "Singapore", "Canada", "India",
              "Germany", "Australia", "Brazil", "United Arab Emirates", "Japan"]
-
-
 def random_name():
     return random.choice(FIRST_NAMES) + " " + random.choice(LAST_NAMES)
-
-
 def random_id(prefix, n=6):
     suffix = "".join(random.choices(string.digits, k=n))
     return prefix + suffix
-
-
 def random_field_value(field_name, node_type, index):
     name_lower = field_name.lower()
     if name_lower.endswith("_id"):
@@ -729,8 +687,6 @@ def random_field_value(field_name, node_type, index):
     if "days" in name_lower or "hours" in name_lower or "count" in name_lower or "quantity" in name_lower:
         return random.randint(1, 500)
     return "Value " + str(random.randint(1, 999))
-
-
 def generate_synthetic_dataset(use_case_key, config, nodes_per_type=12, seed=None):
     """
     Generates a synthetic node table and edge table for the given use case
@@ -738,14 +694,11 @@ def generate_synthetic_dataset(use_case_key, config, nodes_per_type=12, seed=Non
     """
     if seed is not None:
         random.seed(seed)
-
     node_types = config["node_types"]
     fields = config["fields"]
     edge_types = config["edge_types"]
-
     node_rows = []
     node_ids_by_type = {}
-
     for ntype in node_types:
         ids_for_type = []
         for i in range(nodes_per_type):
@@ -759,9 +712,7 @@ def generate_synthetic_dataset(use_case_key, config, nodes_per_type=12, seed=Non
             node_rows.append(row)
             ids_for_type.append(node_id)
         node_ids_by_type[ntype] = ids_for_type
-
     nodes_df = pd.DataFrame(node_rows)
-
     edge_rows = []
     for source_type, target_type, relation in edge_types:
         source_ids = node_ids_by_type.get(source_type, [])
@@ -780,11 +731,8 @@ def generate_synthetic_dataset(use_case_key, config, nodes_per_type=12, seed=Non
                     "relationship": relation,
                     "weight": round(random.uniform(0.1, 1.0), 3),
                 })
-
     edges_df = pd.DataFrame(edge_rows)
     return {"nodes": nodes_df, "edges": edges_df}
-
-
 def build_networkx_graph(nodes_df, edges_df):
     G = nx.DiGraph()
     if nodes_df is not None and len(nodes_df) > 0:
@@ -811,8 +759,6 @@ def build_networkx_graph(nodes_df, edges_df):
             weight = row.get("weight", 1.0)
             G.add_edge(src, tgt, relationship=rel, weight=weight)
     return G
-
-
 def dataframes_from_uploaded(nodes_file, edges_file):
     """
     Reads user uploaded CSV files for nodes and edges into DataFrames.
@@ -830,14 +776,9 @@ def dataframes_from_uploaded(nodes_file, edges_file):
     if "weight" not in edges_df.columns:
         edges_df["weight"] = 1.0
     return {"nodes": nodes_df, "edges": edges_df}
-
-
 # =============================================================================
 # SECTION 3: GRAPH ANALYTICS AND VISUALIZATION
 # =============================================================================
-
-
-
 def compute_core_metrics(G):
     """
     Computes degree centrality, betweenness centrality and pagerank for
@@ -846,7 +787,6 @@ def compute_core_metrics(G):
     if G.number_of_nodes() == 0:
         return pd.DataFrame(columns=["node_id", "label", "node_type",
                                       "degree_centrality", "betweenness_centrality", "pagerank"])
-
     degree = nx.degree_centrality(G)
     try:
         betweenness = nx.betweenness_centrality(G)
@@ -856,7 +796,6 @@ def compute_core_metrics(G):
         pagerank = nx.pagerank(G, weight="weight")
     except Exception:
         pagerank = {n: 0.0 for n in G.nodes()}
-
     rows = []
     for n in G.nodes():
         data = G.nodes[n]
@@ -869,8 +808,6 @@ def compute_core_metrics(G):
             "pagerank": round(pagerank.get(n, 0.0), 4),
         })
     return pd.DataFrame(rows).sort_values("pagerank", ascending=False).reset_index(drop=True)
-
-
 def find_top_paths(G, max_paths=5):
     """
     Finds a handful of representative shortest paths between nodes of
@@ -881,14 +818,12 @@ def find_top_paths(G, max_paths=5):
     nodes = list(G.nodes())
     if len(nodes) < 2:
         return paths
-
     sources = [n for n in nodes if G.out_degree(n) > 0 and G.in_degree(n) == 0]
     sinks = [n for n in nodes if G.in_degree(n) > 0 and G.out_degree(n) == 0]
     if not sources:
         sources = nodes[: min(5, len(nodes))]
     if not sinks:
         sinks = nodes[: min(5, len(nodes))]
-
     count = 0
     for s in sources:
         for t in sinks:
@@ -905,8 +840,6 @@ def find_top_paths(G, max_paths=5):
             if count >= max_paths:
                 return paths
     return paths
-
-
 def build_plotly_graph(G, highlight_path=None, max_nodes=250):
     """
     Builds an interactive Plotly figure of the graph using a spring layout.
@@ -917,27 +850,21 @@ def build_plotly_graph(G, highlight_path=None, max_nodes=250):
         fig = go.Figure()
         fig.update_layout(title="No graph data available")
         return fig
-
     if G.number_of_nodes() > max_nodes:
         keep = list(G.nodes())[:max_nodes]
         G = G.subgraph(keep).copy()
-
     pos = nx.spring_layout(G, seed=42, k=None)
-
     node_types = sorted(set(nx.get_node_attributes(G, "node_type").values()))
     palette = ["#1f4e9c", "#c0392b", "#1e8449", "#b9770e", "#6c3483",
                "#117864", "#a04000", "#2874a6", "#7d3c98", "#154360"]
     color_map = {nt: palette[i % len(palette)] for i, nt in enumerate(node_types)}
-
     highlight_edges = set()
     if highlight_path:
         for i in range(len(highlight_path) - 1):
             highlight_edges.add((highlight_path[i], highlight_path[i + 1]))
-
     edge_traces = []
     edge_x_normal, edge_y_normal = [], []
     edge_x_highlight, edge_y_highlight = [], []
-
     for u, v in G.edges():
         x0, y0 = pos[u]
         x1, y1 = pos[v]
@@ -947,7 +874,6 @@ def build_plotly_graph(G, highlight_path=None, max_nodes=250):
         else:
             edge_x_normal += [x0, x1, None]
             edge_y_normal += [y0, y1, None]
-
     edge_traces.append(go.Scatter(x=edge_x_normal, y=edge_y_normal, mode="lines",
                                    line=dict(width=1, color="#bbbbbb"),
                                    hoverinfo="none", showlegend=False))
@@ -956,7 +882,6 @@ def build_plotly_graph(G, highlight_path=None, max_nodes=250):
                                        line=dict(width=3, color="#e74c3c"),
                                        hoverinfo="none", showlegend=False,
                                        name="Highlighted Path"))
-
     node_traces = []
     for nt in node_types:
         xs, ys, texts, ids = [], [], [], []
@@ -972,7 +897,6 @@ def build_plotly_graph(G, highlight_path=None, max_nodes=250):
             marker=dict(size=14, color=color_map[nt], line=dict(width=1, color="#ffffff")),
             text=texts, hoverinfo="text"
         ))
-
     fig = go.Figure(data=edge_traces + node_traces)
     fig.update_layout(
         showlegend=True,
@@ -984,20 +908,34 @@ def build_plotly_graph(G, highlight_path=None, max_nodes=250):
         height=560,
     )
     return fig
-
-
 # =============================================================================
 # SECTION 4: LLM INTEGRATION - GROQ AND GEMINI
 # =============================================================================
-
-
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
-GROQ_DEFAULT_MODEL = "llama-3.3-70b-versatile"
-
+# Groq periodically retires older chat models (the Llama 3.x, Mixtral and
+# Gemma2 families have all been shut down). openai/gpt-oss-120b is the
+# current flagship production model on GroqCloud as of the latest model
+# list published at console.groq.com/docs/models.
+GROQ_DEFAULT_MODEL = "openai/gpt-oss-120b"
+GROQ_MODEL_OPTIONS = [
+    "openai/gpt-oss-120b",
+    "openai/gpt-oss-20b",
+    "qwen/qwen3.6-27b",
+    "groq/compound",
+    "groq/compound-mini",
+]
 GEMINI_API_URL_TEMPLATE = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
-GEMINI_DEFAULT_MODEL = "gemini-2.0-flash"
-
-
+# Google periodically retires older Gemini models (gemini-2.0-flash and
+# gemini-2.0-flash-lite have both been shut down). gemini-3.6-flash is a
+# current stable model on the Gemini API as of the latest model list
+# published at ai.google.dev/gemini-api/docs/models.
+GEMINI_DEFAULT_MODEL = "gemini-3.6-flash"
+GEMINI_MODEL_OPTIONS = [
+    "gemini-3.6-flash",
+    "gemini-3.7-flash",
+    "gemini-2.5-flash",
+    "gemini-2.5-flash-lite",
+]
 def call_groq(api_key, system_prompt, user_prompt, model=None, timeout=60):
     if not api_key:
         return None, "Groq API key is missing. Please enter a key in the sidebar."
@@ -1018,14 +956,18 @@ def call_groq(api_key, system_prompt, user_prompt, model=None, timeout=60):
     try:
         resp = requests.post(GROQ_API_URL, headers=headers, data=json.dumps(payload), timeout=timeout)
         if resp.status_code != 200:
-            return None, "Groq API error, status code " + str(resp.status_code) + ". Details: " + resp.text[:300]
+            detail = resp.text[:300]
+            if resp.status_code == 404 and "model_not_found" in resp.text:
+                detail += (
+                    " This Groq model has likely been retired. Pick a different "
+                    "model from the sidebar Groq Model dropdown."
+                )
+            return None, "Groq API error, status code " + str(resp.status_code) + ". Details: " + detail
         data = resp.json()
         text = data["choices"][0]["message"]["content"]
         return text, None
     except Exception as e:
         return None, "Groq API request failed: " + str(e)
-
-
 def call_gemini(api_key, system_prompt, user_prompt, model=None, timeout=60):
     if not api_key:
         return None, "Gemini API key is missing. Please enter a key in the sidebar."
@@ -1042,7 +984,13 @@ def call_gemini(api_key, system_prompt, user_prompt, model=None, timeout=60):
     try:
         resp = requests.post(url, headers=headers, data=json.dumps(payload), timeout=timeout)
         if resp.status_code != 200:
-            return None, "Gemini API error, status code " + str(resp.status_code) + ". Details: " + resp.text[:300]
+            detail = resp.text[:300]
+            if resp.status_code == 404:
+                detail += (
+                    " This Gemini model has likely been retired. Pick a different "
+                    "model from the sidebar Gemini Model dropdown."
+                )
+            return None, "Gemini API error, status code " + str(resp.status_code) + ". Details: " + detail
         data = resp.json()
         candidates = data.get("candidates", [])
         if not candidates:
@@ -1052,8 +1000,6 @@ def call_gemini(api_key, system_prompt, user_prompt, model=None, timeout=60):
         return text, None
     except Exception as e:
         return None, "Gemini API request failed: " + str(e)
-
-
 def run_llm_analysis(provider, api_key, system_prompt, user_prompt, model=None):
     """
     Dispatches to the selected provider. provider is either Groq or Gemini.
@@ -1067,15 +1013,11 @@ def run_llm_analysis(provider, api_key, system_prompt, user_prompt, model=None):
         text, error = call_gemini(api_key, system_prompt, user_prompt, model=model)
     else:
         text, error = None, "Unknown provider selected."
-
     if text:
         return text, None
-
     fallback = build_fallback_summary(user_prompt)
     note = "Live LLM call was not available (" + (error or "no key provided") + "). Showing a rule based summary instead."
     return fallback, note
-
-
 def build_fallback_summary(user_prompt):
     """
     A simple deterministic fallback used when no API key is configured or a
@@ -1091,14 +1033,9 @@ def build_fallback_summary(user_prompt):
         "Gemini API key in the sidebar and rerun the analysis.",
     ]
     return "\n".join(lines)
-
-
 # =============================================================================
 # SECTION 5: EXPORT UTILITIES - PDF, WORD, TEXT, CSV
 # =============================================================================
-
-
-
 def build_text_report(title, sections):
     """
     sections is a list of tuples (heading, body_text)
@@ -1116,8 +1053,6 @@ def build_text_report(title, sections):
         lines.append(body)
         lines.append("")
     return "\n".join(lines).encode("utf-8")
-
-
 def build_csv_report(nodes_df, edges_df, metrics_df):
     buffer = io.StringIO()
     buffer.write("NODE TABLE\n")
@@ -1130,31 +1065,23 @@ def build_csv_report(nodes_df, edges_df, metrics_df):
     if metrics_df is not None and len(metrics_df) > 0:
         metrics_df.to_csv(buffer, index=False)
     return buffer.getvalue().encode("utf-8")
-
-
 def build_word_report(title, sections, metrics_df=None):
     doc = Document()
-
     heading = doc.add_heading(level=0)
     run = heading.add_run(title)
     run.font.color.rgb = RGBColor(0x1f, 0x4e, 0x9c)
     run.font.size = Pt(24)
     run.bold = True
-
     sub = doc.add_paragraph()
     sub_run = sub.add_run("Knowledge Graph AI Use Cases Application")
     sub_run.bold = True
     sub_run.font.color.rgb = RGBColor(0x1f, 0x4e, 0x9c)
-
     footer_p = doc.add_paragraph("Developed by Randy Singh from Kalsnet KNet Consulting Group")
     footer_p.runs[0].italic = True
-
     doc.add_paragraph("")
-
     for heading_text, body_text in sections:
         doc.add_heading(heading_text, level=1)
         doc.add_paragraph(body_text)
-
     if metrics_df is not None and len(metrics_df) > 0:
         doc.add_heading("Graph Metrics Summary", level=1)
         top = metrics_df.head(15)
@@ -1167,20 +1094,16 @@ def build_word_report(title, sections, metrics_df=None):
             cells = table.add_row().cells
             for i, col in enumerate(top.columns):
                 cells[i].text = str(row[col])
-
     buf = io.BytesIO()
     doc.save(buf)
     buf.seek(0)
     return buf.read()
-
-
 def build_pdf_report(title, sections, metrics_df=None):
     buf = io.BytesIO()
     doc = SimpleDocTemplate(buf, pagesize=letter,
                              topMargin=0.6 * inch, bottomMargin=0.6 * inch,
                              leftMargin=0.6 * inch, rightMargin=0.6 * inch)
     styles = getSampleStyleSheet()
-
     title_style = ParagraphStyle("TitleBlue", parent=styles["Title"],
                                   textColor=colors.HexColor("#1f4e9c"), fontSize=22)
     heading_style = ParagraphStyle("HeadingBlue", parent=styles["Heading2"],
@@ -1188,19 +1111,16 @@ def build_pdf_report(title, sections, metrics_df=None):
     body_style = styles["BodyText"]
     footer_style = ParagraphStyle("Footer", parent=styles["Normal"], fontSize=9,
                                    textColor=colors.HexColor("#555555"))
-
     story = []
     story.append(Paragraph(title, title_style))
     story.append(Paragraph("Knowledge Graph AI Use Cases Application", heading_style))
     story.append(Paragraph("Developed by Randy Singh from Kalsnet KNet Consulting Group", footer_style))
     story.append(Spacer(1, 16))
-
     for heading_text, body_text in sections:
         story.append(Paragraph(heading_text, heading_style))
         safe_body = body_text.replace("\n", "<br/>")
         story.append(Paragraph(safe_body, body_style))
         story.append(Spacer(1, 10))
-
     if metrics_df is not None and len(metrics_df) > 0:
         story.append(Paragraph("Graph Metrics Summary", heading_style))
         top = metrics_df.head(15)
@@ -1214,20 +1134,13 @@ def build_pdf_report(title, sections, metrics_df=None):
             ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f2f6fc")]),
         ]))
         story.append(t)
-
     doc.build(story)
     buf.seek(0)
     return buf.read()
-
-
 # =============================================================================
 # SECTION 6: REAL WORLD DATA SOURCE INTEGRATION - OPENSANCTIONS AND ELLIPTIC
 # =============================================================================
-
-
 OPENSANCTIONS_BASE_URL = "https://api.opensanctions.org"
-
-
 def fetch_opensanctions_graph(api_key, search_text, dataset="default", limit=15, timeout=30):
     """
     Calls the real OpenSanctions search API for the given free text query,
@@ -1238,10 +1151,8 @@ def fetch_opensanctions_graph(api_key, search_text, dataset="default", limit=15,
     """
     if not api_key:
         return None, "OpenSanctions API key is missing. Please enter a key in the sidebar or the panel above."
-
     headers = {"Authorization": "ApiKey " + api_key}
     search_url = OPENSANCTIONS_BASE_URL + "/search/" + dataset
-
     try:
         resp = requests.get(
             search_url,
@@ -1251,19 +1162,15 @@ def fetch_opensanctions_graph(api_key, search_text, dataset="default", limit=15,
         )
     except Exception as e:
         return None, "OpenSanctions request failed: " + str(e)
-
     if resp.status_code != 200:
         return None, "OpenSanctions API error, status code " + str(resp.status_code) + ". Details: " + resp.text[:300]
-
     data = resp.json()
     results = data.get("results", [])
     if not results:
         return None, "No matching entities were found for this search text."
-
     node_rows = []
     edge_rows = []
     seen_nodes = set()
-
     def add_node(node_id, label, node_type, extra=None):
         if node_id in seen_nodes:
             return
@@ -1272,7 +1179,6 @@ def fetch_opensanctions_graph(api_key, search_text, dataset="default", limit=15,
             row.update(extra)
         node_rows.append(row)
         seen_nodes.add(node_id)
-
     for entity in results:
         entity_id = entity.get("id")
         caption = entity.get("caption", entity_id)
@@ -1280,7 +1186,6 @@ def fetch_opensanctions_graph(api_key, search_text, dataset="default", limit=15,
         props = entity.get("properties", {})
         topics = props.get("topics", [])
         countries = props.get("country", [])
-
         add_node(
             entity_id, caption, "Person" if schema == "Person" else "Business",
             extra={
@@ -1290,7 +1195,6 @@ def fetch_opensanctions_graph(api_key, search_text, dataset="default", limit=15,
                 "match_score": entity.get("score", ""),
             },
         )
-
         for ds in entity.get("datasets", [])[:3]:
             ds_node_id = "dataset_" + ds
             add_node(ds_node_id, ds, "Watchlist Source")
@@ -1299,7 +1203,6 @@ def fetch_opensanctions_graph(api_key, search_text, dataset="default", limit=15,
                 "target_id": ds_node_id, "target_type": "Watchlist Source",
                 "relationship": "listed_in", "weight": 1.0,
             })
-
         for topic in topics:
             topic_node_id = "topic_" + topic
             add_node(topic_node_id, topic, "Risk Topic")
@@ -1308,7 +1211,6 @@ def fetch_opensanctions_graph(api_key, search_text, dataset="default", limit=15,
                 "target_id": topic_node_id, "target_type": "Risk Topic",
                 "relationship": "flagged_as", "weight": 1.0,
             })
-
         try:
             detail_resp = requests.get(
                 OPENSANCTIONS_BASE_URL + "/entities/" + entity_id,
@@ -1337,21 +1239,17 @@ def fetch_opensanctions_graph(api_key, search_text, dataset="default", limit=15,
                                 })
         except Exception:
             continue
-
     nodes_df = pd.DataFrame(node_rows)
     edges_df = pd.DataFrame(edge_rows) if edge_rows else pd.DataFrame(
         columns=["source_id", "source_type", "target_id", "target_type", "relationship", "weight"]
     )
     return {"nodes": nodes_df, "edges": edges_df}, None
-
-
 def load_elliptic_dataset(classes_file, edgelist_file, features_file=None, sample_size=300, seed=42):
     """
     Reads the real Elliptic Bitcoin dataset files that the user has
     downloaded from Kaggle and uploaded to the application. Builds a
     transaction to transaction graph in the application node and edge
     schema, sampled down to a manageable size for interactive rendering.
-
     Expected file formats, matching the original Kaggle release:
     classes_file columns: txId, class (values are 1 for illicit,
       2 for licit, unknown for unlabeled)
@@ -1361,19 +1259,15 @@ def load_elliptic_dataset(classes_file, edgelist_file, features_file=None, sampl
     """
     classes_df = pd.read_csv(classes_file)
     edges_raw = pd.read_csv(edgelist_file)
-
     classes_df.columns = [c.strip().lower() for c in classes_df.columns]
     edges_raw.columns = [c.strip().lower() for c in edges_raw.columns]
-
     if "txid" not in classes_df.columns:
         return None, "The classes file does not contain a txId column. Please upload the original elliptic_txs_classes.csv file."
     if "txid1" not in edges_raw.columns or "txid2" not in edges_raw.columns:
         return None, "The edgelist file does not contain txId1 and txId2 columns. Please upload the original elliptic_txs_edgelist.csv file."
-
     label_map = {"1": "Illicit", "2": "Licit", "unknown": "Unknown"}
     classes_df["class"] = classes_df["class"].astype(str)
     classes_df["label"] = classes_df["class"].map(label_map).fillna("Unknown")
-
     illicit_ids = classes_df[classes_df["label"] == "Illicit"]["txid"].tolist()
     if len(illicit_ids) == 0:
         sample_ids = classes_df["txid"].sample(min(sample_size, len(classes_df)), random_state=seed).tolist()
@@ -1384,20 +1278,16 @@ def load_elliptic_dataset(classes_file, edgelist_file, features_file=None, sampl
         other_ids = classes_df[~classes_df["txid"].isin(sample_ids)]["txid"]
         if remaining > 0 and len(other_ids) > 0:
             sample_ids += other_ids.sample(min(remaining, len(other_ids)), random_state=seed).tolist()
-
     sample_id_set = set(sample_ids)
-
     sampled_edges = edges_raw[
         edges_raw["txid1"].isin(sample_id_set) & edges_raw["txid2"].isin(sample_id_set)
     ].copy()
-
     if len(sampled_edges) < 10:
         expanded_edges = edges_raw[
             edges_raw["txid1"].isin(sample_id_set) | edges_raw["txid2"].isin(sample_id_set)
         ].copy()
         sample_id_set = set(expanded_edges["txid1"]).union(set(expanded_edges["txid2"]))
         sampled_edges = expanded_edges
-
     node_rows = []
     for txid in sample_id_set:
         label_row = classes_df[classes_df["txid"] == txid]
@@ -1409,7 +1299,6 @@ def load_elliptic_dataset(classes_file, edgelist_file, features_file=None, sampl
             "aml_label": label_val,
             "source_txid": txid,
         })
-
     edge_rows = []
     for _, row in sampled_edges.iterrows():
         edge_rows.append({
@@ -1420,12 +1309,10 @@ def load_elliptic_dataset(classes_file, edgelist_file, features_file=None, sampl
             "relationship": "flows_to",
             "weight": 1.0,
         })
-
     nodes_df = pd.DataFrame(node_rows)
     edges_df = pd.DataFrame(edge_rows) if edge_rows else pd.DataFrame(
         columns=["source_id", "source_type", "target_id", "target_type", "relationship", "weight"]
     )
-
     summary = (
         "Loaded " + str(len(nodes_df)) + " real transactions and " + str(len(edges_df))
         + " real transaction flows from the Elliptic Bitcoin dataset. "
@@ -1433,27 +1320,18 @@ def load_elliptic_dataset(classes_file, edgelist_file, features_file=None, sampl
         + "are labeled illicit out of " + str(len(classes_df)) + " total labeled and unlabeled transactions."
     )
     return {"nodes": nodes_df, "edges": edges_df, "summary": summary}, None
-
-
 # =============================================================================
 # SECTION 7: STREAMLIT APPLICATION
 # =============================================================================
-
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-
-
 REAL_DATA_ENABLED_KEYS = ["aml", "fraud"]
-
-
 st.set_page_config(
     page_title="Knowledge Graph AI Use Cases",
     page_icon=None,
     layout="wide",
 )
-
-
 # ---------------------------------------------------------------------------
 # Global styling
 # ---------------------------------------------------------------------------
@@ -1493,8 +1371,6 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-
-
 # ---------------------------------------------------------------------------
 # Session state initialization
 # ---------------------------------------------------------------------------
@@ -1502,8 +1378,6 @@ if "datasets" not in st.session_state:
     st.session_state["datasets"] = {}
 if "analysis_results" not in st.session_state:
     st.session_state["analysis_results"] = {}
-
-
 # ---------------------------------------------------------------------------
 # Sidebar
 # ---------------------------------------------------------------------------
@@ -1512,20 +1386,36 @@ st.sidebar.markdown(
     unsafe_allow_html=True,
 )
 st.sidebar.markdown("Select a use case below")
-
 use_case_labels = [str(USE_CASES[k]["order"]) + ". " + USE_CASES[k]["title"] for k in USE_CASE_ORDER]
 label_to_key = dict(zip(use_case_labels, USE_CASE_ORDER))
 selected_label = st.sidebar.radio("Use Cases", use_case_labels, index=0, label_visibility="collapsed")
 selected_key = label_to_key[selected_label]
 config = USE_CASES[selected_key]
-
 st.sidebar.markdown("---")
 st.sidebar.markdown("**AI Provider Settings**")
 provider = st.sidebar.selectbox("Select LLM Provider", ["Groq", "Gemini"])
 groq_key = st.sidebar.text_input("Groq API Key", type="password", key="groq_key_input")
+groq_model_choice = st.sidebar.selectbox(
+    "Groq Model",
+    GROQ_MODEL_OPTIONS,
+    index=0,
+    help="Groq periodically retires older models (the Llama 3.x, Mixtral and Gemma2 "
+         "families have all been shut down). If a model here ever returns a "
+         "model not found error, check console.groq.com/docs/models for the current "
+         "list and pick a replacement.",
+)
 gemini_key = st.sidebar.text_input("Gemini API Key", type="password", key="gemini_key_input")
+gemini_model_choice = st.sidebar.selectbox(
+    "Gemini Model",
+    GEMINI_MODEL_OPTIONS,
+    index=0,
+    help="Google periodically retires older Gemini models (gemini-2.0-flash and "
+         "gemini-2.0-flash-lite have both been shut down). If a model here ever "
+         "returns a not found error, check ai.google.dev/gemini-api/docs/models "
+         "for the current list and pick a replacement.",
+)
 active_key = groq_key if provider == "Groq" else gemini_key
-
+active_model = groq_model_choice if provider == "Groq" else gemini_model_choice
 with st.sidebar.expander("How to get a free Groq API key"):
     st.markdown(
         """
@@ -1537,7 +1427,6 @@ with st.sidebar.expander("How to get a free Groq API key"):
         6. Groq offers a free developer tier with generous request limits, no credit card required to start
         """
     )
-
 with st.sidebar.expander("How to get a free Gemini API key"):
     st.markdown(
         """
@@ -1549,12 +1438,10 @@ with st.sidebar.expander("How to get a free Gemini API key"):
         6. Google AI Studio provides a free usage tier suitable for development and testing
         """
     )
-
 st.sidebar.markdown("---")
 st.sidebar.markdown("**Real Data Source Settings**")
 st.sidebar.caption("Used by the Fraud and AML use cases to load real, live data instead of synthetic data")
 opensanctions_key = st.sidebar.text_input("OpenSanctions API Key", type="password", key="opensanctions_key_input")
-
 with st.sidebar.expander("How to get a free OpenSanctions API key"):
     st.markdown(
         """
@@ -1567,7 +1454,6 @@ with st.sidebar.expander("How to get a free OpenSanctions API key"):
         6. OpenSanctions is free for non commercial use, a data license is required for commercial use
         """
     )
-
 with st.sidebar.expander("How to get the Elliptic Bitcoin dataset"):
     st.markdown(
         """
@@ -1580,15 +1466,12 @@ with st.sidebar.expander("How to get the Elliptic Bitcoin dataset"):
            classes file and the edgelist file, the features file is optional
         """
     )
-
 st.sidebar.markdown("---")
 st.sidebar.markdown(
     "<div class='kg-developer-line'>Developed by Randy Singh</div>"
     "<div class='kg-developer-line'>Kalsnet KNet Consulting Group</div>",
     unsafe_allow_html=True,
 )
-
-
 # ---------------------------------------------------------------------------
 # Header
 # ---------------------------------------------------------------------------
@@ -1602,8 +1485,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 st.write("")
-
-
 # ---------------------------------------------------------------------------
 # Use case heading
 # ---------------------------------------------------------------------------
@@ -1612,39 +1493,30 @@ st.markdown(
     unsafe_allow_html=True,
 )
 st.write(config["description"])
-
 col_a, col_b = st.columns(2)
 with col_a:
     st.info("What the Graph Provides: " + config["graph_provides"])
 with col_b:
     st.success("What AI Does: " + config["ai_does"])
-
 st.markdown("---")
-
-
 # ---------------------------------------------------------------------------
 # Tabs within the selected use case
 # ---------------------------------------------------------------------------
 tab_data, tab_schema, tab_graph, tab_ai, tab_export, tab_benefits = st.tabs(
     ["Data Source", "Schema and Formulas", "Graph Visualization", "AI Analysis", "Export Results", "Benefits"]
 )
-
-
 # ----- Tab 1: Data Source ---------------------------------------------------
 with tab_data:
     st.subheader("Choose a Data Source")
-
     mode_options = ["Use Synthetic Data", "Upload Real Data"]
     if selected_key in REAL_DATA_ENABLED_KEYS:
         mode_options.append("Load Live Real Data")
-
     data_mode = st.radio(
         "Data mode",
         mode_options,
         horizontal=True,
         key="mode_" + selected_key,
     )
-
     if data_mode == "Use Synthetic Data":
         num_records = st.slider(
             "Number of records to generate per entity type",
@@ -1654,7 +1526,6 @@ with tab_data:
             dataset = generate_synthetic_dataset(selected_key, config, nodes_per_type=num_records, seed=42)
             st.session_state["datasets"][selected_key] = dataset
             st.success("Synthetic data generated for " + config["title"])
-
     elif data_mode == "Upload Real Data":
         st.write(
             "Upload two CSV files, one for nodes and one for edges. "
@@ -1671,7 +1542,6 @@ with tab_data:
                     st.success("Uploaded data loaded for " + config["title"])
                 except Exception as e:
                     st.error("Could not read uploaded files: " + str(e))
-
     else:
         st.markdown("### Real World Data Sources")
         st.write(
@@ -1683,7 +1553,6 @@ with tab_data:
             ["OpenSanctions Live Sanctions and PEP Screening", "Elliptic Real Bitcoin AML Dataset"],
             key="real_source_" + selected_key,
         )
-
         if real_source == "OpenSanctions Live Sanctions and PEP Screening":
             st.write(
                 "Calls the real OpenSanctions API and builds a live knowledge graph from actual "
@@ -1705,7 +1574,6 @@ with tab_data:
                 else:
                     st.session_state["datasets"][selected_key] = dataset
                     st.success("Loaded real OpenSanctions data for the search term: " + search_text)
-
         else:
             st.write(
                 "Uses the real, published Elliptic Bitcoin dataset, a graph of over two hundred "
@@ -1732,7 +1600,6 @@ with tab_data:
                     else:
                         st.session_state["datasets"][selected_key] = dataset
                         st.success(dataset.get("summary", "Elliptic dataset loaded."))
-
     current_dataset = st.session_state["datasets"].get(selected_key)
     if current_dataset is not None:
         st.markdown("**Node Table Preview**")
@@ -1741,8 +1608,6 @@ with tab_data:
         st.dataframe(current_dataset["edges"].head(50), use_container_width=True)
     else:
         st.warning("No data loaded yet for this use case. Generate synthetic data or upload real data above.")
-
-
 # ----- Tab 2: Schema and Formulas ------------------------------------------
 with tab_schema:
     st.subheader("Graph Schema")
@@ -1750,23 +1615,18 @@ with tab_schema:
         "The knowledge graph for this use case connects the following entity types "
         "through the relationships shown below."
     )
-
     for source_type, target_type, relation in config["edge_types"]:
         st.markdown("- **" + source_type + "** " + relation + " **" + target_type + "**")
-
     st.markdown("### Entity Fields")
     for entity_type, field_list in config["fields"].items():
         with st.expander(entity_type + " Fields"):
             for f in field_list:
                 st.write("- " + f)
-
     st.markdown("### Formulas Used")
     for formula_name, formula_explanation in config["formulas"]:
         st.markdown("**" + formula_name + "**")
         st.write(formula_explanation)
         st.write("")
-
-
 # ----- Tab 3: Graph Visualization -------------------------------------------
 with tab_graph:
     st.subheader("Interactive Graph Visualization")
@@ -1779,10 +1639,8 @@ with tab_graph:
             "Graph contains " + str(G.number_of_nodes()) + " nodes and "
             + str(G.number_of_edges()) + " edges."
         )
-
         metrics_df = compute_core_metrics(G)
         st.session_state["analysis_results"].setdefault(selected_key, {})["metrics_df"] = metrics_df
-
         paths = find_top_paths(G, max_paths=5)
         highlight_choice = None
         if paths:
@@ -1795,10 +1653,8 @@ with tab_graph:
                 idx = path_labels.index(selected_path_label)
                 highlight_choice = paths[idx]
                 st.session_state["analysis_results"][selected_key]["highlighted_path"] = highlight_choice
-
         fig = build_plotly_graph(G, highlight_path=highlight_choice)
         st.plotly_chart(fig, use_container_width=True)
-
         st.markdown("### Top Ranked Nodes by Graph Metrics")
         st.write(
             "Degree centrality measures direct connections. Betweenness centrality "
@@ -1806,8 +1662,6 @@ with tab_graph:
             "Pagerank measures overall structural importance considering edge weight."
         )
         st.dataframe(metrics_df.head(20), use_container_width=True)
-
-
 # ----- Tab 4: AI Analysis ----------------------------------------------------
 with tab_ai:
     st.subheader("AI Powered Analysis")
@@ -1821,18 +1675,16 @@ with tab_ai:
             G = build_networkx_graph(current_dataset["nodes"], current_dataset["edges"])
             metrics_df = compute_core_metrics(G)
             results_store["metrics_df"] = metrics_df
-
         st.write(
             "This step sends a summary of the graph structure and top ranked nodes "
             "to the selected AI provider, which will " + config["ai_prompt_focus"] + "."
         )
-
+        st.caption("Using " + provider + " model: " + active_model)
         user_question = st.text_area(
             "Optional question to focus the analysis",
             value="Summarize the most important risk or insight visible in this graph.",
             key="question_" + selected_key,
         )
-
         if st.button("Run AI Analysis", key="run_ai_" + selected_key):
             top_nodes = metrics_df.head(10).to_dict(orient="records")
             system_prompt = (
@@ -1850,24 +1702,22 @@ with tab_ai:
                 "User question: " + user_question
             )
             with st.spinner("Contacting " + provider + " for analysis..."):
-                result_text, note = run_llm_analysis(provider, active_key, system_prompt, user_prompt)
+                result_text, note = run_llm_analysis(
+                    provider, active_key, system_prompt, user_prompt, model=active_model
+                )
             results_store["ai_result"] = result_text
             results_store["ai_note"] = note
             results_store["ai_question"] = user_question
-
         if "ai_result" in results_store:
             if results_store.get("ai_note"):
                 st.warning(results_store["ai_note"])
             st.markdown("### AI Analysis Result")
             st.write(results_store["ai_result"])
-
-
 # ----- Tab 5: Export Results --------------------------------------------------
 with tab_export:
     st.subheader("Export Results")
     current_dataset = st.session_state["datasets"].get(selected_key)
     results_store = st.session_state["analysis_results"].get(selected_key, {})
-
     if current_dataset is None:
         st.warning("Load data in the Data Source tab first.")
     else:
@@ -1875,10 +1725,8 @@ with tab_export:
         edges_df = current_dataset["edges"]
         metrics_df = results_store.get("metrics_df")
         ai_result = results_store.get("ai_result", "AI analysis has not been run yet for this use case.")
-
         report_title = config["title"] + " Analysis Report"
         generated_on = "Generated on " + datetime.now().strftime("%Y-%m-%d %H:%M")
-
         sections = [
             ("Use Case Overview", config["description"]),
             ("What the Graph Provides", config["graph_provides"]),
@@ -1887,9 +1735,7 @@ with tab_export:
             ("AI Analysis Result", ai_result),
             ("Benefits", "\n".join(["- " + b for b in config["benefits"]])),
         ]
-
         col1, col2, col3, col4 = st.columns(4)
-
         with col1:
             pdf_bytes = build_pdf_report(report_title, sections, metrics_df)
             st.download_button(
@@ -1915,20 +1761,15 @@ with tab_export:
                 "Download CSV", data=csv_bytes,
                 file_name=selected_key + "_data.csv", mime="text/csv",
             )
-
         st.markdown("### Report Preview")
         for heading, body in sections:
             st.markdown("**" + heading + "**")
             st.write(body)
-
-
 # ----- Tab 6: Benefits -------------------------------------------------------
 with tab_benefits:
     st.subheader("Benefits of This Use Case")
     for benefit in config["benefits"]:
         st.markdown("<div class='kg-benefit-box'>" + benefit + "</div>", unsafe_allow_html=True)
-
-
 # ---------------------------------------------------------------------------
 # Footer
 # ---------------------------------------------------------------------------
