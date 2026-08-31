@@ -1198,7 +1198,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 st.set_page_config(
-    page_title="GraphSentinel Defense and Cyber Intelligence Platform",
+    page_title="GraphTheory Defense and Cyber Intelligence Platform",
     page_icon=None,
     layout="wide",
 )
