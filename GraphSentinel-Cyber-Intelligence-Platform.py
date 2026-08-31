@@ -1369,7 +1369,7 @@ st.sidebar.markdown(
 # ---------------------------------------------------------------------------
 # Header
 # ---------------------------------------------------------------------------
-st.markdown("<div class='main-title'>GraphTheory</div>", unsafe_allow_html=True)
+st.markdown("<div class='main-title'>GraphTheory-Applications</div>", unsafe_allow_html=True)
 st.markdown(
     "<div class='sub-title'>Defense and Cyber Intelligence Platform, "
     "Graph Theory Powered Analysis Across Thirteen Mission Critical Use Cases</div>",
@@ -1640,7 +1640,7 @@ with tab_benefits:
 # ---------------------------------------------------------------------------
 st.markdown("---")
 st.markdown(
-    "<div class='developer-line'>GraphSentinel Defense and Cyber Intelligence Platform</div>"
+    "<div class='developer-line'>GraphTheory Defense and Cyber Intelligence Platform</div>"
     "<div class='developer-line'>Developed by Randy Singh from Kalsnet (KNet) Consulting Group</div>",
     unsafe_allow_html=True,
 )
