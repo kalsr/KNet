@@ -1,9 +1,6 @@
-
 # GraphSentinel: Defense and Cyber Intelligence Platform
 # Single File Streamlit Edition
-
 # Developed by Randy Singh from Kalsnet (KNet) Consulting Group
-
 # A production level Streamlit application implementing thirteen Knowledge
 # Graph plus AI use cases for cyber defense and defense department analysis.
 # Each use case tab supports synthetic data generation with a live record
@@ -11,22 +8,18 @@
 # Graphviz flow diagram, interactive graph visualization, AI analysis
 # powered by Groq or Gemini, and export of results to PDF, Word, text and
 # CSV formats.
-
 # This single file contains all configuration, data generation, graph
 # analytics, LLM integration, export utilities, and the Streamlit interface.
-
 import io
 import json
 import random
 import string
 from datetime import datetime
-
 import requests
 import pandas as pd
 import networkx as nx
 import plotly.graph_objects as go
 import streamlit as st
-
 from docx import Document
 from docx.shared import Pt, RGBColor
 from reportlab.lib.pagesizes import letter
@@ -34,14 +27,10 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib.units import inch
-
-
 # =============================================================================
 # SECTION 1: USE CASE CONFIGURATION - THIRTEEN DEFENSE AND CYBER USE CASES
 # =============================================================================
-
 USE_CASES = {
-
     "attack_path": {
         "order": 1,
         "title": "Attack Path and Lateral Movement Analysis",
@@ -85,7 +74,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "explain the attacker reachable path from the compromised endpoint to the critical asset and recommend the highest priority containment action",
     },
-
     "mitre_attack": {
         "order": 2,
         "title": "MITRE ATT&CK Threat Correlation",
@@ -128,7 +116,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "correlate the observed techniques to the most likely known threat group and explain the confidence level and reasoning",
     },
-
     "identity_access": {
         "order": 3,
         "title": "Identity and Access Graph Analysis",
@@ -169,7 +156,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "identify the highest risk privilege escalation paths and recommend specific access reductions",
     },
-
     "threat_intel_fusion": {
         "order": 4,
         "title": "Threat Intelligence Fusion",
@@ -211,7 +197,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "explain the fused intelligence picture across campaigns and provide an attribution assessment with confidence level",
     },
-
     "insider_threat": {
         "order": 5,
         "title": "Insider Threat and Anomalous Behavior Detection",
@@ -254,7 +239,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "summarize the behavioral deviations for human review and explain why they differ from the peer group baseline, this is decision support not a determination of guilt",
     },
-
     "software_supply_chain": {
         "order": 6,
         "title": "Supply Chain and Software Bill of Materials Risk",
@@ -296,7 +280,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "explain the vulnerability blast radius across mission applications and recommend a remediation order",
     },
-
     "intel_investigation": {
         "order": 7,
         "title": "Intelligence Analysis and Connected Data Investigation",
@@ -338,7 +321,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "summarize the connected network, identify the highest priority person for follow up investigation, and explain the reasoning",
     },
-
     "mission_readiness": {
         "order": 8,
         "title": "Mission and Force Readiness Planning",
@@ -380,7 +362,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "identify capability gaps and readiness risk for the mission and explain the reasoning",
     },
-
     "logistics_resilience": {
         "order": 9,
         "title": "Logistics and Defense Supply Chain Resilience",
@@ -421,7 +402,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "explain the cascading logistics impact of the disruption and recommend a mitigation priority",
     },
-
     "counter_terror_financing": {
         "order": 10,
         "title": "Counter Terrorism Financing and Sanctions Network Analysis",
@@ -463,7 +443,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "explain the financing network structure, the path of funds toward the sanctioned entity, and the key facilitators involved",
     },
-
     "personnel_security": {
         "order": 11,
         "title": "Personnel Security and Counter Intelligence",
@@ -506,7 +485,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "summarize the connected pattern across contacts, disclosures and travel for personnel security officer review, this is decision support not an adjudication",
     },
-
     "digital_twin_infra": {
         "order": 12,
         "title": "Digital Twin of Critical Infrastructure",
@@ -548,7 +526,6 @@ USE_CASES = {
         ],
         "ai_prompt_focus": "explain the likely failure cause, downstream mission impact, and recommended maintenance action",
     },
-
     "data_sovereignty": {
         "order": 13,
         "title": "Data Sovereignty and Deployment Risk Assessment",
@@ -592,15 +569,10 @@ USE_CASES = {
         "ai_prompt_focus": "identify data sovereignty exposure and recommend deployment adjustments to close compliance gaps",
     },
 }
-
 USE_CASE_ORDER = [k for k, v in sorted(USE_CASES.items(), key=lambda kv: kv[1]["order"])]
-
-
 # =============================================================================
 # SECTION 2: SYNTHETIC DATA GENERATION AND GRAPH CONSTRUCTION
 # =============================================================================
-
-
 FIRST_NAMES = ["James", "Maria", "Wei", "Amara", "Liam", "Sofia", "Noah", "Priya",
                "Ethan", "Fatima", "Lucas", "Ingrid", "Omar", "Chen", "Ava", "Diego"]
 LAST_NAMES = ["Smith", "Garcia", "Chen", "Okafor", "Muller", "Rossi", "Kim", "Singh",
@@ -609,17 +581,11 @@ CITIES = ["New York", "London", "Singapore", "Toronto", "Mumbai", "Berlin",
           "Sydney", "Sao Paulo", "Dubai", "Tokyo", "Chicago", "Nairobi"]
 COUNTRIES = ["United States", "United Kingdom", "Singapore", "Canada", "India",
              "Germany", "Australia", "Brazil", "United Arab Emirates", "Japan"]
-
-
 def random_name():
     return random.choice(FIRST_NAMES) + " " + random.choice(LAST_NAMES)
-
-
 def random_id(prefix, n=6):
     suffix = "".join(random.choices(string.digits, k=n))
     return prefix + suffix
-
-
 def random_field_value(field_name, node_type, index):
     name_lower = field_name.lower()
     if name_lower.endswith("_id"):
@@ -650,8 +616,6 @@ def random_field_value(field_name, node_type, index):
     if "days" in name_lower or "hours" in name_lower or "count" in name_lower or "quantity" in name_lower:
         return random.randint(1, 500)
     return "Value " + str(random.randint(1, 999))
-
-
 def generate_synthetic_dataset(use_case_key, config, nodes_per_type=12, seed=None):
     """
     Generates a synthetic node table and edge table for the given use case
@@ -659,14 +623,11 @@ def generate_synthetic_dataset(use_case_key, config, nodes_per_type=12, seed=Non
     """
     if seed is not None:
         random.seed(seed)
-
     node_types = config["node_types"]
     fields = config["fields"]
     edge_types = config["edge_types"]
-
     node_rows = []
     node_ids_by_type = {}
-
     for ntype in node_types:
         ids_for_type = []
         for i in range(nodes_per_type):
@@ -680,9 +641,7 @@ def generate_synthetic_dataset(use_case_key, config, nodes_per_type=12, seed=Non
             node_rows.append(row)
             ids_for_type.append(node_id)
         node_ids_by_type[ntype] = ids_for_type
-
     nodes_df = pd.DataFrame(node_rows)
-
     edge_rows = []
     for source_type, target_type, relation in edge_types:
         source_ids = node_ids_by_type.get(source_type, [])
@@ -701,11 +660,8 @@ def generate_synthetic_dataset(use_case_key, config, nodes_per_type=12, seed=Non
                     "relationship": relation,
                     "weight": round(random.uniform(0.1, 1.0), 3),
                 })
-
     edges_df = pd.DataFrame(edge_rows)
     return {"nodes": nodes_df, "edges": edges_df}
-
-
 def build_networkx_graph(nodes_df, edges_df):
     G = nx.DiGraph()
     if nodes_df is not None and len(nodes_df) > 0:
@@ -732,8 +688,6 @@ def build_networkx_graph(nodes_df, edges_df):
             weight = row.get("weight", 1.0)
             G.add_edge(src, tgt, relationship=rel, weight=weight)
     return G
-
-
 def dataframes_from_uploaded(nodes_file, edges_file):
     """
     Reads user uploaded CSV files for nodes and edges into DataFrames.
@@ -751,14 +705,9 @@ def dataframes_from_uploaded(nodes_file, edges_file):
     if "weight" not in edges_df.columns:
         edges_df["weight"] = 1.0
     return {"nodes": nodes_df, "edges": edges_df}
-
-
 # =============================================================================
 # SECTION 3: GRAPH ANALYTICS, VISUALIZATION AND SCHEMA FLOW DIAGRAM
 # =============================================================================
-
-
-
 def compute_core_metrics(G):
     """
     Computes degree centrality, betweenness centrality and pagerank for
@@ -767,7 +716,6 @@ def compute_core_metrics(G):
     if G.number_of_nodes() == 0:
         return pd.DataFrame(columns=["node_id", "label", "node_type",
                                       "degree_centrality", "betweenness_centrality", "pagerank"])
-
     degree = nx.degree_centrality(G)
     try:
         betweenness = nx.betweenness_centrality(G)
@@ -777,7 +725,6 @@ def compute_core_metrics(G):
         pagerank = nx.pagerank(G, weight="weight")
     except Exception:
         pagerank = {n: 0.0 for n in G.nodes()}
-
     rows = []
     for n in G.nodes():
         data = G.nodes[n]
@@ -790,8 +737,6 @@ def compute_core_metrics(G):
             "pagerank": round(pagerank.get(n, 0.0), 4),
         })
     return pd.DataFrame(rows).sort_values("pagerank", ascending=False).reset_index(drop=True)
-
-
 def find_top_paths(G, max_paths=5):
     """
     Finds a handful of representative shortest paths between nodes of
@@ -802,14 +747,12 @@ def find_top_paths(G, max_paths=5):
     nodes = list(G.nodes())
     if len(nodes) < 2:
         return paths
-
     sources = [n for n in nodes if G.out_degree(n) > 0 and G.in_degree(n) == 0]
     sinks = [n for n in nodes if G.in_degree(n) > 0 and G.out_degree(n) == 0]
     if not sources:
         sources = nodes[: min(5, len(nodes))]
     if not sinks:
         sinks = nodes[: min(5, len(nodes))]
-
     count = 0
     for s in sources:
         for t in sinks:
@@ -826,8 +769,6 @@ def find_top_paths(G, max_paths=5):
             if count >= max_paths:
                 return paths
     return paths
-
-
 def build_plotly_graph(G, highlight_path=None, max_nodes=250):
     """
     Builds an interactive Plotly figure of the graph using a spring layout.
@@ -838,27 +779,21 @@ def build_plotly_graph(G, highlight_path=None, max_nodes=250):
         fig = go.Figure()
         fig.update_layout(title="No graph data available")
         return fig
-
     if G.number_of_nodes() > max_nodes:
         keep = list(G.nodes())[:max_nodes]
         G = G.subgraph(keep).copy()
-
     pos = nx.spring_layout(G, seed=42, k=None)
-
     node_types = sorted(set(nx.get_node_attributes(G, "node_type").values()))
     palette = ["#0b3d91", "#c0392b", "#1e8449", "#b9770e", "#6c3483",
                "#117864", "#a04000", "#2874a6", "#7d3c98", "#154360"]
     color_map = {nt: palette[i % len(palette)] for i, nt in enumerate(node_types)}
-
     highlight_edges = set()
     if highlight_path:
         for i in range(len(highlight_path) - 1):
             highlight_edges.add((highlight_path[i], highlight_path[i + 1]))
-
     edge_traces = []
     edge_x_normal, edge_y_normal = [], []
     edge_x_highlight, edge_y_highlight = [], []
-
     for u, v in G.edges():
         x0, y0 = pos[u]
         x1, y1 = pos[v]
@@ -868,7 +803,6 @@ def build_plotly_graph(G, highlight_path=None, max_nodes=250):
         else:
             edge_x_normal += [x0, x1, None]
             edge_y_normal += [y0, y1, None]
-
     edge_traces.append(go.Scatter(x=edge_x_normal, y=edge_y_normal, mode="lines",
                                    line=dict(width=1, color="#bbbbbb"),
                                    hoverinfo="none", showlegend=False))
@@ -877,7 +811,6 @@ def build_plotly_graph(G, highlight_path=None, max_nodes=250):
                                        line=dict(width=3, color="#e74c3c"),
                                        hoverinfo="none", showlegend=False,
                                        name="Highlighted Path"))
-
     node_traces = []
     for nt in node_types:
         xs, ys, texts = [], [], []
@@ -893,7 +826,6 @@ def build_plotly_graph(G, highlight_path=None, max_nodes=250):
             marker=dict(size=14, color=color_map[nt], line=dict(width=1, color="#ffffff")),
             text=texts, hoverinfo="text"
         ))
-
     fig = go.Figure(data=edge_traces + node_traces)
     fig.update_layout(
         showlegend=True,
@@ -905,8 +837,6 @@ def build_plotly_graph(G, highlight_path=None, max_nodes=250):
         height=560,
     )
     return fig
-
-
 def build_schema_flow_diagram(config):
     """
     Builds a Graphviz DOT format flow diagram string describing how the
@@ -919,18 +849,14 @@ def build_schema_flow_diagram(config):
     lines.append('node [shape=box, style="rounded,filled", fillcolor="#eaf1fb", '
                   'color="#0b3d91", fontname="Helvetica", fontsize=11, fontcolor="#0b3d91", penwidth=2];')
     lines.append('edge [color="#5d6d7e", fontname="Helvetica", fontsize=9, fontcolor="#333333"];')
-
     for source_type, target_type, relation in config["edge_types"]:
         source_id = source_type.replace(" ", "_")
         target_id = target_type.replace(" ", "_")
         lines.append('"' + source_id + '" [label="' + source_type + '"];')
         lines.append('"' + target_id + '" [label="' + target_type + '"];')
         lines.append('"' + source_id + '" -> "' + target_id + '" [label="' + relation + '"];')
-
     lines.append("}")
     return "\n".join(lines)
-
-
 def build_record_count_chart(nodes_df):
     """
     Builds a Plotly bar chart showing the number of synthetic or uploaded
@@ -941,10 +867,8 @@ def build_record_count_chart(nodes_df):
         fig = go.Figure()
         fig.update_layout(title="No data loaded yet")
         return fig
-
     counts = nodes_df["node_type"].value_counts().reset_index()
     counts.columns = ["node_type", "record_count"]
-
     fig = go.Figure(data=[
         go.Bar(
             x=counts["node_type"], y=counts["record_count"],
@@ -960,53 +884,140 @@ def build_record_count_chart(nodes_df):
         plot_bgcolor="#ffffff",
     )
     return fig
-
-
 # =============================================================================
 # SECTION 4: LLM INTEGRATION - GROQ AND GEMINI
 # =============================================================================
-
-
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
+GROQ_MODELS_URL = "https://api.groq.com/openai/v1/models"
+# Groq periodically retires models. Rather than hard code a single model
+# name that eventually returns HTTP 404 model_not_found, keep an ordered
+# list of reasonable current candidates and let the caller override with
+# whatever the live /models endpoint reports as actually available on
+# the caller's account.
 GROQ_DEFAULT_MODEL = "llama-3.3-70b-versatile"
-
+GROQ_FALLBACK_MODELS = [
+    "llama-3.3-70b-versatile",
+    "llama-3.1-8b-instant",
+    "openai/gpt-oss-120b",
+    "openai/gpt-oss-20b",
+    "groq/compound-mini",
+]
 GEMINI_API_URL_TEMPLATE = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
-GEMINI_DEFAULT_MODEL = "gemini-2.0-flash"
-
-
+GEMINI_MODELS_URL_TEMPLATE = "https://generativelanguage.googleapis.com/v1beta/models?key={key}"
+# Google periodically retires dated Gemini snapshots (for example
+# gemini-2.0-flash) in favor of newer ones. "gemini-flash-latest" is a
+# rolling alias Google maintains that always resolves to the current
+# recommended fast Gemini model, so it does not go stale the way a
+# pinned dated model name does.
+GEMINI_DEFAULT_MODEL = "gemini-flash-latest"
+GEMINI_FALLBACK_MODELS = [
+    "gemini-flash-latest",
+    "gemini-pro-latest",
+    "gemini-2.5-flash",
+    "gemini-2.0-flash",
+]
+def list_groq_models(api_key, timeout=20):
+    """
+    Queries Groq's /models endpoint to discover which model ids are
+    actually available for this API key right now. Returns a list of
+    model id strings, or an empty list if the call fails.
+    """
+    if not api_key:
+        return []
+    headers = {"Authorization": "Bearer " + api_key}
+    try:
+        resp = requests.get(GROQ_MODELS_URL, headers=headers, timeout=timeout)
+        if resp.status_code != 200:
+            return []
+        data = resp.json()
+        ids = [m.get("id") for m in data.get("data", []) if m.get("id")]
+        # Prefer chat capable text models over whisper or guard models.
+        ids = [i for i in ids if "whisper" not in i.lower() and "guard" not in i.lower()
+               and "tts" not in i.lower()]
+        return sorted(ids)
+    except Exception:
+        return []
+def list_gemini_models(api_key, timeout=20):
+    """
+    Queries Gemini's ListModels endpoint to discover which model names
+    support generateContent for this API key right now. Returns a list
+    of model id strings (without the leading "models/" prefix), or an
+    empty list if the call fails.
+    """
+    if not api_key:
+        return []
+    url = GEMINI_MODELS_URL_TEMPLATE.format(key=api_key)
+    try:
+        resp = requests.get(url, timeout=timeout)
+        if resp.status_code != 200:
+            return []
+        data = resp.json()
+        names = []
+        for m in data.get("models", []):
+            methods = m.get("supportedGenerationMethods", [])
+            if "generateContent" in methods:
+                name = m.get("name", "")
+                if name.startswith("models/"):
+                    name = name[len("models/"):]
+                if name:
+                    names.append(name)
+        return sorted(names)
+    except Exception:
+        return []
+def _is_model_not_found(status_code, response_text):
+    if status_code == 404:
+        return True
+    lowered = (response_text or "").lower()
+    return "model_not_found" in lowered or "does not exist" in lowered or "not found" in lowered
 def call_groq(api_key, system_prompt, user_prompt, model=None, timeout=60):
     if not api_key:
         return None, "Groq API key is missing. Please enter a key in the sidebar."
-    model_name = model or GROQ_DEFAULT_MODEL
+    candidates = []
+    if model:
+        candidates.append(model)
+    for m in GROQ_FALLBACK_MODELS:
+        if m not in candidates:
+            candidates.append(m)
     headers = {
         "Authorization": "Bearer " + api_key,
         "Content-Type": "application/json",
     }
-    payload = {
-        "model": model_name,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
-        "temperature": 0.3,
-        "max_tokens": 900,
-    }
-    try:
-        resp = requests.post(GROQ_API_URL, headers=headers, data=json.dumps(payload), timeout=timeout)
-        if resp.status_code != 200:
-            return None, "Groq API error, status code " + str(resp.status_code) + ". Details: " + resp.text[:300]
-        data = resp.json()
-        text = data["choices"][0]["message"]["content"]
-        return text, None
-    except Exception as e:
-        return None, "Groq API request failed: " + str(e)
-
-
+    last_error = None
+    for model_name in candidates:
+        payload = {
+            "model": model_name,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            "temperature": 0.3,
+            "max_tokens": 900,
+        }
+        try:
+            resp = requests.post(GROQ_API_URL, headers=headers, data=json.dumps(payload), timeout=timeout)
+            if resp.status_code != 200:
+                last_error = ("Groq API error for model " + model_name + ", status code "
+                              + str(resp.status_code) + ". Details: " + resp.text[:300])
+                if _is_model_not_found(resp.status_code, resp.text):
+                    # This model was retired or unavailable to this key, try the next candidate.
+                    continue
+                return None, last_error
+            data = resp.json()
+            text = data["choices"][0]["message"]["content"]
+            return text, None
+        except Exception as e:
+            last_error = "Groq API request failed for model " + model_name + ": " + str(e)
+            continue
+    return None, last_error or "Groq API request failed for all candidate models."
 def call_gemini(api_key, system_prompt, user_prompt, model=None, timeout=60):
     if not api_key:
         return None, "Gemini API key is missing. Please enter a key in the sidebar."
-    model_name = model or GEMINI_DEFAULT_MODEL
-    url = GEMINI_API_URL_TEMPLATE.format(model=model_name, key=api_key)
+    candidates = []
+    if model:
+        candidates.append(model)
+    for m in GEMINI_FALLBACK_MODELS:
+        if m not in candidates:
+            candidates.append(m)
     combined_prompt = system_prompt + "\n\n" + user_prompt
     payload = {
         "contents": [
@@ -1015,27 +1026,39 @@ def call_gemini(api_key, system_prompt, user_prompt, model=None, timeout=60):
         "generationConfig": {"temperature": 0.3, "maxOutputTokens": 900},
     }
     headers = {"Content-Type": "application/json"}
-    try:
-        resp = requests.post(url, headers=headers, data=json.dumps(payload), timeout=timeout)
-        if resp.status_code != 200:
-            return None, "Gemini API error, status code " + str(resp.status_code) + ". Details: " + resp.text[:300]
-        data = resp.json()
-        candidates = data.get("candidates", [])
-        if not candidates:
-            return None, "Gemini API returned no candidates."
-        parts = candidates[0]["content"]["parts"]
-        text = "".join([p.get("text", "") for p in parts])
-        return text, None
-    except Exception as e:
-        return None, "Gemini API request failed: " + str(e)
-
-
+    last_error = None
+    for model_name in candidates:
+        url = GEMINI_API_URL_TEMPLATE.format(model=model_name, key=api_key)
+        try:
+            resp = requests.post(url, headers=headers, data=json.dumps(payload), timeout=timeout)
+            if resp.status_code != 200:
+                last_error = ("Gemini API error for model " + model_name + ", status code "
+                              + str(resp.status_code) + ". Details: " + resp.text[:300])
+                if _is_model_not_found(resp.status_code, resp.text):
+                    continue
+                return None, last_error
+            data = resp.json()
+            candidates_resp = data.get("candidates", [])
+            if not candidates_resp:
+                last_error = "Gemini API returned no candidates for model " + model_name + "."
+                continue
+            parts = candidates_resp[0]["content"]["parts"]
+            text = "".join([p.get("text", "") for p in parts])
+            return text, None
+        except Exception as e:
+            last_error = "Gemini API request failed for model " + model_name + ": " + str(e)
+            continue
+    return None, last_error or "Gemini API request failed for all candidate models."
 def run_llm_analysis(provider, api_key, system_prompt, user_prompt, model=None):
     """
     Dispatches to the selected provider. provider is either Groq or Gemini.
     Returns a tuple of result text and error message. If the call fails or
     no key is present, a locally generated fallback explanation is returned
-    so the application remains usable without live API access.
+    so the application remains usable without live API access. Both
+    providers automatically retry against a short list of known-good
+    fallback model names if the requested model has been retired or is
+    not available on the caller's account, so a single stale model id
+    does not silently break AI analysis.
     """
     if provider == "Groq":
         text, error = call_groq(api_key, system_prompt, user_prompt, model=model)
@@ -1043,15 +1066,11 @@ def run_llm_analysis(provider, api_key, system_prompt, user_prompt, model=None):
         text, error = call_gemini(api_key, system_prompt, user_prompt, model=model)
     else:
         text, error = None, "Unknown provider selected."
-
     if text:
         return text, None
-
     fallback = build_fallback_summary(user_prompt)
     note = "Live LLM call was not available (" + (error or "no key provided") + "). Showing a rule based summary instead."
     return fallback, note
-
-
 def build_fallback_summary(user_prompt):
     """
     A simple deterministic fallback used when no API key is configured or a
@@ -1064,17 +1083,13 @@ def build_fallback_summary(user_prompt):
         "including centrality, pagerank and shortest path analysis.",
         "",
         "To receive a full natural language explanation, add a valid Groq or",
-        "Gemini API key in the sidebar and rerun the analysis.",
+        "Gemini API key in the sidebar, confirm a model is selected under",
+        "Model Settings, and rerun the analysis.",
     ]
     return "\n".join(lines)
-
-
 # =============================================================================
 # SECTION 5: EXPORT UTILITIES - PDF, WORD, TEXT, CSV
 # =============================================================================
-
-
-
 def build_text_report(title, sections):
     """
     sections is a list of tuples (heading, body_text)
@@ -1092,8 +1107,6 @@ def build_text_report(title, sections):
         lines.append(body)
         lines.append("")
     return "\n".join(lines).encode("utf-8")
-
-
 def build_csv_report(nodes_df, edges_df, metrics_df):
     buffer = io.StringIO()
     buffer.write("NODE TABLE\n")
@@ -1106,31 +1119,23 @@ def build_csv_report(nodes_df, edges_df, metrics_df):
     if metrics_df is not None and len(metrics_df) > 0:
         metrics_df.to_csv(buffer, index=False)
     return buffer.getvalue().encode("utf-8")
-
-
 def build_word_report(title, sections, metrics_df=None):
     doc = Document()
-
     heading = doc.add_heading(level=0)
     run = heading.add_run(title)
     run.font.color.rgb = RGBColor(0x1f, 0x4e, 0x9c)
     run.font.size = Pt(24)
     run.bold = True
-
     sub = doc.add_paragraph()
     sub_run = sub.add_run("Knowledge Graph AI Use Cases Application")
     sub_run.bold = True
     sub_run.font.color.rgb = RGBColor(0x1f, 0x4e, 0x9c)
-
     footer_p = doc.add_paragraph("Developed by Randy Singh from Kalsnet KNet Consulting Group")
     footer_p.runs[0].italic = True
-
     doc.add_paragraph("")
-
     for heading_text, body_text in sections:
         doc.add_heading(heading_text, level=1)
         doc.add_paragraph(body_text)
-
     if metrics_df is not None and len(metrics_df) > 0:
         doc.add_heading("Graph Metrics Summary", level=1)
         top = metrics_df.head(15)
@@ -1143,20 +1148,16 @@ def build_word_report(title, sections, metrics_df=None):
             cells = table.add_row().cells
             for i, col in enumerate(top.columns):
                 cells[i].text = str(row[col])
-
     buf = io.BytesIO()
     doc.save(buf)
     buf.seek(0)
     return buf.read()
-
-
 def build_pdf_report(title, sections, metrics_df=None):
     buf = io.BytesIO()
     doc = SimpleDocTemplate(buf, pagesize=letter,
                              topMargin=0.6 * inch, bottomMargin=0.6 * inch,
                              leftMargin=0.6 * inch, rightMargin=0.6 * inch)
     styles = getSampleStyleSheet()
-
     title_style = ParagraphStyle("TitleBlue", parent=styles["Title"],
                                   textColor=colors.HexColor("#1f4e9c"), fontSize=22)
     heading_style = ParagraphStyle("HeadingBlue", parent=styles["Heading2"],
@@ -1164,19 +1165,16 @@ def build_pdf_report(title, sections, metrics_df=None):
     body_style = styles["BodyText"]
     footer_style = ParagraphStyle("Footer", parent=styles["Normal"], fontSize=9,
                                    textColor=colors.HexColor("#555555"))
-
     story = []
     story.append(Paragraph(title, title_style))
     story.append(Paragraph("Knowledge Graph AI Use Cases Application", heading_style))
     story.append(Paragraph("Developed by Randy Singh from Kalsnet KNet Consulting Group", footer_style))
     story.append(Spacer(1, 16))
-
     for heading_text, body_text in sections:
         story.append(Paragraph(heading_text, heading_style))
         safe_body = body_text.replace("\n", "<br/>")
         story.append(Paragraph(safe_body, body_style))
         story.append(Spacer(1, 10))
-
     if metrics_df is not None and len(metrics_df) > 0:
         story.append(Paragraph("Graph Metrics Summary", heading_style))
         top = metrics_df.head(15)
@@ -1190,29 +1188,20 @@ def build_pdf_report(title, sections, metrics_df=None):
             ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f2f6fc")]),
         ]))
         story.append(t)
-
     doc.build(story)
     buf.seek(0)
     return buf.read()
-
-
 # =============================================================================
 # SECTION 6: STREAMLIT APPLICATION
 # =============================================================================
-
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-
-
-
 st.set_page_config(
     page_title="GraphSentinel Defense and Cyber Intelligence Platform",
     page_icon=None,
     layout="wide",
 )
-
-
 # ---------------------------------------------------------------------------
 # Global styling, production level look
 # ---------------------------------------------------------------------------
@@ -1283,8 +1272,6 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-
-
 # ---------------------------------------------------------------------------
 # Session state initialization
 # ---------------------------------------------------------------------------
@@ -1292,27 +1279,65 @@ if "datasets" not in st.session_state:
     st.session_state["datasets"] = {}
 if "analysis_results" not in st.session_state:
     st.session_state["analysis_results"] = {}
-
-
+if "groq_models" not in st.session_state:
+    st.session_state["groq_models"] = []
+if "gemini_models" not in st.session_state:
+    st.session_state["gemini_models"] = []
 # ---------------------------------------------------------------------------
 # Sidebar navigation
 # ---------------------------------------------------------------------------
 st.sidebar.markdown("<div class='sidebar-title'>GraphSentinel</div>", unsafe_allow_html=True)
 st.sidebar.caption("Defense and Cyber Intelligence Platform, select a use case below")
-
 use_case_labels = [str(USE_CASES[k]["order"]) + ". " + USE_CASES[k]["title"] for k in USE_CASE_ORDER]
 label_to_key = dict(zip(use_case_labels, USE_CASE_ORDER))
 selected_label = st.sidebar.radio("Use Cases", use_case_labels, index=0, label_visibility="collapsed")
 selected_key = label_to_key[selected_label]
 config = USE_CASES[selected_key]
-
 st.sidebar.markdown("---")
 st.sidebar.markdown("**AI Provider Settings**")
 provider = st.sidebar.selectbox("Select LLM Provider", ["Groq", "Gemini"])
 groq_key = st.sidebar.text_input("Groq API Key", type="password", key="groq_key_input")
 gemini_key = st.sidebar.text_input("Gemini API Key", type="password", key="gemini_key_input")
 active_key = groq_key if provider == "Groq" else gemini_key
-
+# --- Model selection ---------------------------------------------------
+# Provider model catalogs change over time and a pinned model id can be
+# retired without notice (this is what produced the original 404
+# model_not_found errors). Rather than hard code one name, let the user
+# fetch the live list of models their key actually has access to, and
+# fall back to a short list of known-good candidates when that is not
+# possible (no key yet, or the discovery call itself fails).
+st.sidebar.markdown("**Model Settings**")
+if provider == "Groq":
+    fetch_col, _ = st.sidebar.columns([1, 1])
+    with fetch_col:
+        if st.button("Refresh Groq Models", key="refresh_groq_models"):
+            fetched = list_groq_models(groq_key)
+            if fetched:
+                st.session_state["groq_models"] = fetched
+                st.sidebar.success(str(len(fetched)) + " models found")
+            else:
+                st.sidebar.warning("Could not fetch live model list, using default candidates.")
+    model_options = st.session_state["groq_models"] or GROQ_FALLBACK_MODELS
+    default_index = model_options.index(GROQ_DEFAULT_MODEL) if GROQ_DEFAULT_MODEL in model_options else 0
+    selected_model = st.sidebar.selectbox("Groq Model", model_options, index=default_index, key="groq_model_select")
+else:
+    fetch_col, _ = st.sidebar.columns([1, 1])
+    with fetch_col:
+        if st.button("Refresh Gemini Models", key="refresh_gemini_models"):
+            fetched = list_gemini_models(gemini_key)
+            if fetched:
+                st.session_state["gemini_models"] = fetched
+                st.sidebar.success(str(len(fetched)) + " models found")
+            else:
+                st.sidebar.warning("Could not fetch live model list, using default candidates.")
+    model_options = st.session_state["gemini_models"] or GEMINI_FALLBACK_MODELS
+    default_index = model_options.index(GEMINI_DEFAULT_MODEL) if GEMINI_DEFAULT_MODEL in model_options else 0
+    selected_model = st.sidebar.selectbox("Gemini Model", model_options, index=default_index, key="gemini_model_select")
+st.sidebar.caption(
+    "If a model is retired by the provider, AI Analysis automatically retries "
+    "with the next known-good candidate, so a single stale model id will not "
+    "block analysis."
+)
 with st.sidebar.expander("How to get a free Groq API key"):
     st.markdown(
         """
@@ -1324,7 +1349,6 @@ with st.sidebar.expander("How to get a free Groq API key"):
         6. Groq offers a free developer tier with generous request limits, no credit card required to start
         """
     )
-
 with st.sidebar.expander("How to get a free Gemini API key"):
     st.markdown(
         """
@@ -1336,15 +1360,12 @@ with st.sidebar.expander("How to get a free Gemini API key"):
         6. Google AI Studio provides a free usage tier suitable for development and testing
         """
     )
-
 st.sidebar.markdown("---")
 st.sidebar.markdown(
     "<div class='developer-line'>Developed by Randy Singh</div>"
     "<div class='developer-line'>Kalsnet (KNet) Consulting Group</div>",
     unsafe_allow_html=True,
 )
-
-
 # ---------------------------------------------------------------------------
 # Header
 # ---------------------------------------------------------------------------
@@ -1359,8 +1380,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 st.write("")
-
-
 # ---------------------------------------------------------------------------
 # Use case heading and summary
 # ---------------------------------------------------------------------------
@@ -1369,22 +1388,18 @@ st.markdown(
     unsafe_allow_html=True,
 )
 st.write(config["description"])
-
 col_a, col_b = st.columns(2)
 with col_a:
     st.info("What the Graph Provides: " + config["graph_provides"])
 with col_b:
     st.success("What AI Does: " + config["ai_does"])
-
 current_dataset = st.session_state["datasets"].get(selected_key)
 results_store = st.session_state["analysis_results"].get(selected_key, {})
-
 kpi1, kpi2, kpi3, kpi4 = st.columns(4)
 total_nodes = len(current_dataset["nodes"]) if current_dataset is not None else 0
 total_edges = len(current_dataset["edges"]) if current_dataset is not None else 0
 entity_types = len(config["node_types"])
 formulas_count = len(config["formulas"])
-
 with kpi1:
     st.markdown("<div class='kpi-box'><div class='kpi-value'>" + str(total_nodes) +
                 "</div><div class='kpi-label'>Total Records Loaded</div></div>", unsafe_allow_html=True)
@@ -1397,18 +1412,13 @@ with kpi3:
 with kpi4:
     st.markdown("<div class='kpi-box'><div class='kpi-value'>" + str(formulas_count) +
                 "</div><div class='kpi-label'>Analytical Formulas Applied</div></div>", unsafe_allow_html=True)
-
 st.markdown("---")
-
-
 # ---------------------------------------------------------------------------
 # Tabs within the selected use case
 # ---------------------------------------------------------------------------
 tab_data, tab_schema, tab_graph, tab_ai, tab_export, tab_benefits = st.tabs(
     ["Data Source", "Schema, Formulas and Flow Diagram", "Graph Visualization", "AI Analysis", "Export Results", "Benefits"]
 )
-
-
 # ----- Tab 1: Data Source ---------------------------------------------------
 with tab_data:
     st.subheader("Choose a Data Source")
@@ -1418,7 +1428,6 @@ with tab_data:
         horizontal=True,
         key="mode_" + selected_key,
     )
-
     if data_mode == "Use Synthetic Data":
         num_records = st.slider(
             "Number of records to generate per entity type",
@@ -1428,7 +1437,6 @@ with tab_data:
             dataset = generate_synthetic_dataset(selected_key, config, nodes_per_type=num_records, seed=42)
             st.session_state["datasets"][selected_key] = dataset
             st.success("Synthetic data generated for " + config["title"])
-
     else:
         st.write(
             "Upload two CSV files, one for nodes and one for edges. "
@@ -1445,7 +1453,6 @@ with tab_data:
                     st.success("Uploaded data loaded for " + config["title"])
                 except Exception as e:
                     st.error("Could not read uploaded files: " + str(e))
-
     current_dataset = st.session_state["datasets"].get(selected_key)
     if current_dataset is not None:
         st.markdown("### Synthetic Data Summary Bar")
@@ -1454,15 +1461,12 @@ with tab_data:
         )
         chart = build_record_count_chart(current_dataset["nodes"])
         st.plotly_chart(chart, use_container_width=True)
-
         st.markdown("**Node Table Preview**")
         st.dataframe(current_dataset["nodes"].head(100), use_container_width=True)
         st.markdown("**Edge Table Preview**")
         st.dataframe(current_dataset["edges"].head(100), use_container_width=True)
     else:
         st.warning("No data loaded yet for this use case. Generate synthetic data or upload real data above.")
-
-
 # ----- Tab 2: Schema, Formulas and Flow Diagram ------------------------------
 with tab_schema:
     st.subheader("Graph Schema Flow Diagram")
@@ -1472,7 +1476,6 @@ with tab_schema:
     )
     dot_diagram = build_schema_flow_diagram(config)
     st.graphviz_chart(dot_diagram, use_container_width=True)
-
     st.markdown("### Entity Fields")
     st.write("Each entity type below carries the following fields in the graph.")
     field_cols = st.columns(len(config["fields"]))
@@ -1481,7 +1484,6 @@ with tab_schema:
             st.markdown("**" + entity_type + "**")
             for f in field_list:
                 st.write("- " + f)
-
     st.markdown("### Formulas Used")
     st.write(
         "These are the analytical formulas applied to the graph to produce the "
@@ -1490,8 +1492,6 @@ with tab_schema:
     for formula_name, formula_explanation in config["formulas"]:
         with st.expander(formula_name):
             st.write(formula_explanation)
-
-
 # ----- Tab 3: Graph Visualization -------------------------------------------
 with tab_graph:
     st.subheader("Interactive Graph Visualization")
@@ -1504,10 +1504,8 @@ with tab_graph:
             "Graph contains " + str(G.number_of_nodes()) + " nodes and "
             + str(G.number_of_edges()) + " edges."
         )
-
         metrics_df = compute_core_metrics(G)
         st.session_state["analysis_results"].setdefault(selected_key, {})["metrics_df"] = metrics_df
-
         paths = find_top_paths(G, max_paths=5)
         highlight_choice = None
         if paths:
@@ -1520,10 +1518,8 @@ with tab_graph:
                 idx = path_labels.index(selected_path_label)
                 highlight_choice = paths[idx]
                 st.session_state["analysis_results"][selected_key]["highlighted_path"] = highlight_choice
-
         fig = build_plotly_graph(G, highlight_path=highlight_choice)
         st.plotly_chart(fig, use_container_width=True)
-
         st.markdown("### Top Ranked Nodes by Graph Metrics")
         st.write(
             "Degree centrality measures direct connections. Betweenness centrality "
@@ -1531,8 +1527,6 @@ with tab_graph:
             "Pagerank measures overall structural importance considering edge weight."
         )
         st.dataframe(metrics_df.head(20), use_container_width=True)
-
-
 # ----- Tab 4: AI Analysis ----------------------------------------------------
 with tab_ai:
     st.subheader("AI Powered Analysis")
@@ -1546,18 +1540,16 @@ with tab_ai:
             G = build_networkx_graph(current_dataset["nodes"], current_dataset["edges"])
             metrics_df = compute_core_metrics(G)
             results_store["metrics_df"] = metrics_df
-
         st.write(
             "This step sends a summary of the graph structure and top ranked nodes "
             "to the selected AI provider, which will " + config["ai_prompt_focus"] + "."
         )
-
+        st.caption("Using " + provider + " model: " + selected_model)
         user_question = st.text_area(
             "Optional question to focus the analysis",
             value="Summarize the most important risk or insight visible in this graph.",
             key="question_" + selected_key,
         )
-
         if st.button("Run AI Analysis", key="run_ai_" + selected_key):
             top_nodes = metrics_df.head(10).to_dict(orient="records")
             system_prompt = (
@@ -1575,24 +1567,22 @@ with tab_ai:
                 "User question: " + user_question
             )
             with st.spinner("Contacting " + provider + " for analysis..."):
-                result_text, note = run_llm_analysis(provider, active_key, system_prompt, user_prompt)
+                result_text, note = run_llm_analysis(
+                    provider, active_key, system_prompt, user_prompt, model=selected_model
+                )
             results_store["ai_result"] = result_text
             results_store["ai_note"] = note
             results_store["ai_question"] = user_question
-
         if "ai_result" in results_store:
             if results_store.get("ai_note"):
                 st.warning(results_store["ai_note"])
             st.markdown("### AI Analysis Result")
             st.write(results_store["ai_result"])
-
-
 # ----- Tab 5: Export Results --------------------------------------------------
 with tab_export:
     st.subheader("Export Results")
     current_dataset = st.session_state["datasets"].get(selected_key)
     results_store = st.session_state["analysis_results"].get(selected_key, {})
-
     if current_dataset is None:
         st.warning("Load data in the Data Source tab first.")
     else:
@@ -1600,10 +1590,8 @@ with tab_export:
         edges_df = current_dataset["edges"]
         metrics_df = results_store.get("metrics_df")
         ai_result = results_store.get("ai_result", "AI analysis has not been run yet for this use case.")
-
         report_title = "GraphSentinel Report: " + config["title"]
         generated_on = "Generated on " + datetime.now().strftime("%Y-%m-%d %H:%M")
-
         sections = [
             ("Use Case Overview", config["description"]),
             ("What the Graph Provides", config["graph_provides"]),
@@ -1612,9 +1600,7 @@ with tab_export:
             ("AI Analysis Result", ai_result),
             ("Benefits", "\n".join(["- " + b for b in config["benefits"]])),
         ]
-
         col1, col2, col3, col4 = st.columns(4)
-
         with col1:
             pdf_bytes = build_pdf_report(report_title, sections, metrics_df)
             st.download_button(
@@ -1640,20 +1626,15 @@ with tab_export:
                 "Download CSV", data=csv_bytes,
                 file_name=selected_key + "_data.csv", mime="text/csv",
             )
-
         st.markdown("### Report Preview")
         for heading, body in sections:
             st.markdown("**" + heading + "**")
             st.write(body)
-
-
 # ----- Tab 6: Benefits -------------------------------------------------------
 with tab_benefits:
     st.subheader("Benefits of This Use Case")
     for benefit in config["benefits"]:
         st.markdown("<div class='benefit-box'>" + benefit + "</div>", unsafe_allow_html=True)
-
-
 # ---------------------------------------------------------------------------
 # Footer
 # ---------------------------------------------------------------------------
