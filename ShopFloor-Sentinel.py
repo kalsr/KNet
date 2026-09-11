@@ -48,7 +48,7 @@ if not logger.handlers:
 # PAGE CONFIG
 # =========================================================================
 st.set_page_config(
-    page_title="ShopFloor Sentinel | Manufacturing AI",
+    page_title="ShopFloor Sentinel | Manufacturing Intelligence Platform",
     page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="expanded",
