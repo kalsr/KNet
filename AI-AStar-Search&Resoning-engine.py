@@ -1,6 +1,3 @@
-
-
-
 # A* Search & Resoning engine app
 
 # Message. For JAWS, turn virtual PC Cursor on if needed.
@@ -9,8 +6,9 @@
 # Developed By Randy Singh from Kalsnet (KNet) Consulting Group
 
 # This Streamlit application demonstrates Uninformed Search techniques
-# (Depth First Search, Breadth First Search, and Uniform Cost Search)
-# applied to a security and enterprise Knowledge Graph.
+# (Depth First Search, Breadth First Search, and Uniform Cost Search) and
+# the Informed Search technique A* Search, applied to a security and
+# enterprise Knowledge Graph.
 
 # The application allows the user to:
 # 1. Read an explanation of each search technique and its schema
@@ -154,15 +152,22 @@ CASE_INFO = {
         "full_name": "A* Search",
         "purpose": "Heuristic-Guided Optimal Remediation Path",
         "explanation": (
-            "A* Search extends Uniform Cost Search by combining the cumulative cost so far, "
-            "g(n), with a heuristic estimate of the remaining cost to the goal, h(n), and always "
-            "expands the node with the lowest f(n) = g(n) + h(n). Inside Kalsnet Hub the "
-            "heuristic is derived from the shortest hop distance to the goal, ignoring edge "
-            "direction, multiplied by the cheapest edge weight found anywhere in the graph. "
-            "Because this heuristic never overestimates the true remaining cost, it is "
-            "admissible, so A* still finds the same optimal path Uniform Cost Search would find, "
-            "while typically visiting fewer nodes because the heuristic focuses the search "
-            "toward the goal instead of expanding uniformly in every direction."
+            "A* Search is an INFORMED search technique -- unlike DFS, BFS, and Uniform Cost "
+            "Search above, which are all uninformed (they know nothing about the graph except "
+            "what they discover as they go), A* uses extra domain knowledge, a heuristic, to "
+            "guide the search toward the goal instead of expanding blindly in every direction. "
+            "A* extends Uniform Cost Search by combining the cumulative cost so far, g(n), with "
+            "a heuristic estimate of the remaining cost to the goal, h(n), and always expands "
+            "the node with the lowest f(n) = g(n) + h(n). Inside Kalsnet Hub the heuristic is "
+            "derived from the shortest hop distance to the goal, ignoring edge direction, "
+            "multiplied by the cheapest edge weight found anywhere in the graph. Because this "
+            "heuristic never overestimates the true remaining cost, it is admissible, so A* "
+            "still finds the same optimal path Uniform Cost Search would find, while typically "
+            "visiting fewer nodes because the heuristic focuses the search toward the goal "
+            "instead of expanding uniformly in every direction. This app shows exactly where "
+            "A* is used: it is the fourth tab below, and the tab itself displays the live "
+            "heuristic table and a full g(n)/h(n)/f(n) trace computed on your current graph so "
+            "you can see the mechanism working, not just read about it."
         ),
         "use_cases": [
             "Faster least cost remediation path selection on larger graphs",
@@ -316,7 +321,8 @@ def ucs_search(graph, start, goal, weight_field="Cost"):
 def compute_heuristic_table(graph, goal, weight_field="Cost"):
     """Admissible heuristic: hop distance to goal (ignoring edge direction)
     multiplied by the cheapest edge weight anywhere in the graph. This never
-    overestimates the true remaining cost, which is what A* requires."""
+    overestimates the true remaining cost, which is what A* requires in
+    order to guarantee it still finds the optimal path."""
     undirected = graph.to_undirected()
     if goal in undirected:
         hop_distances = nx.single_source_shortest_path_length(undirected, goal)
@@ -335,10 +341,24 @@ def compute_heuristic_table(graph, goal, weight_field="Cost"):
 
 
 def astar_search(graph, start, goal, weight_field="Cost"):
+    """A* Search: THE informed search algorithm in this app. Every other
+    algorithm here (DFS, BFS, UCS) is uninformed -- it only ever looks at
+    what it has already discovered while exploring. A* is different: before
+    it even starts, it consults compute_heuristic_table() for an admissible
+    estimate h(n) of how much it will cost to reach the goal from any node,
+    and it always expands whichever node on the frontier has the lowest
+    f(n) = g(n) + h(n), where g(n) is the real cumulative cost travelled so
+    far. That h(n) term is what makes A* 'search smarter, not just search
+    more': it steers expansion toward the goal instead of outward in every
+    direction the way UCS does. Returns the path, its total g(n) cost, the
+    node visit order, and a full step-by-step trace of g(n)/h(n)/f(n) for
+    every node the algorithm actually expanded, so the mechanism can be
+    displayed and inspected in the UI rather than treated as a black box."""
     heuristic = compute_heuristic_table(graph, goal, weight_field)
     visited_order = []
     visited = set()
     counter = 0
+    trace = []
     frontier = [(heuristic.get(start, 0.0), counter, start, [start], 0.0)]
 
     while frontier:
@@ -347,9 +367,17 @@ def astar_search(graph, start, goal, weight_field="Cost"):
             continue
         visited.add(node)
         visited_order.append(node)
+        h_score = heuristic.get(node, 0.0)
+        trace.append({
+            "Step": len(trace) + 1,
+            "Node Expanded": node,
+            "g(n) cost so far": round(g_score, 2),
+            "h(n) heuristic estimate": round(h_score, 2),
+            "f(n) = g(n) + h(n)": round(f_score, 2),
+        })
 
         if node == goal:
-            return path, g_score, visited_order
+            return path, g_score, visited_order, trace
 
         for neighbor in sorted(graph.successors(node)):
             if neighbor not in visited:
@@ -359,7 +387,7 @@ def astar_search(graph, start, goal, weight_field="Cost"):
                 counter += 1
                 heapq.heappush(frontier, (new_f, counter, neighbor, path + [neighbor], new_g))
 
-    return None, None, visited_order
+    return None, None, visited_order, trace
 
 
 # ---------------------------------------------------------------------------
@@ -592,19 +620,59 @@ def export_pdf_bytes(summary):
 # These helpers call the user's own Groq or Gemini account using a key the
 # user pastes into the sidebar at runtime. No key is ever hard coded here,
 # and nothing is sent anywhere except directly to Groq's or Google's API.
+#
+# IMPORTANT KEY FORMAT NOTE: a Groq key always starts with "gsk_". A Google
+# API key (used for Gemini) always starts with "AIza". Pasting a Google key
+# into the Groq field (or vice versa) will fail on every model, which looks
+# like a broken app but is actually just the wrong key in the wrong box --
+# the sidebar now checks for this and warns you directly.
 
+# These are ONLY an offline fallback, used if the live model list can't be
+# fetched from the provider (for example no internet reachability to the
+# provider's /models endpoint). Both Groq and Google retire and rename
+# models fairly often, so hard coding "the current models" is exactly what
+# broke this app before. Whenever a key is entered, the app now asks the
+# provider directly which models that key can use right now, and uses that
+# live list instead. Keep these as rough placeholders only.
 GROQ_MODELS = [
     "llama-3.3-70b-versatile",
     "llama-3.1-8b-instant",
-    "mixtral-8x7b-32768",
-    "gemma2-9b-it",
 ]
 
 GEMINI_MODELS = [
-    "gemini-1.5-flash",
-    "gemini-1.5-pro",
-    "gemini-1.0-pro",
+    "gemini-flash-latest",
+    "gemini-2.5-flash",
 ]
+
+# If one of these IDs shows up in the live list fetched from the provider,
+# it is preselected as the default choice in the dropdown. If none of them
+# match (for example because the provider has renamed things again), a
+# scoring heuristic (_default_model_score below) picks a sensible default
+# instead of just taking whatever happens to sort first alphabetically.
+PREFERRED_GROQ_DEFAULTS = [
+    "llama-3.3-70b-versatile",
+    "llama-3.1-8b-instant",
+    "openai/gpt-oss-120b",
+    "openai/gpt-oss-20b",
+]
+
+# Deliberately favors small/flash models over "pro" tier ones: Gemini "pro"
+# models frequently have a free-tier quota of exactly zero, so defaulting to
+# one just produces an immediate 429 quota-exceeded error for anyone on a
+# free API key. Pro models are still selectable by hand.
+PREFERRED_GEMINI_DEFAULTS = [
+    "gemini-flash-latest",
+    "gemini-2.5-flash",
+    "gemini-2.5-flash-lite",
+]
+
+
+def _looks_like_groq_key(key):
+    return key.startswith("gsk_")
+
+
+def _looks_like_google_key(key):
+    return key.startswith("AIza")
 
 
 def build_ai_prompt(summary):
@@ -626,7 +694,74 @@ def build_ai_prompt(summary):
     return prompt
 
 
-def call_groq_api(api_key, model, prompt):
+def _raise_with_api_detail(response, provider_label):
+    """Raise an error that includes the API's own explanation, not just the
+    bare HTTP status. Groq and Gemini both return a JSON body describing
+    exactly what was wrong (bad model name, bad key, rate limit, etc.), but
+    response.raise_for_status() alone discards that body, which is why past
+    errors only ever showed a bare status code with no explanation."""
+    if response.ok:
+        return
+    detail = ""
+    try:
+        body = response.json()
+        if isinstance(body, dict):
+            err = body.get("error", body)
+            if isinstance(err, dict):
+                detail = err.get("message") or err.get("code") or str(err)
+            else:
+                detail = str(err)
+        else:
+            detail = str(body)
+    except ValueError:
+        detail = response.text[:500]
+
+    detail = detail or "no additional detail returned"
+
+    # A 429 with "limit: 0" for a specific model means that model has NO
+    # free-tier quota at all on this key's project, no matter how long you
+    # wait or retry -- this happens on Pro-tier and image-generation Gemini
+    # models in particular. Make that distinction obvious instead of letting
+    # it look like an ordinary rate limit that will clear up on its own.
+    lowered = detail.lower()
+    if response.status_code == 429 and "free_tier" in lowered and "limit: 0" in lowered:
+        detail += (
+            " | This model has ZERO free-tier quota on your API key's project, so retrying "
+            "will not help. This is common for Pro-tier and image-generation models. Pick a "
+            "Flash or Flash-Lite model in the sidebar instead, or enable billing on the "
+            "Google Cloud project behind this key."
+        )
+
+    # A 404 on a Gemini generateContent URL almost always means the model ID
+    # in that URL does not exist (renamed or retired), not that anything is
+    # wrong with the key itself.
+    if provider_label == "Gemini" and response.status_code == 404:
+        detail += (
+            " | This usually means the model name no longer exists on Gemini's API. Use the "
+            "'Refresh Gemini model list' button in the sidebar to pull the current model names "
+            "for your key instead of an old cached one."
+        )
+
+    # A 401/403 is very often simply the wrong provider's key pasted into
+    # the wrong box (Groq keys start with 'gsk_', Google/Gemini keys start
+    # with 'AIza').
+    if response.status_code in (401, 403):
+        if provider_label == "Groq":
+            detail += (
+                " | If this key does not start with 'gsk_', it is not a Groq key -- Google "
+                "API keys (which start with 'AIza') will never work here."
+            )
+        elif provider_label == "Gemini":
+            detail += (
+                " | If this key does not start with 'AIza', it is not a Google API key -- "
+                "Groq keys (which start with 'gsk_') will never work here."
+            )
+
+    message = provider_label + " API error " + str(response.status_code) + ": " + detail
+    raise requests.exceptions.HTTPError(message, response=response)
+
+
+def call_groq_api(api_key, model, prompt, max_tokens=500, json_mode=False):
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
         "Authorization": "Bearer " + api_key,
@@ -639,30 +774,226 @@ def call_groq_api(api_key, model, prompt):
             {"role": "user", "content": prompt},
         ],
         "temperature": 0.4,
-        "max_tokens": 500,
+        "max_tokens": max_tokens,
     }
-    response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=30)
-    response.raise_for_status()
+    if json_mode:
+        payload["response_format"] = {"type": "json_object"}
+
+    response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=60)
+
+    # Not every model on Groq supports response_format / JSON mode. If that is
+    # why the request failed, quietly retry once without it rather than
+    # surfacing a confusing error for something the caller did not ask about.
+    if json_mode and response.status_code == 400 and "response_format" in response.text.lower():
+        payload.pop("response_format", None)
+        response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=60)
+
+    _raise_with_api_detail(response, "Groq")
     data = response.json()
-    return data["choices"][0]["message"]["content"].strip()
+    choice = data["choices"][0]
+    content = choice["message"]["content"].strip()
+
+    # If the response was cut off because it hit max_tokens, say so plainly
+    # instead of letting the caller fail later with a cryptic JSON parse
+    # error that gives no hint about why the JSON is incomplete.
+    if choice.get("finish_reason") == "length":
+        raise ValueError(
+            "The model's response was cut off before it finished (hit the " +
+            str(max_tokens) + " token output limit). Try a smaller number of "
+            "nodes, or pick a different model."
+        )
+
+    return content
 
 
-def call_gemini_api(api_key, model, prompt):
-    url = "https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent?key=" + api_key
+def call_gemini_api(api_key, model, prompt, max_tokens=500, json_mode=False):
+    url = (
+        "https://generativelanguage.googleapis.com/v1beta/models/"
+        + model + ":generateContent?key=" + api_key
+    )
     headers = {"Content-Type": "application/json"}
+    generation_config = {
+        "temperature": 0.4,
+        "maxOutputTokens": max_tokens,
+    }
+    if json_mode:
+        generation_config["responseMimeType"] = "application/json"
+
     payload = {
         "contents": [
             {"parts": [{"text": prompt}]}
         ],
-        "generationConfig": {
-            "temperature": 0.4,
-            "maxOutputTokens": 500,
-        },
+        "generationConfig": generation_config,
     }
-    response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=30)
-    response.raise_for_status()
+    response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=60)
+
+    # Older or more restricted Gemini models can reject responseMimeType.
+    # Retry once in plain text mode rather than failing outright.
+    if json_mode and response.status_code == 400 and "mimetype" in response.text.lower():
+        generation_config.pop("responseMimeType", None)
+        response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=60)
+
+    _raise_with_api_detail(response, "Gemini")
     data = response.json()
-    return data["candidates"][0]["content"]["parts"][0]["text"].strip()
+
+    candidates = data.get("candidates") or []
+    if not candidates:
+        block_reason = (data.get("promptFeedback") or {}).get("blockReason")
+        if block_reason:
+            raise ValueError("Gemini blocked this request (reason: " + str(block_reason) + ").")
+        raise ValueError("Gemini returned no candidates for this request.")
+
+    candidate = candidates[0]
+    finish_reason = candidate.get("finishReason")
+    parts = (candidate.get("content") or {}).get("parts") or []
+    text = "".join(part.get("text", "") for part in parts).strip()
+
+    if finish_reason == "MAX_TOKENS" and not text:
+        raise ValueError(
+            "The model's response was cut off before it produced any output (hit the " +
+            str(max_tokens) + " token output limit). Try a smaller number of "
+            "nodes, or pick a different model."
+        )
+
+    return text
+
+
+def list_groq_models(api_key):
+    """Ask Groq directly which chat models this API key can currently use.
+    Model availability on Groq changes over time (models get retired or
+    renamed), so this is queried live instead of trusting a hard coded list.
+
+    Groq's /models endpoint lists every model it hosts, not just text chat
+    models: speech-to-text (whisper), text-to-speech (tts, playai, orpheus /
+    canopylabs voices), and safety classifiers (guard / prompt-guard /
+    moderation) all show up here too, but none of them work with the
+    /chat/completions JSON-generation prompts this app sends. Some of the
+    TTS voice models also require separate terms acceptance per voice, which
+    otherwise shows up as a confusing 400 error after the user picks one
+    from the dropdown. Filter all of these out up front."""
+    url = "https://api.groq.com/openai/v1/models"
+    headers = {"Authorization": "Bearer " + api_key}
+    response = requests.get(url, headers=headers, timeout=15)
+    _raise_with_api_detail(response, "Groq")
+    data = response.json()
+
+    exclude_markers = (
+        "whisper", "distil-whisper", "tts", "playai", "orpheus", "canopylabs",
+        "guard", "prompt-guard", "moderation", "transcribe", "safety",
+    )
+    model_ids = []
+    for entry in data.get("data", []):
+        model_id = entry.get("id", "")
+        if not model_id:
+            continue
+        if entry.get("active") is False:
+            continue
+        if any(marker in model_id.lower() for marker in exclude_markers):
+            continue
+        model_ids.append(model_id)
+
+    return sorted(model_ids)
+
+
+def list_gemini_models(api_key):
+    """Ask Google directly which models this API key can currently use with
+    generateContent. Gemini model names change fairly often (for example
+    gemini-1.5-flash and gemini-2.5-flash were both later retired for new
+    users), so this is queried live instead of trusting a hard coded list.
+
+    Filtering on 'generateContent' support alone is not enough: Google's
+    image-generation models (gemini-3-pro-image, gemini-2.5-flash-image, ...),
+    text-to-speech models, and a few other specialty families all answer
+    generateContent too, but they either return image/audio parts this app
+    can't use for JSON, or sit on a paid-only quota tier (free-tier limit of
+    0 requests), which is exactly the 429 error this app kept hitting. Both
+    problems are avoided by excluding these non-text-chat families by name."""
+    url = "https://generativelanguage.googleapis.com/v1beta/models?key=" + api_key
+    response = requests.get(url, timeout=15)
+    _raise_with_api_detail(response, "Gemini")
+    data = response.json()
+
+    exclude_markers = (
+        "image", "imagen", "tts", "veo", "embedding", "aqa", "-live",
+        "robotics", "computer-use", "video",
+    )
+    model_ids = []
+    for entry in data.get("models", []):
+        methods = entry.get("supportedGenerationMethods", [])
+        if "generateContent" not in methods:
+            continue
+        name = entry.get("name", "")
+        if name.startswith("models/"):
+            name = name[len("models/"):]
+        if not name:
+            continue
+        if any(marker in name.lower() for marker in exclude_markers):
+            continue
+        model_ids.append(name)
+
+    return sorted(model_ids)
+
+
+def _default_model_score(model_id):
+    """Heuristic used only to choose which model is preselected in the
+    dropdown, favoring smaller / lighter chat models that are far more
+    likely to be usable on a free API key. 'Pro' tier models in particular
+    often have a free-tier quota of zero (a 429 quota-exceeded error, not a
+    bug in this app), so they are never auto-selected, only selectable by
+    hand. Higher score wins."""
+    low = model_id.lower()
+    score = 0
+    if "flash-lite" in low:
+        score += 4
+    elif "flash" in low:
+        score += 3
+    elif "instant" in low or "8b" in low or "-mini" in low or "small" in low:
+        score += 2
+    if "latest" in low:
+        score += 1
+    if "-pro" in low or low.endswith("pro"):
+        score -= 5
+    if any(tag in low for tag in ("preview", "exp", "image", "vision", "embedding", "live")):
+        score -= 2
+    return score
+
+
+def _pick_default_index(models, preferred_ids):
+    if not models:
+        return 0
+    for preferred in preferred_ids:
+        if preferred in models:
+            return models.index(preferred)
+    ranked = sorted(range(len(models)), key=lambda i: (-_default_model_score(models[i]), models[i]))
+    return ranked[0]
+
+
+def get_selectable_models(provider, api_key, static_fallback, force_refresh=False):
+    """Return (models, is_live) for the given provider and key. Results are
+    cached in session state per API key so the provider is not re-queried on
+    every Streamlit rerun. Falls back to the static offline list, tagged as
+    not-live, if the key is missing or the live lookup fails."""
+    if not api_key:
+        return static_fallback, False
+
+    cache_key = "_model_cache_" + provider
+    cached = st.session_state.get(cache_key)
+    if not force_refresh and cached and cached.get("api_key") == api_key and cached.get("models"):
+        return cached["models"], True
+
+    try:
+        if provider == "Groq":
+            models = list_groq_models(api_key)
+        elif provider == "Google Gemini":
+            models = list_gemini_models(api_key)
+        else:
+            models = []
+        if not models:
+            raise ValueError("The provider returned no usable chat models for this key")
+        st.session_state[cache_key] = {"api_key": api_key, "models": models}
+        return models, True
+    except Exception:
+        return static_fallback, False
 
 
 def generate_ai_explanation(provider, api_key, model, summary):
@@ -677,9 +1008,10 @@ def generate_ai_explanation(provider, api_key, model, summary):
 
 # ---------------------------------------------------------------------------
 # AI-driven reasoning -- the LLM performs the search itself, replacing the
-# classical DFS / BFS / UCS algorithms below as the primary reasoning engine.
-# The classical functions are kept only as an automatic fallback in case an
-# AI call fails or returns an unusable result, so the app never breaks.
+# classical DFS / BFS / UCS / A* algorithms below as the primary reasoning
+# engine. The classical functions are kept as an automatic fallback in case
+# an AI call fails or returns an unusable result, so the app never breaks,
+# and (for A*) as a locally computed reference trace shown in the UI.
 # ---------------------------------------------------------------------------
 
 def serialize_graph_for_llm(nodes_df, edges_df):
@@ -796,10 +1128,16 @@ def run_llm_reasoning(case_key, graph, nodes_df, edges_df, start, goal, weight_f
     graph_text = serialize_graph_for_llm(nodes_df, edges_df)
     prompt = build_search_reasoning_prompt(case_key, graph_text, start, goal, weight_field, heuristic=heuristic)
 
+    # 3000 tokens comfortably covers path + visited_order + levels/cost for
+    # graphs up to the app's 60 node maximum; a smaller hard coded limit
+    # silently truncated the JSON on anything but tiny graphs, which is what
+    # produced "Expecting ',' delimiter" style parse errors.
+    reasoning_max_tokens = 3000
+
     if provider == "Groq":
-        raw = call_groq_api(api_key, model, prompt)
+        raw = call_groq_api(api_key, model, prompt, max_tokens=reasoning_max_tokens, json_mode=True)
     elif provider == "Google Gemini":
-        raw = call_gemini_api(api_key, model, prompt)
+        raw = call_gemini_api(api_key, model, prompt, max_tokens=reasoning_max_tokens, json_mode=True)
     else:
         raise ValueError("Unknown AI provider selected")
 
@@ -867,13 +1205,25 @@ def build_data_generation_prompt(num_nodes, seed):
     )
 
 
+def compute_data_gen_max_tokens(num_nodes):
+    """The synthetic dataset's JSON grows with the node count (each node
+    plus its share of the spanning tree and extra edges), so a single fixed
+    token budget either wastes tokens on small graphs or truncates large
+    ones mid-JSON -- the latter is exactly what produced 'Expecting ,
+    delimiter' style parse errors on anything but a tiny graph. Scale the
+    budget with num_nodes and cap it comfortably under what every
+    live-discovered chat model on Groq/Gemini supports as a completion limit."""
+    return min(8000, 1200 + num_nodes * 130)
+
+
 def generate_synthetic_data_llm(num_nodes, seed, provider, api_key, model):
     prompt = build_data_generation_prompt(num_nodes, seed)
+    data_gen_max_tokens = compute_data_gen_max_tokens(num_nodes)
 
     if provider == "Groq":
-        raw = call_groq_api(api_key, model, prompt)
+        raw = call_groq_api(api_key, model, prompt, max_tokens=data_gen_max_tokens, json_mode=True)
     elif provider == "Google Gemini":
-        raw = call_gemini_api(api_key, model, prompt)
+        raw = call_gemini_api(api_key, model, prompt, max_tokens=data_gen_max_tokens, json_mode=True)
     else:
         raise ValueError("Unknown AI provider selected")
 
@@ -954,7 +1304,7 @@ def render_ai_sidebar():
     st.sidebar.write(
         "Connect a free Groq or Google Gemini account. This app now uses your "
         "chosen LLM to generate the synthetic graph data, perform the DFS, "
-        "BFS, and UCS search reasoning itself, and write the plain English "
+        "BFS, UCS, and A* search reasoning itself, and write the plain English "
         "explanation of each result. Your key is only stored for this "
         "browser session and is sent directly to Groq or Google, never to "
         "Kalsnet. Without a key, each step falls back to the original "
@@ -966,7 +1316,8 @@ def render_ai_sidebar():
             "1. Go to **console.groq.com** and sign up or log in (free).\n"
             "2. Open the **API Keys** section in the left menu.\n"
             "3. Click **Create API Key**, name it, and copy the key shown.\n"
-            "4. Paste it into the *Groq API Key* box below.\n"
+            "4. Paste it into the *Groq API Key* box below. A real Groq key "
+            "always starts with `gsk_`.\n"
             "5. Groq's free tier includes generous rate limits on models "
             "such as Llama 3.3 70B, so no payment is required to try this."
         )
@@ -977,7 +1328,8 @@ def render_ai_sidebar():
             "2. Click **Get API key** (top left or in the left menu).\n"
             "3. Click **Create API key**, choose or create a Google Cloud "
             "project when prompted, and copy the key shown.\n"
-            "4. Paste it into the *Gemini API Key* box below.\n"
+            "4. Paste it into the *Gemini API Key* box below. A real Google "
+            "API key always starts with `AIza`.\n"
             "5. Google AI Studio's free tier allows a limited number of "
             "requests per minute at no cost, which is enough for this app."
         )
@@ -989,10 +1341,54 @@ def render_ai_sidebar():
 
     if provider == "Groq":
         api_key = st.sidebar.text_input("Groq API Key", type="password", key="groq_api_key")
-        model = st.sidebar.selectbox("Groq Model", GROQ_MODELS, key="groq_model")
+        if api_key and not _looks_like_groq_key(api_key):
+            st.sidebar.error(
+                "This does not look like a Groq key (Groq keys start with `gsk_`). If it starts "
+                "with `AIza`, that is a Google API key -- paste it into the Gemini box below "
+                "instead, and get a real Groq key from console.groq.com."
+            )
+        refresh = st.sidebar.button("Refresh Groq model list", key="groq_refresh_models")
+        models, is_live = get_selectable_models("Groq", api_key, GROQ_MODELS, force_refresh=refresh)
+        default_index = _pick_default_index(models, PREFERRED_GROQ_DEFAULTS)
+        widget_key = "groq_model_" + str(abs(hash(tuple(models))))
+        model = st.sidebar.selectbox("Groq Model", models, index=default_index, key=widget_key)
+        if not api_key:
+            st.sidebar.caption("Enter your Groq API key to load the live list of models it can use.")
+        elif is_live:
+            st.sidebar.caption("Model list fetched live from your Groq account just now.")
+        else:
+            st.sidebar.caption(
+                "Could not fetch the live model list from Groq (bad key, no network, or a temporary "
+                "Groq error). Showing an offline fallback list, which may include retired model names."
+            )
     elif provider == "Google Gemini":
         api_key = st.sidebar.text_input("Gemini API Key", type="password", key="gemini_api_key")
-        model = st.sidebar.selectbox("Gemini Model", GEMINI_MODELS, key="gemini_model")
+        if api_key and not _looks_like_google_key(api_key):
+            st.sidebar.error(
+                "This does not look like a Google API key (Google keys start with `AIza`). If it "
+                "starts with `gsk_`, that is a Groq key -- paste it into the Groq box above "
+                "instead, and get a real Gemini key from aistudio.google.com."
+            )
+        refresh = st.sidebar.button("Refresh Gemini model list", key="gemini_refresh_models")
+        models, is_live = get_selectable_models("Google Gemini", api_key, GEMINI_MODELS, force_refresh=refresh)
+        default_index = _pick_default_index(models, PREFERRED_GEMINI_DEFAULTS)
+        widget_key = "gemini_model_" + str(abs(hash(tuple(models))))
+        model = st.sidebar.selectbox("Gemini Model", models, index=default_index, key=widget_key)
+        if not api_key:
+            st.sidebar.caption("Enter your Gemini API key to load the live list of models it can use.")
+        elif is_live:
+            st.sidebar.caption("Model list fetched live from your Gemini account just now.")
+        else:
+            st.sidebar.caption(
+                "Could not fetch the live model list from Gemini (bad key, no network, or a temporary "
+                "Google error). Showing an offline fallback list, which may include retired model names."
+            )
+        if api_key and model and "-pro" in model.lower():
+            st.sidebar.caption(
+                "Note: Gemini 'Pro' models usually have a free-tier quota of zero and need a billing "
+                "account enabled on the Google Cloud project behind this key. If you see a 429 quota "
+                "error, switch to a Flash or Flash-Lite model instead."
+            )
 
     st.session_state["ai_settings"] = {
         "provider": provider,
@@ -1095,6 +1491,44 @@ def render_data_section(case_key):
     return nodes_df, edges_df
 
 
+def render_astar_explainer(graph, goal, weight_field):
+    """Makes A* visible and concrete inside the app itself, not just in the
+    written explanation: shows the formula, the live heuristic table this
+    app computed for the current goal node, and (once a run has happened) a
+    full classical A* trace elsewhere on the page -- computed locally, for
+    free, regardless of whether AI or the classical fallback ends up
+    producing the path shown in the Results section below."""
+    with st.expander("How A* Search Works Here (with live numbers from this graph)", expanded=True):
+        st.markdown(
+            "**A* is an informed search** -- DFS, BFS, and Uniform Cost Search above only ever "
+            "use information they discover while exploring. A* is given extra knowledge up "
+            "front: a heuristic function **h(n)** that estimates the remaining cost from any "
+            "node n to the goal.\n\n"
+            "At every step, A* looks at its frontier of discovered-but-not-yet-expanded nodes "
+            "and always expands whichever one has the lowest\n\n"
+            "**f(n) = g(n) + h(n)**\n\n"
+            "- **g(n)** -- the real cumulative cost already paid to reach n (exactly what "
+            "Uniform Cost Search tracks)\n"
+            "- **h(n)** -- the estimated remaining cost from n to the goal (this is what UCS "
+            "does *not* have)\n\n"
+            "The heuristic used in this app: hop distance from n to the goal, ignoring edge "
+            "direction, multiplied by the cheapest edge weight anywhere in the graph. No real "
+            "path can possibly cost less than (hop count x cheapest possible edge), so this "
+            "heuristic never overestimates the true remaining cost -- it is **admissible**. An "
+            "admissible heuristic guarantees A* still finds the truly optimal path, the same "
+            "one UCS would find, while usually expanding fewer nodes because it is biased "
+            "toward the goal instead of expanding uniformly outward in every direction."
+        )
+
+        heuristic = compute_heuristic_table(graph, goal, weight_field)
+        heuristic_df = pd.DataFrame(
+            sorted(heuristic.items(), key=lambda kv: kv[1]),
+            columns=["Node", "h(n) estimated remaining " + weight_field],
+        )
+        st.write("Live heuristic table computed for goal node **" + str(goal) + "**:")
+        st.dataframe(heuristic_df, use_container_width=True, hide_index=True)
+
+
 def render_ai_insights_section(case_key, summary):
     st.subheader("Step 5: AI-Powered Insights (Optional)")
 
@@ -1166,6 +1600,9 @@ def render_case(case_key):
             key=case_key + "_weightfield",
         )
 
+    if case_key == "ASTAR":
+        render_astar_explainer(graph, goal, weight_field)
+
     if st.button("Run " + info["full_name"], key=case_key + "_run"):
         ai_settings = st.session_state.get("ai_settings", {"provider": "None", "api_key": "", "model": None})
         provider = ai_settings.get("provider", "None")
@@ -1219,7 +1656,7 @@ def render_case(case_key):
                     extra = "Depth level of goal node: " + str(levels.get(goal, "not reached")) + \
                         " | Fallback: classical algorithm used because AI reasoning failed"
                 elif case_key == "ASTAR":
-                    path, cost, visited_order = astar_search(graph, start, goal, weight_field=weight_field)
+                    path, cost, visited_order, _trace = astar_search(graph, start, goal, weight_field=weight_field)
                     extra = "Total cumulative " + weight_field.lower() + " of path: " + \
                         (str(round(cost, 2)) if cost is not None else "not applicable") + \
                         " | Fallback: classical algorithm used because AI reasoning failed"
@@ -1242,6 +1679,20 @@ def render_case(case_key):
             st.write(summary["extra"])
         st.write("Nodes visited during search, in order:")
         st.write(" then ".join(summary["visited_order"]))
+
+        if case_key == "ASTAR":
+            ref_path, ref_cost, ref_visited, ref_trace = astar_search(graph, start, goal, weight_field=weight_field)
+            with st.expander("Classical A* trace on this exact graph (g(n), h(n), f(n) per expansion step)"):
+                if ref_trace:
+                    st.dataframe(pd.DataFrame(ref_trace), use_container_width=True, hide_index=True)
+                    if ref_path:
+                        st.write(
+                            "This locally computed reference confirms the optimal path is: " +
+                            " then ".join(ref_path) + " (total " + weight_field.lower() + " = " +
+                            str(round(ref_cost, 2)) + ")."
+                        )
+                else:
+                    st.write("No nodes were expanded (start and goal may be disconnected).")
 
         st.subheader("Graph Visualization")
         fig = plot_graph(graph, path=summary["path"], title=info["full_name"] + " Result")
@@ -1295,11 +1746,12 @@ def main():
 
     st.write(
         "This application demonstrates three Uninformed Search techniques, Depth First Search, "
-        "Breadth First Search, Uniform Cost Search, and A* Search, applied to a security and "
-        "enterprise Knowledge Graph. Select a tab below to explore each technique. Connect a "
-        "free Groq or Google Gemini API key in the sidebar so the LLM generates the synthetic "
-        "data, performs the search reasoning itself, and writes a plain English explanation of "
-        "each result."
+        "Breadth First Search, and Uniform Cost Search, plus one Informed Search technique, "
+        "A* Search, applied to a security and enterprise Knowledge Graph. Select a tab below to "
+        "explore each technique -- A* is the fourth tab, and it shows exactly how it works using "
+        "live numbers computed from your own graph. Connect a free Groq or Google Gemini API key "
+        "in the sidebar so the LLM generates the synthetic data, performs the search reasoning "
+        "itself, and writes a plain English explanation of each result."
     )
 
     tab_dfs, tab_bfs, tab_ucs, tab_astar = st.tabs([
