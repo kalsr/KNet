@@ -524,14 +524,14 @@ def export_pdf_bytes(summary):
 GROQ_MODELS = [
     "llama-3.3-70b-versatile",
     "llama-3.1-8b-instant",
-    "mixtral-8x7b-32768",
-    "gemma2-9b-it",
+    "openai/gpt-oss-120b",
+    "openai/gpt-oss-20b",
 ]
 
 GEMINI_MODELS = [
-    "gemini-1.5-flash",
-    "gemini-1.5-pro",
-    "gemini-1.0-pro",
+    "gemini-2.5-flash",
+    "gemini-2.5-pro",
+    "gemini-2.5-flash-lite",
 ]
 
 
@@ -554,6 +554,32 @@ def build_ai_prompt(summary):
     return prompt
 
 
+def _raise_with_api_detail(response, provider_label):
+    """Raise an error that includes the API's own explanation, not just the
+    bare HTTP status. Groq and Gemini both return a JSON body describing
+    exactly what was wrong (bad model name, bad key, rate limit, etc.), but
+    response.raise_for_status() alone discards that body, which is why past
+    errors only ever showed '400 Client Error' with no explanation."""
+    if response.ok:
+        return
+    detail = ""
+    try:
+        body = response.json()
+        if isinstance(body, dict):
+            err = body.get("error", body)
+            if isinstance(err, dict):
+                detail = err.get("message") or err.get("code") or str(err)
+            else:
+                detail = str(err)
+        else:
+            detail = str(body)
+    except ValueError:
+        detail = response.text[:500]
+
+    message = provider_label + " API error " + str(response.status_code) + ": " + (detail or "no additional detail returned")
+    raise requests.exceptions.HTTPError(message, response=response)
+
+
 def call_groq_api(api_key, model, prompt):
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
@@ -570,7 +596,7 @@ def call_groq_api(api_key, model, prompt):
         "max_tokens": 500,
     }
     response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=30)
-    response.raise_for_status()
+    _raise_with_api_detail(response, "Groq")
     data = response.json()
     return data["choices"][0]["message"]["content"].strip()
 
@@ -591,7 +617,7 @@ def call_gemini_api(api_key, model, prompt):
         },
     }
     response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=30)
-    response.raise_for_status()
+    _raise_with_api_detail(response, "Gemini")
     data = response.json()
     return data["candidates"][0]["content"]["parts"][0]["text"].strip()
 
