@@ -521,17 +521,37 @@ def export_pdf_bytes(summary):
 # user pastes into the sidebar at runtime. No key is ever hard coded here,
 # and nothing is sent anywhere except directly to Groq's or Google's API.
 
+# These are ONLY an offline fallback, used if the live model list can't be
+# fetched from the provider (for example no internet reachability to the
+# provider's /models endpoint). Both Groq and Google retire and rename
+# models fairly often, so hard coding "the current models" is exactly what
+# broke this app twice before. Whenever a key is entered, the app now asks
+# the provider directly which models that key can use right now, and uses
+# that live list instead. Keep these as rough placeholders only.
 GROQ_MODELS = [
+    "llama-3.3-70b-versatile",
+    "llama-3.1-8b-instant",
+]
+
+GEMINI_MODELS = [
+    "gemini-flash-latest",
+    "gemini-2.5-flash",
+]
+
+# If one of these IDs shows up in the live list fetched from the provider,
+# it is preselected as the default choice in the dropdown. Otherwise the
+# first model returned by the provider is used.
+PREFERRED_GROQ_DEFAULTS = [
     "llama-3.3-70b-versatile",
     "llama-3.1-8b-instant",
     "openai/gpt-oss-120b",
     "openai/gpt-oss-20b",
 ]
 
-GEMINI_MODELS = [
+PREFERRED_GEMINI_DEFAULTS = [
+    "gemini-flash-latest",
     "gemini-2.5-flash",
     "gemini-2.5-pro",
-    "gemini-2.5-flash-lite",
 ]
 
 
@@ -620,6 +640,90 @@ def call_gemini_api(api_key, model, prompt):
     _raise_with_api_detail(response, "Gemini")
     data = response.json()
     return data["candidates"][0]["content"]["parts"][0]["text"].strip()
+
+
+def list_groq_models(api_key):
+    """Ask Groq directly which chat models this API key can currently use.
+    Model availability on Groq changes over time (models get retired or
+    renamed), so this is queried live instead of trusting a hard coded list."""
+    url = "https://api.groq.com/openai/v1/models"
+    headers = {"Authorization": "Bearer " + api_key}
+    response = requests.get(url, headers=headers, timeout=15)
+    _raise_with_api_detail(response, "Groq")
+    data = response.json()
+
+    exclude_markers = ("whisper", "tts", "distil-whisper")
+    model_ids = []
+    for entry in data.get("data", []):
+        model_id = entry.get("id", "")
+        if not model_id:
+            continue
+        if entry.get("active") is False:
+            continue
+        if any(marker in model_id.lower() for marker in exclude_markers):
+            continue
+        model_ids.append(model_id)
+
+    return sorted(model_ids)
+
+
+def list_gemini_models(api_key):
+    """Ask Google directly which models this API key can currently use with
+    generateContent. Gemini model names change fairly often (for example
+    gemini-1.5-flash and gemini-2.5-flash were both later retired for new
+    users), so this is queried live instead of trusting a hard coded list."""
+    url = "https://generativelanguage.googleapis.com/v1beta/models?key=" + api_key
+    response = requests.get(url, timeout=15)
+    _raise_with_api_detail(response, "Gemini")
+    data = response.json()
+
+    model_ids = []
+    for entry in data.get("models", []):
+        methods = entry.get("supportedGenerationMethods", [])
+        if "generateContent" not in methods:
+            continue
+        name = entry.get("name", "")
+        if name.startswith("models/"):
+            name = name[len("models/"):]
+        if name:
+            model_ids.append(name)
+
+    return sorted(model_ids)
+
+
+def _pick_default_index(models, preferred_ids):
+    for preferred in preferred_ids:
+        if preferred in models:
+            return models.index(preferred)
+    return 0
+
+
+def get_selectable_models(provider, api_key, static_fallback, force_refresh=False):
+    """Return (models, is_live) for the given provider and key. Results are
+    cached in session state per API key so the provider is not re-queried on
+    every Streamlit rerun. Falls back to the static offline list, tagged as
+    not-live, if the key is missing or the live lookup fails."""
+    if not api_key:
+        return static_fallback, False
+
+    cache_key = "_model_cache_" + provider
+    cached = st.session_state.get(cache_key)
+    if not force_refresh and cached and cached.get("api_key") == api_key and cached.get("models"):
+        return cached["models"], True
+
+    try:
+        if provider == "Groq":
+            models = list_groq_models(api_key)
+        elif provider == "Google Gemini":
+            models = list_gemini_models(api_key)
+        else:
+            models = []
+        if not models:
+            raise ValueError("The provider returned no usable chat models for this key")
+        st.session_state[cache_key] = {"api_key": api_key, "models": models}
+        return models, True
+    except Exception:
+        return static_fallback, False
 
 
 def generate_ai_explanation(provider, api_key, model, summary):
@@ -926,10 +1030,36 @@ def render_ai_sidebar():
 
     if provider == "Groq":
         api_key = st.sidebar.text_input("Groq API Key", type="password", key="groq_api_key")
-        model = st.sidebar.selectbox("Groq Model", GROQ_MODELS, key="groq_model")
+        refresh = st.sidebar.button("Refresh Groq model list", key="groq_refresh_models")
+        models, is_live = get_selectable_models("Groq", api_key, GROQ_MODELS, force_refresh=refresh)
+        default_index = _pick_default_index(models, PREFERRED_GROQ_DEFAULTS)
+        widget_key = "groq_model_" + str(abs(hash(tuple(models))))
+        model = st.sidebar.selectbox("Groq Model", models, index=default_index, key=widget_key)
+        if not api_key:
+            st.sidebar.caption("Enter your Groq API key to load the live list of models it can use.")
+        elif is_live:
+            st.sidebar.caption("Model list fetched live from your Groq account just now.")
+        else:
+            st.sidebar.caption(
+                "Could not fetch the live model list from Groq (bad key, no network, or a temporary "
+                "Groq error). Showing an offline fallback list, which may include retired model names."
+            )
     elif provider == "Google Gemini":
         api_key = st.sidebar.text_input("Gemini API Key", type="password", key="gemini_api_key")
-        model = st.sidebar.selectbox("Gemini Model", GEMINI_MODELS, key="gemini_model")
+        refresh = st.sidebar.button("Refresh Gemini model list", key="gemini_refresh_models")
+        models, is_live = get_selectable_models("Google Gemini", api_key, GEMINI_MODELS, force_refresh=refresh)
+        default_index = _pick_default_index(models, PREFERRED_GEMINI_DEFAULTS)
+        widget_key = "gemini_model_" + str(abs(hash(tuple(models))))
+        model = st.sidebar.selectbox("Gemini Model", models, index=default_index, key=widget_key)
+        if not api_key:
+            st.sidebar.caption("Enter your Gemini API key to load the live list of models it can use.")
+        elif is_live:
+            st.sidebar.caption("Model list fetched live from your Gemini account just now.")
+        else:
+            st.sidebar.caption(
+                "Could not fetch the live model list from Gemini (bad key, no network, or a temporary "
+                "Google error). Showing an offline fallback list, which may include retired model names."
+            )
 
     st.session_state["ai_settings"] = {
         "provider": provider,
