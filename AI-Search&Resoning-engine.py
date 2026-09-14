@@ -602,7 +602,23 @@ def _raise_with_api_detail(response, provider_label):
     except ValueError:
         detail = response.text[:500]
 
-    message = provider_label + " API error " + str(response.status_code) + ": " + (detail or "no additional detail returned")
+    detail = detail or "no additional detail returned"
+
+    # A 429 with "limit: 0" for a specific model means that model has NO
+    # free-tier quota at all on this key's project, no matter how long you
+    # wait or retry -- this happens on Pro-tier and image-generation Gemini
+    # models in particular. Make that distinction obvious instead of letting
+    # it look like an ordinary rate limit that will clear up on its own.
+    lowered = detail.lower()
+    if response.status_code == 429 and "free_tier" in lowered and "limit: 0" in lowered:
+        detail += (
+            " | This model has ZERO free-tier quota on your API key's project, so retrying "
+            "will not help. This is common for Pro-tier and image-generation models. Pick a "
+            "Flash or Flash-Lite model in the sidebar instead, or enable billing on the "
+            "Google Cloud project behind this key."
+        )
+
+    message = provider_label + " API error " + str(response.status_code) + ": " + detail
     raise requests.exceptions.HTTPError(message, response=response)
 
 
@@ -743,12 +759,24 @@ def list_gemini_models(api_key):
     """Ask Google directly which models this API key can currently use with
     generateContent. Gemini model names change fairly often (for example
     gemini-1.5-flash and gemini-2.5-flash were both later retired for new
-    users), so this is queried live instead of trusting a hard coded list."""
+    users), so this is queried live instead of trusting a hard coded list.
+
+    Filtering on 'generateContent' support alone is not enough: Google's
+    image-generation models (gemini-3-pro-image, gemini-2.5-flash-image, ...),
+    text-to-speech models, and a few other specialty families all answer
+    generateContent too, but they either return image/audio parts this app
+    can't use for JSON, or sit on a paid-only quota tier (free-tier limit of
+    0 requests), which is exactly the 429 error this app kept hitting. Both
+    problems are avoided by excluding these non-text-chat families by name."""
     url = "https://generativelanguage.googleapis.com/v1beta/models?key=" + api_key
     response = requests.get(url, timeout=15)
     _raise_with_api_detail(response, "Gemini")
     data = response.json()
 
+    exclude_markers = (
+        "image", "imagen", "tts", "veo", "embedding", "aqa", "-live",
+        "robotics", "computer-use", "video",
+    )
     model_ids = []
     for entry in data.get("models", []):
         methods = entry.get("supportedGenerationMethods", [])
@@ -757,8 +785,11 @@ def list_gemini_models(api_key):
         name = entry.get("name", "")
         if name.startswith("models/"):
             name = name[len("models/"):]
-        if name:
-            model_ids.append(name)
+        if not name:
+            continue
+        if any(marker in name.lower() for marker in exclude_markers):
+            continue
+        model_ids.append(name)
 
     return sorted(model_ids)
 
