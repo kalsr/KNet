@@ -1,6 +1,3 @@
-
-
-
 # Search & Resoning engine app
 
 # Message. For JAWS, turn virtual PC Cursor on if needed.
@@ -579,8 +576,10 @@ def call_groq_api(api_key, model, prompt):
 
 
 def call_gemini_api(api_key, model, prompt):
-    url = "https://generativelanguage.googleapis.com/v1beta/models/"
-+ model + ":generateContent?key=" + api_key
+    url = (
+        "https://generativelanguage.googleapis.com/v1beta/models/"
+        + model + ":generateContent?key=" + api_key
+    )
     headers = {"Content-Type": "application/json"}
     payload = {
         "contents": [
@@ -1221,5 +1220,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
