@@ -539,8 +539,10 @@ GEMINI_MODELS = [
 ]
 
 # If one of these IDs shows up in the live list fetched from the provider,
-# it is preselected as the default choice in the dropdown. Otherwise the
-# first model returned by the provider is used.
+# it is preselected as the default choice in the dropdown. If none of them
+# match (for example because the provider has renamed things again), a
+# scoring heuristic (_default_model_score below) picks a sensible default
+# instead of just taking whatever happens to sort first alphabetically.
 PREFERRED_GROQ_DEFAULTS = [
     "llama-3.3-70b-versatile",
     "llama-3.1-8b-instant",
@@ -548,10 +550,14 @@ PREFERRED_GROQ_DEFAULTS = [
     "openai/gpt-oss-20b",
 ]
 
+# Deliberately favors small/flash models over "pro" tier ones: Gemini "pro"
+# models frequently have a free-tier quota of exactly zero, so defaulting to
+# one just produces an immediate 429 quota-exceeded error for anyone on a
+# free API key. Pro models are still selectable by hand.
 PREFERRED_GEMINI_DEFAULTS = [
     "gemini-flash-latest",
     "gemini-2.5-flash",
-    "gemini-2.5-pro",
+    "gemini-2.5-flash-lite",
 ]
 
 
@@ -600,7 +606,7 @@ def _raise_with_api_detail(response, provider_label):
     raise requests.exceptions.HTTPError(message, response=response)
 
 
-def call_groq_api(api_key, model, prompt):
+def call_groq_api(api_key, model, prompt, max_tokens=500, json_mode=False):
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
         "Authorization": "Bearer " + api_key,
@@ -613,33 +619,88 @@ def call_groq_api(api_key, model, prompt):
             {"role": "user", "content": prompt},
         ],
         "temperature": 0.4,
-        "max_tokens": 500,
+        "max_tokens": max_tokens,
     }
-    response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=30)
+    if json_mode:
+        payload["response_format"] = {"type": "json_object"}
+
+    response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=60)
+
+    # Not every model on Groq supports response_format / JSON mode. If that is
+    # why the request failed, quietly retry once without it rather than
+    # surfacing a confusing error for something the caller did not ask about.
+    if json_mode and response.status_code == 400 and "response_format" in response.text.lower():
+        payload.pop("response_format", None)
+        response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=60)
+
     _raise_with_api_detail(response, "Groq")
     data = response.json()
-    return data["choices"][0]["message"]["content"].strip()
+    choice = data["choices"][0]
+    content = choice["message"]["content"].strip()
+
+    # If the response was cut off because it hit max_tokens, say so plainly
+    # instead of letting the caller fail later with a cryptic JSON parse
+    # error that gives no hint about why the JSON is incomplete.
+    if choice.get("finish_reason") == "length":
+        raise ValueError(
+            "The model's response was cut off before it finished (hit the " +
+            str(max_tokens) + " token output limit). Try a smaller number of "
+            "nodes, or pick a different model."
+        )
+
+    return content
 
 
-def call_gemini_api(api_key, model, prompt):
+def call_gemini_api(api_key, model, prompt, max_tokens=500, json_mode=False):
     url = (
         "https://generativelanguage.googleapis.com/v1beta/models/"
         + model + ":generateContent?key=" + api_key
     )
     headers = {"Content-Type": "application/json"}
+    generation_config = {
+        "temperature": 0.4,
+        "maxOutputTokens": max_tokens,
+    }
+    if json_mode:
+        generation_config["responseMimeType"] = "application/json"
+
     payload = {
         "contents": [
             {"parts": [{"text": prompt}]}
         ],
-        "generationConfig": {
-            "temperature": 0.4,
-            "maxOutputTokens": 500,
-        },
+        "generationConfig": generation_config,
     }
-    response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=30)
+    response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=60)
+
+    # Older or more restricted Gemini models can reject responseMimeType.
+    # Retry once in plain text mode rather than failing outright.
+    if json_mode and response.status_code == 400 and "mimetype" in response.text.lower():
+        generation_config.pop("responseMimeType", None)
+        response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=60)
+
     _raise_with_api_detail(response, "Gemini")
     data = response.json()
-    return data["candidates"][0]["content"]["parts"][0]["text"].strip()
+
+    candidates = data.get("candidates") or []
+    if not candidates:
+        block_reason = (data.get("promptFeedback") or {}).get("blockReason")
+        if block_reason:
+            raise ValueError("Gemini blocked this request (reason: " + str(block_reason) + ").")
+        raise ValueError("Gemini returned no candidates for this request.")
+
+    candidate = candidates[0]
+    finish_reason = candidate.get("finishReason")
+    parts = (candidate.get("content") or {}).get("parts") or []
+    text = "".join(part.get("text", "") for part in parts).strip()
+
+    if finish_reason == "MAX_TOKENS" and not text:
+        raise ValueError(
+            "The model's response was cut off before it produced any output (hit the " +
+            str(max_tokens) + " token output limit). Try a smaller number of "
+            "nodes, or pick a different model."
+        )
+
+    return text
 
 
 def list_groq_models(api_key):
@@ -652,7 +713,18 @@ def list_groq_models(api_key):
     _raise_with_api_detail(response, "Groq")
     data = response.json()
 
-    exclude_markers = ("whisper", "tts", "distil-whisper")
+    # Groq's /models endpoint lists every model it hosts, not just text chat
+    # models: speech-to-text (whisper), text-to-speech (tts, playai, orpheus /
+    # canopylabs voices), and safety classifiers (guard / prompt-guard /
+    # moderation) all show up here too, but none of them work with the
+    # /chat/completions JSON-generation prompts this app sends. Some of the
+    # TTS voice models also require separate terms acceptance per voice,
+    # which otherwise shows up as a confusing 400 error after the user picks
+    # one from the dropdown. Filter all of these out up front.
+    exclude_markers = (
+        "whisper", "distil-whisper", "tts", "playai", "orpheus", "canopylabs",
+        "guard", "prompt-guard", "moderation", "transcribe", "safety",
+    )
     model_ids = []
     for entry in data.get("data", []):
         model_id = entry.get("id", "")
@@ -691,11 +763,38 @@ def list_gemini_models(api_key):
     return sorted(model_ids)
 
 
+def _default_model_score(model_id):
+    """Heuristic used only to choose which model is preselected in the
+    dropdown, favoring smaller / lighter chat models that are far more
+    likely to be usable on a free API key. 'Pro' tier models in particular
+    often have a free-tier quota of zero (a 429 quota-exceeded error, not a
+    bug in this app), so they are never auto-selected, only selectable by
+    hand. Higher score wins."""
+    low = model_id.lower()
+    score = 0
+    if "flash-lite" in low:
+        score += 4
+    elif "flash" in low:
+        score += 3
+    elif "instant" in low or "8b" in low or "-mini" in low or "small" in low:
+        score += 2
+    if "latest" in low:
+        score += 1
+    if "-pro" in low or low.endswith("pro"):
+        score -= 5
+    if any(tag in low for tag in ("preview", "exp", "image", "vision", "embedding", "live")):
+        score -= 2
+    return score
+
+
 def _pick_default_index(models, preferred_ids):
+    if not models:
+        return 0
     for preferred in preferred_ids:
         if preferred in models:
             return models.index(preferred)
-    return 0
+    ranked = sorted(range(len(models)), key=lambda i: (-_default_model_score(models[i]), models[i]))
+    return ranked[0]
 
 
 def get_selectable_models(provider, api_key, static_fallback, force_refresh=False):
@@ -837,10 +936,16 @@ def run_llm_reasoning(case_key, graph, nodes_df, edges_df, start, goal, weight_f
     graph_text = serialize_graph_for_llm(nodes_df, edges_df)
     prompt = build_search_reasoning_prompt(case_key, graph_text, start, goal, weight_field)
 
+    # 3000 tokens comfortably covers path + visited_order + levels/cost for
+    # graphs up to the app's 60 node maximum; the earlier hard coded 500
+    # token limit silently truncated the JSON on anything but tiny graphs,
+    # which is what produced "Expecting ',' delimiter" style parse errors.
+    reasoning_max_tokens = 3000
+
     if provider == "Groq":
-        raw = call_groq_api(api_key, model, prompt)
+        raw = call_groq_api(api_key, model, prompt, max_tokens=reasoning_max_tokens, json_mode=True)
     elif provider == "Google Gemini":
-        raw = call_gemini_api(api_key, model, prompt)
+        raw = call_gemini_api(api_key, model, prompt, max_tokens=reasoning_max_tokens, json_mode=True)
     else:
         raise ValueError("Unknown AI provider selected")
 
@@ -908,13 +1013,25 @@ def build_data_generation_prompt(num_nodes, seed):
     )
 
 
+def compute_data_gen_max_tokens(num_nodes):
+    """The synthetic dataset's JSON grows with the node count (each node
+    plus its share of the spanning tree and extra edges), so a single fixed
+    token budget either wastes tokens on small graphs or truncates large
+    ones mid-JSON -- the latter is exactly what produced the earlier
+    'Expecting , delimiter' parse errors on anything but a tiny graph.
+    Scale the budget with num_nodes and cap it comfortably under what every
+    live-discovered chat model on Groq/Gemini supports as a completion limit."""
+    return min(8000, 1200 + num_nodes * 130)
+
+
 def generate_synthetic_data_llm(num_nodes, seed, provider, api_key, model):
     prompt = build_data_generation_prompt(num_nodes, seed)
+    data_gen_max_tokens = compute_data_gen_max_tokens(num_nodes)
 
     if provider == "Groq":
-        raw = call_groq_api(api_key, model, prompt)
+        raw = call_groq_api(api_key, model, prompt, max_tokens=data_gen_max_tokens, json_mode=True)
     elif provider == "Google Gemini":
-        raw = call_gemini_api(api_key, model, prompt)
+        raw = call_gemini_api(api_key, model, prompt, max_tokens=data_gen_max_tokens, json_mode=True)
     else:
         raise ValueError("Unknown AI provider selected")
 
@@ -1059,6 +1176,12 @@ def render_ai_sidebar():
             st.sidebar.caption(
                 "Could not fetch the live model list from Gemini (bad key, no network, or a temporary "
                 "Google error). Showing an offline fallback list, which may include retired model names."
+            )
+        if api_key and "-pro" in model.lower():
+            st.sidebar.caption(
+                "Note: Gemini 'Pro' models usually have a free-tier quota of zero and need a billing "
+                "account enabled on the Google Cloud project behind this key. If you see a 429 quota "
+                "error, switch to a Flash or Flash-Lite model instead."
             )
 
     st.session_state["ai_settings"] = {
