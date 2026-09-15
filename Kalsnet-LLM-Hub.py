@@ -250,49 +250,39 @@ digraph Private {
 
 API_KEY_INFO = {
     "OpenAI (GPT family)": {
-        "url": "https://platform.openai.com/api-keys",  
+        "url": "https://platform.openai.com/api-keys",
         "note": "Sign in, open API keys, create a new secret key. A small free credit is usually given to new accounts.",
     },
     "Anthropic (Claude family)": {
-        "url": "https://console.anthropic.com/", 
+        "url": "https://console.anthropic.com/",
         "note": "Create a console account, open API keys, create a new key. Claude ai also offers a separate free chat tier.",
     },
     "Google (Gemini family)": {
-        "url": "Sign in - Google Accounts 
-
-Sign in - Google Accounts
-
-
+        "url": "https://aistudio.google.com/app/apikey",
         "note": "Sign in with a Google account and generate a key in Google AI Studio. This tier is free with rate limits.",
     },
     "DeepSeek": {
-        "url": "https://platform.deepseek.com/", 
+        "url": "https://platform.deepseek.com/",
         "note": "Create an account and generate an API key from the platform dashboard. Pricing is low cost per token.",
     },
     "Qwen (Alibaba Cloud)": {
-        "url": "https://bailian.console.aliyun.com/", 
+        "url": "https://bailian.console.aliyun.com/",
         "note": "Create an Alibaba Cloud account and generate a key in the Model Studio console. Open weight Qwen models can also be downloaded and run locally at no cost.",
     },
     "Llama (Meta)": {
-        "url": "https://huggingface.co/meta-llama", 
+        "url": "https://huggingface.co/meta-llama",
         "note": "Llama models are open weight. Download them from Hugging Face, or call a hosted free tier through a provider such as Groq.",
     },
     "Groq (free hosted open models)": {
-        "url": "https://console.groq.com/keys", 
+        "url": "https://console.groq.com/keys",
         "note": "Free API key with a generous rate limit for open weight models such as Llama and Qwen, useful for quick testing.",
     },
     "OpenRouter (many models, one key)": {
-        "url": "https://openrouter.ai/keys", 
+        "url": "https://openrouter.ai/keys",
         "note": "One key gives access to many providers including several free open weight models.",
     },
     "Hugging Face": {
-        "url": "Hugging Face – The AI community building the future. 
-
-Hugging Face – The AI community building the future.
-We’re on a journey to advance and democratize artificial intelligence through open source and open science.
-
-
-
+        "url": "https://huggingface.co/settings/tokens",
         "note": "Free account token, useful for downloading open weight models and calling the free inference endpoints.",
     },
 }
@@ -389,4 +379,3 @@ st.sidebar.caption(
 # -----------------------------------------------------------------------
 
 render_engine_page(selected_engine)
- 
