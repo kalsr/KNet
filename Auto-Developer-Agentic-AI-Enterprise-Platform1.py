@@ -1,5 +1,3 @@
-
-
 # ==========================================================
 # KALSNET (KNet) – ENTERPRISE AGENTIC AI PLATFORM
 # ==========================================================
@@ -43,35 +41,72 @@ Developed by Randy Singh
 """, unsafe_allow_html=True)
 
 # ----------------------------------------------------------
-# GROQ KEY (STRICTLY FROM SECRETS ONLY)
+# GROQ KEY (FROM SIDEBAR INPUT, FALLING BACK TO SECRETS)
 # ----------------------------------------------------------
-def load_groq_key():
-    # Load GROQ API Key from Streamlit secrets into session_state if not already present
-    if "GROQ_API_KEY" not in st.session_state:
+def load_groq_key_from_secrets():
+    # Load GROQ API Key from Streamlit secrets into session_state if not already present.
+    # This is only ever used as a fallback, since a key typed into the sidebar below
+    # always takes priority and does not require a secrets.toml file to exist at all.
+    if "GROQ_API_KEY_FROM_SECRETS" not in st.session_state:
         try:
             if "GROQ_API_KEY" in st.secrets:
-                st.session_state.GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
+                st.session_state.GROQ_API_KEY_FROM_SECRETS = st.secrets["GROQ_API_KEY"]
             else:
-                st.session_state.GROQ_API_KEY = None # Explicitly set to None if not found
-        except Exception as e:
-            st.warning(f"Error loading secrets: {e}")
-            st.session_state.GROQ_API_KEY = None
-    return st.session_state.GROQ_API_KEY
+                st.session_state.GROQ_API_KEY_FROM_SECRETS = None
+        except Exception:
+            # st.secrets raises if no secrets.toml file exists at all, which is a normal,
+            # expected situation for anyone using the sidebar key entry instead.
+            st.session_state.GROQ_API_KEY_FROM_SECRETS = None
+    return st.session_state.GROQ_API_KEY_FROM_SECRETS
 
-api_key = load_groq_key()
+
+secrets_key = load_groq_key_from_secrets()
+
+st.sidebar.markdown("## Groq API Key")
+st.sidebar.write(
+    "Paste a Groq API key below to use this app. This is optional only if a "
+    "GROQ_API_KEY is already configured in a .streamlit/secrets.toml file."
+)
+sidebar_key = st.sidebar.text_input(
+    "Groq API key",
+    value="",
+    type="password",
+    placeholder="gsk_...",
+    key="groq_api_key_sidebar",
+)
+
+with st.sidebar.expander("How to get a free Groq API key"):
+    st.markdown(
+        "1. Go to **console.groq.com** and sign in or create a free account, no credit card required.\n"
+        "2. Open the **API Keys** section, at console.groq.com/keys.\n"
+        "3. Click **Create API Key**, give it a name, and click Submit.\n"
+        "4. Copy the key immediately. It starts with `gsk_` and is shown only once.\n"
+        "5. Paste the key into the field above, or, if you prefer, save it in a "
+        "`.streamlit/secrets.toml` file in your project root as:\n\n"
+        "```\nGROQ_API_KEY = \"your_actual_groq_api_key_here\"\n```\n\n"
+        "Groq currently offers a free developer tier with generous rate limits, which is "
+        "enough to run this application. Check Groq's current pricing page for up to date limits."
+    )
+
+# A key typed into the sidebar always takes priority over secrets.toml, since it is the
+# simplest way to get the app working without creating any extra files.
+api_key = sidebar_key.strip() if sidebar_key and sidebar_key.strip() else secrets_key
 
 if not api_key:
     st.error("""
 ❌ GROQ API Key not found.
 
 Fix checklist:
-1. Ensure .streamlit/secrets.toml exists in your project root.
-2. Ensure key is: `GROQ_API_KEY = "your_actual_groq_api_key_here"`
-3. If running locally, restart Streamlit. If deployed, ensure secrets are properly configured.
+1. Paste a free Groq API key into the **Groq API Key** box in the sidebar, on the left. See
+   "How to get a free Groq API key" in the sidebar for step by step instructions.
+2. Alternatively, ensure a `.streamlit/secrets.toml` file exists in your project root with a
+   line reading `GROQ_API_KEY = "your_actual_groq_api_key_here"`.
+3. If running locally, restart Streamlit after adding the key. If deployed, ensure secrets are
+   properly configured in your hosting platform's settings.
 """)
     st.stop()
 
-# Initialize Groq client here after successful API key loading
+# Initialize Groq client here after successfully obtaining an API key from either source.
 client = Groq(api_key=api_key)
 
 
