@@ -1,8 +1,3 @@
-
-
-
-
-
 # Kalsnet Universal Search and Reasoning Engine
 # Developed By Randy Singh from Kalsnet (KNet) Consulting Group
 
@@ -38,6 +33,23 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib.units import inch
 
+
+def _default_seed():
+    """Return a fresh random default for a Random seed widget.
+
+    Every Random seed number_input below used to default to the fixed value
+    42, which meant every category and every algorithm generated the exact
+    same synthetic data unless a person manually typed a different seed. A
+    Streamlit widget's `value` argument only takes effect the first time
+    that widget's key is created in a session, so calling this on every
+    script rerun still lets each seed widget keep whatever the person set
+    once it exists, while giving every category, sub search, and fresh
+    session a genuinely different starting seed instead of always the same
+    identical looking synthetic data.
+    """
+    return random.randint(1, 9999)
+
+
 # ---------------------------------------------------------------------------
 # Reference lists
 # ---------------------------------------------------------------------------
@@ -64,57 +76,93 @@ TEXT_VERBS = ["accessed", "scanned", "updated", "reviewed", "detected",
               "isolated", "patched", "monitored", "flagged", "restored"]
 
 NODE_SCHEMA = pd.DataFrame([
-    {"Field": "ID", "Type": "String", "Description": "Unique identifier for the node"},
-    {"Field": "Type", "Type": "String", "Description": "Category of the node, for example Endpoint, Server, Database"},
-    {"Field": "Risk", "Type": "Integer 0 to 10", "Description": "Risk score assigned to the node"},
-    {"Field": "Criticality", "Type": "Integer 0 to 10", "Description": "Business criticality of the node"},
-    {"Field": "Owner", "Type": "String", "Description": "Team responsible for the node"},
-    {"Field": "Security_Score", "Type": "Integer 0 to 100", "Description": "Overall security posture score"},
-    {"Field": "X", "Type": "Float", "Description": "Synthetic coordinate used by heuristic search techniques"},
-    {"Field": "Y", "Type": "Float", "Description": "Synthetic coordinate used by heuristic search techniques"},
+    {"Field": "ID", "Type": "String", "Description": "Unique identifier for the node",
+     "How Calculated": "Assigned in generation order as N1, N2, N3 and so on, one per node created."},
+    {"Field": "Type", "Type": "String", "Description": "Category of the node, for example Endpoint, Server, Database",
+     "How Calculated": "Chosen at random, uniformly, from the fixed NODE_TYPES reference list using the node generator's seeded random number generator."},
+    {"Field": "Risk", "Type": "Integer 0 to 10", "Description": "Risk score assigned to the node",
+     "How Calculated": "A random integer drawn uniformly from 0 to 10 inclusive using the seeded random number generator."},
+    {"Field": "Criticality", "Type": "Integer 0 to 10", "Description": "Business criticality of the node",
+     "How Calculated": "A random integer drawn uniformly from 0 to 10 inclusive, independent of Risk, using the seeded random number generator."},
+    {"Field": "Owner", "Type": "String", "Description": "Team responsible for the node",
+     "How Calculated": "Chosen at random, uniformly, from the fixed OWNERS reference list."},
+    {"Field": "Security_Score", "Type": "Integer 0 to 100", "Description": "Overall security posture score",
+     "How Calculated": "A random integer drawn uniformly from 0 to 100 inclusive, independent of Risk and Criticality."},
+    {"Field": "X", "Type": "Float", "Description": "Synthetic coordinate used by heuristic search techniques",
+     "How Calculated": "A random value drawn uniformly from 0 to 100 and rounded to one decimal place, used only to compute straight line distance heuristics for A Star and related techniques."},
+    {"Field": "Y", "Type": "Float", "Description": "Synthetic coordinate used by heuristic search techniques",
+     "How Calculated": "A random value drawn uniformly from 0 to 100 and rounded to one decimal place, paired with X to place the node in a synthetic two dimensional plane."},
 ])
 
 EDGE_SCHEMA = pd.DataFrame([
-    {"Field": "Source", "Type": "String", "Description": "ID of the source node"},
-    {"Field": "Target", "Type": "String", "Description": "ID of the target node"},
-    {"Field": "Relationship", "Type": "String", "Description": "Type of relationship between the nodes"},
-    {"Field": "Cost", "Type": "Float", "Description": "Cost of traversing this relationship"},
-    {"Field": "Risk", "Type": "Integer 0 to 10", "Description": "Risk score of this relationship"},
-    {"Field": "Probability", "Type": "Float 0 to 1", "Description": "Estimated probability of exploit"},
-    {"Field": "Time", "Type": "Float", "Description": "Estimated time in hours to traverse this relationship"},
+    {"Field": "Source", "Type": "String", "Description": "ID of the source node",
+     "How Calculated": "For the first pass of edges, each node from the second one onward is connected back to a randomly chosen earlier node, guaranteeing the graph is reachable from the start; extra edges then pick two random existing node IDs."},
+    {"Field": "Target", "Type": "String", "Description": "ID of the target node",
+     "How Calculated": "The node being connected to, either the next node in generation order for the guaranteed connectivity pass, or a second randomly chosen node for extra edges."},
+    {"Field": "Relationship", "Type": "String", "Description": "Type of relationship between the nodes",
+     "How Calculated": "Chosen at random, uniformly, from the fixed RELATIONSHIP_TYPES reference list."},
+    {"Field": "Cost", "Type": "Float", "Description": "Cost of traversing this relationship",
+     "How Calculated": "A random value drawn uniformly from 1 to 50 and rounded to two decimals; when negative costs are enabled for an algorithm, roughly 15 percent of edges instead get a negative cost drawn uniformly from -1 to -10."},
+    {"Field": "Risk", "Type": "Integer 0 to 10", "Description": "Risk score of this relationship",
+     "How Calculated": "A random integer drawn uniformly from 0 to 10 inclusive, independent of the node level Risk field."},
+    {"Field": "Probability", "Type": "Float 0 to 1", "Description": "Estimated probability of exploit",
+     "How Calculated": "A random value drawn uniformly from 0 to 1 and rounded to two decimals."},
+    {"Field": "Time", "Type": "Float", "Description": "Estimated time in hours to traverse this relationship",
+     "How Calculated": "A random value drawn uniformly from 1 to 20 and rounded to two decimals."},
 ])
 
 TEXT_SCHEMA = pd.DataFrame([
-    {"Field": "DocID", "Type": "String", "Description": "Unique identifier for the document"},
-    {"Field": "Title", "Type": "String", "Description": "Document title"},
-    {"Field": "Text", "Type": "String", "Description": "Full text content of the document"},
+    {"Field": "DocID", "Type": "String", "Description": "Unique identifier for the document",
+     "How Calculated": "Assigned in generation order as D1, D2, D3 and so on, one per document created."},
+    {"Field": "Title", "Type": "String", "Description": "Document title",
+     "How Calculated": "Built automatically as the literal text Document followed by the document's sequence number."},
+    {"Field": "Text", "Type": "String", "Description": "Full text content of the document",
+     "How Calculated": "Built by randomly choosing three words from the TEXT_TOPICS list and two words from the TEXT_VERBS list, shuffling all five words into a random order, and appending the literal text report number followed by the document's sequence number."},
 ])
 
 TABLE_SCHEMA = pd.DataFrame([
-    {"Field": "RecordID", "Type": "Integer", "Description": "Unique identifier for the record"},
-    {"Field": "Key", "Type": "String", "Description": "Business key used for lookups"},
-    {"Field": "Category", "Type": "String", "Description": "Business category of the record"},
-    {"Field": "Amount", "Type": "Float", "Description": "Monetary amount associated with the record"},
-    {"Field": "Risk_Score", "Type": "Integer 0 to 100", "Description": "Risk score of the record"},
-    {"Field": "Country", "Type": "String", "Description": "Country associated with the record"},
-    {"Field": "Probability", "Type": "Float 0 to 1", "Description": "Estimated probability used by probabilistic search"},
-    {"Field": "IP_Address", "Type": "String", "Description": "Source IP address, used by cybersecurity search"},
-    {"Field": "File_Hash", "Type": "String", "Description": "File hash, used by cybersecurity search"},
-    {"Field": "Event_Type", "Type": "String", "Description": "Type of security or business event"},
-    {"Field": "Hour", "Type": "Integer 0 to 23", "Description": "Hour of day the event occurred"},
+    {"Field": "RecordID", "Type": "Integer", "Description": "Unique identifier for the record",
+     "How Calculated": "Assigned in generation order starting at 1, one per record created."},
+    {"Field": "Key", "Type": "String", "Description": "Business key used for lookups",
+     "How Calculated": "The letter K followed by a random four digit integer drawn uniformly from 1000 to 9999."},
+    {"Field": "Category", "Type": "String", "Description": "Business category of the record",
+     "How Calculated": "Chosen at random, uniformly, from the fixed TABLE_CATEGORIES reference list."},
+    {"Field": "Amount", "Type": "Float", "Description": "Monetary amount associated with the record",
+     "How Calculated": "A random value drawn uniformly from 10 to 10000 and rounded to two decimals."},
+    {"Field": "Risk_Score", "Type": "Integer 0 to 100", "Description": "Risk score of the record",
+     "How Calculated": "A random integer drawn uniformly from 0 to 100 inclusive."},
+    {"Field": "Country", "Type": "String", "Description": "Country associated with the record",
+     "How Calculated": "Chosen at random, uniformly, from the fixed COUNTRIES reference list."},
+    {"Field": "Probability", "Type": "Float 0 to 1", "Description": "Estimated probability used by probabilistic search",
+     "How Calculated": "A random value drawn uniformly from 0 to 1 and rounded to three decimals."},
+    {"Field": "IP_Address", "Type": "String", "Description": "Source IP address, used by cybersecurity search",
+     "How Calculated": "Four random integers, each drawn uniformly from 1 to 255, joined with periods into a dotted quad address."},
+    {"Field": "File_Hash", "Type": "String", "Description": "File hash, used by cybersecurity search",
+     "How Calculated": "Sixteen characters chosen at random from the hexadecimal digits 0 through 9 and a through f, concatenated together."},
+    {"Field": "Event_Type", "Type": "String", "Description": "Type of security or business event",
+     "How Calculated": "Chosen at random, uniformly, from the fixed EVENT_TYPES reference list."},
+    {"Field": "Hour", "Type": "Integer 0 to 23", "Description": "Hour of day the event occurred",
+     "How Calculated": "A random integer drawn uniformly from 0 to 23 inclusive, representing a 24 hour clock hour."},
 ])
 
 CITIES_SCHEMA = pd.DataFrame([
-    {"Field": "CityID", "Type": "String", "Description": "Unique identifier for the city or stop"},
-    {"Field": "Name", "Type": "String", "Description": "Display name of the city or stop"},
-    {"Field": "X", "Type": "Float", "Description": "Horizontal coordinate"},
-    {"Field": "Y", "Type": "Float", "Description": "Vertical coordinate"},
+    {"Field": "CityID", "Type": "String", "Description": "Unique identifier for the city or stop",
+     "How Calculated": "Assigned in generation order as C1, C2, C3 and so on, one per stop created."},
+    {"Field": "Name", "Type": "String", "Description": "Display name of the city or stop",
+     "How Calculated": "Built automatically as the literal text City followed by the stop's sequence number."},
+    {"Field": "X", "Type": "Float", "Description": "Horizontal coordinate",
+     "How Calculated": "A random value drawn uniformly from 0 to 100 and rounded to one decimal place."},
+    {"Field": "Y", "Type": "Float", "Description": "Vertical coordinate",
+     "How Calculated": "A random value drawn uniformly from 0 to 100 and rounded to one decimal place, independent of X."},
 ])
 
 CSP_SCHEMA = pd.DataFrame([
-    {"Field": "RegionID", "Type": "String", "Description": "Unique identifier for the region or variable"},
-    {"Field": "Name", "Type": "String", "Description": "Display name of the region"},
-    {"Field": "RegionA, RegionB", "Type": "String pair", "Description": "Adjacency constraint between two regions"},
+    {"Field": "RegionID", "Type": "String", "Description": "Unique identifier for the region or variable",
+     "How Calculated": "Assigned in generation order as R1, R2, R3 and so on, one per region created."},
+    {"Field": "Name", "Type": "String", "Description": "Display name of the region",
+     "How Calculated": "Built automatically as the literal text Region followed by the region's sequence number."},
+    {"Field": "RegionA, RegionB", "Type": "String pair", "Description": "Adjacency constraint between two regions",
+     "How Calculated": "Built in two passes: first, each region from the second one onward is paired with a randomly chosen earlier region, guaranteeing every region has at least one neighbor; then extra adjacency pairs, about 30 percent of the region count, connect two randomly chosen distinct regions."},
 ])
 
 
@@ -1446,7 +1494,7 @@ def semantic_search_wordoverlap(corpus_df, query):
 
 
 # ---------------------------------------------------------------------------
-# Category 10: Modern AI and LLM Search, with optional OpenAI or Gemini keys
+# Category 10: Modern AI and LLM Search, with optional OpenAI, Gemini, or Grok keys
 # ---------------------------------------------------------------------------
 
 def synthetic_pseudo_embedding(text, dims=16):
@@ -1461,7 +1509,13 @@ def get_embeddings_for_texts(texts, api_provider, api_key):
     if not api_key or api_provider == "None":
         vectors = [synthetic_pseudo_embedding(t) for t in texts]
         note = ("No API key provided. Using a deterministic hash based pseudo embedding as a stand in. "
-                "Provide a free OpenAI or Gemini key in the sidebar for real semantic embeddings.")
+                "Provide an OpenAI or Gemini key in the sidebar for real semantic embeddings.")
+        return vectors, note
+    if api_provider == "Grok":
+        vectors = [synthetic_pseudo_embedding(t) for t in texts]
+        note = ("xAI's Grok API does not currently offer a public embeddings endpoint, so a deterministic hash "
+                "based pseudo embedding was used instead. Switch the provider to OpenAI or Gemini in the sidebar "
+                "for real semantic embeddings.")
         return vectors, note
     try:
         if api_provider == "OpenAI":
@@ -1496,7 +1550,7 @@ def get_embeddings_for_texts(texts, api_provider, api_key):
 def call_llm_chat(prompt, api_provider, api_key, max_tokens=300):
     if not api_key or api_provider == "None":
         return None, ("No API key provided, so an AI generated answer was not created. "
-                       "Provide a free OpenAI or Gemini key in the sidebar to enable this feature.")
+                       "Provide an OpenAI, Gemini, or Grok key in the sidebar to enable this feature.")
     try:
         if api_provider == "OpenAI":
             resp = requests.post(
@@ -1515,6 +1569,15 @@ def call_llm_chat(prompt, api_provider, api_key, max_tokens=300):
             )
             resp.raise_for_status()
             return resp.json()["candidates"][0]["content"]["parts"][0]["text"], "Response generated using Gemini 1.5 Flash"
+        if api_provider == "Grok":
+            resp = requests.post(
+                "https://api.x.ai/v1/chat/completions",
+                headers={"Authorization": "Bearer " + api_key, "Content-Type": "application/json"},
+                json={"model": "grok-4.6", "messages": [{"role": "user", "content": prompt}], "max_tokens": max_tokens},
+                timeout=30,
+            )
+            resp.raise_for_status()
+            return resp.json()["choices"][0]["message"]["content"], "Response generated using xAI Grok 4.6"
     except Exception as e:
         return None, "The API call failed. Detail: " + str(e)
     return None, "Unknown provider"
@@ -2213,7 +2276,7 @@ def render_sidebar():
     st.sidebar.markdown("---")
     st.sidebar.markdown("## AI Provider Settings")
     st.sidebar.write("Optional. Used only by the Modern AI and LLM Search category for real embeddings and generated answers. Every other category works fully without a key.")
-    api_provider = st.sidebar.selectbox("Provider", ["None", "OpenAI", "Gemini"], key="api_provider")
+    api_provider = st.sidebar.selectbox("Provider", ["None", "OpenAI", "Gemini", "Grok"], key="api_provider")
     api_key = ""
     if api_provider != "None":
         api_key = st.sidebar.text_input("API key for " + api_provider, type="password", key="api_key_input")
@@ -2233,7 +2296,14 @@ def render_sidebar():
             "3. Click Create new secret key\n"
             "4. Copy the key and paste it above\n\n"
             "New OpenAI accounts sometimes receive limited free trial credit. Check OpenAI's current pricing page, "
-            "since embeddings and chat completions are billed once trial credit is used."
+            "since embeddings and chat completions are billed once trial credit is used.\n\n"
+            "**Grok, from xAI**\n\n"
+            "1. Go to console.x.ai and sign in or create an account\n"
+            "2. Open the API Keys section and click Create API Key\n"
+            "3. Copy the key and paste it above\n\n"
+            "xAI's Grok API is used here for generated chat answers. It does not currently offer a public embeddings "
+            "endpoint, so Grok is used only for the generated answer, not for embeddings, and check xAI's current "
+            "pricing page for up to date free credit and billing details."
         )
 
     return category, api_provider, api_key
@@ -2252,7 +2322,7 @@ def graph_domain_ui(prefix, allow_negative=False, force_dag=False):
         with c1:
             num_nodes = st.slider("Number of nodes", 5, 60, 14, key=prefix + "_n")
         with c2:
-            seed = st.number_input("Random seed", 1, 9999, 42, key=prefix + "_seed")
+            seed = st.number_input("Random seed", 1, 9999, _default_seed(), key=prefix + "_seed")
         with c3:
             show_all = st.checkbox("Display Entire Synthetic Data", key=prefix + "_showall")
         if st.button("Generate Synthetic Data Now", key=prefix + "_gen"):
@@ -2306,7 +2376,7 @@ def text_domain_ui(prefix):
         with c1:
             num_docs = st.slider("Number of documents", 5, 60, 15, key=prefix + "_n")
         with c2:
-            seed = st.number_input("Random seed", 1, 9999, 42, key=prefix + "_seed")
+            seed = st.number_input("Random seed", 1, 9999, _default_seed(), key=prefix + "_seed")
         with c3:
             show_all = st.checkbox("Display Entire Synthetic Data", key=prefix + "_showall")
         if st.button("Generate Synthetic Data Now", key=prefix + "_gen"):
@@ -2341,7 +2411,7 @@ def table_domain_ui(prefix):
         with c1:
             num_records = st.slider("Number of records", 10, 300, 60, key=prefix + "_n")
         with c2:
-            seed = st.number_input("Random seed", 1, 9999, 42, key=prefix + "_seed")
+            seed = st.number_input("Random seed", 1, 9999, _default_seed(), key=prefix + "_seed")
         with c3:
             show_all = st.checkbox("Display Entire Synthetic Data", key=prefix + "_showall")
         if st.button("Generate Synthetic Data Now", key=prefix + "_gen"):
@@ -2376,7 +2446,7 @@ def cities_domain_ui(prefix):
         with c1:
             num_cities = st.slider("Number of stops", 4, 25, 10, key=prefix + "_n")
         with c2:
-            seed = st.number_input("Random seed", 1, 9999, 42, key=prefix + "_seed")
+            seed = st.number_input("Random seed", 1, 9999, _default_seed(), key=prefix + "_seed")
         with c3:
             show_all = st.checkbox("Display Entire Synthetic Data", key=prefix + "_showall")
         if st.button("Generate Synthetic Data Now", key=prefix + "_gen"):
@@ -2411,7 +2481,7 @@ def csp_domain_ui(prefix):
         with c1:
             num_regions = st.slider("Number of regions", 4, 25, 10, key=prefix + "_n")
         with c2:
-            seed = st.number_input("Random seed", 1, 9999, 42, key=prefix + "_seed")
+            seed = st.number_input("Random seed", 1, 9999, _default_seed(), key=prefix + "_seed")
         with c3:
             show_all = st.checkbox("Display Entire Synthetic Data", key=prefix + "_showall")
         if st.button("Generate Synthetic Data Now", key=prefix + "_gen"):
@@ -2459,7 +2529,7 @@ def gametree_domain_ui(prefix, use_chance_nodes=False):
     with c2:
         depth = st.slider("Tree depth", 2, 5, 3, key=prefix + "_d")
     with c3:
-        seed = st.number_input("Random seed", 1, 9999, 42, key=prefix + "_seed")
+        seed = st.number_input("Random seed", 1, 9999, _default_seed(), key=prefix + "_seed")
     if st.button("Generate Game Tree Now", key=prefix + "_gen"):
         st.session_state[prefix + "_tree"] = build_synthetic_gametree(branching, depth, seed=seed, use_chance_nodes=use_chance_nodes)
     if prefix + "_tree" in st.session_state:
@@ -2523,14 +2593,54 @@ def render_category_1():
     ], key="cat1_algo")
 
     explanations = {
-        "Breadth First Search": "Explores nodes level by level outward from the start node. Finds the shortest path in terms of number of relationships when all edges are treated as equal cost.",
-        "Depth First Search": "Follows one path as deeply as possible before backtracking. Uses relatively little memory, approximately O(b times m) for branching factor b and depth m.",
-        "Depth Limited Search": "Performs Depth First Search but stops expanding once a maximum depth limit is reached, preventing an indefinite search.",
-        "Iterative Deepening DFS": "Repeatedly runs Depth Limited Search with an increasing depth limit until a solution is found, combining the low memory use of DFS with the completeness of BFS.",
-        "Uniform Cost Search": "Expands the lowest cumulative cost path first, useful when relationships between nodes have different costs such as risk, time, or money.",
-        "Bidirectional Search": "Runs two simultaneous searches, one forward from the start node and one backward from the goal node, meeting in the middle to reduce the search space.",
-        "Tree Search": "Treats every generated path as a new node even if the same state has already been seen, which can revisit states but is simple to implement.",
-        "Graph Search": "Maintains an explored set of visited states so that the same state is never expanded twice, avoiding redundant work in cyclic graphs.",
+        "Breadth First Search": (
+            "Explores nodes level by level outward from the start node. Finds the shortest path in terms of number of relationships when all edges are treated as equal cost.\n\n"
+            "**When to use:** Use it when every relationship should count equally, no edge has a meaningful cost, and you need the fewest possible hops between two points, for example the shortest chain of logins between two accounts.\n\n"
+            "**Benefits:** Guarantees the shortest hop count, is simple to implement and reason about, and explores the graph in a predictable, level by level order that is easy to visualize.\n\n"
+            "**Important use-cases:** Finding the shortest reporting or access chain in an org or asset graph, computing degrees of separation in a social or vendor network, and broadcasting or reachability checks in unweighted networks."
+        ),
+        "Depth First Search": (
+            "Follows one path as deeply as possible before backtracking. Uses relatively little memory, approximately O(b times m) for branching factor b and depth m.\n\n"
+            "**When to use:** Use it when memory is limited, any valid path will do rather than the shortest one, or you need to explore deep chains such as long dependency or attack sequences before trying alternatives.\n\n"
+            "**Benefits:** Very low memory footprint compared to breadth first exploration, straightforward to implement recursively or with a stack, and well suited to problems where a full path must be built before it can be evaluated.\n\n"
+            "**Important use-cases:** Detecting cycles in dependency graphs, exploring deep attack or exploit chains, maze and puzzle solving, and topological style traversals where depth matters more than breadth."
+        ),
+        "Depth Limited Search": (
+            "Performs Depth First Search but stops expanding once a maximum depth limit is reached, preventing an indefinite search.\n\n"
+            "**When to use:** Use it when the graph may contain cycles or be effectively infinite and you only care about solutions within a known maximum number of hops.\n\n"
+            "**Benefits:** Prevents runaway searches on cyclic or very deep graphs, keeps memory bounded like plain DFS, and gives predictable worst case run time based on the chosen limit.\n\n"
+            "**Important use-cases:** Bounding how many hops an attacker could realistically pivot through, enforcing a maximum approval chain length, and any policy check where only nearby relationships matter."
+        ),
+        "Iterative Deepening DFS": (
+            "Repeatedly runs Depth Limited Search with an increasing depth limit until a solution is found, combining the low memory use of DFS with the completeness of BFS.\n\n"
+            "**When to use:** Use it when you want the shortest-path guarantee of BFS but cannot afford the memory BFS needs, particularly on large or unknown-depth graphs.\n\n"
+            "**Benefits:** Combines low memory use with completeness and optimality in hop count, and does not require knowing the depth of the solution in advance.\n\n"
+            "**Important use-cases:** Large scale dependency or access graphs where memory is constrained, exploratory investigations where the distance to the answer is unknown, and puzzle or game state search."
+        ),
+        "Uniform Cost Search": (
+            "Expands the lowest cumulative cost path first, useful when relationships between nodes have different costs such as risk, time, or money.\n\n"
+            "**When to use:** Use it whenever edges carry a real cost, such as risk, time, or dollars, and you need the cheapest path rather than the one with the fewest hops.\n\n"
+            "**Benefits:** Guarantees the lowest total cost path for non negative edge weights, and generalizes breadth first search naturally to weighted graphs.\n\n"
+            "**Important use-cases:** Finding the lowest risk path an attacker could take through a network, cheapest routing decisions, and prioritizing remediation paths by cumulative effort or cost."
+        ),
+        "Bidirectional Search": (
+            "Runs two simultaneous searches, one forward from the start node and one backward from the goal node, meeting in the middle to reduce the search space.\n\n"
+            "**When to use:** Use it when both the start and the goal are known in advance and the graph is large, so that searching from both ends cuts the explored space dramatically.\n\n"
+            "**Benefits:** Can reduce the number of nodes explored roughly from b^d to 2 times b^(d/2), which is a large saving on large graphs, while still finding a shortest path.\n\n"
+            "**Important use-cases:** Large scale connectivity checks between two specific assets, shortest relationship path lookups in big enterprise graphs, and any point to point search where both endpoints are fixed."
+        ),
+        "Tree Search": (
+            "Treats every generated path as a new node even if the same state has already been seen, which can revisit states but is simple to implement.\n\n"
+            "**When to use:** Use it for teaching or illustrating the basic search mechanism, or in problems where the state space is genuinely a tree and duplicate states cannot occur.\n\n"
+            "**Benefits:** Very simple to implement and understand, and requires no bookkeeping of an explored set.\n\n"
+            "**Important use-cases:** Educational demonstrations of search fundamentals, and small acyclic decision trees where revisiting is not a concern."
+        ),
+        "Graph Search": (
+            "Maintains an explored set of visited states so that the same state is never expanded twice, avoiding redundant work in cyclic graphs.\n\n"
+            "**When to use:** Use it whenever the underlying graph can contain cycles or shared sub-paths, which is the normal case for enterprise, network, and organizational graphs.\n\n"
+            "**Benefits:** Avoids repeated, wasted expansion of the same node, which keeps the search efficient and guarantees termination even on cyclic graphs.\n\n"
+            "**Important use-cases:** Any production search over a real enterprise or network graph, where cycles such as mutual dependencies or bidirectional connections are common."
+        ),
     }
     st.write(explanations[algo])
 
@@ -2608,14 +2718,54 @@ def render_category_2():
     ], key="cat2_algo")
 
     explanations = {
-        "Greedy Best First Search": "Always expands the node that appears closest to the goal according to the heuristic, ignoring the cost already spent getting there.",
-        "A Star": "Combines the actual cost so far g(n) with the estimated remaining cost h(n), expanding the node with the lowest f(n) = g(n) + h(n). Guarantees an optimal path when the heuristic never overestimates.",
-        "Weighted A Star": "A variant of A Star that multiplies the heuristic by a weight greater than one, trading optimality for a faster search.",
-        "IDA Star": "Iterative Deepening A Star, which repeats a depth first search bounded by an increasing f(n) threshold, achieving A Star quality solutions with much lower memory use.",
-        "Beam Search": "Keeps only a limited number of the best candidate nodes at each level, discarding the rest, which keeps memory use bounded at the cost of completeness.",
-        "Hill Climbing": "Continuously moves to the best looking neighboring node, stopping when no neighbor improves on the current node, which can get stuck in a local optimum.",
-        "Random Restart Hill Climbing": "Runs Hill Climbing repeatedly from different random starting nodes to try to escape local optima.",
-        "Simulated Annealing": "Behaves like Hill Climbing but occasionally accepts a worse move, especially early in the search when a temperature parameter is high, to escape local optima.",
+        "Greedy Best First Search": (
+            "Always expands the node that appears closest to the goal according to the heuristic, ignoring the cost already spent getting there.\n\n"
+            "**When to use:** Use it when you need a fast, approximate path and a reasonably good heuristic exists, and you can accept a path that may not be the cheapest.\n\n"
+            "**Benefits:** Often very fast in practice because it aggressively pursues the goal, and needs little bookkeeping beyond the heuristic estimate.\n\n"
+            "**Important use-cases:** Quick triage of a likely attack or access path when speed matters more than optimality, and any first-pass exploration before a more rigorous search is run."
+        ),
+        "A Star": (
+            "Combines the actual cost so far g(n) with the estimated remaining cost h(n), expanding the node with the lowest f(n) = g(n) + h(n). Guarantees an optimal path when the heuristic never overestimates.\n\n"
+            "**When to use:** Use it whenever you need the guaranteed cheapest path and have an admissible heuristic available, making it the default choice over Uniform Cost Search when a good heuristic exists.\n\n"
+            "**Benefits:** Optimal and complete under an admissible heuristic, and typically explores far fewer nodes than Uniform Cost Search because the heuristic focuses the search toward the goal.\n\n"
+            "**Important use-cases:** Finding the lowest cost route through a network or dependency graph, route planning, and any risk or cost minimizing path search where correctness matters."
+        ),
+        "Weighted A Star": (
+            "A variant of A Star that multiplies the heuristic by a weight greater than one, trading optimality for a faster search.\n\n"
+            "**When to use:** Use it when a fast, good-enough answer is more valuable than a guaranteed optimal one, for example under time pressure during an incident.\n\n"
+            "**Benefits:** Converges faster than plain A Star by expanding fewer nodes, with the weight giving a tunable dial between speed and solution quality.\n\n"
+            "**Important use-cases:** Time constrained investigations, near real time path suggestions, and large graphs where full A Star would be too slow."
+        ),
+        "IDA Star": (
+            "Iterative Deepening A Star, which repeats a depth first search bounded by an increasing f(n) threshold, achieving A Star quality solutions with much lower memory use.\n\n"
+            "**When to use:** Use it when A Star would be optimal but its memory use is too high for the size of the graph.\n\n"
+            "**Benefits:** Keeps the optimality guarantees of A Star while using memory proportional to the solution depth rather than the number of nodes stored.\n\n"
+            "**Important use-cases:** Very large graphs or state spaces where A Star's frontier would not fit in memory, such as broad enterprise wide asset graphs."
+        ),
+        "Beam Search": (
+            "Keeps only a limited number of the best candidate nodes at each level, discarding the rest, which keeps memory use bounded at the cost of completeness.\n\n"
+            "**When to use:** Use it on very large search spaces where exploring every candidate is impractical and a bounded, approximate search is acceptable.\n\n"
+            "**Benefits:** Predictable, bounded memory and time regardless of graph size, and tunable quality versus speed through the beam width.\n\n"
+            "**Important use-cases:** Large scale candidate ranking such as narrowing down likely attack paths from many possibilities, and any scenario where only the top few options at each stage matter."
+        ),
+        "Hill Climbing": (
+            "Continuously moves to the best looking neighboring node, stopping when no neighbor improves on the current node, which can get stuck in a local optimum.\n\n"
+            "**When to use:** Use it for a quick, simple local improvement when an approximate answer is acceptable and the search space is reasonably smooth.\n\n"
+            "**Benefits:** Extremely simple and fast, with very low memory use since it only tracks the current node.\n\n"
+            "**Important use-cases:** Fast local refinement of an existing path or configuration, and as a baseline to compare against more robust techniques like Simulated Annealing."
+        ),
+        "Random Restart Hill Climbing": (
+            "Runs Hill Climbing repeatedly from different random starting nodes to try to escape local optima.\n\n"
+            "**When to use:** Use it when plain Hill Climbing keeps getting stuck in local optima and you can afford several repeated runs.\n\n"
+            "**Benefits:** Much more likely to find a globally strong solution than a single Hill Climbing run, while remaining simple to implement.\n\n"
+            "**Important use-cases:** Rugged, bumpy search landscapes such as irregular network topologies, and situations where a single starting point is not trustworthy."
+        ),
+        "Simulated Annealing": (
+            "Behaves like Hill Climbing but occasionally accepts a worse move, especially early in the search when a temperature parameter is high, to escape local optima.\n\n"
+            "**When to use:** Use it when the search landscape has many local optima and a single greedy climb is likely to get stuck, but you want a single continuous run rather than many restarts.\n\n"
+            "**Benefits:** Balances exploration and exploitation through its cooling schedule, and can escape local optima that trap plain Hill Climbing.\n\n"
+            "**Important use-cases:** Complex optimization landscapes such as risk-weighted path selection, and problems where Random Restart Hill Climbing is too expensive to run many times."
+        ),
     }
     st.write(explanations[algo])
 
@@ -2642,7 +2792,7 @@ def render_category_2():
     if algo == "Simulated Annealing":
         extra_params["initial_temp"] = st.slider("Initial temperature", 10, 300, 100, key="cat2_temp")
         extra_params["cooling"] = st.slider("Cooling rate", 0.80, 0.99, 0.95, step=0.01, key="cat2_cooling")
-    seed = st.number_input("Random seed for stochastic techniques", 1, 9999, 42, key="cat2_seed")
+    seed = st.number_input("Random seed for stochastic techniques", 1, 9999, _default_seed(), key="cat2_seed")
 
     if st.button("Run " + algo, key="cat2_run"):
         params = {"Start node": start, "Goal node": goal, "Total nodes": len(nodes_df)}
@@ -2702,10 +2852,30 @@ def render_category_3():
     ], key="cat3_algo")
 
     explanations = {
-        "Minimax": "Explores the full game tree, assuming the maximizing player always picks the highest value move and the minimizing player always picks the lowest value move.",
-        "Alpha Beta Pruning": "Computes the same result as Minimax but skips branches that cannot possibly influence the final decision, using alpha and beta bounds to prune the tree.",
-        "Expectiminimax": "Extends Minimax to trees that include chance nodes, where the value of a chance node is the probability weighted average of its children.",
-        "Monte Carlo Tree Search": "Estimates the value of each move using many random rollout simulations rather than exploring the full tree, useful when the tree is too large to search exhaustively.",
+        "Minimax": (
+            "Explores the full game tree, assuming the maximizing player always picks the highest value move and the minimizing player always picks the lowest value move.\n\n"
+            "**When to use:** Use it on small, fully known, two player adversarial trees where the entire tree can realistically be explored.\n\n"
+            "**Benefits:** Guarantees the game theoretically optimal move under the assumption of a perfectly rational opponent, and is simple and easy to reason about.\n\n"
+            "**Important use-cases:** Small board games, teaching adversarial reasoning, and modeling attacker versus defender decision trees where both sides play optimally."
+        ),
+        "Alpha Beta Pruning": (
+            "Computes the same result as Minimax but skips branches that cannot possibly influence the final decision, using alpha and beta bounds to prune the tree.\n\n"
+            "**When to use:** Use it any time you would use Minimax, since it returns the identical result while typically exploring far fewer nodes.\n\n"
+            "**Benefits:** Same optimal guarantees as Minimax with substantially lower computation, allowing deeper or larger trees to be searched in the same time.\n\n"
+            "**Important use-cases:** Larger adversarial game trees than plain Minimax can handle, and any production adversarial reasoning where efficiency matters."
+        ),
+        "Expectiminimax": (
+            "Extends Minimax to trees that include chance nodes, where the value of a chance node is the probability weighted average of its children.\n\n"
+            "**When to use:** Use it when the adversarial process includes an element of randomness or uncertainty, not just two players making deterministic choices.\n\n"
+            "**Benefits:** Correctly accounts for probabilistic outcomes rather than assuming worst case or best case chance results, giving a more realistic expected value.\n\n"
+            "**Important use-cases:** Games with dice or random events, and modeling attacker decisions where some steps succeed only with a certain probability, such as an exploit that only sometimes works."
+        ),
+        "Monte Carlo Tree Search": (
+            "Estimates the value of each move using many random rollout simulations rather than exploring the full tree, useful when the tree is too large to search exhaustively.\n\n"
+            "**When to use:** Use it when the game tree is far too large for Minimax or Alpha Beta Pruning to explore exhaustively, but many quick random simulations are feasible.\n\n"
+            "**Benefits:** Scales to very large or even unknown-size trees, improves its estimate as more simulations are run, and does not require a full tree in memory.\n\n"
+            "**Important use-cases:** Large scale strategy games, and simulating many plausible attacker or defender scenarios to estimate the value of a move without enumerating every possibility."
+        ),
     }
     st.write(explanations[algo])
 
@@ -2721,7 +2891,7 @@ def render_category_3():
     simulations = 200
     if algo == "Monte Carlo Tree Search":
         simulations = st.slider("Number of rollout simulations per move", 20, 1000, 200, key="cat3_sims")
-    seed = st.number_input("Random seed", 1, 9999, 42, key="cat3_seed")
+    seed = st.number_input("Random seed", 1, 9999, _default_seed(), key="cat3_seed")
 
     if st.button("Run " + algo, key="cat3_run"):
         params = {"Branching factor and depth": "see tree configuration above", "Random seed": seed}
@@ -2770,13 +2940,48 @@ def render_category_4():
     ], key="cat4_algo")
 
     explanations = {
-        "Local Search": "Searches neighboring solutions by making small random changes to the current tour, keeping any change that improves the total distance.",
-        "Genetic Algorithm": "Evolves a population of candidate tours using selection of the fittest tours, crossover between pairs of tours, and occasional random mutation.",
-        "Evolutionary Search": "A related population based technique that keeps only a truncated set of the best performing tours as survivors each generation, then generates offspring from them.",
-        "Particle Swarm Optimization": "Represents each candidate tour as a particle with a position and velocity in a continuous space, where particles are pulled toward their own best position and the swarm's best position.",
-        "Ant Colony Optimization": "Simulates ants laying down pheromone trails on good edges, with future ants more likely to follow paths with stronger pheromone concentration.",
-        "Tabu Search": "Similar to Local Search, but keeps a short term memory of recently tried moves that are temporarily forbidden, encouraging the search to explore new areas.",
-        "Differential Evolution": "A population based technique that creates new candidate solutions by combining the weighted difference between two population members with a third member.",
+        "Local Search": (
+            "Searches neighboring solutions by making small random changes to the current tour, keeping any change that improves the total distance.\n\n"
+            "**When to use:** Use it as a fast, simple baseline for optimization problems where you need a quick improvement over a starting solution rather than a guaranteed best answer.\n\n"
+            "**Benefits:** Very low implementation complexity and computational cost, and easy to apply to almost any optimization problem with a notion of neighboring solutions.\n\n"
+            "**Important use-cases:** Quick route or schedule improvement, warm-starting a more sophisticated optimizer, and small to medium routing problems."
+        ),
+        "Genetic Algorithm": (
+            "Evolves a population of candidate tours using selection of the fittest tours, crossover between pairs of tours, and occasional random mutation.\n\n"
+            "**When to use:** Use it on larger, more complex optimization landscapes where local search alone gets stuck, and where a diverse population helps avoid premature convergence.\n\n"
+            "**Benefits:** Explores many candidate solutions in parallel, is resistant to getting trapped in a single local optimum, and generalizes to a wide range of optimization problems beyond routing.\n\n"
+            "**Important use-cases:** Route and logistics optimization, scheduling problems, and resource allocation where the search space is large and irregular."
+        ),
+        "Evolutionary Search": (
+            "A related population based technique that keeps only a truncated set of the best performing tours as survivors each generation, then generates offspring from them.\n\n"
+            "**When to use:** Use it when you want the population diversity of a Genetic Algorithm but with stronger, more deterministic selection pressure toward the current best solutions.\n\n"
+            "**Benefits:** Tends to converge faster than a standard Genetic Algorithm because only the strongest survivors reproduce, while still exploring multiple candidates per generation.\n\n"
+            "**Important use-cases:** Optimization problems where faster convergence is valued over maximum diversity, such as time boxed route replanning."
+        ),
+        "Particle Swarm Optimization": (
+            "Represents each candidate tour as a particle with a position and velocity in a continuous space, where particles are pulled toward their own best position and the swarm's best position.\n\n"
+            "**When to use:** Use it on optimization problems that can be represented in a continuous space and benefit from particles sharing information about the best solution found so far.\n\n"
+            "**Benefits:** Simple to tune with few parameters, converges quickly by combining individual and collective memory, and works well on smooth continuous landscapes.\n\n"
+            "**Important use-cases:** Continuous parameter tuning, route and layout optimization, and engineering style optimization problems adapted to a discrete tour."
+        ),
+        "Ant Colony Optimization": (
+            "Simulates ants laying down pheromone trails on good edges, with future ants more likely to follow paths with stronger pheromone concentration.\n\n"
+            "**When to use:** Use it specifically on graph and routing style optimization problems, where reinforcing good edges over many iterations naturally builds strong paths.\n\n"
+            "**Benefits:** Naturally suited to edge and path based problems, balances exploration and exploitation through pheromone evaporation, and often finds high quality routes.\n\n"
+            "**Important use-cases:** Vehicle routing and logistics, network path optimization, and any problem naturally expressed as finding good edges through a graph."
+        ),
+        "Tabu Search": (
+            "Similar to Local Search, but keeps a short term memory of recently tried moves that are temporarily forbidden, encouraging the search to explore new areas.\n\n"
+            "**When to use:** Use it when plain Local Search keeps cycling back to the same local optimum and you need memory of recent moves to force exploration of new areas.\n\n"
+            "**Benefits:** Escapes cycles and shallow local optima more reliably than plain Local Search, while remaining computationally lightweight.\n\n"
+            "**Important use-cases:** Routing and scheduling problems with many similar local optima, and refining a solution after a broader search has narrowed the candidates."
+        ),
+        "Differential Evolution": (
+            "A population based technique that creates new candidate solutions by combining the weighted difference between two population members with a third member.\n\n"
+            "**When to use:** Use it on optimization problems with continuous or continuous-like structure where combining differences between existing good solutions tends to produce better ones.\n\n"
+            "**Benefits:** Few control parameters, strong performance on continuous optimization landscapes, and a good balance of exploration through mutation and exploitation through selection.\n\n"
+            "**Important use-cases:** Parameter and configuration tuning, continuous route or layout optimization, and as an alternative to Genetic Algorithm and PSO on smoother landscapes."
+        ),
     }
     st.write(explanations[algo])
 
@@ -2786,7 +2991,7 @@ def render_category_4():
         st.info("Provide data above to continue")
         return
 
-    seed = st.number_input("Random seed", 1, 9999, 42, key="cat4_seed")
+    seed = st.number_input("Random seed", 1, 9999, _default_seed(), key="cat4_seed")
     extra_params = {}
     if algo in ("Genetic Algorithm", "Evolutionary Search"):
         extra_params["pop_size"] = st.slider("Population size", 10, 100, 30, key="cat4_pop")
@@ -2852,11 +3057,36 @@ def render_category_5():
     ], key="cat5_algo")
 
     explanations = {
-        "Backtracking Search": "Builds a solution one region at a time, assigning a valid color and moving forward. If no valid color exists it backs up and tries a different earlier assignment.",
-        "CSP Search": "The general Constraint Satisfaction Problem search process, here applying the same backtracking mechanism while explicitly tracking every variable, its domain of possible colors, and the constraints between neighboring regions.",
-        "Forward Checking": "After assigning a color to a region, immediately removes that color from the domains of its uncolored neighbors, catching failures earlier than plain backtracking.",
-        "Arc Consistency Search": "Applies the AC-3 algorithm before search begins, removing colors from a region's domain if no compatible color exists for a neighboring region, shrinking the search space in advance.",
-        "Branch and Bound": "Tries to color the map with the fewest possible colors, starting from one color and increasing the palette size only when a smaller palette fails, bounding the search by the best known solution.",
+        "Backtracking Search": (
+            "Builds a solution one region at a time, assigning a valid color and moving forward. If no valid color exists it backs up and tries a different earlier assignment.\n\n"
+            "**When to use:** Use it as the standard baseline approach for any constraint satisfaction problem where solutions must be built incrementally and checked against constraints.\n\n"
+            "**Benefits:** Guaranteed to find a solution if one exists, straightforward to implement, and works on any constraint structure without special preprocessing.\n\n"
+            "**Important use-cases:** Resource and role assignment where conflicting entities cannot share a value, scheduling with exclusion rules, and classic map or graph coloring problems."
+        ),
+        "CSP Search": (
+            "The general Constraint Satisfaction Problem search process, here applying the same backtracking mechanism while explicitly tracking every variable, its domain of possible colors, and the constraints between neighboring regions.\n\n"
+            "**When to use:** Use it when you want full visibility into the variables, domains, and constraints driving the search, not just the final answer.\n\n"
+            "**Benefits:** Makes the constraint model explicit and auditable, which helps when explaining why a particular assignment was or was not possible.\n\n"
+            "**Important use-cases:** Compliance and policy modeling where every constraint must be traceable, and configuration problems with many interacting rules."
+        ),
+        "Forward Checking": (
+            "After assigning a color to a region, immediately removes that color from the domains of its uncolored neighbors, catching failures earlier than plain backtracking.\n\n"
+            "**When to use:** Use it whenever plain Backtracking Search is exploring too many dead ends, since detecting failure earlier saves significant wasted work.\n\n"
+            "**Benefits:** Prunes the search tree earlier than plain backtracking, reducing wasted exploration, while remaining simple to add on top of backtracking.\n\n"
+            "**Important use-cases:** Larger constraint problems such as enterprise wide access or segmentation assignments, where early failure detection meaningfully speeds up the search."
+        ),
+        "Arc Consistency Search": (
+            "Applies the AC-3 algorithm before search begins, removing colors from a region's domain if no compatible color exists for a neighboring region, shrinking the search space in advance.\n\n"
+            "**When to use:** Use it as a preprocessing step before search on problems with many tightly interconnected constraints, to shrink the space before any search begins.\n\n"
+            "**Benefits:** Can eliminate large parts of the search space before search starts, often making the subsequent search dramatically faster or even trivial.\n\n"
+            "**Important use-cases:** Densely connected constraint networks such as tightly coupled segmentation zones, and any CSP where a quick consistency check can rule out many options up front."
+        ),
+        "Branch and Bound": (
+            "Tries to color the map with the fewest possible colors, starting from one color and increasing the palette size only when a smaller palette fails, bounding the search by the best known solution.\n\n"
+            "**When to use:** Use it when the goal is not just any valid assignment but the smallest or cheapest number of resources needed to satisfy all constraints.\n\n"
+            "**Benefits:** Finds the provably minimal resource count, and prunes branches that cannot beat the best solution found so far, avoiding wasted search.\n\n"
+            "**Important use-cases:** Minimizing the number of security zones, roles, or resource pools needed while respecting separation constraints, and other minimum-resource assignment problems."
+        ),
     }
     st.write(explanations[algo])
 
@@ -2930,14 +3160,54 @@ def render_category_6():
     ], key="cat6_algo")
 
     explanations = {
-        "Linear String Search": "Checks every position in the text sequentially, comparing the pattern directly against the text at that position.",
-        "Naive Pattern Matching": "The classic brute force approach that tries matching the pattern at every possible position in the text, one character at a time, also reporting the total number of character comparisons performed.",
-        "KMP Search": "Knuth Morris Pratt search precomputes a failure function from the pattern itself, allowing it to skip re-examining characters it has already matched, giving linear time performance.",
-        "Boyer Moore Search": "Compares the pattern against the text from right to left and uses a bad character rule to skip ahead in the text when a mismatch occurs, often skipping many positions at once.",
-        "Rabin Karp Search": "Uses a rolling hash to quickly compare a hash of the pattern against a hash of each substring of the text, only doing a full character comparison when the hashes match.",
-        "Trie Search": "Builds a prefix tree from a list of words, enabling very fast lookup of all words that share a given prefix.",
-        "Suffix Tree Search": "Represents all suffixes of a text using a sorted suffix array with binary search, enabling fast substring lookup, here implemented as a suffix array based approximation of a suffix tree.",
-        "Regular Expression Search": "Uses the standard regular expression engine to find all positions in the text matching a pattern that may include wildcards and special characters.",
+        "Linear String Search": (
+            "Checks every position in the text sequentially, comparing the pattern directly against the text at that position.\n\n"
+            "**When to use:** Use it for short texts or one-off searches where implementation simplicity matters more than raw speed.\n\n"
+            "**Benefits:** Trivial to implement and understand, with no preprocessing step required before searching.\n\n"
+            "**Important use-cases:** Quick ad hoc lookups in short log snippets or small text fields, and as a correctness baseline to compare faster algorithms against."
+        ),
+        "Naive Pattern Matching": (
+            "The classic brute force approach that tries matching the pattern at every possible position in the text, one character at a time, also reporting the total number of character comparisons performed.\n\n"
+            "**When to use:** Use it when you want to see or measure exactly how many character comparisons a brute force match requires, typically for teaching or benchmarking.\n\n"
+            "**Benefits:** Simple, predictable, and useful as a reference point for demonstrating why smarter algorithms like KMP or Boyer Moore are faster.\n\n"
+            "**Important use-cases:** Educational comparisons of string matching efficiency, and small texts where the overhead of a smarter algorithm is not worth it."
+        ),
+        "KMP Search": (
+            "Knuth Morris Pratt search precomputes a failure function from the pattern itself, allowing it to skip re-examining characters it has already matched, giving linear time performance.\n\n"
+            "**When to use:** Use it when searching for a pattern in a large text and you need a guaranteed linear time worst case, especially with repetitive patterns.\n\n"
+            "**Benefits:** Guaranteed O(n plus m) time with no backtracking in the text, which makes it reliable even in adversarial or highly repetitive inputs.\n\n"
+            "**Important use-cases:** Scanning large log files or documents for a fixed signature, and streaming text search where the text cannot be re-read."
+        ),
+        "Boyer Moore Search": (
+            "Compares the pattern against the text from right to left and uses a bad character rule to skip ahead in the text when a mismatch occurs, often skipping many positions at once.\n\n"
+            "**When to use:** Use it on long texts with a moderately long pattern, where large skips on mismatch give a real world speed advantage.\n\n"
+            "**Benefits:** Often the fastest practical exact string matcher on natural language or long alphabets, since it can skip multiple characters per mismatch.\n\n"
+            "**Important use-cases:** Searching large documents or log corpora for known signatures, and text editor or IDE style find operations on big files."
+        ),
+        "Rabin Karp Search": (
+            "Uses a rolling hash to quickly compare a hash of the pattern against a hash of each substring of the text, only doing a full character comparison when the hashes match.\n\n"
+            "**When to use:** Use it when you need to search for many patterns at once, or search the same text for multiple different patterns efficiently.\n\n"
+            "**Benefits:** The rolling hash makes it easy to extend to multiple pattern search, and average case performance is very good on typical text.\n\n"
+            "**Important use-cases:** Plagiarism and duplicate content detection, multi-pattern indicator of compromise scanning, and DNA or sequence matching style problems."
+        ),
+        "Trie Search": (
+            "Builds a prefix tree from a list of words, enabling very fast lookup of all words that share a given prefix.\n\n"
+            "**When to use:** Use it when you repeatedly need prefix based lookups, such as autocomplete, over a fixed or slowly changing vocabulary of words.\n\n"
+            "**Benefits:** Extremely fast prefix queries after the tree is built, and naturally supports autocomplete and prefix enumeration.\n\n"
+            "**Important use-cases:** Autocomplete and typeahead search, dictionary and vocabulary lookups, and matching against a known list of terms or identifiers by prefix."
+        ),
+        "Suffix Tree Search": (
+            "Represents all suffixes of a text using a sorted suffix array with binary search, enabling fast substring lookup, here implemented as a suffix array based approximation of a suffix tree.\n\n"
+            "**When to use:** Use it when the same text will be searched for many different substrings repeatedly, so the upfront indexing cost pays off.\n\n"
+            "**Benefits:** Very fast repeated substring queries once built, at the cost of a one time preprocessing step to build the suffix structure.\n\n"
+            "**Important use-cases:** Repeated substring or pattern queries against a fixed large document, bioinformatics style sequence analysis, and full text indexing."
+        ),
+        "Regular Expression Search": (
+            "Uses the standard regular expression engine to find all positions in the text matching a pattern that may include wildcards and special characters.\n\n"
+            "**When to use:** Use it when the search pattern is not a fixed literal string but a flexible pattern involving wildcards, character classes, or repetition.\n\n"
+            "**Benefits:** Enormous flexibility to express complex matching rules in a compact syntax, supporting far more than exact string matches.\n\n"
+            "**Important use-cases:** Validating and extracting structured fields such as IP addresses or file hashes from log text, and flexible pattern based log or alert filtering."
+        ),
     }
     st.write(explanations[algo])
 
@@ -3017,12 +3287,42 @@ def render_category_7():
     ], key="cat7_algo")
 
     explanations = {
-        "Sequential Table Scan": "Examines every record one at a time, comparing the target field against the search value. Simple but slow on large tables.",
-        "Index Search": "Builds a dictionary style index that maps each field value to the matching record positions, giving very fast lookup after the index is built.",
-        "B Tree Search": "Sorts the table on the search field and uses binary search to locate the target value, similar to how a balanced B tree index narrows down a search range.",
-        "Hash Search": "Builds a hash based index for exact equality lookups, giving close to constant time lookup regardless of table size.",
-        "Range Search": "Finds all records whose value in a numeric field falls between a lower and upper bound, after sorting the table on that field.",
-        "Query Optimization Search": "Estimates the cost of a full table scan versus an index based lookup and automatically chooses the cheaper strategy, similar to a database query optimizer choosing an execution plan.",
+        "Sequential Table Scan": (
+            "Examines every record one at a time, comparing the target field against the search value. Simple but slow on large tables.\n\n"
+            "**When to use:** Use it on small tables, one-off queries, or when no index exists and building one is not worth the cost.\n\n"
+            "**Benefits:** Requires no preprocessing or index maintenance, always works regardless of query pattern, and is trivial to reason about.\n\n"
+            "**Important use-cases:** Ad hoc exploration of small record sets, and as a correctness baseline when validating that an indexed search returns the right results."
+        ),
+        "Index Search": (
+            "Builds a dictionary style index that maps each field value to the matching record positions, giving very fast lookup after the index is built.\n\n"
+            "**When to use:** Use it when the same field will be queried repeatedly for exact matches, so the one time cost of building the index is repaid many times over.\n\n"
+            "**Benefits:** Near constant time equality lookups after the index is built, dramatically faster than scanning for repeated queries.\n\n"
+            "**Important use-cases:** Repeated lookups by a business key such as employee ID or account number, and any field queried frequently in a dashboard or application."
+        ),
+        "B Tree Search": (
+            "Sorts the table on the search field and uses binary search to locate the target value, similar to how a balanced B tree index narrows down a search range.\n\n"
+            "**When to use:** Use it when queries need both exact match and range or ordering support, which a pure hash index cannot provide.\n\n"
+            "**Benefits:** Logarithmic time lookup while also preserving sort order, enabling efficient range queries in addition to exact matches.\n\n"
+            "**Important use-cases:** Fields queried both for exact values and ranges, such as amounts or risk scores, and any scenario mirroring a real relational database B tree index."
+        ),
+        "Hash Search": (
+            "Builds a hash based index for exact equality lookups, giving close to constant time lookup regardless of table size.\n\n"
+            "**When to use:** Use it when only exact equality lookups are needed on a field, not ranges or ordering, and lookup speed is the top priority.\n\n"
+            "**Benefits:** Close to constant time lookup regardless of table size, generally the fastest option for pure equality queries.\n\n"
+            "**Important use-cases:** High volume equality lookups such as looking up a record by a unique key, hash, or identifier during real time processing."
+        ),
+        "Range Search": (
+            "Finds all records whose value in a numeric field falls between a lower and upper bound, after sorting the table on that field.\n\n"
+            "**When to use:** Use it whenever the query is a range condition rather than an exact match, such as records above a threshold or within a window.\n\n"
+            "**Benefits:** Efficiently narrows down to a contiguous block of sorted records rather than scanning the whole table.\n\n"
+            "**Important use-cases:** Finding records with a risk score above a threshold, amounts within a budget range, or events within a time window."
+        ),
+        "Query Optimization Search": (
+            "Estimates the cost of a full table scan versus an index based lookup and automatically chooses the cheaper strategy, similar to a database query optimizer choosing an execution plan.\n\n"
+            "**When to use:** Use it when you want the system to automatically pick the most efficient strategy rather than committing to one approach manually.\n\n"
+            "**Benefits:** Adapts automatically to table size and selectivity, avoiding the cost of a full scan when an index based approach would be cheaper, and vice versa.\n\n"
+            "**Important use-cases:** Production style query execution where workload characteristics vary, and demonstrating how a real database optimizer chooses between plans."
+        ),
     }
     st.write(explanations[algo])
 
@@ -3096,16 +3396,66 @@ def render_category_8():
     ], key="cat8_algo")
 
     explanations = {
-        "Breadth First Search": "Finds nodes by increasing number of relationships, or hops, away from a starting node.",
-        "Depth First Search": "Explores a graph as deeply as possible along each branch before backtracking.",
-        "Shortest Path Search": "Finds the least cost path between two nodes. Implemented here using Dijkstra's algorithm, which is optimal when all edge costs are non negative.",
-        "Dijkstra Algorithm": "Finds the shortest path from a start node to every other node using a priority queue, guaranteed correct when all edge weights are non negative.",
-        "Bellman Ford Algorithm": "Finds shortest paths even when some edge weights are negative, by relaxing every edge repeatedly, and can also detect negative cost cycles.",
-        "Floyd Warshall Algorithm": "Computes the shortest path between every pair of nodes in the graph simultaneously using dynamic programming.",
-        "A Star Graph Search": "Uses a straight line distance heuristic between synthetic coordinates to accelerate the search for the lowest cost path.",
-        "Topological Search": "Orders the nodes of a directed acyclic graph so that every edge points from an earlier node to a later node, useful for dependency ordering.",
-        "Connectivity Search": "Determines which groups of nodes are connected to each other, useful for identifying isolated segments of an enterprise network.",
-        "Community Detection": "Groups nodes into clusters that are more densely connected internally than to the rest of the graph, using a greedy modularity optimization approach.",
+        "Breadth First Search": (
+            "Finds nodes by increasing number of relationships, or hops, away from a starting node.\n\n"
+            "**When to use:** Use it to explore an enterprise or network graph outward from an asset when hop distance, not weighted cost, is what matters.\n\n"
+            "**Benefits:** Simple, predictable, and guarantees the fewest hops to any reachable node.\n\n"
+            "**Important use-cases:** Mapping how far an asset is from a compromised node in hops, and general graph reachability exploration."
+        ),
+        "Depth First Search": (
+            "Explores a graph as deeply as possible along each branch before backtracking.\n\n"
+            "**When to use:** Use it when you need to trace a single deep chain of relationships, such as following one dependency path to its end, rather than exploring broadly.\n\n"
+            "**Benefits:** Low memory use and naturally suited to exploring deep chains of relationships one at a time.\n\n"
+            "**Important use-cases:** Tracing a dependency or ownership chain to its root, and exploring deep relationship structures in the Knowledge Graph."
+        ),
+        "Shortest Path Search": (
+            "Finds the least cost path between two nodes. Implemented here using Dijkstra's algorithm, which is optimal when all edge costs are non negative.\n\n"
+            "**When to use:** Use it as the general purpose, go-to shortest path tool whenever edge costs are non negative and you need the single lowest cost path between two specific nodes.\n\n"
+            "**Benefits:** Optimal and efficient for the common case of non negative weights, and directly answers the practical question of the cheapest way between two points.\n\n"
+            "**Important use-cases:** Lowest cost or lowest risk path between two enterprise assets, and general purpose point to point routing in the Knowledge Graph."
+        ),
+        "Dijkstra Algorithm": (
+            "Finds the shortest path from a start node to every other node using a priority queue, guaranteed correct when all edge weights are non negative.\n\n"
+            "**When to use:** Use it when you need shortest paths from one start node to many or all other nodes at once, not just a single destination.\n\n"
+            "**Benefits:** Computes shortest paths to every reachable node in a single run, which is more efficient than repeating a single-target search for each destination.\n\n"
+            "**Important use-cases:** Computing the shortest or lowest risk distance from a compromised asset to every other asset, and building distance tables for further analysis."
+        ),
+        "Bellman Ford Algorithm": (
+            "Finds shortest paths even when some edge weights are negative, by relaxing every edge repeatedly, and can also detect negative cost cycles.\n\n"
+            "**When to use:** Use it specifically when the graph can contain negative edge weights, which Dijkstra cannot handle correctly, or when you need to detect negative cycles.\n\n"
+            "**Benefits:** Correctly handles negative weights and can explicitly detect negative cost cycles that would otherwise be silently mishandled by other algorithms.\n\n"
+            "**Important use-cases:** Graphs where a relationship can represent a net benefit or discount modeled as a negative cost, and detecting inconsistent or cyclic risk scoring."
+        ),
+        "Floyd Warshall Algorithm": (
+            "Computes the shortest path between every pair of nodes in the graph simultaneously using dynamic programming.\n\n"
+            "**When to use:** Use it on smaller to medium graphs when you need the complete matrix of shortest distances between every pair of nodes, not just from one source.\n\n"
+            "**Benefits:** Produces the full all pairs shortest path matrix in one computation, and naturally handles negative edges without negative cycles.\n\n"
+            "**Important use-cases:** Building a complete distance or risk matrix across all assets for further analysis, and dense graphs where many pairwise queries are expected."
+        ),
+        "A Star Graph Search": (
+            "Uses a straight line distance heuristic between synthetic coordinates to accelerate the search for the lowest cost path.\n\n"
+            "**When to use:** Use it, as in Category 2, whenever a good heuristic is available and you want the optimal path found faster than Dijkstra alone.\n\n"
+            "**Benefits:** Same optimality guarantee as Dijkstra for a single target, but typically explores far fewer nodes thanks to heuristic guidance.\n\n"
+            "**Important use-cases:** Fast point to point shortest path queries on large graphs where a spatial or estimated distance heuristic is available."
+        ),
+        "Topological Search": (
+            "Orders the nodes of a directed acyclic graph so that every edge points from an earlier node to a later node, useful for dependency ordering.\n\n"
+            "**When to use:** Use it whenever you need a valid processing or build order that respects dependency relationships, and the graph has no cycles.\n\n"
+            "**Benefits:** Produces a correct dependency respecting order in linear time, and can reveal whether the graph actually is acyclic.\n\n"
+            "**Important use-cases:** Determining a safe order to patch or update interdependent systems, and sequencing tasks that must respect prerequisite relationships."
+        ),
+        "Connectivity Search": (
+            "Determines which groups of nodes are connected to each other, useful for identifying isolated segments of an enterprise network.\n\n"
+            "**When to use:** Use it to check whether the graph is a single connected structure or splits into isolated islands, which matters for both reachability and isolation analysis.\n\n"
+            "**Benefits:** Quickly reveals isolated or segmented parts of the network without needing to compute full path distances.\n\n"
+            "**Important use-cases:** Verifying that network segmentation is working as intended, and identifying orphaned or disconnected assets in the environment."
+        ),
+        "Community Detection": (
+            "Groups nodes into clusters that are more densely connected internally than to the rest of the graph, using a greedy modularity optimization approach.\n\n"
+            "**When to use:** Use it when you want to discover natural groupings or clusters in the graph without predefining categories, based purely on connection density.\n\n"
+            "**Benefits:** Surfaces organizational or functional groupings that may not be obvious from metadata alone, purely from the relationship structure.\n\n"
+            "**Important use-cases:** Discovering natural asset or team clusters for segmentation planning, and identifying tightly coupled groups of systems that behave as a unit."
+        ),
     }
     st.write(explanations[algo])
 
@@ -3210,16 +3560,66 @@ def render_category_9():
     ], key="cat9_algo")
 
     explanations = {
-        "Keyword Search": "Finds documents whose text contains the given keyword, treated as a simple substring match.",
-        "Boolean Search": "Supports AND, OR, and NOT operators between terms, letting the person build more precise queries.",
-        "Full Text Search": "Searches the complete content of every document for the query text, case insensitive.",
-        "Inverted Index Search": "Builds an index mapping every word to the list of documents containing it, which is the foundational data structure behind most search engines.",
-        "Ranked Retrieval": "Counts how many times each query term appears in each document and ranks documents by that raw term frequency count.",
-        "TF-IDF Search": "Ranks documents using term frequency, how often a word appears in a document, combined with inverse document frequency, which down weights words that appear in many documents.",
-        "BM25 Search": "A widely used probabilistic ranking function that improves on TF-IDF by accounting for document length and saturating the effect of very frequent terms.",
-        "Semantic Search": "Ranks documents by meaning rather than exact words. Without an API key this falls back to a word overlap similarity measure, described in the Modern AI and LLM Search category for full embedding based semantics.",
-        "Vector Search": "Represents documents and the query as numeric vectors, here built from TF-IDF weights, and ranks by cosine similarity between vectors.",
-        "Hybrid Search": "Combines a keyword based ranking, BM25, with a vector based ranking, blending both scores into a single combined rank.",
+        "Keyword Search": (
+            "Finds documents whose text contains the given keyword, treated as a simple substring match.\n\n"
+            "**When to use:** Use it for the simplest possible lookup, when you just need to know which documents mention a specific word or phrase.\n\n"
+            "**Benefits:** Extremely simple, fast to implement, and requires no indexing or ranking machinery.\n\n"
+            "**Important use-cases:** Quick presence checks such as finding every document that mentions a specific vendor or system name."
+        ),
+        "Boolean Search": (
+            "Supports AND, OR, and NOT operators between terms, letting the person build more precise queries.\n\n"
+            "**When to use:** Use it when a single keyword is too broad or too narrow and you need to combine multiple conditions precisely.\n\n"
+            "**Benefits:** Gives precise, explicit control over which combinations of terms must, may, or must not appear.\n\n"
+            "**Important use-cases:** Precise compliance or legal style document searches, and narrowing large result sets with explicit include and exclude terms."
+        ),
+        "Full Text Search": (
+            "Searches the complete content of every document for the query text, case insensitive.\n\n"
+            "**When to use:** Use it for a straightforward, case-insensitive search of complete document content when exact substring matching is enough.\n\n"
+            "**Benefits:** Simple and comprehensive, checking the entire document body rather than just titles or metadata.\n\n"
+            "**Important use-cases:** General purpose document search across incident reports, policies, or notes."
+        ),
+        "Inverted Index Search": (
+            "Builds an index mapping every word to the list of documents containing it, which is the foundational data structure behind most search engines.\n\n"
+            "**When to use:** Use it when the same corpus will be searched repeatedly, since the one time cost of building the index makes every subsequent query fast.\n\n"
+            "**Benefits:** Very fast repeated term lookups after the index is built, and forms the foundation that ranked and scored search techniques build on.\n\n"
+            "**Important use-cases:** Backing a searchable document repository or knowledge base where users issue many queries over time."
+        ),
+        "Ranked Retrieval": (
+            "Counts how many times each query term appears in each document and ranks documents by that raw term frequency count.\n\n"
+            "**When to use:** Use it as a simple relevance ranking when a more sophisticated weighting scheme like TF-IDF or BM25 is not needed.\n\n"
+            "**Benefits:** Easy to understand and compute, giving a basic sense of relevance ordering beyond simple presence or absence.\n\n"
+            "**Important use-cases:** Quick relevance ordering of search results when document collections are small and term frequency alone is informative enough."
+        ),
+        "TF-IDF Search": (
+            "Ranks documents using term frequency, how often a word appears in a document, combined with inverse document frequency, which down weights words that appear in many documents.\n\n"
+            "**When to use:** Use it when common words should be down-weighted automatically so that distinctive, rarer terms drive the ranking.\n\n"
+            "**Benefits:** Automatically balances term frequency against how distinctive a term is across the whole corpus, giving better relevance than raw counts.\n\n"
+            "**Important use-cases:** Ranking documents by relevance in a general purpose search tool, and as the foundation for the Vector Search technique below."
+        ),
+        "BM25 Search": (
+            "A widely used probabilistic ranking function that improves on TF-IDF by accounting for document length and saturating the effect of very frequent terms.\n\n"
+            "**When to use:** Use it as a stronger default than TF-IDF for production style relevance ranking, especially when documents vary a lot in length.\n\n"
+            "**Benefits:** Handles document length variation and term frequency saturation better than plain TF-IDF, which is why it is the default ranking function in many real search engines.\n\n"
+            "**Important use-cases:** Production grade document ranking, and as the keyword-based half of Hybrid Search."
+        ),
+        "Semantic Search": (
+            "Ranks documents by meaning rather than exact words. Without an API key this falls back to a word overlap similarity measure, described in the Modern AI and LLM Search category for full embedding based semantics.\n\n"
+            "**When to use:** Use it when the right documents may not share exact keywords with the query, so meaning based matching is needed instead of literal term matching.\n\n"
+            "**Benefits:** Can surface relevant documents that use different wording than the query, which keyword based methods would miss entirely.\n\n"
+            "**Important use-cases:** Natural language questions over a document set, and finding conceptually related material that does not share exact vocabulary."
+        ),
+        "Vector Search": (
+            "Represents documents and the query as numeric vectors, here built from TF-IDF weights, and ranks by cosine similarity between vectors.\n\n"
+            "**When to use:** Use it when you want a mathematically grounded similarity ranking based on vector representations rather than raw term overlap.\n\n"
+            "**Benefits:** Provides a general, reusable similarity framework that also underlies embedding based semantic search in Category 10.\n\n"
+            "**Important use-cases:** Similarity ranking and nearest-document lookups, and as a conceptual bridge to full embedding based vector search."
+        ),
+        "Hybrid Search": (
+            "Combines a keyword based ranking, BM25, with a vector based ranking, blending both scores into a single combined rank.\n\n"
+            "**When to use:** Use it when neither pure keyword search nor pure vector search alone gives consistently strong results, and you want the strengths of both.\n\n"
+            "**Benefits:** Balances exact keyword precision with vector based conceptual relevance, generally outperforming either approach used alone.\n\n"
+            "**Important use-cases:** Production search systems that need to handle both precise keyword queries and broader conceptual questions well."
+        ),
     }
     st.write(explanations[algo])
 
@@ -3279,7 +3679,7 @@ def render_category_9():
 
 def render_category_10(api_provider, api_key):
     st.header("10. Modern AI and LLM Search")
-    st.write("These techniques reflect how modern AI systems, including large language models, search over information. Several can use a real OpenAI or Gemini API key configured in the sidebar for true embeddings and generated answers, and otherwise fall back to a transparent synthetic substitute.")
+    st.write("These techniques reflect how modern AI systems, including large language models, search over information. Several can use a real OpenAI, Gemini, or Grok API key configured in the sidebar for true generated answers, real embeddings from OpenAI or Gemini, and otherwise fall back to a transparent synthetic substitute.")
     algo = st.selectbox("Choose a technique", [
         "Embedding Search", "Vector Similarity Search", "RAG Search", "Knowledge Graph Search",
         "Graph RAG", "Agentic Search", "Multi Step Search", "Query Expansion",
@@ -3287,16 +3687,66 @@ def render_category_10(api_provider, api_key):
     ], key="cat10_algo")
 
     explanations = {
-        "Embedding Search": "Converts every document and the query into a numeric embedding vector and ranks documents by cosine similarity to the query vector.",
-        "Vector Similarity Search": "The same underlying mechanism as Embedding Search, presented as the general technique of comparing vector representations using a distance measure such as cosine similarity.",
-        "RAG Search": "Retrieval Augmented Generation, which retrieves the most relevant documents for a query and then, if an API key is configured, asks a language model to answer using only that retrieved context.",
-        "Knowledge Graph Search": "Searches entities and relationships in the enterprise Knowledge Graph for nodes whose type, owner, or name matches the query.",
-        "Graph RAG": "Combines Knowledge Graph Search with document retrieval, giving a language model both graph context and document context to generate a grounded answer.",
-        "Agentic Search": "Simulates an AI agent that runs a search, evaluates the result, and automatically refines its own query across several iterations until a strong match is found.",
-        "Multi Step Search": "Chains together a sequence of searches, where each step's top result feeds into the query used for the next step.",
-        "Query Expansion": "Expands the original query with related terms, either from a language model if a key is configured or from a small built in synonym list, before searching.",
-        "Semantic Reranking": "First retrieves a broader set of candidates using keyword ranking, then reorders that smaller set using embedding based semantic similarity.",
-        "Self Query Search": "Parses a natural language question into structured filters, for example turning risk above fifty into a numeric filter, and applies them to a table of records.",
+        "Embedding Search": (
+            "Converts every document and the query into a numeric embedding vector and ranks documents by cosine similarity to the query vector.\n\n"
+            "**When to use:** Use it when the right answer may be phrased very differently from the query, so meaning based similarity is needed rather than exact keyword overlap. Configure an OpenAI or Gemini key for real embeddings.\n\n"
+            "**Benefits:** Captures conceptual similarity that keyword search misses entirely, and provides the foundation for RAG and other AI search techniques.\n\n"
+            "**Important use-cases:** Finding conceptually related incident reports or policies that use different terminology, and general semantic document lookup."
+        ),
+        "Vector Similarity Search": (
+            "The same underlying mechanism as Embedding Search, presented as the general technique of comparing vector representations using a distance measure such as cosine similarity.\n\n"
+            "**When to use:** Use it whenever you already have vector representations of items and need to compare or rank them by similarity, beyond just documents.\n\n"
+            "**Benefits:** A general purpose similarity framework applicable to any vectorized data, not limited to text.\n\n"
+            "**Important use-cases:** Nearest neighbor lookups across embedded records, and as the mathematical basis behind recommendation and clustering features."
+        ),
+        "RAG Search": (
+            "Retrieval Augmented Generation, which retrieves the most relevant documents for a query and then, if an API key is configured, asks a language model to answer using only that retrieved context.\n\n"
+            "**When to use:** Use it when you want a natural language answer grounded in your own documents rather than the model's general knowledge, reducing the risk of an unsupported answer. Requires an OpenAI, Gemini, or Grok key for the generated answer, and OpenAI or Gemini for real retrieval embeddings.\n\n"
+            "**Benefits:** Answers are grounded in retrieved source material, which reduces fabricated or unsupported claims compared to asking a language model with no context.\n\n"
+            "**Important use-cases:** Answering questions about internal policies or incident history in natural language, and building an internal assistant grounded in enterprise documents."
+        ),
+        "Knowledge Graph Search": (
+            "Searches entities and relationships in the enterprise Knowledge Graph for nodes whose type, owner, or name matches the query.\n\n"
+            "**When to use:** Use it when the answer depends on structured entities and their relationships rather than free text, such as who owns what or how systems relate.\n\n"
+            "**Benefits:** Leverages the explicit structure of the graph, giving precise, structured answers rather than approximate text matches.\n\n"
+            "**Important use-cases:** Looking up ownership or relationship facts about specific assets, and grounding AI answers in verified structured data."
+        ),
+        "Graph RAG": (
+            "Combines Knowledge Graph Search with document retrieval, giving a language model both graph context and document context to generate a grounded answer.\n\n"
+            "**When to use:** Use it when a good answer needs both structured relationship facts and narrative document context together, more than either alone provides. Requires an OpenAI, Gemini, or Grok key for the generated answer.\n\n"
+            "**Benefits:** Produces richer, more complete grounded answers by combining two complementary sources of truth, structure and narrative.\n\n"
+            "**Important use-cases:** Investigative questions that need both relationship context, such as which systems are connected, and document context, such as what happened."
+        ),
+        "Agentic Search": (
+            "Simulates an AI agent that runs a search, evaluates the result, and automatically refines its own query across several iterations until a strong match is found.\n\n"
+            "**When to use:** Use it when a single search query is unlikely to find the best answer immediately and iterative refinement would help.\n\n"
+            "**Benefits:** Automatically improves the query over multiple attempts without manual intervention, often surfacing better results than a single static query.\n\n"
+            "**Important use-cases:** Exploratory investigations where the right search terms are not known up front, and automating iterative research tasks."
+        ),
+        "Multi Step Search": (
+            "Chains together a sequence of searches, where each step's top result feeds into the query used for the next step.\n\n"
+            "**When to use:** Use it when answering the real question requires following a chain of related lookups rather than a single search.\n\n"
+            "**Benefits:** Supports multi-hop reasoning by carrying context from one search step into the next, something a single query cannot do.\n\n"
+            "**Important use-cases:** Multi-hop investigative questions such as tracing from an initial alert to a related system to that system's owner."
+        ),
+        "Query Expansion": (
+            "Expands the original query with related terms, either from a language model if a key is configured or from a small built in synonym list, before searching.\n\n"
+            "**When to use:** Use it when users may search with different words than the documents use, so broadening the query improves recall. An OpenAI, Gemini, or Grok key gives richer, model generated expansions.\n\n"
+            "**Benefits:** Improves recall by catching relevant documents that use synonyms or related terms rather than the exact query wording.\n\n"
+            "**Important use-cases:** Improving search recall for users unfamiliar with exact internal terminology, and reducing missed results from narrow keyword queries."
+        ),
+        "Semantic Reranking": (
+            "First retrieves a broader set of candidates using keyword ranking, then reorders that smaller set using embedding based semantic similarity.\n\n"
+            "**When to use:** Use it when you want the speed of keyword retrieval combined with the relevance quality of semantic ranking, without running semantic search over the whole corpus.\n\n"
+            "**Benefits:** Cheaper than running semantic search over an entire large corpus, while still improving final ranking quality using meaning based similarity.\n\n"
+            "**Important use-cases:** Improving top result quality in large document collections without the cost of full corpus embedding search."
+        ),
+        "Self Query Search": (
+            "Parses a natural language question into structured filters, for example turning risk above fifty into a numeric filter, and applies them to a table of records.\n\n"
+            "**When to use:** Use it when users want to query structured tabular data using plain language instead of learning a formal query syntax.\n\n"
+            "**Benefits:** Makes structured data accessible through natural language, lowering the barrier for non-technical users to filter records precisely.\n\n"
+            "**Important use-cases:** Letting analysts ask plain language questions like risk above fifty in the USA, and building natural language front ends over enterprise tables."
+        ),
     }
     st.write(explanations[algo])
 
@@ -3419,10 +3869,30 @@ def render_category_11():
     ], key="cat11_algo")
 
     explanations = {
-        "Probabilistic Search": "Ranks records by a precomputed probability field, returning only those above a chosen threshold.",
-        "Bayesian Search": "Starts from a prior probability for each record, combines it with a simulated likelihood based on new evidence, and computes an updated posterior probability using Bayes rule.",
-        "Monte Carlo Search": "Repeatedly samples records at random, weighted by their probability, and counts how often each record is drawn to build an estimate of its true relative importance.",
-        "Particle Filtering": "Maintains a population of weighted particles representing possible states, and repeatedly reweights and normalizes them as new noisy evidence arrives.",
+        "Probabilistic Search": (
+            "Ranks records by a precomputed probability field, returning only those above a chosen threshold.\n\n"
+            "**When to use:** Use it when each record already carries a meaningful probability estimate and you simply need to filter or rank by it.\n\n"
+            "**Benefits:** Very fast and simple since it only requires filtering and sorting, no modeling step needed.\n\n"
+            "**Important use-cases:** Filtering alerts or records to only those above a confidence or likelihood threshold, such as high probability exploit records."
+        ),
+        "Bayesian Search": (
+            "Starts from a prior probability for each record, combines it with a simulated likelihood based on new evidence, and computes an updated posterior probability using Bayes rule.\n\n"
+            "**When to use:** Use it when new evidence should update an existing belief rather than replace it outright, formally combining prior knowledge with new observations.\n\n"
+            "**Benefits:** Provides a principled, mathematically grounded way to combine prior knowledge with new evidence, rather than treating each new fact in isolation.\n\n"
+            "**Important use-cases:** Updating the likelihood that a record represents a true incident as new evidence arrives, and any belief revision task with prior knowledge."
+        ),
+        "Monte Carlo Search": (
+            "Repeatedly samples records at random, weighted by their probability, and counts how often each record is drawn to build an estimate of its true relative importance.\n\n"
+            "**When to use:** Use it when you want to empirically estimate relative importance or likelihood through repeated random sampling rather than closed form computation.\n\n"
+            "**Benefits:** Works even when an exact analytical computation is difficult, and the estimate improves as more trials are run.\n\n"
+            "**Important use-cases:** Estimating the relative importance of risk factors through simulation, and validating a probability model by empirical sampling."
+        ),
+        "Particle Filtering": (
+            "Maintains a population of weighted particles representing possible states, and repeatedly reweights and normalizes them as new noisy evidence arrives.\n\n"
+            "**When to use:** Use it when tracking a state that evolves over time under noisy or uncertain observations, and a single point estimate is not enough.\n\n"
+            "**Benefits:** Naturally represents a whole distribution of possible states rather than a single guess, and adapts as new noisy evidence arrives.\n\n"
+            "**Important use-cases:** Tracking the evolving likelihood of a security state under a stream of uncertain signals, and other sequential state estimation problems."
+        ),
     }
     st.write(explanations[algo])
 
@@ -3432,7 +3902,7 @@ def render_category_11():
         st.info("Provide data above to continue")
         return
 
-    seed = st.number_input("Random seed", 1, 9999, 42, key="cat11_seed")
+    seed = st.number_input("Random seed", 1, 9999, _default_seed(), key="cat11_seed")
     extra_params = {}
     if algo == "Probabilistic Search":
         extra_params["threshold"] = st.slider("Probability threshold", 0.0, 1.0, 0.5, step=0.05, key="cat11_threshold")
@@ -3480,11 +3950,36 @@ def render_category_12():
     ], key="cat12_algo")
 
     explanations = {
-        "Distributed Search": "Splits the record table into partitions, one per simulated worker, and each worker searches only its own partition before results are combined.",
-        "Parallel Search": "Similar to Distributed Search, but also simulates a processing time for each worker, showing how the total completion time under parallel execution compares to running everything sequentially.",
-        "Federated Search": "Treats each partition as an independent data source with its own identity, searching all sources and merging the results while keeping track of which source each result came from.",
-        "MapReduce Search": "Applies a map phase that counts values per partition, then a reduce phase that aggregates those partial counts into a single combined total, mirroring the MapReduce programming model.",
-        "Distributed Graph Search": "Partitions the nodes of a graph across simulated workers and runs a search, counting how many times the path has to cross from one worker's partition to another.",
+        "Distributed Search": (
+            "Splits the record table into partitions, one per simulated worker, and each worker searches only its own partition before results are combined.\n\n"
+            "**When to use:** Use it when a table is too large for a single sequential scan to be efficient and can be naturally divided among workers.\n\n"
+            "**Benefits:** Reduces the work any single worker must do by dividing the table, illustrating how horizontal scaling speeds up search.\n\n"
+            "**Important use-cases:** Searching very large record sets that are naturally partitioned, such as by region or business unit, across multiple nodes."
+        ),
+        "Parallel Search": (
+            "Similar to Distributed Search, but also simulates a processing time for each worker, showing how the total completion time under parallel execution compares to running everything sequentially.\n\n"
+            "**When to use:** Use it when you need to reason about or demonstrate the time savings of parallel execution, not just the logical partitioning.\n\n"
+            "**Benefits:** Makes the real world speed benefit of parallelism visible and measurable, not just conceptual.\n\n"
+            "**Important use-cases:** Capacity planning and demonstrating expected speedup from adding more parallel workers to a search workload."
+        ),
+        "Federated Search": (
+            "Treats each partition as an independent data source with its own identity, searching all sources and merging the results while keeping track of which source each result came from.\n\n"
+            "**When to use:** Use it when data genuinely lives in separate, independently owned systems and provenance of each result must be preserved.\n\n"
+            "**Benefits:** Preserves source identity and ownership boundaries while still providing a single unified search experience.\n\n"
+            "**Important use-cases:** Searching across independently owned business unit systems or vendor data sources while tracking where each result originated."
+        ),
+        "MapReduce Search": (
+            "Applies a map phase that counts values per partition, then a reduce phase that aggregates those partial counts into a single combined total, mirroring the MapReduce programming model.\n\n"
+            "**When to use:** Use it for aggregation style questions, such as totals or counts, over very large partitioned datasets, rather than simple record retrieval.\n\n"
+            "**Benefits:** Scales aggregation computations naturally across many partitions, following a well understood, proven programming model.\n\n"
+            "**Important use-cases:** Computing enterprise wide totals or counts across many partitioned data sources, such as total events per category."
+        ),
+        "Distributed Graph Search": (
+            "Partitions the nodes of a graph across simulated workers and runs a search, counting how many times the path has to cross from one worker's partition to another.\n\n"
+            "**When to use:** Use it when the graph itself is too large for one machine and understanding cross-partition traversal cost matters.\n\n"
+            "**Benefits:** Surfaces the hidden cost of cross-partition edges, which is a key consideration when designing large scale distributed graph systems.\n\n"
+            "**Important use-cases:** Planning how to partition a very large enterprise graph across systems, and understanding the overhead of cross-partition relationship traversal."
+        ),
     }
     st.write(explanations[algo])
 
@@ -3502,7 +3997,7 @@ def render_category_12():
             goal = st.selectbox("Goal node", node_ids, index=min(len(node_ids) - 1, 1), key="cat12_goal")
         with c3:
             num_workers = st.slider("Number of workers", 2, 8, 3, key="cat12_workers")
-        seed = st.number_input("Random seed", 1, 9999, 42, key="cat12_seed")
+        seed = st.number_input("Random seed", 1, 9999, _default_seed(), key="cat12_seed")
 
         if st.button("Run " + algo, key="cat12_run"):
             path, hops, worker_counts, visited = distributed_graph_search(graph, start, goal, num_workers, seed)
@@ -3534,7 +4029,7 @@ def render_category_12():
         field = st.selectbox("Field to search", all_fields, key="cat12_field")
         value = st.text_input("Value to search for", str(table_df[field].iloc[0]), key="cat12_value")
         num_workers = st.slider("Number of workers or sources", 2, 10, 4, key="cat12_workers")
-    seed = st.number_input("Random seed", 1, 9999, 42, key="cat12_seed")
+    seed = st.number_input("Random seed", 1, 9999, _default_seed(), key="cat12_seed")
 
     if st.button("Run " + algo, key="cat12_run"):
         details = []
@@ -3583,14 +4078,54 @@ def render_category_13():
     ], key="cat13_algo")
 
     explanations = {
-        "IOC Search": "Searches event records for a known indicator of compromise, such as a specific IP address or file hash.",
-        "Threat Hunting Search": "Proactively searches event records for a suspicious combination of attributes, such as a high risk score occurring during an unusual hour of the day.",
-        "Attack Path Search": "Traces a possible attack chain from a compromised endpoint to a sensitive target by performing a depth first search across the enterprise Knowledge Graph.",
-        "Graph Based Threat Search": "Performs a bounded breadth first search from a starting node, flagging every node reached within a limited number of hops whose risk score meets or exceeds a threshold.",
-        "Anomaly Search": "Computes a z-score for each record relative to the mean and standard deviation of a numeric field, flagging records that deviate significantly from normal behavior.",
-        "Vulnerability Search": "Searches the Knowledge Graph nodes for assets whose security score falls below an acceptable threshold.",
-        "SIEM Query Search": "Parses a simple query language, similar to a SIEM search query, with field comparisons joined by AND, and applies it to event records.",
-        "SOAR Playbook Search": "Scores a set of predefined remediation playbooks by a weighted combination of cost, risk, and time, and recommends the lowest combined score playbook, similar to automated SOAR playbook selection.",
+        "IOC Search": (
+            "Searches event records for a known indicator of compromise, such as a specific IP address or file hash.\n\n"
+            "**When to use:** Use it when you already have a specific known-bad indicator, such as a malicious IP or file hash from a threat feed, and need to check for it in your own event data.\n\n"
+            "**Benefits:** Fast, precise, and directly actionable, since a match against a known indicator is high confidence evidence.\n\n"
+            "**Important use-cases:** Checking newly published threat intelligence indicators against historical event logs, and confirming whether a known-bad artifact touched the environment."
+        ),
+        "Threat Hunting Search": (
+            "Proactively searches event records for a suspicious combination of attributes, such as a high risk score occurring during an unusual hour of the day.\n\n"
+            "**When to use:** Use it proactively, before any specific alert exists, to look for suspicious patterns that automated rules might not catch.\n\n"
+            "**Benefits:** Surfaces suspicious activity that does not match any known indicator, catching novel or previously unseen threats.\n\n"
+            "**Important use-cases:** Proactive hunting for insider threats or novel attacker behavior, and validating that monitoring coverage catches unusual combinations of activity."
+        ),
+        "Attack Path Search": (
+            "Traces a possible attack chain from a compromised endpoint to a sensitive target by performing a depth first search across the enterprise Knowledge Graph.\n\n"
+            "**When to use:** Use it after identifying a compromised or at-risk starting point, to understand how far an attacker could reach and what they could reach it through.\n\n"
+            "**Benefits:** Reveals a concrete, traceable chain of relationships an attacker could exploit, turning an abstract risk into a specific actionable path.\n\n"
+            "**Important use-cases:** Incident response scoping from a known compromised endpoint, and red team or tabletop exercises tracing plausible attack chains."
+        ),
+        "Graph Based Threat Search": (
+            "Performs a bounded breadth first search from a starting node, flagging every node reached within a limited number of hops whose risk score meets or exceeds a threshold.\n\n"
+            "**When to use:** Use it to find every risky asset within a bounded blast radius of a starting point, rather than tracing a single path.\n\n"
+            "**Benefits:** Efficiently surfaces every at-risk asset within a defined proximity, giving a fuller picture than a single attack path alone.\n\n"
+            "**Important use-cases:** Assessing blast radius around a compromised or high risk asset, and prioritizing containment around the riskiest nearby nodes."
+        ),
+        "Anomaly Search": (
+            "Computes a z-score for each record relative to the mean and standard deviation of a numeric field, flagging records that deviate significantly from normal behavior.\n\n"
+            "**When to use:** Use it when there is no known indicator to search for, but a numeric field's typical range is well understood and outliers are suspicious.\n\n"
+            "**Benefits:** Statistically grounded and catches unusual behavior automatically, without needing predefined rules or known indicators.\n\n"
+            "**Important use-cases:** Flagging unusually large transactions or unusual access counts, and general purpose outlier detection across numeric security metrics."
+        ),
+        "Vulnerability Search": (
+            "Searches the Knowledge Graph nodes for assets whose security score falls below an acceptable threshold.\n\n"
+            "**When to use:** Use it to proactively identify weak points in the environment before they are exploited, based on an existing security posture score.\n\n"
+            "**Benefits:** Directly surfaces the weakest assets by score, making prioritization of remediation straightforward.\n\n"
+            "**Important use-cases:** Prioritizing patching and hardening efforts, and periodic posture reviews to catch assets that have drifted below acceptable standards."
+        ),
+        "SIEM Query Search": (
+            "Parses a simple query language, similar to a SIEM search query, with field comparisons joined by AND, and applies it to event records.\n\n"
+            "**When to use:** Use it when analysts need to build custom, precise, multi-condition queries against event data, similar to querying a real SIEM.\n\n"
+            "**Benefits:** Flexible and precise, letting analysts combine multiple conditions in one query rather than being limited to a single fixed search.\n\n"
+            "**Important use-cases:** Ad hoc security investigations with multiple conditions, and mimicking real SIEM query workflows for training or demonstration."
+        ),
+        "SOAR Playbook Search": (
+            "Scores a set of predefined remediation playbooks by a weighted combination of cost, risk, and time, and recommends the lowest combined score playbook, similar to automated SOAR playbook selection.\n\n"
+            "**When to use:** Use it once a threat or incident is identified and you need to decide which remediation playbook to execute, balancing multiple competing factors.\n\n"
+            "**Benefits:** Provides a consistent, explainable, weighted basis for choosing a remediation action instead of an ad hoc decision.\n\n"
+            "**Important use-cases:** Automated or semi-automated incident response playbook selection, and comparing remediation options by cost, risk, and time trade-offs."
+        ),
     }
     st.write(explanations[algo])
 
