@@ -1,7 +1,3 @@
-
-
-
-
 # Kalsnet AI Reasoning Studio
 # ============================
 # Three self-contained reasoning modules for the Kalsnet AI + Knowledge Graph
@@ -17,7 +13,7 @@
 # synthetic values. Results in every tab can be exported as PDF, Word (.docx),
 # CSV, or plain text.
 
-# Developed by Randy Singh — Kalsnet (KNet) Consulting Group
+# Developed by Randy Singh - Kalsnet (KNet) Consulting Group
 
 
 import io
@@ -39,7 +35,7 @@ from fpdf import FPDF
 # ============================================================================
 st.set_page_config(
     page_title="Kalsnet AI Reasoning Studio",
-    page_icon="🧠",
+    page_icon=":brain:",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -97,17 +93,17 @@ st.markdown(
         box-shadow: 0 1px 4px rgba(0,0,0,0.08);
         border-left: 5px solid {ACCENT_BLUE};
     }}
-    .stTabs [data-baseweb="tab-list"] { gap: 6px; }
-    .stTabs [data-baseweb="tab"] {
+    .stTabs [data-baseweb="tab-list"] {{ gap: 6px; }}
+    .stTabs [data-baseweb="tab"] {{
         background-color: #e4ecf7;
         border-radius: 8px 8px 0 0;
         padding: 10px 16px;
         font-weight: 600;
-    }
-    .stTabs [aria-selected="true"] {
+    }}
+    .stTabs [aria-selected="true"] {{
         background-color: {PRIMARY_BLUE} !important;
         color: white !important;
-    }
+    }}
     </style>
     """.replace("{PRIMARY_BLUE}", PRIMARY_BLUE)
        .replace("{ACCENT_BLUE}", ACCENT_BLUE)
@@ -122,14 +118,14 @@ st.markdown(
     """
     <div class="title-block">
         <div class="title-main">Kalsnet AI Reasoning Studio</div>
-        <div class="title-sub">Developed by Randy Singh &mdash; Kalsnet (KNet) Consulting Group</div>
+        <div class="title-sub">Developed by Randy Singh - Kalsnet (KNet) Consulting Group</div>
     </div>
     """,
     unsafe_allow_html=True,
 )
 st.caption(
-    "Adversarial reasoning (Minimax) · Probabilistic reasoning (Expectimax) · "
-    "Logical constraint reasoning (3-SAT) — building blocks for the Kalsnet "
+    "Adversarial reasoning (Minimax) - Probabilistic reasoning (Expectimax) - "
+    "Logical constraint reasoning (3-SAT) - building blocks for the Kalsnet "
     "AI + Knowledge Graph platform."
 )
 st.divider()
@@ -154,7 +150,7 @@ def export_docx_bytes(title: str, sections: list) -> bytes:
     for run in h.runs:
         run.font.color.rgb = RGBColor(0x1A, 0x3D, 0x6D)
     doc.add_paragraph(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
-    doc.add_paragraph("Kalsnet (KNet) Consulting Group — Randy Singh")
+    doc.add_paragraph("Kalsnet (KNet) Consulting Group - Randy Singh")
     for heading, body in sections:
         doc.add_heading(heading, level=2)
         if isinstance(body, pd.DataFrame):
@@ -209,27 +205,27 @@ def export_pdf_bytes(title: str, sections: list) -> bytes:
 
 
 def render_export_bar(key_prefix: str, title: str, sections: list, df_for_csv: pd.DataFrame):
-    st.markdown("##### 📤 Export these results")
+    st.markdown("##### Export these results")
     c1, c2, c3, c4 = st.columns(4)
     text_blob = "\n\n".join(
         f"{h}\n{'-'*len(h)}\n{(b.to_string(index=False) if isinstance(b, pd.DataFrame) else b)}"
         for h, b in sections
     )
     with c1:
-        st.download_button("📄 PDF", data=export_pdf_bytes(title, sections),
+        st.download_button("PDF", data=export_pdf_bytes(title, sections),
                             file_name=f"{key_prefix}.pdf", mime="application/pdf",
                             key=f"{key_prefix}_pdf")
     with c2:
-        st.download_button("📝 Word (.docx)", data=export_docx_bytes(title, sections),
+        st.download_button("Word (.docx)", data=export_docx_bytes(title, sections),
                             file_name=f"{key_prefix}.docx",
                             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                             key=f"{key_prefix}_docx")
     with c3:
-        st.download_button("📊 CSV", data=export_csv_bytes(df_for_csv),
+        st.download_button("CSV", data=export_csv_bytes(df_for_csv),
                             file_name=f"{key_prefix}.csv", mime="text/csv",
                             key=f"{key_prefix}_csv")
     with c4:
-        st.download_button("🔤 Text", data=export_txt(text_blob),
+        st.download_button("Text", data=export_txt(text_blob),
                             file_name=f"{key_prefix}.txt", mime="text/plain",
                             key=f"{key_prefix}_txt")
 
@@ -335,13 +331,13 @@ def minimax(G, node):
 
 
 def render_minimax_tab():
-    st.markdown('<div class="module-banner banner-minimax">🎮 Minimax &mdash; Adversarial Reasoning</div>',
+    st.markdown('<div class="module-banner banner-minimax">Minimax - Adversarial Reasoning</div>',
                 unsafe_allow_html=True)
     st.write(
         "Two opposing agents (MAX vs. MIN) alternate turns down a game tree. "
         "MAX always picks the branch with the highest guaranteed value; MIN always "
         "picks the branch that is worst for MAX. This models zero-sum adversarial "
-        "decisions — e.g. competitive bidding, negotiation, or an attacker/defender "
+        "decisions - e.g. competitive bidding, negotiation, or an attacker/defender "
         "scenario on an industrial network."
     )
 
@@ -370,7 +366,7 @@ def render_minimax_tab():
                 st.error(f"Could not read CSV: {e}")
 
         template = pd.DataFrame({"leaf_value": [0] * n_leaves})
-        st.download_button("⬇️ Download CSV template", data=export_csv_bytes(template),
+        st.download_button("Download CSV template", data=export_csv_bytes(template),
                             file_name="minimax_leaf_template.csv", mime="text/csv", key="mm_template")
 
     G, root = build_tree(depth, branching, node_types, leaf_values=leaf_values, seed=seed)
@@ -415,7 +411,7 @@ def render_minimax_tab():
         ("Minimax Result", f"Optimal (minimax) value = {best_val:.2f}\nOptimal path: {' -> '.join(path)}"),
         ("Leaf Values", result_df),
     ]
-    render_export_bar("minimax_results", "Kalsnet AI Reasoning Studio — Minimax Results", sections, result_df)
+    render_export_bar("minimax_results", "Kalsnet AI Reasoning Studio - Minimax Results", sections, result_df)
 
 
 # ============================================================================
@@ -441,13 +437,13 @@ def expectimax(G, node):
 
 
 def render_expectimax_tab():
-    st.markdown('<div class="module-banner banner-expectimax">🎲 Expectimax &mdash; Probabilistic Reasoning</div>',
+    st.markdown('<div class="module-banner banner-expectimax">Expectimax - Probabilistic Reasoning</div>',
                 unsafe_allow_html=True)
     st.write(
         "MAX nodes still pick the best option, but MIN is replaced by CHANCE nodes "
         "whose outcomes follow a probability distribution (e.g. equipment failure "
         "rates, demand uncertainty, sensor noise). The value of a chance node is the "
-        "probability-weighted expectation of its children — this models planning "
+        "probability-weighted expectation of its children - this models planning "
         "under uncertainty rather than against an adversary."
     )
 
@@ -476,7 +472,7 @@ def render_expectimax_tab():
                 st.error(f"Could not read CSV: {e}")
 
         template = pd.DataFrame({"leaf_value": [0] * n_leaves})
-        st.download_button("⬇️ Download CSV template", data=export_csv_bytes(template),
+        st.download_button("Download CSV template", data=export_csv_bytes(template),
                             file_name="expectimax_leaf_template.csv", mime="text/csv", key="em_template")
 
     G, root = build_tree(depth, branching, node_types, leaf_values=leaf_values, seed=seed)
@@ -520,7 +516,7 @@ def render_expectimax_tab():
         ("Expectimax Result", f"Expected value at root = {exp_val:.2f}\nRecommended first move: {best_first_move}"),
         ("Leaf Values", result_df),
     ]
-    render_export_bar("expectimax_results", "Kalsnet AI Reasoning Studio — Expectimax Results", sections, result_df)
+    render_export_bar("expectimax_results", "Kalsnet AI Reasoning Studio - Expectimax Results", sections, result_df)
 
 
 # ============================================================================
@@ -584,11 +580,11 @@ def walksat(clauses, n_vars, max_flips=400, p=0.4, seed=42):
 
 
 def render_3sat_tab():
-    st.markdown('<div class="module-banner banner-3sat">🧩 3-SAT &mdash; Logical Constraint Reasoning</div>',
+    st.markdown('<div class="module-banner banner-3sat">3-SAT - Logical Constraint Reasoning</div>',
                 unsafe_allow_html=True)
     st.write(
         "Boolean satisfiability with clauses of exactly 3 literals each. This models "
-        "hard logical-constraint problems in industrial settings — e.g. scheduling, "
+        "hard logical-constraint problems in industrial settings - e.g. scheduling, "
         "configuration validation, or checking whether a set of design/process rules "
         "can be jointly satisfied. Solved here with exact brute force (small instances) "
         "or WalkSAT local search (larger instances)."
@@ -602,10 +598,10 @@ def render_3sat_tab():
         m_clauses = max(1, int(round(n_vars * ratio)))
         seed = st.number_input("Random seed", value=3, step=1, key="sat_seed")
         st.caption(f"Generating {m_clauses} random 3-literal clauses over {n_vars} variables "
-                   f"(ratio {ratio:.1f} — the classic hardness peak is around 4.27).")
+                   f"(ratio {ratio:.1f} - the classic hardness peak is around 4.27).")
 
         st.markdown("**Or upload real clauses (CSV)**")
-        st.caption("CSV needs columns `lit1,lit2,lit3` — signed integers, e.g. `3,-5,7` means (x3 OR NOT x5 OR x7).")
+        st.caption("CSV needs columns `lit1,lit2,lit3` - signed integers, e.g. `3,-5,7` means (x3 OR NOT x5 OR x7).")
         upload = st.file_uploader("Upload clause CSV", type=["csv"], key="sat_upload")
 
         clauses = None
@@ -624,7 +620,7 @@ def render_3sat_tab():
             clauses = generate_3sat(n_vars, m_clauses, seed=seed)
 
         template = pd.DataFrame({"lit1": [1, -2, 3], "lit2": [-3, 4, -5], "lit3": [5, -1, 2]})
-        st.download_button("⬇️ Download CSV template", data=export_csv_bytes(template),
+        st.download_button("Download CSV template", data=export_csv_bytes(template),
                             file_name="3sat_clause_template.csv", mime="text/csv", key="sat_template")
 
         solver_choice = st.radio("Solver", ["Auto", "Brute force (exact)", "WalkSAT (local search)"],
@@ -664,7 +660,7 @@ def render_3sat_tab():
             st.pyplot(fig3, use_container_width=True)
 
     m1, m2, m3 = st.columns(3)
-    verdict = "✅ SATISFIABLE" if satisfiable else "⚠️ Best-effort (not fully satisfied)"
+    verdict = "SATISFIABLE" if satisfiable else "Best-effort (not fully satisfied)"
     m1.markdown(f'<div class="metric-card"><b>Result</b><br><span style="font-size:22px;color:{ACCENT_PURPLE}">{verdict}</span></div>', unsafe_allow_html=True)
     m2.markdown(f'<div class="metric-card"><b>Clauses satisfied</b><br><span style="font-size:26px;color:{ACCENT_PURPLE}">{sat_count}/{len(clauses)}</span></div>', unsafe_allow_html=True)
     m3.markdown(f'<div class="metric-card"><b>Method</b><br><span style="font-size:16px;color:{ACCENT_PURPLE}">{method}</span></div>', unsafe_allow_html=True)
@@ -676,11 +672,11 @@ def render_3sat_tab():
 
     sections = [
         ("Configuration", f"Variables={n_vars}, Clauses={len(clauses)}, Ratio={len(clauses)/n_vars:.2f}, Method={method}"),
-        ("Verdict", f"{verdict} — {sat_count}/{len(clauses)} clauses satisfied"),
+        ("Verdict", f"{verdict} - {sat_count}/{len(clauses)} clauses satisfied"),
         ("Variable Assignment", assign_df),
         ("Clauses", clause_df),
     ]
-    render_export_bar("3sat_results", "Kalsnet AI Reasoning Studio — 3-SAT Results", sections, clause_df)
+    render_export_bar("3sat_results", "Kalsnet AI Reasoning Studio - 3-SAT Results", sections, clause_df)
 
 
 # ============================================================================
@@ -688,7 +684,7 @@ def render_3sat_tab():
 # ============================================================================
 
 def render_about_tab():
-    st.markdown('<div class="module-banner banner-about">ℹ️ About this Studio</div>', unsafe_allow_html=True)
+    st.markdown('<div class="module-banner banner-about">About this Studio</div>', unsafe_allow_html=True)
     st.markdown(
         """
         **Kalsnet AI Reasoning Studio** packages three foundational reasoning
@@ -714,14 +710,14 @@ def render_about_tab():
 
 
 # ============================================================================
-# MAIN — TABS
+# MAIN - TABS
 # ============================================================================
 
 tab1, tab2, tab3, tab4 = st.tabs([
-    "🎮 Minimax",
-    "🎲 Expectimax",
-    "🧩 3-SAT",
-    "ℹ️ About",
+    "Minimax",
+    "Expectimax",
+    "3-SAT",
+    "About",
 ])
 
 with tab1:
