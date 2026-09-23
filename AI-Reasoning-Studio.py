@@ -28,7 +28,7 @@ import pandas as pd
 import streamlit as st
 from docx import Document
 from docx.shared import Pt, RGBColor
-from fpdf import FPDF
+from fpdf import FPDF, XPos, YPos
 
 # ============================================================================
 # PAGE CONFIG & GLOBAL STYLE
@@ -188,15 +188,15 @@ def export_pdf_bytes(title: str, sections: list) -> bytes:
     pdf.add_page()
     pdf.set_font("Helvetica", "B", 18)
     pdf.set_text_color(26, 61, 109)
-    pdf.multi_cell(0, 10, title, new_x="LMARGIN", new_y="NEXT")
+    pdf.multi_cell(0, 10, title, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.set_font("Helvetica", "", 9)
     pdf.set_text_color(90, 90, 90)
-    pdf.multi_cell(0, 6, f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}  |  Kalsnet (KNet) Consulting Group", new_x="LMARGIN", new_y="NEXT")
+    pdf.multi_cell(0, 6, f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}  |  Kalsnet (KNet) Consulting Group", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.ln(3)
     for heading, body in sections:
         pdf.set_font("Helvetica", "B", 13)
         pdf.set_text_color(26, 61, 109)
-        pdf.multi_cell(0, 8, heading, new_x="LMARGIN", new_y="NEXT")
+        pdf.multi_cell(0, 8, heading, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
         pdf.set_font("Helvetica", "", 10)
         pdf.set_text_color(30, 30, 30)
         if isinstance(body, pd.DataFrame):
@@ -212,7 +212,7 @@ def export_pdf_bytes(title: str, sections: list) -> bytes:
                 pdf.ln()
         else:
             safe = str(body).encode("latin-1", "replace").decode("latin-1")
-            pdf.multi_cell(0, 6, safe, new_x="LMARGIN", new_y="NEXT")
+            pdf.multi_cell(0, 6, safe, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
         pdf.ln(2)
     out = pdf.output()
     return bytes(out)
