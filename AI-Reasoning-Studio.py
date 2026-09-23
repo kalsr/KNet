@@ -28,7 +28,13 @@ import pandas as pd
 import streamlit as st
 from docx import Document
 from docx.shared import Pt, RGBColor
-from fpdf import FPDF, XPos, YPos
+try:
+    from fpdf import FPDF, XPos, YPos
+except ImportError:
+    import streamlit as st
+    st.error("PDF library mismatch: requirements.txt must list 'fpdf2' (not 'fpdf'). "
+             "Fix it, then reboot the app.")
+    st.stop()
 
 # ============================================================================
 # PAGE CONFIG & GLOBAL STYLE
