@@ -1,11 +1,9 @@
-
-
-
-
+"""
 AGI Mission Intelligence Suite
 Developed by Randy Singh from Kalsnet (KNet) Consulting Group
 
-Run with:  streamlit run app.py
+Run with:  streamlit run AGI-MISSION-INTELLIGENCE.py
+Requires agi_engine.py and exports.py in the same folder.
 """
 from __future__ import annotations
 
@@ -28,21 +26,24 @@ BLUE = "#0D47A1"
 PALETTE = ["#0D47A1", "#00897B", "#F57C00", "#C62828", "#6A1B9A", "#2E7D32", "#5D4037", "#455A64"]
 TODAY = date(2026, 10, 4) if date.today() < date(2026, 10, 4) else date.today()
 
-st.markdown(f"""
+# Plain (non f-string) CSS so the curly braces are never parsed as Python code.
+CSS = """
 <style>
-.app-title {{ color:{BLUE}; font-weight:800; font-size:2.6rem; line-height:1.15; margin-bottom:0.1rem; }}
-.app-sub {{ color:{BLUE}; font-weight:700; font-size:1.15rem; margin-bottom:0.8rem; }}
-.why-box {{ background:#E3F2FD; border-left:6px solid {BLUE}; padding:0.8rem 1rem; border-radius:6px; margin:0.4rem 0 0.8rem 0; }}
-.step-box {{ background:#F1F8E9; border-left:6px solid #2E7D32; padding:0.6rem 1rem; border-radius:6px; margin:0.3rem 0; }}
-.warn-box {{ background:#FFF3E0; border-left:6px solid #F57C00; padding:0.6rem 1rem; border-radius:6px; margin:0.3rem 0; }}
-section[data-testid="stSidebar"] {{ background: linear-gradient(180deg,#0D47A1 0%,#1565C0 55%,#1E88E5 100%); }}
-section[data-testid="stSidebar"] * {{ color:#FFFFFF !important; }}
-section[data-testid="stSidebar"] [data-baseweb="select"] * {{ color:#0D47A1 !important; }}
-div[data-testid="stMetric"] {{ background:#F5F9FF; border:1px solid #BBDEFB; border-radius:8px; padding:0.5rem 0.8rem; }}
+.app-title { color:__BLUE__; font-weight:800; font-size:2.6rem; line-height:1.15; margin-bottom:0.1rem; }
+.app-sub { color:__BLUE__; font-weight:700; font-size:1.15rem; margin-bottom:0.8rem; }
+.why-box { background:#E3F2FD; border-left:6px solid __BLUE__; padding:0.8rem 1rem; border-radius:6px; margin:0.4rem 0 0.8rem 0; }
+.step-box { background:#F1F8E9; border-left:6px solid #2E7D32; padding:0.6rem 1rem; border-radius:6px; margin:0.3rem 0; }
+.warn-box { background:#FFF3E0; border-left:6px solid #F57C00; padding:0.6rem 1rem; border-radius:6px; margin:0.3rem 0; }
+section[data-testid="stSidebar"] { background: linear-gradient(180deg,#0D47A1 0%,#1565C0 55%,#1E88E5 100%); }
+section[data-testid="stSidebar"] * { color:#FFFFFF !important; }
+section[data-testid="stSidebar"] [data-baseweb="select"] * { color:#0D47A1 !important; }
+div[data-testid="stMetric"] { background:#F5F9FF; border:1px solid #BBDEFB; border-radius:8px; padding:0.5rem 0.8rem; }
 </style>
 <div class="app-title">AGI Mission Intelligence Suite</div>
 <div class="app-sub">Developed by Randy Singh from Kalsnet (KNet) Consulting Group</div>
-""", unsafe_allow_html=True)
+""".replace("__BLUE__", BLUE)
+
+st.markdown(CSS, unsafe_allow_html=True)
 
 PAGES = ["Overview", "Healthcare", "Cybersecurity", "Software Development", "Government and DoD",
          "AGI and Knowledge Graph", "Everyday Life Travel Planner"]
