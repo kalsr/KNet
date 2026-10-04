@@ -3,7 +3,8 @@ AGI Mission Intelligence Suite
 Developed by Randy Singh from Kalsnet (KNet) Consulting Group
 
 Run with:  streamlit run AGI-MISSION-INTELLIGENCE.py
-Requires agi_engine.py and exports.py in the same folder.
+Single self-contained file: the AGI engine and report exporters are built in.
+Install packages with:  pip install -r requirements.txt
 """
 from __future__ import annotations
 
@@ -17,8 +18,1400 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-import agi_engine as E
-import exports as X
+import re as _re
+from datetime import timedelta as _td
+from types import SimpleNamespace as _SimpleNamespace
+
+import networkx as nx
+
+
+# =============================================================================
+# AGI ENGINE  (built in - replaces the separate agi_engine.py module)
+# =============================================================================
+class ReasoningTrace:
+    """Ordered record of every reasoning step the agent takes."""
+
+    def __init__(self):
+        self.steps = []
+
+    def add(self, stage: str, reasoning: str):
+        self.steps.append({"Step": len(self.steps) + 1, "Stage": stage, "Reasoning": reasoning})
+        return self
+
+    def to_df(self) -> pd.DataFrame:
+        return pd.DataFrame(self.steps, columns=["Step", "Stage", "Reasoning"])
+
+
+def validate_columns(df: pd.DataFrame, required: list) -> list:
+    return [c for c in required if c not in df.columns]
+
+
+def _yes(v) -> bool:
+    return str(v).strip().lower() in ("yes", "y", "true", "1", "1.0")
+
+
+def _num(v, default=0.0) -> float:
+    try:
+        f = float(v)
+        return default if math.isnan(f) else f
+    except (TypeError, ValueError):
+        return default
+
+
+_WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
+# ----------------------------------------------------------------------------- Healthcare
+HC_REQUIRED = ["PatientID", "Age", "Sex", "HeightCm", "WeightKg", "SystolicBP", "DiastolicBP", "HeartRate",
+               "FastingGlucose", "HbA1c", "LDL", "HDL", "Creatinine", "Smoker", "FamilyHistoryCVD",
+               "ActiveMedications", "LastVisitDaysAgo", "InsuranceStatus", "PreferredDay"]
+
+HC_FIELDS = {
+    "PatientID": "Unique patient identifier. Links results back to the record.",
+    "Age": "Age in years. Drives cardiovascular risk and kidney function (eGFR).",
+    "Sex": "F or M. Needed by the CKD EPI 2021 eGFR formula and the HDL threshold.",
+    "HeightCm": "Height in centimeters. Used to compute BMI.",
+    "WeightKg": "Weight in kilograms. Used to compute BMI and weight trends.",
+    "SystolicBP": "Top blood pressure number (mmHg). Used for BP stage and cardiovascular risk.",
+    "DiastolicBP": "Bottom blood pressure number (mmHg). Used for BP stage.",
+    "HeartRate": "Resting heart rate (beats per minute). Above 100 is flagged.",
+    "FastingGlucose": "Fasting blood sugar (mg/dL). Used for glycemic status.",
+    "HbA1c": "Three month average blood sugar (percent). Used for glycemic status.",
+    "LDL": "LDL ('bad') cholesterol (mg/dL). Raises cardiovascular risk.",
+    "HDL": "HDL ('good') cholesterol (mg/dL). Protective, lowers cardiovascular risk.",
+    "Creatinine": "Serum creatinine (mg/dL). Used to estimate kidney function (eGFR).",
+    "Smoker": "Yes or No. Raises cardiovascular risk.",
+    "FamilyHistoryCVD": "Yes or No for early heart disease in the family. Raises cardiovascular risk.",
+    "ActiveMedications": "Number of current medications. Five or more triggers a polypharmacy review.",
+    "LastVisitDaysAgo": "Days since the last visit. Used to flag overdue follow up.",
+    "InsuranceStatus": "Active, Prior authorization needed, Pending verification or Expired. Drives insurance actions.",
+    "PreferredDay": "Weekday the patient prefers for appointments. Used for scheduling.",
+}
+
+_BP_SCORE = {"Normal": 0.0, "Elevated": 0.3, "Stage 1 Hypertension": 0.6, "Stage 2 Hypertension": 0.85,
+             "Hypertensive Crisis": 1.0}
+_GLY_SCORE = {"Normal": 0.0, "Prediabetes range": 0.5, "Diabetes range": 1.0}
+_BMI_SCORE = {"Underweight": 0.4, "Normal": 0.0, "Overweight": 0.4, "Obesity": 0.8}
+
+
+def _kid_score(egfr: float) -> float:
+    if egfr >= 90:
+        return 0.0
+    if egfr >= 60:
+        return 0.15
+    if egfr >= 45:
+        return 0.55
+    if egfr >= 30:
+        return 0.75
+    return 1.0
+
+
+def _bp_stage(s: float, d: float) -> str:
+    if s >= 180 or d >= 120:
+        return "Hypertensive Crisis"
+    if s >= 140 or d >= 90:
+        return "Stage 2 Hypertension"
+    if s >= 130 or d >= 80:
+        return "Stage 1 Hypertension"
+    if s >= 120:
+        return "Elevated"
+    return "Normal"
+
+
+def _gly_status(a1c: float, glu: float) -> str:
+    if a1c >= 6.5 or glu >= 126:
+        return "Diabetes range"
+    if a1c >= 5.7 or glu >= 100:
+        return "Prediabetes range"
+    return "Normal"
+
+
+def _bmi_cat(b: float) -> str:
+    if b < 18.5:
+        return "Underweight"
+    if b < 25:
+        return "Normal"
+    if b < 30:
+        return "Overweight"
+    return "Obesity"
+
+
+def egfr_ckd_epi_2021(scr: float, age: float, sex: str) -> float:
+    female = str(sex).strip().upper().startswith("F")
+    k, a = (0.7, -0.241) if female else (0.9, -0.302)
+    r = max(scr, 0.1) / k
+    v = 142 * min(r, 1) ** a * max(r, 1) ** -1.200 * 0.9938 ** age
+    return v * 1.012 if female else v
+
+
+def synthetic_healthcare(n: int = 24, seed: int = 42) -> pd.DataFrame:
+    rng = np.random.default_rng(seed)
+    ins = ["Active", "Active", "Active", "Prior authorization needed", "Pending verification", "Expired"]
+    rows = []
+    for i in range(n):
+        profile = i % 4                 # 0 healthy, 1 metabolic, 2 cardiovascular, 3 kidney / older
+        sex = "F" if i % 2 == 0 else "M"
+        age = int(rng.integers(28, 50)) if profile == 0 else int(rng.integers(45, 82))
+        h = float(rng.normal(163 if sex == "F" else 177, 7))
+        bmi = float(rng.normal(*{0: (23, 2), 1: (33, 3), 2: (28, 3), 3: (26, 3)}[profile]))
+        sbp = float(rng.normal(*{0: (116, 6), 1: (134, 8), 2: (152, 14), 3: (138, 10)}[profile]))
+        dbp = sbp * 0.6 + float(rng.normal(4, 4))
+        if i == 6:
+            sbp, dbp = 186.0, 118.0     # one hypertensive crisis for demonstration
+        glu = float(rng.normal(*{0: (88, 6), 1: (138, 18), 2: (104, 8), 3: (112, 14)}[profile]))
+        a1c = 2.6 + 0.032 * glu + float(rng.normal(0, 0.15))
+        rows.append({
+            "PatientID": f"P{i + 1:03d}", "Age": age, "Sex": sex, "HeightCm": round(h, 1),
+            "WeightKg": round(bmi * (h / 100) ** 2, 1), "SystolicBP": int(round(sbp)), "DiastolicBP": int(round(dbp)),
+            "HeartRate": int(round(rng.normal(74 + (10 if profile == 2 else 0), 9))),
+            "FastingGlucose": int(round(glu)), "HbA1c": round(a1c, 1),
+            "LDL": int(round(rng.normal(*{0: (105, 15), 1: (140, 20), 2: (165, 20), 3: (125, 20)}[profile]))),
+            "HDL": int(round(rng.normal(*{0: (58, 8), 1: (40, 6), 2: (42, 6), 3: (48, 7)}[profile]))),
+            "Creatinine": round(max(0.5, float(rng.normal(1.9, 0.4)) if profile == 3
+                                    else float(rng.normal(0.8 if sex == "F" else 1.0, 0.12))), 2),
+            "Smoker": "Yes" if rng.random() < (0.1, 0.25, 0.45, 0.2)[profile] else "No",
+            "FamilyHistoryCVD": "Yes" if rng.random() < (0.2, 0.35, 0.5, 0.3)[profile] else "No",
+            "ActiveMedications": int(rng.integers(0, 2)) if profile == 0 else int(rng.integers(2, 8)),
+            "LastVisitDaysAgo": int(rng.integers(20, 500)),
+            "InsuranceStatus": ins[int(rng.integers(0, len(ins)))],
+            "PreferredDay": _WEEKDAYS[int(rng.integers(0, 5))],
+        })
+    return pd.DataFrame(rows)
+
+
+_LIT = [
+    ("ypertens", "High blood pressure",
+     "2017 ACC/AHA Guideline for the Prevention, Detection, Evaluation and Management of High Blood Pressure in Adults",
+     "Confirm with repeated and out of office readings; lifestyle therapy for everyone, medication guided by stage and cardiovascular risk."),
+    ("iabetes", "Diabetes",
+     "American Diabetes Association Standards of Care in Diabetes (updated each year)",
+     "A diagnosis needs confirmation by repeat testing unless symptoms are clear; HbA1c targets are individualized."),
+    ("rediabetes", "Prediabetes",
+     "American Diabetes Association Standards of Care in Diabetes (updated each year)",
+     "Lifestyle programs reduce progression to type 2 diabetes; retest at least yearly."),
+    ("kidney", "Chronic kidney disease",
+     "KDIGO Clinical Practice Guideline for the Evaluation and Management of CKD (2024)",
+     "Confirm reduced eGFR over at least 3 months, check urine albumin, and review doses of renally cleared drugs."),
+    ("ipid", "Cholesterol",
+     "2018 AHA/ACC Guideline on the Management of Blood Cholesterol",
+     "LDL of 190 or more usually warrants high intensity statin therapy; otherwise treatment follows overall risk."),
+    ("HDL", "Low HDL",
+     "2018 AHA/ACC Guideline on the Management of Blood Cholesterol",
+     "Low HDL is a risk enhancer; focus on overall risk reduction rather than raising HDL alone."),
+    ("Obesity", "Obesity",
+     "US Preventive Services Task Force: behavioral weight loss interventions for adults (2018)",
+     "Offer or refer adults with BMI 30 or more to intensive, multicomponent behavioral programs."),
+    ("ardiovascular", "Cardiovascular risk",
+     "2019 ACC/AHA Guideline on the Primary Prevention of Cardiovascular Disease",
+     "Use a validated 10 year risk estimate plus risk enhancers to guide statin and lifestyle decisions."),
+    ("achycardia", "Fast resting heart rate",
+     "Clinical evaluation (no single guideline)",
+     "A resting rate above 100 deserves an ECG and review of causes such as anemia, thyroid or medication effects."),
+]
+
+
+def literature_for(conditions: str) -> pd.DataFrame:
+    rows = [{"Finding": t, "Guideline or source": g, "Key point": k}
+            for key, t, g, k in _LIT if key in str(conditions)]
+    df = pd.DataFrame(rows, columns=["Finding", "Guideline or source", "Key point"])
+    return df.drop_duplicates("Finding").reset_index(drop=True)
+
+
+def analyze_healthcare(df: pd.DataFrame, today):
+    trace = ReasoningTrace()
+    out = []
+    for r in df.to_dict("records"):
+        age, sex = _num(r["Age"]), str(r["Sex"])
+        h, w = _num(r["HeightCm"], 170), _num(r["WeightKg"], 70)
+        sbp, dbp, hr = _num(r["SystolicBP"]), _num(r["DiastolicBP"]), _num(r["HeartRate"])
+        glu, a1c = _num(r["FastingGlucose"]), _num(r["HbA1c"])
+        ldl, hdl, scr = _num(r["LDL"]), _num(r["HDL"]), _num(r["Creatinine"], 1.0)
+        meds, last = _num(r["ActiveMedications"]), _num(r["LastVisitDaysAgo"])
+        smoker, fam = _yes(r.get("Smoker", "No")), _yes(r.get("FamilyHistoryCVD", "No"))
+
+        bmi = w / ((h / 100) ** 2) if h > 0 else 0
+        bmic, bps, gly = _bmi_cat(bmi), _bp_stage(sbp, dbp), _gly_status(a1c, glu)
+        egfr = egfr_ckd_epi_2021(scr, age, sex)
+        z = (-9.0 + 0.065 * age + 0.018 * sbp + 0.007 * ldl - 0.025 * hdl + 0.65 * smoker + 0.45 * fam
+             + 0.50 * (gly == "Diabetes range"))
+        risk = 1 / (1 + math.exp(-z))
+        score = 100 * (0.30 * min(risk / 0.30, 1) + 0.20 * _BP_SCORE[bps] + 0.20 * _GLY_SCORE[gly]
+                       + 0.15 * _kid_score(egfr) + 0.15 * _BMI_SCORE[bmic])
+        level = "High" if score >= 60 else "Medium" if score >= 35 else "Low"
+        crisis = bps == "Hypertensive Crisis"
+
+        conds, qs, plan = [], [], []
+        if crisis:
+            conds.append("Hypertensive crisis")
+            qs.append("Does this reading need same day evaluation for end organ damage?")
+            plan.append("Same day clinical assessment and repeat blood pressure measurement")
+        elif bps in ("Stage 1 Hypertension", "Stage 2 Hypertension"):
+            conds.append(f"Hypertension ({bps.replace(' Hypertension', '').lower()})")
+            qs.append("Should home blood pressure monitoring confirm the diagnosis before starting or changing medication?")
+            plan.append("Home blood pressure log twice daily for 2 weeks; reduce sodium; 150 minutes of activity per week")
+        if gly == "Diabetes range":
+            conds.append("Possible type 2 diabetes")
+            qs.append("Should HbA1c or fasting glucose be repeated to confirm diabetes?")
+            plan.append("Repeat HbA1c; referral to diabetes self management education")
+        elif gly == "Prediabetes range":
+            conds.append("Prediabetes")
+            qs.append("Is a structured lifestyle program appropriate to prevent progression?")
+            plan.append("Lifestyle program; recheck glucose in 12 months")
+        if egfr < 60:
+            conds.append("Possible chronic kidney disease")
+            qs.append(f"Should renally cleared medications be dose adjusted for an eGFR of {egfr:.0f}?")
+            plan.append("Repeat creatinine and urine albumin in 3 months; avoid NSAIDs")
+        if ldl >= 160:
+            conds.append("Hyperlipidemia")
+            qs.append("Is statin therapy indicated given LDL and overall cardiovascular risk?")
+            plan.append("Heart healthy diet; repeat lipid panel")
+        if hdl < (50 if sex.upper().startswith("F") else 40):
+            conds.append("Low HDL")
+        if bmi >= 30:
+            conds.append("Obesity")
+            plan.append("Refer to an intensive behavioral weight management program")
+        if hr > 100:
+            conds.append("Tachycardia")
+            qs.append("Is an ECG needed to evaluate the resting heart rate above 100?")
+        if risk >= 0.20:
+            conds.append("Elevated cardiovascular risk")
+            qs.append("Should cardiovascular prevention therapy be discussed?")
+        if smoker:
+            plan.append("Offer smoking cessation counselling and pharmacotherapy")
+        if meds >= 5:
+            qs.append(f"Should the {int(meds)} active medications be reviewed for interactions (polypharmacy)?")
+        if not qs:
+            qs.append("Are routine preventive screenings up to date?")
+        plan.append("Follow up as scheduled and continue trend monitoring")
+
+        interval = 1 if crisis else {"High": 7, "Medium": 30, "Low": 90}[level]
+        due = today + _td(days=interval)
+        appt = due
+        pref = str(r.get("PreferredDay", "")).strip().title()
+        if not crisis and pref in _WEEKDAYS:
+            for back in range(7):
+                cand = due - _td(days=back)
+                if cand <= today:
+                    break
+                if cand.weekday() == _WEEKDAYS.index(pref):
+                    appt = cand
+                    break
+        appt_txt = f"{appt.isoformat()} ({appt.strftime('%A')})" + (" URGENT" if crisis else "")
+        overdue = last > {"High": 90, "Medium": 180, "Low": 365}[level]
+        status = str(r.get("InsuranceStatus", "Active")).strip()
+        ins = {"active": "Verified, no action",
+               "prior authorization needed": "Submit prior authorization before the next appointment",
+               "pending verification": "Verify coverage with the payer before the visit",
+               "expired": "Coverage expired: contact the patient and a financial counselor"}.get(
+            status.lower(), f"Review insurance status: {status}")
+
+        out.append({"PatientID": r["PatientID"], "BMI": round(bmi, 1), "BMICategory": bmic, "BPStage": bps,
+                    "GlycemicStatus": gly, "eGFR": round(egfr, 1), "CVRiskPercent": round(100 * risk, 1),
+                    "PriorityScore": round(score, 1), "PriorityLevel": level,
+                    "PossibleConditions": "; ".join(conds) if conds else "No flags",
+                    "PhysicianQuestions": " | ".join(qs), "CarePlan": " | ".join(plan),
+                    "NextAppointment": appt_txt, "Overdue": "Yes" if overdue else "No", "InsuranceAction": ins})
+    res = pd.DataFrame(out).sort_values("PriorityScore", ascending=False).reset_index(drop=True)
+    n_hi = int((res.PriorityLevel == "High").sum())
+    trace.add("Observe", f"Loaded {len(res)} patient records with vitals, labs, history and insurance status.")
+    trace.add("Review medical records", "Computed BMI, blood pressure stage (ACC AHA 2017) and glycemic status for every patient.")
+    trace.add("Analyze lab results", f"Estimated kidney function with CKD EPI 2021; {int((res.eGFR < 60).sum())} patients have eGFR below 60.")
+    trace.add("Reason across sources", "Combined age, blood pressure, cholesterol, smoking, family history and diabetes into an illustrative cardiovascular risk.")
+    trace.add("Research literature", "Linked each finding to the relevant clinical guideline for the physician to review.")
+    trace.add("Prioritize", f"Weighted five severity domains into a 0 to 100 priority score: {n_hi} High, "
+                            f"{int((res.PriorityLevel == 'Medium').sum())} Medium, {int((res.PriorityLevel == 'Low').sum())} Low.")
+    trace.add("Plan and coordinate", "Drafted physician questions and care plans, scheduled visits by urgency and preferred weekday, and flagged insurance follow ups.")
+    trace.add("Human decision authority", "All outputs are decision support. The physician confirms every diagnosis and treatment.")
+    return res, trace
+
+
+def patient_trend(prow) -> pd.DataFrame:
+    rng = np.random.default_rng(sum(ord(c) for c in str(prow["PatientID"])))
+    months = list(range(1, 13))
+    out = {"Month": months}
+    for col, sd, noise in [("SystolicBP", 1.2, 3.0), ("FastingGlucose", 1.6, 4.0), ("WeightKg", 0.3, 0.6),
+                           ("HbA1c", 0.04, 0.08)]:
+        cur = _num(prow[col])
+        drift = float(rng.normal(0.4 * sd, sd))
+        out[col] = [round(cur - drift * (12 - m) + (float(rng.normal(0, noise)) if m < 12 else 0.0), 2) for m in months]
+    return pd.DataFrame(out)
+
+
+def trend_slopes(trend: pd.DataFrame) -> pd.DataFrame:
+    thr = {"SystolicBP": 1.0, "FastingGlucose": 1.5, "WeightKg": 0.3, "HbA1c": 0.05}
+    x = trend["Month"].to_numpy(dtype=float)
+    rows = []
+    for col in [c for c in trend.columns if c != "Month"]:
+        y = trend[col].to_numpy(dtype=float)
+        b = float(((x - x.mean()) * (y - y.mean())).sum() / ((x - x.mean()) ** 2).sum())
+        a = float(y.mean() - b * x.mean())
+        t = thr.get(col, 0.5)
+        rows.append({"Measure": col, "SlopePerMonth": round(b, 3), "Current": round(y[-1], 2),
+                     "Projected3Months": round(a + b * (x[-1] + 3), 2),
+                     "Trend": "Rising" if b > t else "Falling" if b < -t else "Stable"})
+    return pd.DataFrame(rows)
+
+
+# ----------------------------------------------------------------------------- Cybersecurity
+CY_REQUIRED = ["AlertID", "Timestamp", "AlertType", "SourceHost", "DestinationHost", "UserAccount", "Severity",
+               "AssetCriticality", "ThreatIntelScore", "AnomalyScore", "DetectionConfidence"]
+
+CY_FIELDS = {
+    "AlertID": "Unique SIEM alert identifier.",
+    "Timestamp": "When the alert fired. Orders the kill chain timeline.",
+    "AlertType": "Kind of detection. Selects the SOAR playbook and groups learning.",
+    "SourceHost": "Where the activity came from. Start of an attack graph edge.",
+    "DestinationHost": "Where the activity went. End of an attack graph edge.",
+    "UserAccount": "Account involved. Used to pivot to related alerts.",
+    "Severity": "SIEM severity from 1 to 10.",
+    "AssetCriticality": "Business value of the destination from 1 to 5.",
+    "ThreatIntelScore": "0 to 1 match with known threat intelligence indicators.",
+    "AnomalyScore": "0 to 1 deviation from normal behavior (UEBA).",
+    "DetectionConfidence": "0 to 1 confidence of the detection rule. Multiplies the risk score.",
+    "MitreTechnique": "Optional MITRE ATT&CK technique ID for context.",
+    "AnalystVerdict": "Optional True positive or False positive. Used for learning.",
+}
+
+_PLAYBOOKS = {
+    "Phishing email clicked": ("Quarantine the email, block the sender and reset the user password", 0.85),
+    "Malicious PowerShell": ("Isolate the endpoint and kill the process tree", 0.90),
+    "Command and control beacon": ("Block the C2 address at proxy and firewall", 0.90),
+    "Credential access": ("Disable compromised accounts and rotate service credentials", 0.85),
+    "Lateral movement": ("Segment hosts and block SMB and RDP between zones", 0.80),
+    "Privilege escalation": ("Revoke elevated rights and reset privileged credentials", 0.85),
+    "Data exfiltration": ("Block egress, preserve evidence and notify legal", 0.88),
+    "Brute force login": ("Lock the account and enforce MFA", 0.80),
+    "Port scan": ("Confirm scanner authorization and tune the rule", 0.70),
+    "Impossible travel": ("Force re-authentication with MFA", 0.75),
+    "Malware quarantined": ("Confirm quarantine and run a full scan", 0.80),
+    "DNS tunneling": ("Sinkhole the domain and isolate the host", 0.85),
+}
+_DEFAULT_PLAYBOOK = ("Generic containment: isolate the host and reset credentials", 0.60)
+
+
+def synthetic_cyber() -> pd.DataFrame:
+    rows = [
+        ("Phishing email clicked", "MAIL-RELAY", "WS-ACCT-07", "jsmith", 6, 2, 0.80, 0.60, 0.85, "T1566", "True positive"),
+        ("Brute force login", "VPN-GW", "WS-HR-03", "tlee", 4, 2, 0.10, 0.30, 0.50, "T1110", "False positive"),
+        ("Malicious PowerShell", "WS-ACCT-07", "C2-203.0.113.45", "jsmith", 8, 2, 0.90, 0.85, 0.90, "T1059", "True positive"),
+        ("Command and control beacon", "WS-ACCT-07", "C2-203.0.113.45", "jsmith", 8, 2, 0.95, 0.80, 0.85, "T1071", "True positive"),
+        ("Port scan", "SCANNER-01", "APP-ERP-02", "svc_scan", 4, 4, 0.00, 0.20, 0.40, "T1046", "False positive"),
+        ("Credential access", "WS-ACCT-07", "AUTH-SRV-01", "jsmith", 8, 4, 0.70, 0.80, 0.80, "T1558", "True positive"),
+        ("Lateral movement", "WS-ACCT-07", "FS-01", "svc_backup", 7, 3, 0.60, 0.85, 0.80, "T1021", "True positive"),
+        ("Lateral movement", "WS-ACCT-07", "FS-01", "svc_backup", 6, 3, 0.50, 0.70, 0.75, "T1021", "True positive"),
+        ("Impossible travel", "VPN-GW", "WS-SALES-11", "mlee", 5, 2, 0.20, 0.60, 0.55, "T1078", "False positive"),
+        ("Lateral movement", "FS-01", "APP-ERP-02", "svc_backup", 7, 4, 0.60, 0.80, 0.80, "T1021", "True positive"),
+        ("Malware quarantined", "WS-SALES-11", "WS-SALES-11", "mlee", 5, 2, 0.30, 0.20, 0.70, "T1204", "False positive"),
+        ("Privilege escalation", "APP-ERP-02", "DC-01", "svc_backup", 9, 5, 0.75, 0.90, 0.85, "T1068", "True positive"),
+        ("DNS tunneling", "WS-ENG-04", "EXT-DNS", "achen", 6, 3, 0.40, 0.70, 0.60, "T1071.004", "False positive"),
+        ("Lateral movement", "DC-01", "DB-FIN-01", "adm_jsmith", 9, 5, 0.70, 0.90, 0.85, "T1021", "True positive"),
+        ("Brute force login", "VPN-GW", "WS-HR-03", "tlee", 3, 2, 0.05, 0.25, 0.45, "T1110", "False positive"),
+        ("Data exfiltration", "DB-FIN-01", "EXT-203.0.113.77", "adm_jsmith", 10, 3, 0.85, 0.95, 0.90, "T1041", "True positive"),
+    ]
+    start = pd.Timestamp("2026-10-03 08:05")
+    recs = []
+    for i, r in enumerate(rows):
+        recs.append({"AlertID": f"A{i + 1:03d}", "Timestamp": (start + pd.Timedelta(minutes=17 * i)).strftime("%Y-%m-%d %H:%M"),
+                     "AlertType": r[0], "SourceHost": r[1], "DestinationHost": r[2], "UserAccount": r[3],
+                     "Severity": r[4], "AssetCriticality": r[5], "ThreatIntelScore": r[6], "AnomalyScore": r[7],
+                     "DetectionConfidence": r[8], "MitreTechnique": r[9], "AnalystVerdict": r[10]})
+    return pd.DataFrame(recs)
+
+
+def _risk_tier(x: float) -> str:
+    return "Critical" if x >= 60 else "High" if x >= 40 else "Medium" if x >= 20 else "Low"
+
+
+def analyze_cyber(df: pd.DataFrame, approved: bool = False, weights=(0.35, 0.25, 0.20, 0.20)):
+    trace = ReasoningTrace()
+    d = df.copy()
+    for c in ["AlertID", "AlertType", "SourceHost", "DestinationHost", "UserAccount"]:
+        d[c] = d[c].astype(str)
+    w1, w2, w3, w4 = weights
+    sev, crit = d.Severity.clip(0, 10) / 10, d.AssetCriticality.clip(0, 5) / 5
+    ti, an, conf = d.ThreatIntelScore.clip(0, 1), d.AnomalyScore.clip(0, 1), d.DetectionConfidence.clip(0, 1)
+    d["RiskScore"] = (100 * conf * (w1 * sev + w2 * crit + w3 * ti + w4 * an)).round(1)
+    d["RiskTier"] = d.RiskScore.map(_risk_tier)
+    d["StepProbability"] = (conf * (0.5 * ti + 0.5 * an) + 0.1).clip(0.01, 0.99).round(3)
+    scored = d.sort_values("RiskScore", ascending=False).reset_index(drop=True)
+
+    g = nx.DiGraph()
+    crit_of = {}
+    for r in d.itertuples():
+        crit_of[r.DestinationHost] = max(crit_of.get(r.DestinationHost, 0.0), float(r.AssetCriticality))
+        crit_of.setdefault(r.SourceHost, 0.0)
+        if r.SourceHost == r.DestinationHost:
+            g.add_node(r.SourceHost)
+            continue
+        p = float(r.StepProbability)
+        if g.has_edge(r.SourceHost, r.DestinationHost):
+            e = g[r.SourceHost][r.DestinationHost]
+            e["p"] = round(1 - (1 - e["p"]) * (1 - p), 3)
+            e["alerts"] += 1
+        else:
+            g.add_edge(r.SourceHost, r.DestinationHost, p=round(p, 3), alerts=1)
+    for _, _, e in g.edges(data=True):
+        e["weight"] = -math.log(max(e["p"], 1e-6))
+    for n in g.nodes:
+        g.nodes[n]["type"] = "host"
+        g.nodes[n]["criticality"] = crit_of.get(n, 0.0)
+
+    risk_in = d.groupby("DestinationHost").RiskScore.max().to_dict()
+    sources = [n for n in g.nodes if g.in_degree(n) == 0] or list(g.nodes)
+    best = (0.0, [], None, None)
+    for t in sorted(g.nodes, key=lambda n: (crit_of.get(n, 0.0), risk_in.get(n, 0.0)), reverse=True):
+        for s in sources:
+            if s == t:
+                continue
+            try:
+                length, p_nodes = nx.single_source_dijkstra(g, s, t, weight="weight")
+            except nx.NetworkXNoPath:
+                continue
+            prob = math.exp(-length)
+            if prob > best[0]:
+                best = (prob, p_nodes, s, t)
+        if best[1]:
+            break
+    prob, path, entry, target = best
+
+    resp_rows = []
+    for at, grp in scored.groupby("AlertType", sort=False):
+        mx = float(grp.RiskScore.max())
+        tier = _risk_tier(mx)
+        pb, eff = _PLAYBOOKS.get(at, _DEFAULT_PLAYBOOK)
+        if tier == "Critical" and not approved:
+            status, after = "Awaiting human approval", mx
+        else:
+            status = "Executed after human approval" if tier == "Critical" else "Executed automatically"
+            after = round(mx * (1 - eff), 1)
+        resp_rows.append({"AlertType": at, "Alerts": len(grp), "HighestTier": tier, "Playbook": pb,
+                          "Effectiveness": eff, "Status": status, "MaxRiskBefore": round(mx, 1),
+                          "ResidualRiskAfter": after,
+                          "Recovered": "Yes" if status != "Awaiting human approval" and after < 20 else "No"})
+    resp = pd.DataFrame(resp_rows)
+
+    if "AnalystVerdict" in d.columns:
+        verdict = d.AnalystVerdict.astype(str).str.strip().str.lower()
+        tp_mask = verdict.str.contains("true") | verdict.isin(["tp", "yes", "malicious"])
+        basis = "analyst verdicts"
+    else:
+        tp_mask = d.RiskScore >= 40
+        basis = "risk score of 40 or more as a proxy (no AnalystVerdict column)"
+    learn_rows = []
+    for at, idx in d.groupby("AlertType").groups.items():
+        tp = int(tp_mask.loc[idx].sum())
+        fp = len(idx) - tp
+        prec = tp / (tp + fp) if tp + fp else 0.0
+        old = float(d.loc[idx, "DetectionConfidence"].mean())
+        mult = 0.5 + 0.5 * prec
+        learn_rows.append({"AlertType": at, "TruePositives": tp, "FalsePositives": fp, "Precision": round(prec, 2),
+                           "OldConfidence": round(old, 2), "ConfidenceMultiplier": round(mult, 2),
+                           "NewConfidence": round(min(1.0, old * mult), 2)})
+    learn = pd.DataFrame(learn_rows)
+
+    trace.add("Understand the alert", f"Scored {len(d)} alerts with severity, asset value, threat intelligence and behavior; "
+                                      f"{int((d.RiskTier == 'Critical').sum())} are Critical.")
+    top = scored.iloc[0] if len(scored) else None
+    if top is not None:
+        trace.add("Investigate", f"Top alert {top.AlertID} ({top.AlertType}) pivoted on user {top.UserAccount} and hosts "
+                                 f"{top.SourceHost} and {top.DestinationHost}.")
+    trace.add("Build attack graph", f"Built a graph of {g.number_of_nodes()} hosts and {g.number_of_edges()} observed steps; "
+                                    "repeated evidence on a link is fused.")
+    trace.add("Determine attack path", ("Most likely path " + " then ".join(path) + f" with probability {prob:.3f}.")
+              if path else "No connected path to a high value asset was found.")
+    trace.add("Decide response", f"Matched {len(resp)} alert types to SOAR playbooks. Critical playbooks need human approval.")
+    trace.add("Verify recovery", f"{int((resp.Recovered == 'Yes').sum())} of {len(resp)} playbooks bring residual risk below 20.")
+    trace.add("Learn", f"Retuned detection confidence per alert type using {basis}.")
+    return scored, g, path, prob, entry, target, resp, learn, trace
+
+
+# ----------------------------------------------------------------------------- Software development
+SW_REQUIRED = ["ModuleID", "ModuleName", "Layer", "DependsOn", "EstimatedKLOC", "Complexity", "RequirementsCount",
+               "TestCases", "DefectsFound"]
+
+SW_FIELDS = {
+    "ModuleID": "Unique module code. Used in the dependency graph.",
+    "ModuleName": "Human readable module name.",
+    "Layer": "Architecture layer: UI, Security, Logic, Integration, Data or Test.",
+    "DependsOn": "Module IDs this module needs first, separated by semicolons. Drives the build order.",
+    "EstimatedKLOC": "Estimated size in thousands of lines of code. Drives COCOMO effort.",
+    "Complexity": "1 (simple) to 5 (very complex). Weights the effort share.",
+    "RequirementsCount": "Number of requirements the module implements. Used for test coverage.",
+    "TestCases": "Generated test cases. Coverage assumes three tests per requirement.",
+    "DefectsFound": "Defects found by the first automated test run. Feeds the test and fix loop.",
+}
+
+_COCOMO = {"Organic": (2.4, 1.05, 2.5, 0.38), "Semi detached": (3.0, 1.12, 2.5, 0.35),
+           "Embedded": (3.6, 1.20, 2.5, 0.32)}
+
+
+def synthetic_software() -> pd.DataFrame:
+    rows = [
+        ("M01", "Authentication", "Security", "", 1.8, 4, 8, 22, 6),
+        ("M02", "Data model", "Data", "", 1.2, 2, 6, 16, 3),
+        ("M03", "Graph database connector", "Integration", "M02", 2.0, 4, 7, 15, 7),
+        ("M04", "Synthetic data generator", "Data", "M02", 1.0, 2, 5, 15, 2),
+        ("M05", "Threat intelligence ingest", "Integration", "M03", 1.6, 3, 6, 12, 5),
+        ("M06", "AI reasoning engine", "Logic", "M03;M05", 3.2, 5, 10, 24, 11),
+        ("M07", "Risk scoring", "Logic", "M06", 1.4, 3, 6, 18, 4),
+        ("M08", "CSV and PDF export", "Logic", "M07", 1.1, 2, 5, 15, 3),
+        ("M09", "Dashboard UI", "UI", "M01;M07;M08", 2.6, 3, 9, 20, 8),
+        ("M10", "End to end test suite", "Test", "M09", 1.5, 2, 6, 18, 2),
+    ]
+    return pd.DataFrame(rows, columns=SW_REQUIRED)
+
+
+def analyze_software(df: pd.DataFrame, fix: float = 0.6, mode: str = "Organic"):
+    trace = ReasoningTrace()
+    d = df.copy()
+    d["ModuleID"] = d.ModuleID.astype(str).str.strip()
+    d["DependsOn"] = d.DependsOn.fillna("").astype(str).replace("nan", "")
+    ids = set(d.ModuleID)
+    dg = nx.DiGraph()
+    dg.add_nodes_from(d.ModuleID)
+    for r in d.itertuples():
+        for dep in [x.strip() for x in _re.split(r"[;,|]", r.DependsOn) if x.strip()]:
+            if dep in ids and dep != r.ModuleID:
+                dg.add_edge(dep, r.ModuleID)
+    if not nx.is_directed_acyclic_graph(dg):
+        cyc = nx.find_cycle(dg)
+        raise ValueError("Dependency cycle detected: " + " -> ".join([u for u, _ in cyc] + [cyc[0][0]]) + ".")
+    order = list(nx.lexicographical_topological_sort(dg))
+
+    a, b, c, dd = _COCOMO.get(mode, _COCOMO["Organic"])
+    kloc = d.EstimatedKLOC.clip(lower=0.01)
+    total = float(kloc.sum())
+    effort = a * total ** b
+    sched = c * effort ** dd
+    team = effort / sched
+    wt = kloc * d.Complexity.clip(lower=0.1)
+    d["EffortPM"] = (wt / wt.sum() * effort).round(2)
+
+    d0 = d.DefectsFound.clip(lower=0)
+    D0 = float(d0.sum())
+    n, series = 0, [D0]
+    while series[-1] >= 0.5 and n < 10:
+        n += 1
+        series.append(D0 * (1 - fix) ** n)
+    final = d0 * (1 - fix) ** n
+    cov = (d.TestCases / (3 * d.RequirementsCount.clip(lower=1))).clip(upper=1)
+    dens = d0 / kloc
+    fixed_frac = np.where(d0 > 0, 1 - final / d0.replace(0, 1), 1.0)
+    q = 100 * (0.4 * cov + 0.3 * fixed_frac + 0.3 * (1 - np.minimum(dens / 10, 1)))
+
+    d["BuildOrder"] = [order.index(m) + 1 for m in d.ModuleID]
+    d["DefectDensity"] = dens.round(2)
+    d["TestCoverage"] = cov.round(2)
+    d["DefectsAfterFixing"] = final.round(2)
+    d["QualityScore"] = np.round(q, 1)
+    d["Status"] = np.where(d.QualityScore >= 70, "Ready to deploy", "Needs review")
+    cols = ["BuildOrder"] + [x for x in SW_REQUIRED] + ["EffortPM", "DefectDensity", "TestCoverage",
+                                                        "DefectsAfterFixing", "QualityScore", "Status"]
+    mods = d[cols + [x for x in d.columns if x not in cols]].sort_values("BuildOrder").reset_index(drop=True)
+
+    iters = pd.DataFrame({"Iteration": list(range(len(series))),
+                          "DefectsRemaining": [round(v, 2) for v in series],
+                          "FixedThisIteration": [0.0] + [round(series[i - 1] - series[i], 2) for i in range(1, len(series))]})
+    summ = {"TotalKLOC": round(total, 2), "EffortPM": round(effort, 1), "ScheduleMonths": round(sched, 1),
+            "TeamSize": round(team, 1), "InitialDefects": int(round(D0)), "FinalDefects": round(series[-1], 1)}
+
+    trace.add("Understand the requirement", f"Read the plan of {len(d)} modules totalling {total:.1f} KLOC.")
+    trace.add("Design the architecture", f"Grouped modules into {d.Layer.nunique()} layers and built a dependency graph with {dg.number_of_edges()} links.")
+    trace.add("Plan the build", "Topological sort gives the build order: " + ", ".join(order) + ".")
+    trace.add("Estimate effort", f"Basic COCOMO ({mode}): {effort:.1f} person months over {sched:.1f} months with about {team:.1f} people.")
+    trace.add("Test, find and fix", f"Autonomous loop fixing {fix:.0%} per iteration reduced defects from {D0:.0f} to {series[-1]:.1f} in {n} iterations.")
+    trace.add("Quality gate", f"{int((d.Status == 'Ready to deploy').sum())} of {len(d)} modules pass the quality gate of 70.")
+    trace.add("Document and deploy", "Generated documentation from the same model. Release requires human approval.")
+    return mods, dg, order, iters, summ, trace
+
+
+_REQ_MAP = [
+    (("streamlit", "web app", "ui", "interface", "dashboard"), "User interface", "UI", "Streamlit pages, navigation and charts"),
+    (("authentication", "login", "sign in", "auth", "user management"), "User authentication", "Security", "Login form, password hashing and session handling"),
+    (("graph database", "graph db", "neo4j", "knowledge graph"), "Graph database", "Integration", "Graph connector, node and edge schema, traversal queries"),
+    (("synthetic data", "test data", "sample data"), "Synthetic data generator", "Data", "Seeded generator producing realistic records"),
+    (("ai reasoning", "reasoning", "machine learning", "llm"), "AI reasoning engine", "Logic", "Scoring and explanation functions with a reasoning trace"),
+    (("csv", "pdf", "export", "report"), "Export service", "Logic", "CSV and PDF report builders"),
+    (("cybersecurity", "threat", "siem", "alert", "security"), "Security analytics", "Logic", "Alert model, risk scoring and threat logic"),
+    (("sql", "postgres", "sqlite", "relational database"), "Relational database", "Data", "Tables and data access layer"),
+    (("api", "rest", "endpoint"), "API layer", "Integration", "REST endpoints"),
+]
+
+
+def parse_requirement(req: str) -> pd.DataFrame:
+    text = str(req).lower()
+    rows = []
+    for keys, comp, layer, art in _REQ_MAP:
+        hit = next((k for k in keys if _re.search(r"\b" + _re.escape(k) + r"\b", text)), None)
+        if hit:
+            rows.append({"Component": comp, "Layer": layer, "DetectedFrom": hit, "GeneratedArtifact": art})
+    if not rows:
+        rows.append({"Component": "Core application", "Layer": "Logic", "DetectedFrom": "(general request)",
+                     "GeneratedArtifact": "Application skeleton"})
+    rows.append({"Component": "Automated tests", "Layer": "Test", "DetectedFrom": "(always added)",
+                 "GeneratedArtifact": "Unit tests for every component"})
+    return pd.DataFrame(rows)
+
+
+def generate_scaffold(comps: pd.DataFrame, app_name: str = "generated_app") -> str:
+    out = [f'"""{app_name}: application scaffold generated by the AGI software agent."""', "",
+           "import pandas as pd", "import streamlit as st", "", ""]
+    funcs = []
+    for r in comps.itertuples():
+        fn = _re.sub(r"[^a-z0-9]+", "_", str(r.Component).lower()).strip("_") or "component"
+        funcs.append(fn)
+        out += [f"def {fn}():",
+                f'    """{r.Component} ({r.Layer} layer): {r.GeneratedArtifact}."""',
+                f"    # TODO: implement the {str(r.Component).lower()}",
+                f'    return {{"component": "{r.Component}", "layer": "{r.Layer}", "status": "scaffolded"}}',
+                "", ""]
+    out += ["def main():",
+            f'    st.title("{app_name}")',
+            "    results = [" + ", ".join(f"{f}()" for f in funcs) + "]",
+            "    st.dataframe(pd.DataFrame(results))", "", "",
+            'if __name__ == "__main__":', "    main()", ""]
+    return "\n".join(out)
+
+
+# ----------------------------------------------------------------------------- Government and DoD
+GOV_RISK_REQUIRED = ["RiskID", "Domain", "System", "Description", "Likelihood", "Impact", "ControlEffectiveness",
+                     "MissionDependency"]
+GOV_COA_REQUIRED = ["COA", "Description", "Effectiveness", "CostMillions", "TimeDays", "RiskLevel",
+                    "PolicyCompliance", "SuccessProbability", "Uncertainty"]
+
+GOV_FIELDS = {
+    "RiskID": "Unique risk identifier.",
+    "Domain": "Enterprise domain the risk belongs to (network operations, cybersecurity, logistics ...).",
+    "System": "System or capability affected.",
+    "Description": "Plain language description of the risk or course of action.",
+    "Likelihood": "1 (rare) to 5 (almost certain).",
+    "Impact": "1 (minor) to 5 (severe).",
+    "ControlEffectiveness": "0 to 1 share of the risk already reduced by existing controls.",
+    "MissionDependency": "1 to 5, how much the mission depends on this system.",
+    "Owner": "Optional accountable office.",
+    "COA": "Course of action identifier.",
+    "Effectiveness": "Expected mission effectiveness if it succeeds, 0 to 100.",
+    "CostMillions": "Estimated cost in millions of dollars (lower is better).",
+    "TimeDays": "Days to implement (lower is better).",
+    "RiskLevel": "Implementation risk 1 to 5 (lower is better).",
+    "PolicyCompliance": "0 to 100 compliance with policy and authorities.",
+    "SuccessProbability": "0 to 1 probability of full success. Used in the simulation.",
+    "Uncertainty": "Standard deviation of the outcome in effectiveness points. Used in the simulation.",
+}
+
+_GOV_KEYWORDS = {
+    "Network operations": ["network", "communication", "comms", "link", "bandwidth", "resilient", "connectivity"],
+    "Cybersecurity": ["cyber", "secure", "security", "intrusion", "defend", "attack"],
+    "Logistics": ["logistic", "supply", "parts", "fuel", "transport", "sustain"],
+    "Mission systems": ["mission", "command and control", "c2", "system"],
+    "Policy": ["policy", "coalition", "compliance", "authority", "partner"],
+    "Incident management": ["incident", "response", "recover"],
+    "Asset inventory": ["asset", "inventory", "endpoint", "device"],
+    "Threat intelligence": ["threat", "intelligence", "adversary", "actor"],
+    "Knowledge graph": ["dependency", "dependencies", "knowledge", "relationship"],
+}
+
+
+def synthetic_gov_risks() -> pd.DataFrame:
+    rows = [
+        ("R01", "Network operations", "Coalition WAN backbone", "Single fiber path between two hubs", 3, 5, 0.30, 5, "Network operations center"),
+        ("R02", "Cybersecurity", "C2 enclave", "Active intrusion attempts by a persistent threat actor", 4, 5, 0.50, 5, "Cyber defense"),
+        ("R03", "Cybersecurity", "Identity services", "Legacy accounts without phishing resistant MFA", 4, 4, 0.40, 4, "Identity office"),
+        ("R04", "Logistics", "SATCOM spares", "Long lead time for modem replacements", 3, 3, 0.20, 3, "Logistics"),
+        ("R05", "Mission systems", "C2 application", "Unpatched mission application server", 3, 5, 0.35, 5, "Program office"),
+        ("R06", "Policy", "Coalition data sharing", "Releasability rules slow partner onboarding", 3, 3, 0.50, 4, "Policy office"),
+        ("R07", "Incident management", "Security operations", "After hours incident response staffing gap", 3, 4, 0.30, 4, "SOC"),
+        ("R08", "Asset inventory", "Deployed endpoints", "Incomplete inventory of deployed endpoints", 4, 3, 0.25, 3, "Asset management"),
+        ("R09", "Threat intelligence", "Partner feeds", "Indicators shared late by partners", 3, 3, 0.30, 3, "Intelligence cell"),
+        ("R10", "Knowledge graph", "Dependency map", "Mission to system dependencies not fully mapped", 3, 4, 0.20, 4, "Enterprise architecture"),
+        ("R11", "Network operations", "SATCOM link", "Jamming risk in the contested area", 3, 5, 0.35, 5, "Network operations center"),
+        ("R12", "Logistics", "Forward site power", "Generator fuel resupply delays", 2, 4, 0.30, 4, "Logistics"),
+    ]
+    return pd.DataFrame(rows, columns=GOV_RISK_REQUIRED + ["Owner"])
+
+
+def synthetic_gov_coas() -> pd.DataFrame:
+    rows = [
+        ("COA-1", "Harden existing links with zero trust segmentation and MFA everywhere", 72, 18, 75, 2, 92, 0.80, 8),
+        ("COA-2", "Add redundant commercial LEO satellite paths with encrypted overlay", 84, 42, 110, 3, 80, 0.70, 12),
+        ("COA-3", "Stand up a monitored coalition mission network enclave", 78, 30, 95, 3, 88, 0.75, 10),
+        ("COA-4", "Fast migration of C2 to a cloud hosted platform with managed SOC", 88, 55, 160, 4, 70, 0.55, 15),
+    ]
+    return pd.DataFrame(rows, columns=GOV_COA_REQUIRED)
+
+
+def _sim_coa(row, i: int, n: int = 5000) -> np.ndarray:
+    rng = np.random.default_rng(1000 + i)
+    p = _num(row.SuccessProbability, 0.5)
+    p = p / 100 if p > 1 else p
+    eff, sd = _num(row.Effectiveness), max(_num(row.Uncertainty, 5), 0.1)
+    success = rng.random(n) < min(max(p, 0.0), 1.0)
+    mu = np.where(success, eff, 0.35 * eff)
+    return np.clip(rng.normal(mu, sd), 0, 100)
+
+
+def simulate_draws(coas: pd.DataFrame) -> dict:
+    return {str(r.COA): _sim_coa(r, i) for i, r in enumerate(coas.itertuples())}
+
+
+def analyze_gov(risks: pd.DataFrame, coas: pd.DataFrame, mission: str, weights: dict, threshold: float,
+                approved: bool):
+    trace = ReasoningTrace()
+    text = str(mission).lower()
+    doms = [dname for dname, keys in _GOV_KEYWORDS.items() if any(k in text for k in keys)]
+    if not doms:
+        doms = list(_GOV_KEYWORDS)
+
+    reg = risks.copy()
+    ce = reg.ControlEffectiveness.astype(float)
+    ce = np.where(ce > 1, ce / 100, ce).clip(0, 1)
+    reg["InherentRisk"] = (reg.Likelihood * reg.Impact).astype(float)
+    reg["ResidualRisk"] = (reg.InherentRisk * (1 - ce)).round(2)
+    reg["MissionWeightedRisk"] = (reg.ResidualRisk * reg.MissionDependency / 5).round(2)
+    reg["RiskBand"] = pd.cut(reg.InherentRisk, [0, 4, 9, 14, 25], labels=["Low", "Moderate", "High", "Very High"],
+                             include_lowest=True).astype(str)
+    reg["RelevantToMission"] = np.where(reg.Domain.astype(str).isin(doms) | (reg.MissionDependency >= 4), "Yes", "No")
+    reg = reg.sort_values("MissionWeightedRisk", ascending=False).reset_index(drop=True)
+
+    c = coas.copy().reset_index(drop=True)
+    benefit, cost = ["Effectiveness", "PolicyCompliance"], ["CostMillions", "TimeDays", "RiskLevel"]
+    for col in benefit:
+        mx = c[col].max()
+        c["n_" + col] = (c[col] / mx).round(3) if mx > 0 else 0.0
+    for col in cost:
+        mn = c[col].min()
+        c["n_" + col] = [round(mn / x, 3) if x > 0 else 1.0 for x in c[col]]
+    wsum = sum(weights.values()) or 1
+    c["MCDAScore"] = (100 * sum(weights[k] * c["n_" + k] for k in weights) / wsum).round(1)
+    sims = [_sim_coa(r, i) for i, r in enumerate(c.itertuples())]
+    c["SimMean"] = [round(float(s.mean()), 1) for s in sims]
+    c["P10"] = [round(float(np.percentile(s, 10)), 1) for s in sims]
+    c["P90"] = [round(float(np.percentile(s, 90)), 1) for s in sims]
+    c["ProbAboveThreshold"] = [round(float((s >= threshold).mean()), 3) for s in sims]
+    c["CombinedScore"] = (0.6 * c.MCDAScore + 0.4 * c.SimMean).round(1)
+    ranked = c.sort_values("CombinedScore", ascending=False).reset_index(drop=True)
+    ranked.insert(0, "Rank", range(1, len(ranked) + 1))
+    best = ranked.iloc[0]
+
+    monitor = None
+    if approved:
+        weeks = int(min(max(math.ceil(_num(best.TimeDays, 60) / 7), 4), 26))
+        elapsed = max(2, weeks // 2)
+        rows = []
+        for wk in range(1, weeks + 1):
+            planned = round(100 * wk / weeks, 1)
+            actual = round(min(100.0, planned * (0.9 + 0.05 * math.sin(wk))), 1) if wk <= elapsed else np.nan
+            status = "" if np.isnan(actual) else ("On track" if actual >= planned - 5 else "Behind plan")
+            rows.append({"Week": wk, "PlannedProgress": planned, "ActualProgress": actual, "Status": status})
+        monitor = pd.DataFrame(rows)
+
+    trace.add("Understand mission", "Mapped the mission statement to these domains: " + ", ".join(doms) + ".")
+    trace.add("Analyze systems and data", f"Fused {len(reg)} risks from {reg.Domain.nunique()} domains into one register.")
+    trace.add("Identify risks", f"{int((reg.RelevantToMission == 'Yes').sum())} risks are mission relevant; top risk "
+                                f"{reg.iloc[0].RiskID} ({reg.iloc[0].Description}).")
+    trace.add("Develop courses of action", f"Normalized {len(c)} courses of action on five criteria and applied command weights.")
+    trace.add("Simulate outcomes", "Ran 5000 Monte Carlo trials per course of action.")
+    trace.add("Recommend best option", f"{best.COA} has the best combined score {best.CombinedScore} and a "
+                                       f"{best.ProbAboveThreshold:.0%} chance of exceeding {threshold} effectiveness points.")
+    trace.add("Human approval", "Approved by the decision authority. Execution is being monitored." if approved
+              else "Waiting for the decision authority. No action is taken without approval.")
+    return reg, ranked, monitor, doms, trace
+
+
+# ----------------------------------------------------------------------------- Knowledge graph
+KG_NODE_REQUIRED = ["NodeID", "NodeName", "NodeType", "Criticality"]
+KG_EDGE_REQUIRED = ["SourceID", "TargetID", "Relationship", "CompromiseProbability"]
+
+KG_FIELDS = {
+    "NodeID": "Unique entity identifier.",
+    "NodeName": "Entity name used in answers and diagrams.",
+    "NodeType": "Employee, Device, Network, Application, Server, Database, MissionSystem, Vulnerability or Threat.",
+    "Criticality": "1 to 10 business or mission value. Multiplies reach probability into expected impact.",
+    "SourceID": "Entity the relationship starts from.",
+    "TargetID": "Entity the relationship points to.",
+    "Relationship": "How the two connect (uses, connects to, hosts ...).",
+    "CompromiseProbability": "0 to 1 probability that a compromise spreads across this link.",
+}
+
+
+def synthetic_kg():
+    nodes = pd.DataFrame([
+        ("EMP01", "Employee A. Rivera", "Employee", 3), ("EMP02", "Administrator K. Osei", "Employee", 5),
+        ("DEV01", "Rivera laptop", "Device", 4), ("DEV02", "Admin workstation", "Device", 6),
+        ("DEV03", "Rivera mobile phone", "Device", 2), ("NET01", "Corporate VPN", "Network", 7),
+        ("NET02", "Internal LAN", "Network", 6), ("NET03", "Mission network enclave", "Network", 8),
+        ("APP01", "Email and collaboration suite", "Application", 5), ("APP02", "HR self service portal", "Application", 4),
+        ("SRV01", "Application server", "Server", 7), ("SRV02", "Identity server", "Server", 9),
+        ("DB01", "Finance database", "Database", 8), ("DB02", "Mission data store", "Database", 9),
+        ("MS01", "Command and control system", "MissionSystem", 10), ("MS02", "Logistics planning system", "MissionSystem", 9),
+        ("VUL01", "Unpatched VPN appliance", "Vulnerability", 6), ("THR01", "Ransomware affiliate group", "Threat", 5),
+    ], columns=KG_NODE_REQUIRED)
+    edges = pd.DataFrame([
+        ("EMP01", "DEV01", "uses", 0.90), ("EMP01", "DEV03", "uses", 0.90), ("DEV03", "APP01", "accesses", 0.50),
+        ("DEV01", "NET01", "connects through", 0.80), ("DEV01", "APP01", "accesses", 0.70),
+        ("APP01", "NET02", "runs on", 0.30), ("NET01", "NET02", "routes to", 0.70), ("NET02", "SRV01", "reaches", 0.60),
+        ("NET02", "APP02", "reaches", 0.50), ("SRV01", "DB01", "queries", 0.70), ("SRV01", "SRV02", "authenticates via", 0.40),
+        ("SRV02", "NET03", "grants access to", 0.50), ("DB01", "DB02", "replicates to", 0.35),
+        ("NET03", "DB02", "reaches", 0.60), ("DB02", "MS01", "feeds", 0.80), ("NET03", "MS02", "reaches", 0.55),
+        ("SRV01", "MS02", "integrates with", 0.45), ("EMP02", "DEV02", "uses", 0.90), ("DEV02", "SRV02", "administers", 0.80),
+        ("THR01", "VUL01", "exploits", 0.60), ("VUL01", "NET01", "affects", 0.70),
+    ], columns=KG_EDGE_REQUIRED)
+    return nodes, edges
+
+
+_STOP = {"if", "this", "the", "a", "an", "is", "was", "are", "be", "been", "gets", "got", "what", "which", "could",
+         "would", "ultimately", "be", "affected", "s", "of", "to", "and", "or", "my", "our", "systems", "critical"}
+
+
+def resolve_question(q: str, nodes: pd.DataFrame):
+    words = _re.findall(r"[a-z0-9]+", str(q).lower())
+    qset = {w for w in words if w not in _STOP}
+    focus = None
+    if "compromised" in words:
+        for w in reversed(words[:words.index("compromised")]):
+            if w not in _STOP:
+                focus = w
+                break
+    best, best_score = None, 0.0
+    for r in nodes.itertuples():
+        tset = set(_re.findall(r"[a-z0-9]+", f"{r.NodeName} {r.NodeType}".lower()))
+        score = len(qset & tset) + 0.5 * (str(r.NodeType).lower() in qset) + 3 * (focus in tset if focus else 0)
+        if score > best_score:
+            best, best_score = str(r.NodeID), score
+    return best
+
+
+def _blast(g, start):
+    if start not in g:
+        return [], 0.0
+    dist, paths = nx.single_source_dijkstra(g, start, weight="weight")
+    rows = []
+    for n, dval in dist.items():
+        if n == start:
+            continue
+        p = math.exp(-dval)
+        crit = float(g.nodes[n].get("criticality", 0))
+        rows.append({"NodeID": n, "NodeName": g.nodes[n].get("name", n), "NodeType": g.nodes[n].get("type", ""),
+                     "Criticality": crit, "ReachProbability": round(p, 3), "Hops": len(paths[n]) - 1,
+                     "ExpectedImpact": round(p * crit, 2),
+                     "Path": " -> ".join(g.nodes[x].get("name", x) for x in paths[n])})
+    return rows, sum(r["ExpectedImpact"] for r in rows)
+
+
+def analyze_kg(nodes: pd.DataFrame, edges: pd.DataFrame, start):
+    trace = ReasoningTrace()
+    g = nx.DiGraph()
+    for r in nodes.itertuples():
+        g.add_node(str(r.NodeID), name=str(r.NodeName), type=str(r.NodeType), criticality=_num(r.Criticality))
+    for r in edges.itertuples():
+        p = min(max(_num(r.CompromiseProbability, 0.5), 0.01), 0.99)
+        g.add_edge(str(r.SourceID), str(r.TargetID), p=round(p, 3), weight=-math.log(p),
+                   rel=str(getattr(r, "Relationship", "")))
+    start = str(start)
+    rows, total = _blast(g, start)
+    cols = ["NodeID", "NodeName", "NodeType", "Criticality", "ReachProbability", "Hops", "ExpectedImpact", "Path"]
+    br = pd.DataFrame(rows, columns=cols).sort_values("ExpectedImpact", ascending=False).reset_index(drop=True)
+
+    reach = set(br.NodeID) | {start}
+    mrows = []
+    for u, v, e in list(g.edges(data=True)):
+        if u not in reach:
+            continue
+        h = g.copy()
+        h.remove_edge(u, v)
+        _, t2 = _blast(h, start)
+        mrows.append({"BreakLink": f"{g.nodes[u]['name']} -> {g.nodes[v]['name']}", "Relationship": e.get("rel", ""),
+                      "ExposureAfter": round(t2, 2),
+                      "ReductionPercent": round(100 * (total - t2) / total, 1) if total > 0 else 0.0})
+    mit = pd.DataFrame(mrows, columns=["BreakLink", "Relationship", "ExposureAfter", "ReductionPercent"])
+    mit = mit.sort_values("ReductionPercent", ascending=False).reset_index(drop=True)
+
+    name = g.nodes[start]["name"] if start in g else start
+    ms = br[br.NodeType == "MissionSystem"]
+    trace.add("Understand the question", f"Resolved the compromised entity to {start} ({name}).")
+    trace.add("Traverse the graph", f"{len(br)} entities are reachable from {name}.")
+    trace.add("Estimate likelihood", "Path probability is the product of link probabilities; Dijkstra on -ln p finds the most likely path to each entity.")
+    trace.add("Rank impact", f"Total expected impact {total:.2f}; {len(ms)} mission systems are at risk.")
+    trace.add("What if mitigation", (f"Breaking '{mit.iloc[0].BreakLink}' cuts exposure by {mit.iloc[0].ReductionPercent} percent."
+                                     if len(mit) else "No links to break."))
+    trace.add("Human decision authority", "The security architect chooses which mitigation to implement.")
+    return g, br, mit, trace
+
+
+# ----------------------------------------------------------------------------- Everyday life travel
+TR_REQUIRED = ["ActivityID", "City", "Activity", "Category", "DurationHours", "CostUSD", "EnergyLevel", "FamilyRating"]
+
+TR_FIELDS = {
+    "ActivityID": "Unique activity code.",
+    "City": "City where the activity happens. Cities are visited in the order they first appear.",
+    "Activity": "What the family will do.",
+    "Category": "History, Culture, Food, Shopping, Nature, Relaxation, Adventure or Spiritual. Matched to interests.",
+    "DurationHours": "Hours needed. Limited by the daily activity hours.",
+    "CostUSD": "Cost per person in US dollars.",
+    "EnergyLevel": "1 (easy) to 5 (tiring). Limited by the daily energy budget.",
+    "FamilyRating": "1 to 5 expected enjoyment. Drives city day allocation and selection.",
+    "HotelName": "Hotel booked in the city.",
+    "RateUSDPerNight": "Room rate per night in US dollars (one room per three travelers).",
+    "CheckInTime": "Hotel check in time, used in drafted messages.",
+}
+
+
+def synthetic_travel_activities() -> pd.DataFrame:
+    rows = [
+        ("D01", "Delhi", "Red Fort tour", "History", 3, 8, 3, 5), ("D02", "Delhi", "Humayun's Tomb", "History", 2, 7, 2, 4),
+        ("D03", "Delhi", "Chandni Chowk food walk", "Food", 3, 15, 3, 5), ("D04", "Delhi", "Lotus Temple visit", "Spiritual", 1.5, 0, 1, 4),
+        ("D05", "Delhi", "Dilli Haat crafts market", "Shopping", 2, 10, 2, 4), ("D06", "Delhi", "National Rail Museum", "Culture", 2, 3, 2, 4),
+        ("D07", "Delhi", "Lodhi Garden walk", "Nature", 1.5, 0, 1, 3), ("D08", "Delhi", "Qutub Minar", "History", 2, 7, 2, 5),
+        ("A01", "Agra", "Taj Mahal at sunrise", "History", 3, 15, 3, 5), ("A02", "Agra", "Agra Fort", "History", 2.5, 8, 2, 4),
+        ("A03", "Agra", "Mehtab Bagh sunset view", "Nature", 1.5, 3, 1, 4), ("A04", "Agra", "Marble inlay workshop", "Culture", 1.5, 0, 1, 3),
+        ("J01", "Jaipur", "Amber Fort", "History", 3.5, 7, 4, 5), ("J02", "Jaipur", "City Palace and Jantar Mantar", "History", 3, 10, 2, 4),
+        ("J03", "Jaipur", "Hawa Mahal photo stop", "Culture", 1, 3, 1, 4), ("J04", "Jaipur", "Johari Bazaar shopping", "Shopping", 2.5, 20, 2, 4),
+        ("J05", "Jaipur", "Ethical elephant sanctuary visit", "Nature", 3, 45, 3, 5), ("J06", "Jaipur", "Rajasthani thali and folk dance", "Food", 2.5, 25, 1, 5),
+        ("J07", "Jaipur", "Spa and pool afternoon", "Relaxation", 3, 30, 1, 3), ("J08", "Jaipur", "Nahargarh Fort sunset", "Nature", 2, 4, 3, 4),
+        ("U01", "Udaipur", "Lake Pichola boat ride", "Relaxation", 1.5, 10, 1, 5), ("U02", "Udaipur", "City Palace Udaipur", "History", 2.5, 9, 2, 4),
+        ("U03", "Udaipur", "Rajasthani cooking class", "Food", 3, 30, 2, 5), ("U04", "Udaipur", "Monsoon Palace sunset", "Nature", 2, 5, 2, 4),
+        ("U05", "Udaipur", "Bagore ki Haveli dance show", "Culture", 1.5, 4, 1, 4), ("U06", "Udaipur", "Lakeside cafe and rooftop rest", "Relaxation", 2, 12, 1, 4),
+        ("U07", "Udaipur", "Hilltop zipline adventure", "Adventure", 2, 25, 4, 3),
+        ("M01", "Mumbai", "Gateway of India and harbour cruise", "History", 2, 8, 2, 4), ("M02", "Mumbai", "Elephanta Caves ferry trip", "History", 5, 15, 4, 4),
+        ("M03", "Mumbai", "Marine Drive and Chowpatty street food", "Food", 2, 10, 1, 5), ("M04", "Mumbai", "Colaba Causeway shopping", "Shopping", 2, 25, 2, 4),
+        ("M05", "Mumbai", "Sanjay Gandhi National Park", "Nature", 4, 6, 4, 3), ("M06", "Mumbai", "Dharavi community tour", "Culture", 2.5, 15, 2, 4),
+        ("M07", "Mumbai", "Juhu Beach evening", "Relaxation", 2, 0, 1, 4), ("M08", "Mumbai", "Film studio tour", "Culture", 3, 40, 2, 5),
+    ]
+    return pd.DataFrame(rows, columns=TR_REQUIRED)
+
+
+def synthetic_family() -> pd.DataFrame:
+    return pd.DataFrame([("Raj", 45, "Parent", "History;Food"), ("Priya", 42, "Parent", "Culture;Shopping;Relaxation"),
+                         ("Arjun", 14, "Child", "Adventure;History"), ("Anaya", 9, "Child", "Nature;Food")],
+                        columns=["Name", "Age", "Role", "Interests"])
+
+
+def synthetic_hotels() -> pd.DataFrame:
+    return pd.DataFrame([("Delhi", "Central Delhi family hotel", 140, "14:00"), ("Agra", "Taj view guest house", 110, "13:00"),
+                         ("Jaipur", "Heritage haveli Jaipur", 130, "14:00"), ("Udaipur", "Lakeside palace hotel", 170, "14:00"),
+                         ("Mumbai", "Seafront hotel Mumbai", 180, "15:00")],
+                        columns=["City", "HotelName", "RateUSDPerNight", "CheckInTime"])
+
+
+def _city_alloc(acts: pd.DataFrame, days: int):
+    cities = list(dict.fromkeys(acts.City.astype(str)))
+    if not cities:
+        return []
+    if days <= len(cities):
+        return [(c, 1) for c in cities[:max(days, 1)]]
+    w = {c: float(acts.loc[acts.City.astype(str) == c, "FamilyRating"].sum()) for c in cities}
+    tot = sum(w.values()) or 1.0
+    extra = days - len(cities)
+    q = {c: w[c] / tot * extra for c in cities}
+    base = {c: int(math.floor(q[c])) for c in cities}
+    left = extra - sum(base.values())
+    for c in sorted(cities, key=lambda c: q[c] - base[c], reverse=True)[:left]:
+        base[c] += 1
+    return [(c, 1 + base[c]) for c in cities]
+
+
+def synthetic_flights(start=date(2026, 12, 18), days: int = 14) -> pd.DataFrame:
+    alloc = _city_alloc(synthetic_travel_activities(), days)
+    first = {}
+    d = 0
+    for c, nd in alloc:
+        first[c] = start + _td(days=d)
+        d += nd
+    end = start + _td(days=days - 1)
+    return pd.DataFrame([
+        ("INTL-101", "Washington DC", "Delhi", (start - _td(days=1)).isoformat(), "22:00", 0, 1100),
+        ("DOM-215", "Jaipur", "Udaipur", first.get("Udaipur", start).isoformat(), "10:30", 0, 70),
+        ("DOM-322", "Udaipur", "Mumbai", first.get("Mumbai", start).isoformat(), "11:15", 0, 85),
+        ("INTL-102", "Mumbai", "Washington DC", end.isoformat(), "23:30", 0, 1100),
+    ], columns=["FlightID", "FromCity", "ToCity", "Date", "DepartTime", "DelayHours", "PriceUSDPerPerson"])
+
+
+def _fmt_time(h: float) -> str:
+    h = max(0.0, min(h, 23.99))
+    hh = int(h)
+    mm = int(round((h - hh) * 60))
+    if mm == 60:
+        hh, mm = hh + 1, 0
+    return f"{hh:02d}:{mm:02d}"
+
+
+def _select(pool: pd.DataFrame, hours: float, energy: float, interests: set, mode=None) -> list:
+    cand = pool.copy()
+    if mode == "rest":
+        cand = cand[cand.EnergyLevel <= 2]
+    if mode == "indoor":
+        cand = cand[~cand.Category.isin(["Nature", "Adventure"])]
+    if cand.empty:
+        return []
+    score = cand.FamilyRating + 1.0 * cand.Category.str.lower().isin(interests)
+    if mode == "rest":
+        score = score + 1.5 * (cand.Category == "Relaxation")
+    if mode == "budget":
+        score = score - 0.01 * cand.CostUSD
+    cand = cand.assign(_key=score / cand.EnergyLevel.clip(lower=0.5)).sort_values(["_key", "ActivityID"],
+                                                                                 ascending=[False, True])
+    chosen, h_used, e_used = [], 0.0, 0.0
+    for r in cand.itertuples():
+        if h_used + r.DurationHours <= hours and e_used + r.EnergyLevel <= energy:
+            chosen.append(r.ActivityID)
+            h_used += r.DurationHours + 0.5
+            e_used += r.EnergyLevel
+    return chosen
+
+
+def _day_rows(spec: dict, acts_by_id: dict) -> list:
+    rows = []
+    date_s = spec["date"].isoformat()
+    if spec["travel"]:
+        label = (f"Arrive in {spec['city']} and check in" if spec["day"] == 1
+                 else f"Travel to {spec['city']} and check in")
+        if spec["delay"]:
+            label += f" (flight delayed {spec['delay']:g} h)"
+        rows.append({"Day": spec["day"], "Date": date_s, "City": spec["city"], "Time": _fmt_time(spec["start"] - 1),
+                     "Activity": label, "ActivityID": "", "Category": "Travel", "DurationHours": 0.0,
+                     "EnergyLevel": 0.0, "CostUSD": 0.0})
+    t = spec["start"]
+    for aid in spec["chosen"]:
+        a = acts_by_id[aid]
+        rows.append({"Day": spec["day"], "Date": date_s, "City": spec["city"], "Time": _fmt_time(t),
+                     "Activity": a["Activity"], "ActivityID": aid, "Category": a["Category"],
+                     "DurationHours": float(a["DurationHours"]), "EnergyLevel": float(a["EnergyLevel"]),
+                     "CostUSD": float(a["CostUSD"])})
+        t += float(a["DurationHours"]) + 0.5
+    if not spec["chosen"]:
+        rows.append({"Day": spec["day"], "Date": date_s, "City": spec["city"], "Time": _fmt_time(spec["start"]),
+                     "Activity": "Free time and rest at the hotel", "ActivityID": "", "Category": "Rest",
+                     "DurationHours": 0.0, "EnergyLevel": 0.0, "CostUSD": 0.0})
+    return rows
+
+
+def _build(specs, acts_by_id) -> pd.DataFrame:
+    rows = []
+    for s in specs:
+        rows += _day_rows(s, acts_by_id)
+    return pd.DataFrame(rows, columns=["Day", "Date", "City", "Time", "Activity", "ActivityID", "Category",
+                                       "DurationHours", "EnergyLevel", "CostUSD"])
+
+
+_MODES = {
+    "rest": (["tired", "exhausted", "rest", "relax", "slow", "sleep", "jet lag", "jetlag", "sick", "unwell"],
+             "recover energy while keeping the trip enjoyable"),
+    "budget": (["budget", "cheap", "cheaper", "expensive", "money", "save", "cost"],
+               "spend less without losing the highlights"),
+    "indoor": (["rain", "raining", "weather", "heat", "too hot", "storm", "indoor"],
+               "avoid outdoor activities because of the weather"),
+}
+
+
+def analyze_travel(acts, family, hotels, flights, days, start, budget, fx, req, cur, dh, de):
+    trace = ReasoningTrace()
+    a = acts.copy()
+    a["ActivityID"] = a.ActivityID.astype(str)
+    a["City"] = a.City.astype(str)
+    a["Category"] = a.Category.astype(str)
+    acts_by_id = {r["ActivityID"]: r for r in a.to_dict("records")}
+    n = max(len(family), 1)
+    interests = set()
+    for v in family.get("Interests", pd.Series(dtype=str)).fillna("").astype(str):
+        interests |= {x.strip().lower() for x in v.replace(",", ";").split(";") if x.strip()}
+
+    alloc = _city_alloc(a, days)
+    delays = {}
+    if flights is not None and len(flights) and "ToCity" in flights.columns:
+        for r in flights.itertuples():
+            delays[str(r.ToCity)] = max(delays.get(str(r.ToCity), 0.0), _num(getattr(r, "DelayHours", 0)))
+
+    specs, used, day = [], set(), 1
+    for city, nd in alloc:
+        for k in range(nd):
+            travel = k == 0
+            delay = delays.get(city, 0.0) if travel else 0.0
+            st_h = min(12.0 + delay, 20.0) if travel else 9.0
+            hrs = max(1.0, dh - 3 - delay) if travel else float(dh)
+            en = max(2.0, de * 0.6) if travel else float(de)
+            pool = a[(a.City == city) & (~a.ActivityID.isin(used))]
+            chosen = _select(pool, hrs, en, interests)
+            used |= set(chosen)
+            specs.append({"day": day, "date": start + _td(days=day - 1), "city": city, "travel": travel,
+                          "delay": delay, "start": st_h, "hours": hrs, "energy": en, "chosen": chosen})
+            day += 1
+    base = _build(specs, acts_by_id)
+
+    adj, target, expl = None, None, ""
+    text = str(req).lower()
+    mode = next((m for m, (keys, _) in _MODES.items() if any(k in text for k in keys)), None)
+    if mode and specs:
+        m = _re.search(r"day\s*(\d+)", text)
+        target = int(m.group(1)) if m else (cur if "today" in text else cur + 1)
+        target = min(max(target, 1), len(specs))
+        new = [dict(s, chosen=list(s["chosen"])) for s in specs]
+        s = new[target - 1]
+        other_used = {x for t in new if t is not s for x in t["chosen"]}
+        cand = a[(a.City == s["city"]) & (~a.ActivityID.isin(other_used))]
+        h0 = sum(acts_by_id[x]["DurationHours"] for x in s["chosen"])
+        e0 = sum(acts_by_id[x]["EnergyLevel"] for x in s["chosen"])
+        if mode == "rest":
+            s["hours"], s["energy"] = min(s["hours"], 5.0), min(s["energy"], 5.0)
+            s["start"] = max(s["start"], 10.5)
+        new_ch = _select(cand, s["hours"], s["energy"], interests, mode)
+        dropped = [x for x in s["chosen"] if x not in new_ch]
+        s["chosen"] = new_ch
+        moved, skipped = [], []
+        for x in dropped:
+            placed = False
+            for t in new[target:]:
+                if t["city"] != s["city"]:
+                    continue
+                hh = sum(acts_by_id[y]["DurationHours"] + 0.5 for y in t["chosen"])
+                ee = sum(acts_by_id[y]["EnergyLevel"] for y in t["chosen"])
+                if hh + acts_by_id[x]["DurationHours"] <= dh and ee + acts_by_id[x]["EnergyLevel"] <= de:
+                    t["chosen"].append(x)
+                    moved.append(f"{acts_by_id[x]['Activity']} (day {t['day']})")
+                    placed = True
+                    break
+            if not placed:
+                skipped.append(acts_by_id[x]["Activity"])
+        adj = _build(new, acts_by_id)
+        h1 = sum(acts_by_id[x]["DurationHours"] for x in new_ch)
+        e1 = sum(acts_by_id[x]["EnergyLevel"] for x in new_ch)
+        expl = (f"You said \"{req}\". I read this as a request to {_MODES[mode][1]}, not a literal edit. "
+                f"Day {target} in {s['city']} now starts at {_fmt_time(s['start'])} with {h1:g} activity hours "
+                f"(was {h0:g}) and an energy load of {e1:g} (was {e0:g}). "
+                + (f"Moved to later days: {', '.join(moved)}. " if moved else "")
+                + (f"Not rescheduled: {', '.join(skipped)}." if skipped else ""))
+    final = adj if adj is not None else base
+
+    rooms = math.ceil(n / 3)
+    rate = {}
+    if hotels is not None and len(hotels):
+        for r in hotels.itertuples():
+            rate[str(r.City)] = _num(getattr(r, "RateUSDPerNight", 120), 120)
+    hotel_usd = 0.0
+    for i, (city, nd) in enumerate(alloc):
+        nights = nd - 1 if i == len(alloc) - 1 else nd
+        hotel_usd += max(nights, 0) * rate.get(city, 120.0) * rooms
+    flights_usd = (pd.to_numeric(flights.get("PriceUSDPerPerson", pd.Series(dtype=float)), errors="coerce").fillna(0).sum()
+                   * n if flights is not None else 0.0)
+    act_usd = float(final.CostUSD.sum()) * n
+    lines = pd.DataFrame([("Flights", flights_usd), ("Hotels", hotel_usd), ("Activities and entry fees", act_usd),
+                          ("Ground transport", 60.0 * days), ("Food", 15.0 * n * days)], columns=["Category", "USD"])
+    lines["USD"] = lines.USD.round(0)
+    lines["INR"] = (lines.USD * fx).round(0)
+    total = float(lines.USD.sum())
+    cash = 0.20 * (total - flights_usd) * fx
+
+    trace.add("Understand family and budget", f"{n} travelers; shared interests: {', '.join(sorted(interests)) or 'none given'}; "
+                                              f"budget {budget:,.0f} USD.")
+    trace.add("Allocate days", "Days per city by enjoyment weight: " + ", ".join(f"{c} {d}" for c, d in alloc) + ".")
+    trace.add("Check flights", ("Delays absorbed: " + ", ".join(f"{c} +{v:g} h" for c, v in delays.items() if v) + ".")
+              if any(delays.values()) else "No flight delays reported.")
+    trace.add("Build itinerary", f"Selected activities by enjoyment per unit of energy within {dh} hours and energy {de} per day.")
+    trace.add("Calculate budget and currency", f"Estimated {total:,.0f} USD ({'within' if total <= budget else 'over'} budget) "
+                                               f"at {fx} INR per USD; carry about {cash:,.0f} INR in cash.")
+    trace.add("Adapt to the request", expl if expl else "No change requested, so the base plan stands.")
+    return base, adj, target, expl, lines, total, cash, alloc, trace
+
+
+def draft_messages(final: pd.DataFrame, hotels: pd.DataFrame) -> str:
+    hmap = {}
+    if hotels is not None and len(hotels):
+        for r in hotels.itertuples():
+            hmap[str(r.City)] = (str(getattr(r, "HotelName", "the hotel")), str(getattr(r, "CheckInTime", "14:00")))
+    out = []
+    for city, grp in final.groupby("City", sort=False):
+        name, cin = hmap.get(city, ("the hotel", "14:00"))
+        out.append(f"To {name}: Hello, this is to confirm our family booking from {grp.Date.min()} for "
+                   f"{grp.Day.nunique()} night(s). We expect to arrive around check in ({cin}). Please let us know "
+                   "if an early breakfast is possible on days with early sightseeing. Thank you.")
+    for d, grp in final.groupby("Day"):
+        acts = grp[grp.ActivityID != ""]
+        if acts.empty:
+            continue
+        first = acts.iloc[0]
+        hh, mm = map(int, first.Time.split(":"))
+        pick = _fmt_time(max(hh + mm / 60 - 0.5, 0))
+        out.append(f"To driver, day {d} ({first.Date}, {first.City}): please pick us up at {pick} for {first.Activity}.")
+    return "\n".join(out)
+
+
+# =============================================================================
+# REPORT EXPORTS  (built in - replaces the separate exports.py module)
+# =============================================================================
+_DEV_LINE = "Developed by Randy Singh from Kalsnet (KNet) Consulting Group"
+
+
+def _clean(x) -> str:
+    if x is None:
+        return ""
+    if isinstance(x, float) and math.isnan(x):
+        return ""
+    s = str(x)
+    for k, v in {"→": "->", "—": "-", "–": "-", "≥": ">=", "≤": "<=", "…": "...",
+                 "₹": "INR "}.items():
+        s = s.replace(k, v)
+    return s
+
+
+def _latin(x) -> str:
+    return _clean(x).encode("latin-1", "replace").decode("latin-1")
+
+
+def _esc(x) -> str:
+    return _latin(x).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def _cut(x, n: int = 90) -> str:
+    s = _clean(x)
+    return s if len(s) <= n else s[: n - 3] + "..."
+
+
+def to_pdf(title: str, sections: list, tables: dict) -> bytes:
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import landscape, letter
+    from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+    from reportlab.lib.units import inch
+    from reportlab.platypus import Paragraph, Preformatted, SimpleDocTemplate, Spacer, Table, TableStyle
+
+    buf = io.BytesIO()
+    page = landscape(letter)
+    doc = SimpleDocTemplate(buf, pagesize=page, leftMargin=0.5 * inch, rightMargin=0.5 * inch,
+                            topMargin=0.5 * inch, bottomMargin=0.5 * inch, title=_latin(title))
+    ss = getSampleStyleSheet()
+    blue = colors.HexColor("#0D47A1")
+    h1 = ParagraphStyle("h1", parent=ss["Title"], textColor=blue, fontSize=22, leading=26)
+    dev = ParagraphStyle("dev", parent=ss["Title"], textColor=blue, fontSize=14, leading=18)
+    h2 = ParagraphStyle("h2", parent=ss["Heading2"], textColor=blue)
+    body = ParagraphStyle("b", parent=ss["BodyText"], fontSize=9.5, leading=12.5)
+    cell = ParagraphStyle("c", parent=ss["BodyText"], fontSize=7, leading=8.5)
+    hcell = ParagraphStyle("hc", parent=cell, textColor=colors.white, fontName="Helvetica-Bold")
+    code = ParagraphStyle("code", parent=ss["Code"], fontSize=7, leading=8.5)
+
+    story = [Paragraph(_esc(title), h1), Paragraph(_esc(_DEV_LINE), dev),
+             Paragraph(f"Generated {date.today().isoformat()}", body), Spacer(1, 8)]
+    for head, text in sections:
+        story.append(Paragraph(_esc(head), h2))
+        t = _latin(text)
+        if "\n" in t and ("def " in t or t.lstrip().startswith('"""')):
+            story.append(Preformatted(t, code))
+        else:
+            for para in t.split("\n"):
+                if para.strip():
+                    story.append(Paragraph(_esc(para), body))
+    avail = page[0] - 1.0 * inch
+    for name, df in tables.items():
+        story.append(Paragraph(_esc(name), h2))
+        if df is None or len(df) == 0:
+            story.append(Paragraph("No rows.", body))
+            continue
+        cols = list(df.columns)[:10]
+        sub = df[cols].head(60)
+        data = [[Paragraph(_esc(c), hcell) for c in cols]]
+        data += [[Paragraph(_esc(_cut(v)), cell) for v in row] for row in sub.itertuples(index=False)]
+        tb = Table(data, colWidths=[avail / len(cols)] * len(cols), repeatRows=1)
+        tb.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, 0), blue),
+                                ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#E3F2FD")]),
+                                ("GRID", (0, 0), (-1, -1), 0.3, colors.HexColor("#90CAF9")),
+                                ("VALIGN", (0, 0), (-1, -1), "TOP")]))
+        story.append(tb)
+        notes = []
+        if len(df) > 60:
+            notes.append(f"first 60 of {len(df)} rows")
+        if len(df.columns) > 10:
+            notes.append(f"first 10 of {len(df.columns)} columns")
+        if notes:
+            story.append(Paragraph(f"<i>Showing {' and '.join(notes)}. The CSV export has everything.</i>", body))
+    doc.build(story)
+    return buf.getvalue()
+
+
+def to_docx(title: str, sections: list, tables: dict) -> bytes:
+    from docx import Document
+    from docx.enum.section import WD_ORIENT
+    from docx.shared import Inches, Pt, RGBColor
+
+    doc = Document()
+    sec = doc.sections[0]
+    sec.orientation = WD_ORIENT.LANDSCAPE
+    sec.page_width, sec.page_height = sec.page_height, sec.page_width
+    for side in ("left_margin", "right_margin", "top_margin", "bottom_margin"):
+        setattr(sec, side, Inches(0.6))
+    blue = RGBColor(0x0D, 0x47, 0xA1)
+
+    def para(text, size=10.5, bold=False, color=None, font=None):
+        p = doc.add_paragraph()
+        r = p.add_run(_clean(text))
+        r.font.size, r.bold = Pt(size), bold
+        if color is not None:
+            r.font.color.rgb = color
+        if font:
+            r.font.name = font
+        return p
+
+    para(title, 22, True, blue)
+    para(_DEV_LINE, 14, True, blue)
+    para(f"Generated {date.today().isoformat()}", 9)
+    for head, text in sections:
+        para(head, 13, True, blue)
+        t = _clean(text)
+        is_code = "\n" in t and ("def " in t or t.lstrip().startswith('"""'))
+        if is_code:
+            para(t, 8, font="Consolas")
+        else:
+            for line in t.split("\n"):
+                if line.strip():
+                    para(line)
+    for name, df in tables.items():
+        para(name, 13, True, blue)
+        if df is None or len(df) == 0:
+            para("No rows.")
+            continue
+        cols = list(df.columns)[:12]
+        sub = df[cols].head(100)
+        tb = doc.add_table(rows=1, cols=len(cols))
+        tb.style = "Table Grid"
+        for i, c in enumerate(cols):
+            run = tb.rows[0].cells[i].paragraphs[0].add_run(str(c))
+            run.bold, run.font.size = True, Pt(8)
+        for row in sub.itertuples(index=False):
+            cells = tb.add_row().cells
+            for i, v in enumerate(row):
+                run = cells[i].paragraphs[0].add_run(_cut(v, 120))
+                run.font.size = Pt(8)
+        if len(df) > 100 or len(df.columns) > 12:
+            para("Table truncated in Word. The CSV export has every row and column.", 9)
+    buf = io.BytesIO()
+    doc.save(buf)
+    return buf.getvalue()
+
+
+def to_text(title: str, sections: list, tables: dict) -> bytes:
+    bar = "=" * 100
+    out = [bar, _clean(title), _DEV_LINE, f"Generated {date.today().isoformat()}", bar, ""]
+    for head, text in sections:
+        out += [_clean(head).upper(), "-" * len(_clean(head)), _clean(text), ""]
+    for name, df in tables.items():
+        out += [f"TABLE: {_clean(name)}", "-" * (7 + len(_clean(name)))]
+        if df is None or len(df) == 0:
+            out += ["No rows.", ""]
+            continue
+        with pd.option_context("display.max_columns", None, "display.width", 250, "display.max_colwidth", 45):
+            out += [df.to_string(index=False, max_rows=300), ""]
+    return "\n".join(out).encode("utf-8")
+
+
+def to_csv(tables: dict) -> bytes:
+    buf = io.StringIO()
+    for name, df in tables.items():
+        if df is None:
+            continue
+        buf.write(f"# {_clean(name)}\n")
+        df.to_csv(buf, index=False)
+        buf.write("\n")
+    return buf.getvalue().encode("utf-8-sig")
+
+
+# Namespaces so the user interface below can keep calling E.<name> and X.<name>.
+E = _SimpleNamespace(**{k: v for k, v in dict(globals()).items() if not k.startswith("__")})
+X = E
 
 st.set_page_config(page_title="AGI Mission Intelligence Suite", layout="wide")
 
@@ -666,11 +2059,11 @@ def page_software():
                 continue
             dot.append(f'subgraph cluster_{L} {{ label="{L} layer"; style="rounded,filled"; fillcolor="{colors[L]}55"; color="#0D47A1"; fontname=Helvetica;')
             for r in sub.itertuples():
-                dot.append(f'{r.ModuleID} [label="{r.ModuleName}", fillcolor="{colors[L]}"];')
+                dot.append(f'"{r.ModuleID}" [label="{r.ModuleName}", fillcolor="{colors[L]}"];')
             dot.append("}")
         for u, v in dg.edges:
             if u in set(mods.ModuleID):
-                dot.append(f"{u} -> {v} [color=\"#607D8B\"];")
+                dot.append(f"\"{u}\" -> \"{v}\" [color=\"#607D8B\"];")
         dot.append("}")
         st.graphviz_chart("\n".join(dot), width="content")
         c1, c2 = st.columns(2)
