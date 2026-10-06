@@ -1,14 +1,14 @@
 
 
-KNet ASI Decision Intelligence Platform
-Developed by Randy Singh from Kalsnet (KNet) Consulting Group
+# KNet ASI Decision Intelligence Platform
+# Developed by Randy Singh from Kalsnet (KNet) Consulting Group
 
-A single Streamlit application that demonstrates six enterprise use cases of an
-Artificial Super Intelligence (ASI) style decision engine. Every use case supports
-synthetic data and real data upload, explains each field, formula and benefit,
-draws workflow and decision flow charts, and exports results as PDF, TXT and CSV.
+#  single Streamlit application that demonstrates six enterprise use cases of an
+# Artificial Super Intelligence (ASI) style decision engine. Every use case supports
+# synthetic data and real data upload, explains each field, formula and benefit,
+# draws workflow and decision flow charts, and exports results as PDF, TXT and CSV.
 
-Run with:  streamlit run app.py
+# Run with:  streamlit run app.py
 
 import io
 import datetime as dt
