@@ -52,7 +52,7 @@ from sklearn.preprocessing import StandardScaler  # noqa: E402
 # ----------------------------------------------------------------------------
 # Global identity and theme
 # ----------------------------------------------------------------------------
-APP_TITLE = "KNet ASI Decision Intelligence Platform"
+APP_TITLE = "Kalsnet (KNet) ASI Decision Intelligence Platform"
 APP_TAGLINE = "Artificial Super Intelligence for Predictive, Prescriptive and Explainable Enterprise Decisions"
 DEVELOPER = "Developed by Randy Singh from Kalsnet (KNet) Consulting Group"
 
