@@ -9,7 +9,6 @@ synthetic data and real data upload, explains each field, formula and benefit,
 draws workflow and decision flow charts, and exports results as PDF, TXT and CSV.
 
 Run with:  streamlit run app.py
-"""
 
 import io
 import datetime as dt
