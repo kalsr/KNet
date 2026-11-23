@@ -1,6 +1,3 @@
-
-
-
 # KNet CyberSentinel Security Analytics Hub
 # Developed by Randy Singh from Kalsnet (KNet) Consulting Group
 
@@ -165,7 +162,9 @@ def data_source_panel(key, template_df, synth_fn, n_label, n_min, n_max, n_defau
         n = c1.slider(n_label, n_min, n_max, n_default, key=f"{key}_n")
         seed = c2.number_input("Random seed", min_value=0, max_value=999999, value=42, step=1, key=f"{key}_seed")
         st.caption("Synthetic data is generated on the fly and is entirely fictional. Change the seed for a new sample.")
-        return synth_fn(int(n), int(seed)), "Synthetic demo data"
+        synth_df = synth_fn(int(n), int(seed))
+        show_synthetic_dataset(synth_df)
+        return synth_df, "Synthetic demo data"
     if mode == "Upload real data":
         if upload_help:
             st.write(upload_help)
@@ -196,6 +195,16 @@ def data_source_panel(key, template_df, synth_fn, n_label, n_min, n_max, n_defau
         if mode == label:
             return fn()
     return None, mode
+
+
+def show_synthetic_dataset(df, title="View the entire synthetic dataset", height=420):
+    """Shows every row and column of the generated synthetic data in a scrollable table."""
+    if df is None:
+        return
+    with st.expander(title, expanded=True):
+        st.caption(f"Showing all {len(df):,} rows and {df.shape[1]} columns of the generated synthetic data. "
+                   "Scroll down and across the table to browse every record.")
+        show_df(df, height=height)
 
 
 def no_data_message():
@@ -505,6 +514,10 @@ def page_secrets():
         seed = b.number_input("Random seed", 0, 999999, 42, key="sec_seed")
         files = synth_secret_files(int(n), int(seed))
         st.caption("Synthetic files contain fictional keys planted for the demo.")
+        show_synthetic_dataset(pd.DataFrame(
+            [(fname, lineno, line) for fname, text in files.items() for lineno, line in enumerate(text.splitlines(), 1)],
+            columns=["file", "line", "content"]),
+            title="View the entire synthetic dataset, every line of every synthetic file")
     elif mode == "Upload real data":
         ups = st.file_uploader("Upload source code or configuration files. Several files are allowed.",
                                accept_multiple_files=True, key="sec_up")
