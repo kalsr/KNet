@@ -1,5 +1,5 @@
 
-# ClassiNet Outage Simulator
+# NSA-Net Outage Simulator
 # NSANet-like Classified Enterprise Network Outage Simulation (SYNTHETIC DATA ONLY)
 # Developed by Randy Singh from Kalsnet Consulting Group
 
@@ -36,8 +36,8 @@ from reportlab.platypus import (  # noqa: E402
 # ---------------------------------------------------------------------------
 # 1. CONSTANTS - fictional network model
 # ---------------------------------------------------------------------------
-APP_NAME = "ClassiNet Outage Simulator"
-APP_TAGLINE = "NSANet-like Classified Enterprise Network Outage Simulation - Synthetic Data Only"
+APP_NAME = "NSA-Network  Outage Simulator"
+APP_TAGLINE = "NSA-Network-like Classified Enterprise Network Outage Simulation - Synthetic Data Only"
 DEVELOPER = "Developed by Randy Singh from Kalsnet Consulting Group"
 BLUE = "#0B4FD8"
 
