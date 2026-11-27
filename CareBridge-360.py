@@ -1,6 +1,4 @@
-
-
-# CareBridge 360 — Streamlit app addressing five gaps in today's healthcare system.
+# CareBridge 360 - Streamlit app addressing five gaps in today's healthcare system.
 
   # Use case 1  AI Documentation & Admin Automation          (gap: clinician burnout)
   # Use case 2  Remote Patient Monitoring for Chronic Disease (gap: late detection)
@@ -9,9 +7,9 @@
   # Use case 5  Interoperable Records & Care Coordination     (gap: siloed data)
 
 # Every module has three tabs:
-#  1. Learn     – plain-language explanation, concept diagram, formulas
-#  2. Try it    – synthetic demo data OR upload your own file
-#  3. Download  – results as PDF, Word (.docx), plain text and CSV
+#  1. Learn     - plain-language explanation, concept diagram, formulas
+#  2. Try it    - synthetic demo data OR upload your own file
+#  3. Download  - results as PDF, Word (.docx), plain text and CSV
 
 # All demo data is SYNTHETIC. This is a demonstration prototype, not a medical device.
 
@@ -34,7 +32,7 @@ APP_NAME = "CareBridge 360"
 APP_TAGLINE = "Closing the Gaps in Modern Healthcare"
 DEVELOPER = "Developed by Randy Singh from Kalsnet (KNet) Consulting Group"
 
-st.set_page_config(page_title=f"{APP_NAME}: {APP_TAGLINE}", page_icon="🩺", layout="wide")
+st.set_page_config(page_title=f"{APP_NAME}: {APP_TAGLINE}", layout="wide")
 
 
 def brand_banner():
@@ -44,7 +42,7 @@ def brand_banner():
         <div style="text-align:center; padding:18px 10px 14px 10px; margin-bottom:12px;
                     border-bottom:3px solid #0b5ed7;">
           <div style="font-size:3.2rem; font-weight:800; color:#0b5ed7; line-height:1.1;">
-            🩺 {APP_NAME}
+            {APP_NAME}
           </div>
           <div style="font-size:1.6rem; font-weight:700; color:#0b5ed7; margin-top:4px;">
             {APP_TAGLINE}
@@ -67,7 +65,7 @@ DISCLAIMER = (
 # SHARED UI HELPERS
 # ============================================================================
 def disclaimer():
-    st.caption("⚠️ " + DISCLAIMER)
+    st.caption(DISCLAIMER)
 
 
 def page_header(n, title, gap, solution, benefit):
@@ -76,16 +74,16 @@ def page_header(n, title, gap, solution, benefit):
     st.title(title)
     c1, c2, c3 = st.columns(3)
     with c1:
-        st.error(f"**🚧 The gap**\n\n{gap}")
+        st.error(f"**The gap**\n\n{gap}")
     with c2:
-        st.info(f"**🛠️ What this module does**\n\n{solution}")
+        st.info(f"**What this module does**\n\n{solution}")
     with c3:
-        st.success(f"**🌍 Real-world benefit**\n\n{benefit}")
+        st.success(f"**Real-world benefit**\n\n{benefit}")
     disclaimer()
 
 
 def explain(what, why, how, analogy=None):
-    with st.expander("🧒 Explain it simply (start here)", expanded=True):
+    with st.expander("Explain it simply (start here)", expanded=True):
         st.markdown(f"**What is it?** {what}")
         st.markdown(f"**Why does it matter?** {why}")
         st.markdown("**How does it work, step by step?**")
@@ -95,30 +93,30 @@ def explain(what, why, how, analogy=None):
 
 
 def glossary(terms: dict):
-    with st.expander("📖 Jargon buster (glossary)"):
+    with st.expander("Jargon buster (glossary)"):
         for term, meaning in terms.items():
             st.markdown(f"- **{term}**: {meaning}")
 
 
 def concept_diagram(dot: str, caption: str):
-    st.subheader("🗺️ Concept diagram")
+    st.subheader("Concept diagram")
     st.graphviz_chart(dot)
     st.caption(caption)
 
 
 def formulas(items):
     """items: list of (name, latex, plain-English explanation)."""
-    st.subheader("🧮 Formulas explained")
+    st.subheader("Formulas explained")
     for name, latex, plain in items:
         with st.container(border=True):
             st.markdown(f"**{name}**")
             st.latex(latex)
-            st.markdown(f"👉 *In plain words:* {plain}")
+            st.markdown(f"*In plain words:* {plain}")
 
 
 def privacy_note():
     st.caption(
-        "🔒 Files are processed only inside this running app session and are not stored. "
+        "Files are processed only inside this running app session and are not stored. "
         "Do not upload real patient data unless the app is deployed in a HIPAA/GDPR-compliant environment."
     )
 
@@ -135,7 +133,7 @@ def data_source(key, template: pd.DataFrame, required, help_md, loader, what="da
         return loader(), "synthetic demo data"
 
     st.markdown(help_md)
-    st.download_button("⬇️ Download a blank template (CSV)", template.to_csv(index=False),
+    st.download_button("Download a blank template (CSV)", template.to_csv(index=False),
                        f"{key}_template.csv", key=f"{key}_tpl")
     privacy_note()
     up = st.file_uploader("Upload CSV", type=["csv"], key=f"{key}_up")
@@ -152,7 +150,7 @@ def data_source(key, template: pd.DataFrame, required, help_md, loader, what="da
     if missing:
         st.error(f"Your file is missing these required columns: {missing}. Showing demo data instead.")
         return loader(), "synthetic demo data"
-    st.success(f"✅ Loaded {len(df)} rows from **{up.name}**")
+    st.success(f"Loaded {len(df)} rows from **{up.name}**")
     return df, up.name
 
 
@@ -164,7 +162,7 @@ def read_text_file(up) -> str:
 
 
 # ============================================================================
-# EXPORT HELPERS — PDF, Word, TXT, CSV
+# EXPORT HELPERS - PDF, Word, TXT, CSV
 # ============================================================================
 ASCII_MAP = {
     "≥": ">=", "≤": "<=", "✔": "[x]", "✘": "[ ]", "—": "-", "–": "-", "₂": "2", "→": "->",
@@ -236,7 +234,7 @@ def build_docx(title, sections, tables) -> bytes:
             for i, v in enumerate(row):
                 cells[i].text = _cell(v)
         if len(df) > 500:
-            doc.add_paragraph(f"(First 500 of {len(df)} rows shown — see the CSV for everything.)")
+            doc.add_paragraph(f"(First 500 of {len(df)} rows shown - see the CSV for everything.)")
     buf = io.BytesIO()
     doc.save(buf)
     return buf.getvalue()
@@ -282,7 +280,7 @@ def build_pdf(title, sections, tables) -> bytes:
         ]))
         story.append(t)
         if len(df) > 200:
-            story.append(P(f"(First 200 of {len(df)} rows shown — see the CSV for everything.)", ss["Italic"]))
+            story.append(P(f"(First 200 of {len(df)} rows shown - see the CSV for everything.)", ss["Italic"]))
         story.append(Spacer(1, 8))
     doc.build(story)
     return buf.getvalue()
@@ -290,7 +288,7 @@ def build_pdf(title, sections, tables) -> bytes:
 
 def export_panel(key, title, sections, tables):
     """Download buttons for PDF / Word / TXT plus one CSV per table."""
-    st.subheader("📤 Download your results")
+    st.subheader("Download your results")
     st.markdown(
         "- **PDF**: a formatted report to print or email\n"
         "- **Word**: an editable report you can change in Microsoft Word or Google Docs\n"
@@ -298,20 +296,20 @@ def export_panel(key, title, sections, tables):
         "- **CSV**: raw tables that open in Excel or Google Sheets"
     )
     c1, c2, c3 = st.columns(3)
-    c1.download_button("📄 PDF report", build_pdf(title, sections, tables), f"{key}_report.pdf",
+    c1.download_button("PDF report", build_pdf(title, sections, tables), f"{key}_report.pdf",
                        mime="application/pdf", key=f"{key}_pdf", width="stretch")
-    c2.download_button("📝 Word report (.docx)", build_docx(title, sections, tables), f"{key}_report.docx",
+    c2.download_button("Word report (.docx)", build_docx(title, sections, tables), f"{key}_report.docx",
                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                        key=f"{key}_docx", width="stretch")
-    c3.download_button("🗒️ Text report (.txt)", build_txt(title, sections, tables).encode("utf-8"),
+    c3.download_button("Text report (.txt)", build_txt(title, sections, tables).encode("utf-8"),
                        f"{key}_report.txt", mime="text/plain", key=f"{key}_txt", width="stretch")
     if tables:
         cols = st.columns(min(len(tables), 4))
         for i, (name, df) in enumerate(tables.items()):
             slug = re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
-            cols[i % len(cols)].download_button(f"📊 CSV: {name}", df.to_csv(index=False), f"{key}_{slug}.csv",
+            cols[i % len(cols)].download_button(f"CSV: {name}", df.to_csv(index=False), f"{key}_{slug}.csv",
                                                 mime="text/csv", key=f"{key}_csv_{slug}", width="stretch")
-    with st.expander("👀 Preview of what's in the report"):
+    with st.expander("Preview of what's in the report"):
         for h, body in sections:
             st.markdown(f"**{h}**")
             st.text(body)
@@ -346,7 +344,7 @@ def ask_claude(prompt: str, max_tokens: int = 1200) -> str:
 
 
 # ============================================================================
-# HOME — overview, architecture, impact estimator
+# HOME - overview, architecture, impact estimator
 # ============================================================================
 ARCH_DOT = """
 digraph {
@@ -361,7 +359,7 @@ digraph {
     m4 [label="4  Mental health\\nsupport"];
     m5 [label="5  Records &\\ncare coordination"];
   }
-  out [label="Results\\nPDF • Word • TXT • CSV", fillcolor="#dff3e4"];
+  out [label="Results\\nPDF, Word, TXT, CSV", fillcolor="#dff3e4"];
   people [label="Clinicians, care teams\\n& managers decide", fillcolor="#fde2e1"];
   data -> m1; data -> m2; data -> m3; data -> m4; data -> m5;
   m1 -> out; m2 -> out; m3 -> out; m4 -> out; m5 -> out;
@@ -399,7 +397,7 @@ def page_home():
                               "that people (not the software) act on.")
 
     st.divider()
-    st.header("💰 Impact estimator: what could this be worth?")
+    st.header("Impact estimator: what could this be worth?")
     st.markdown("Change the numbers to match your organisation. **Every default value is only an assumption.**")
     c1, c2, c3 = st.columns(3)
     with c1:
@@ -440,7 +438,7 @@ def page_home():
         ("Hospital admissions avoided", r"A = P \times \frac{a}{100} \times \frac{q}{100}, \qquad V_{rpm} = A \times C",
          "Out of P patients, a% would normally be admitted. If monitoring prevents q% of those, A admissions are avoided."),
         ("Duplicate-test savings", r"V_{dup} = T \times 12 \times c",
-         "Tests avoided each month × 12 months × cost per test."),
+         "Tests avoided each month x 12 months x cost per test."),
         ("Total", r"V_{total} = V_{doc} + V_{rpm} + V_{dup}", "Add the three together."),
     ])
 
@@ -474,7 +472,7 @@ def page_home():
 
 
 # ============================================================================
-# USE CASE 1 — AI DOCUMENTATION & ADMIN AUTOMATION
+# USE CASE 1 - AI DOCUMENTATION & ADMIN AUTOMATION
 # ============================================================================
 SAMPLE_TRANSCRIPT = (
     "Patient is a 58-year-old here for diabetes and blood pressure follow-up. "
@@ -518,13 +516,13 @@ ICD_HINTS = {
 
 PRIOR_AUTH = {
     "MRI lumbar spine (CPT 72148)": [
-        "≥6 weeks of conservative therapy documented",
+        ">=6 weeks of conservative therapy documented",
         "Neurological deficit or red-flag symptoms documented",
         "Clinical exam note within last 30 days",
     ],
     "GLP-1 agonist for type 2 diabetes": [
         "Diagnosis of type 2 diabetes (E11.x) on file",
-        "A1c ≥ 7% within last 90 days",
+        "A1c >= 7% within last 90 days",
         "Documented trial or intolerance of metformin",
     ],
     "Sleep study / polysomnography (CPT 95810)": [
@@ -596,7 +594,7 @@ def page_documentation():
         "and builds a prior-authorization letter with a criteria checklist.",
         "Less typing and fewer rejected insurance requests mean more time with patients and lower admin costs.",
     )
-    learn, tryit, dl = st.tabs(["1️⃣ Learn the concept", "2️⃣ Try it", "3️⃣ Download results"])
+    learn, tryit, dl = st.tabs(["1. Learn the concept", "2. Try it", "3. Download results"])
 
     with learn:
         explain(
@@ -630,14 +628,14 @@ def page_documentation():
             ("Which section the sentence goes in",
              r"\text{section}(s) = \arg\max_k S_k(s)",
              "Pick the section with the highest count. 'argmax' just means 'the winner'. "
-             "No matches → Subjective; ties → the later section (Plan beats Assessment, and so on)."),
+             "No matches means Subjective; ties go to the later section (Plan beats Assessment, and so on)."),
             ("Prior-auth completeness",
              r"C = \frac{\text{criteria documented}}{\text{criteria required}} \times 100\%",
              "If 2 out of 3 required items are documented, the request is 67% complete, and likely to be rejected."),
         ])
 
     with tryit:
-        st.subheader("📂 Step 1: Choose the visit transcript")
+        st.subheader("Step 1: Choose the visit transcript")
         src = st.radio("Where should the transcript come from?",
                        ["Use demo (synthetic) transcript", "Upload a .txt or .docx file", "Paste my own text"],
                        key="doc_src", horizontal=True)
@@ -647,7 +645,7 @@ def page_documentation():
             up = st.file_uploader("Transcript file", type=["txt", "docx"], key="doc_up")
             if up:
                 transcript, source_label = read_text_file(up), up.name
-                st.success(f"✅ Loaded {up.name}")
+                st.success(f"Loaded {up.name}")
             else:
                 st.warning("No file yet, so the demo transcript is shown.")
         elif src.startswith("Paste"):
@@ -661,7 +659,7 @@ def page_documentation():
         with st.expander("Show the transcript being analysed"):
             st.write(transcript)
 
-        st.subheader("🧠 Step 2: The draft SOAP note")
+        st.subheader("Step 2: The draft SOAP note")
         sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", transcript.strip()) if s.strip()]
         rows = []
         for s in sentences:
@@ -672,8 +670,8 @@ def page_documentation():
         note_text = "\n\n".join(f"{k.upper()}:\n{' '.join(v) if v else '(nothing captured)'}" for k, v in soap.items())
 
         if llm_available():
-            if st.button("✨ Draft with Claude instead (AI)", key="doc_ai"):
-                with st.spinner("Drafting with Claude…"):
+            if st.button("Draft with Claude instead (AI)", key="doc_ai"):
+                with st.spinner("Drafting with Claude..."):
                     st.session_state["doc_ai_note"] = ask_claude(
                         "Convert this clinical visit transcript into a concise SOAP note with headings "
                         "Subjective, Objective, Assessment, Plan. Do not invent facts.\n\n" + transcript)
@@ -689,7 +687,7 @@ def page_documentation():
                     st.markdown(f"**{sec}**")
                     st.write(" ".join(lines) if lines else "_Nothing captured._")
 
-        with st.expander("🔍 Why did each sentence go where it did? (keyword scores)"):
+        with st.expander("Why did each sentence go where it did? (keyword scores)"):
             st.dataframe(scores_df, hide_index=True, width="stretch")
             st.caption("Each number is how many keywords from that section matched. The highest number wins.")
 
@@ -697,7 +695,7 @@ def page_documentation():
         st.markdown("**Automatically extracted facts**")
         st.dataframe(ents, hide_index=True, width="stretch")
 
-        st.subheader("📋 Step 3: Prior-authorization assistant")
+        st.subheader("Step 3: Prior-authorization assistant")
         proc = st.selectbox("What is being requested from the insurer?", list(PRIOR_AUTH))
         c1, c2 = st.columns(2)
         patient = c1.text_input("Patient name", "Jane Doe (synthetic)")
@@ -707,9 +705,9 @@ def page_documentation():
         pct = sum(met) / len(met)
         st.progress(pct, text=f"Completeness C = {sum(met)}/{len(met)} = {pct:.0%}")
         if pct < 1:
-            st.warning("⚠️ Missing items are a common reason insurers reject requests. Complete them first.")
+            st.warning("Missing items are a common reason insurers reject requests. Complete them first.")
         else:
-            st.success("✅ All criteria documented. Ready to submit.")
+            st.success("All criteria documented. Ready to submit.")
         letter = (
             f"Date: {date.today():%B %d, %Y}\nRE: Prior authorization request: {proc}\n"
             f"Patient: {patient}\nDiagnosis: {dx}\n\nTo the Utilization Review Team,\n\n"
@@ -738,7 +736,7 @@ def page_documentation():
 
 
 # ============================================================================
-# USE CASE 2 — REMOTE PATIENT MONITORING
+# USE CASE 2 - REMOTE PATIENT MONITORING
 # ============================================================================
 RPM_PATIENTS = [
     ("P-1001", "Maria G.", "Hypertension"), ("P-1002", "James O.", "Type 2 diabetes"),
@@ -750,7 +748,7 @@ METRICS = ["systolic", "glucose", "weight_kg", "heart_rate", "spo2"]
 THRESHOLDS = {
     "systolic": {"high": 160, "low": 90, "unit": "mmHg", "label": "Systolic blood pressure"},
     "glucose": {"high": 250, "low": 70, "unit": "mg/dL", "label": "Blood glucose"},
-    "spo2": {"low": 92, "unit": "%", "label": "Oxygen saturation (SpO₂)"},
+    "spo2": {"low": 92, "unit": "%", "label": "Oxygen saturation (SpO2)"},
     "weight_kg": {"unit": "kg", "label": "Body weight"},
     "heart_rate": {"high": 110, "low": 50, "unit": "bpm", "label": "Heart rate"},
 }
@@ -759,10 +757,10 @@ RPM_DOT = """
 digraph {
   rankdir=LR; bgcolor="transparent";
   node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, fillcolor="#e8f1fb", color="#1f4e79"];
-  dev [label="Home devices\\nBP cuff • glucose meter\\nscale • pulse oximeter", fillcolor="#fff4d6"];
+  dev [label="Home devices\\nBP cuff, glucose meter\\nscale, pulse oximeter", fillcolor="#fff4d6"];
   read [label="Daily readings\\nsent automatically"];
   rules [label="Rules engine", shape=component];
-  r1 [label="1. Fixed safety limits\\n(e.g. BP ≥ 160)"];
+  r1 [label="1. Fixed safety limits\\n(e.g. BP >= 160)"];
   r2 [label="2. Trends\\n(weight +2 kg in 3 days)"];
   r3 [label="3. Personal baseline\\n(unusual for THIS patient)"];
   q [label="Alert queue\\nsorted by risk"];
@@ -849,7 +847,7 @@ def compute_alerts(df: pd.DataFrame) -> pd.DataFrame:
 
         sbp7 = g["systolic"].tail(7).dropna()
         if len(sbp7) >= 5 and (sbp7 >= 140).sum() >= 5:
-            add("Medium", "Trend", f"Systolic ≥140 on {(sbp7 >= 140).sum()} of last {len(sbp7)} readings", "systolic_trend")
+            add("Medium", "Trend", f"Systolic >= 140 on {(sbp7 >= 140).sum()} of last {len(sbp7)} readings", "systolic_trend")
 
         for metric in ["systolic", "glucose", "heart_rate"]:
             hist = g[metric].iloc[:-1].dropna()
@@ -871,8 +869,8 @@ def risk_table(df, alerts):
     pts["high_alerts"] = pts.patient_id.map(counts.get("High", pd.Series(dtype=int))).fillna(0).astype(int)
     pts["medium_alerts"] = pts.patient_id.map(counts.get("Medium", pd.Series(dtype=int))).fillna(0).astype(int)
     pts["risk_score"] = 3 * pts.high_alerts + pts.medium_alerts
-    pts["priority"] = np.select([pts.risk_score >= 3, pts.risk_score >= 1], ["🔴 Call today", "🟠 Review this week"],
-                                "🟢 Routine")
+    pts["priority"] = np.select([pts.risk_score >= 3, pts.risk_score >= 1], ["Call today", "Review this week"],
+                                "Routine")
     pts["last_reading"] = pts.last_reading.dt.date
     return pts.sort_values("risk_score", ascending=False)
 
@@ -886,7 +884,7 @@ def page_rpm():
         "and produces a prioritised call list for the care team.",
         "Catching problems days earlier can prevent emergency visits and hospital admissions.",
     )
-    learn, tryit, dl = st.tabs(["1️⃣ Learn the concept", "2️⃣ Try it", "3️⃣ Download results"])
+    learn, tryit, dl = st.tabs(["1. Learn the concept", "2. Try it", "3. Download results"])
 
     with learn:
         explain(
@@ -902,8 +900,8 @@ def page_rpm():
             analogy="Like a smoke detector for health: it doesn't put out fires, but it warns you while the fire is still small.",
         )
         glossary({
-            "Systolic blood pressure": "The top number in a reading like 120/80; ≥160 is considered very high.",
-            "SpO₂": "Percentage of oxygen in the blood; healthy is usually 95–100%, below 92% is concerning.",
+            "Systolic blood pressure": "The top number in a reading like 120/80; >=160 is considered very high.",
+            "SpO2": "Percentage of oxygen in the blood; healthy is usually 95-100%, below 92% is concerning.",
             "Heart failure": "The heart doesn't pump strongly enough; fluid can build up, showing as quick weight gain.",
             "Baseline": "What is normal for a specific person.",
             "z-score": "How many 'typical wobbles' a reading is away from the person's average.",
@@ -912,21 +910,21 @@ def page_rpm():
         formulas([
             ("Rule 1: Safety limit",
              r"\text{alert if } x_t \ge \text{upper limit} \;\; \text{or} \;\; x_t \le \text{lower limit}",
-             "x_t is today's reading. Example limits used: systolic BP 160/90, glucose 250/70 mg/dL, SpO₂ < 92%, heart rate 110/50."),
+             "x_t is today's reading. Example limits used: systolic BP 160/90, glucose 250/70 mg/dL, SpO2 < 92%, heart rate 110/50."),
             ("Rule 2: Weight trend (fluid build-up)",
              r"\Delta W = W_t - W_{t-3} \;\ge\; 2\ \text{kg}",
              "Compare today's weight with the weight 3 readings ago. Gaining 2 kg or more that fast often means fluid, not fat."),
             ("Rule 3: Personal baseline (z-score)",
              r"z = \frac{x_t - \mu}{\sigma}, \qquad \text{alert if } |z| \ge 3",
-             "μ (mu) is the patient's own average and σ (sigma) is how much their readings normally wobble. "
+             "mu is the patient's own average and sigma is how much their readings normally wobble. "
              "z = 3 means today is three 'normal wobbles' away from usual, which is very unusual for them."),
             ("Patient risk score",
              r"R = 3 \times (\#\text{High alerts}) + 1 \times (\#\text{Medium alerts})",
-             "Serious alerts count three times as much. R ≥ 3 → call today; R ≥ 1 → review this week; R = 0 → routine."),
+             "Serious alerts count three times as much. R >= 3 means call today; R >= 1 means review this week; R = 0 means routine."),
         ])
 
     with tryit:
-        st.subheader("📂 Step 1: Choose the readings")
+        st.subheader("Step 1: Choose the readings")
         raw, source_label = data_source(
             "rpm", RPM_TEMPLATE, ["patient_id", "date"],
             "**Your CSV needs** `patient_id` and `date` (YYYY-MM-DD), plus any of: "
@@ -941,29 +939,29 @@ def page_rpm():
         alerts = compute_alerts(df)
         risks = risk_table(df, alerts)
 
-        st.subheader("📊 Step 2: Results")
+        st.subheader("Step 2: Results")
         c1, c2, c3, c4 = st.columns(4)
         c1.metric("Patients monitored", df.patient_id.nunique())
         c2.metric("Readings analysed", len(df))
         c3.metric("High-severity alerts", int((alerts.severity == "High").sum()))
         c4.metric("Patients to call today", int((risks.risk_score >= 3).sum()))
 
-        st.markdown("**📞 Who should the nurse call first?**")
+        st.markdown("**Who should the nurse call first?**")
         st.dataframe(risks, hide_index=True, width="stretch")
-        st.markdown("**🚨 Alert details**")
+        st.markdown("**Alert details**")
         if alerts.empty:
             st.success("No alerts: everyone looks stable.")
         else:
             st.dataframe(alerts.sort_values("severity"), hide_index=True, width="stretch")
 
-        st.subheader("📈 Step 3: Look at one patient's trend")
+        st.subheader("Step 3: Look at one patient's trend")
         ids = risks.patient_id.tolist()
         pick = st.selectbox("Patient", ids, format_func=lambda p: f"{p}  {risks.set_index('patient_id').loc[p, 'name']}")
         metric = st.radio("Measurement", METRICS, horizontal=True, format_func=lambda m: THRESHOLDS[m]["label"])
         g = df[df.patient_id == pick]
         fig = go.Figure(go.Scatter(x=g.date, y=g[metric], mode="lines+markers", name="reading"))
         if g[metric].notna().sum() >= 7:
-            fig.add_hline(y=g[metric].mean(), line_dash="dot", line_color="gray", annotation_text="personal average μ")
+            fig.add_hline(y=g[metric].mean(), line_dash="dot", line_color="gray", annotation_text="personal average")
         th = THRESHOLDS[metric]
         for k, colr in (("high", "red"), ("low", "orange")):
             if k in th:
@@ -990,7 +988,7 @@ def page_rpm():
 
 
 # ============================================================================
-# USE CASE 3 — TELEHEALTH & VIRTUAL CARE
+# USE CASE 3 - TELEHEALTH & VIRTUAL CARE
 # ============================================================================
 RED_FLAGS = [
     "Chest pain or pressure", "Severe difficulty breathing",
@@ -1105,7 +1103,7 @@ def page_telehealth():
         "a video visit with the right type of clinician when it's safe to do so.",
         "Faster access to care without travel, and in-person slots freed up for people who truly need them.",
     )
-    learn, tryit, dl = st.tabs(["1️⃣ Learn the concept", "2️⃣ Try it", "3️⃣ Download results"])
+    learn, tryit, dl = st.tabs(["1. Learn the concept", "2. Try it", "3. Download results"])
 
     with learn:
         explain(
@@ -1113,12 +1111,12 @@ def page_telehealth():
                  "urgently they need care and whether a video visit is suitable.",
             why="Many health problems can be handled safely by video, saving a long drive. Sorting patients correctly "
                 "means emergencies get to the ER fast, and clinics aren't clogged with visits that could be virtual.",
-            how=["The patient picks their symptoms, how bad they are (0–10), and how long they've had them.",
+            how=["The patient picks their symptoms, how bad they are (0-10), and how long they've had them.",
                  "**Safety first:** any red-flag symptom (like chest pain) immediately says 'go to the ER'.",
                  "Otherwise, points are added up: each symptom has a weight, plus extra points for severity, "
                  "very young/old age, chronic illness or long duration.",
                  "The total score decides the care level: urgent, soon, routine or self-care.",
-                 "The right specialty is matched (e.g. skin → dermatology) and a video slot can be booked."],
+                 "The right specialty is matched (e.g. skin to dermatology) and a video slot can be booked."],
             analogy="Like an airport check-in kiosk: it sorts travellers to the right line so the staff can focus where they're needed.",
         )
         glossary({
@@ -1131,9 +1129,9 @@ def page_telehealth():
         formulas([
             ("Triage score",
              r"T = \sum_{i} w_i \;+\; \left\lfloor \frac{\text{severity}}{3} \right\rfloor \;+\; 2\cdot[\text{age}\ge65 \text{ or } <2] \;+\; [\text{chronic}] \;+\; [\text{days}>7]",
-             "Add each symptom's weight w (fever = 2, cough = 1, …), plus severity divided by 3 (rounded down), plus 2 "
+             "Add each symptom's weight w (fever = 2, cough = 1, ...), plus severity divided by 3 (rounded down), plus 2 "
              "points for babies or older adults, plus 1 for a chronic illness, plus 1 if it's lasted over a week. "
-             "[…] means 1 if true, 0 if false."),
+             "[...] means 1 if true, 0 if false."),
             ("Care level",
              r"\text{Level} = \begin{cases} \text{EMERGENCY} & \text{any red flag} \\ \text{URGENT} & T \ge 8 \\ \text{SOON} & 4 \le T < 8 \\ \text{ROUTINE} & 1 \le T < 4 \\ \text{SELF-CARE} & T = 0 \end{cases}",
              "Higher score means more urgent. Red flags always override the score."),
@@ -1143,7 +1141,7 @@ def page_telehealth():
         ])
 
     with tryit:
-        st.subheader("🅰️ One patient: interactive symptom checker")
+        st.subheader("One patient: interactive symptom checker")
         st.session_state.setdefault("bookings", [])
         with st.form("intake"):
             c1, c2 = st.columns(2)
@@ -1170,21 +1168,21 @@ def page_telehealth():
                 st.markdown(f"**Next available video slots: {specialty}**")
                 for idx, row in avail.iterrows():
                     cc1, cc2 = st.columns([4, 1])
-                    cc1.write(f"🗓️ {row.time:%a %b %d, %I:%M %p} with {row.provider}")
+                    cc1.write(f"{row.time:%a %b %d, %I:%M %p} with {row.provider}")
                     if cc2.button("Book", key=f"book_{idx}"):
                         st.session_state["bookings"].append(
                             dict(slot_id=idx, time=row.time, provider=row.provider, specialty=specialty))
                         st.rerun()
         if st.session_state["bookings"]:
-            st.markdown("**📅 Booked visits**")
+            st.markdown("**Booked visits**")
             st.dataframe(pd.DataFrame(st.session_state["bookings"]).drop(columns="slot_id"), hide_index=True)
 
         st.divider()
-        st.subheader("🅱️ Many patients: batch triage")
+        st.subheader("Many patients: batch triage")
         raw, source_label = data_source(
             "tele", TELE_TEMPLATE, ["patient_id", "age", "symptoms"],
             "**Your CSV needs** `patient_id`, `age`, `symptoms` (separate several with `;`, e.g. `Fever;Cough`). "
-            "Optional: `days`, `severity` (0–10), `chronic` (1/0), `red_flags` (`;`-separated), `distance_miles`.",
+            "Optional: `days`, `severity` (0-10), `chronic` (1/0), `red_flags` (`;`-separated), `distance_miles`.",
             demo_intakes, "intake forms",
         )
         results = triage_batch(raw)
@@ -1218,7 +1216,7 @@ def page_telehealth():
 
 
 # ============================================================================
-# USE CASE 4 — ACCESSIBLE MENTAL HEALTH SUPPORT
+# USE CASE 4 - ACCESSIBLE MENTAL HEALTH SUPPORT
 # ============================================================================
 PHQ9 = [
     "Little interest or pleasure in doing things",
@@ -1226,9 +1224,9 @@ PHQ9 = [
     "Trouble falling or staying asleep, or sleeping too much",
     "Feeling tired or having little energy",
     "Poor appetite or overeating",
-    "Feeling bad about yourself — or that you are a failure or have let yourself or your family down",
+    "Feeling bad about yourself - or that you are a failure or have let yourself or your family down",
     "Trouble concentrating on things, such as reading or watching television",
-    "Moving or speaking so slowly that other people could have noticed, or the opposite — being so fidgety or restless",
+    "Moving or speaking so slowly that other people could have noticed, or the opposite - being so fidgety or restless",
     "Thoughts that you would be better off dead, or of hurting yourself",
 ]
 GAD7 = [
@@ -1249,7 +1247,7 @@ digraph {
   sum [label="Add up the answers\\n(0-3 each)"];
   safe [label="Item 9 > 0?\\n(self-harm thoughts)", shape=diamond, fillcolor="#fde2e1"];
   now [label="Same-day clinician\\nfollow-up + 988", fillcolor="#f8b4b4"];
-  band [label="Severity band\\nminimal → severe"];
+  band [label="Severity band\\nminimal to severe"];
   s0 [label="Watch & rescreen"];
   s1 [label="Step 1: Digital CBT /\\nguided self-help", fillcolor="#dff3e4"];
   s2 [label="Step 2: Care manager\\n+ brief therapy", fillcolor="#dff3e4"];
@@ -1276,7 +1274,7 @@ def stepped_care(phq, gad):
     if worst >= 10:
         return "Step 2: Collaborative care: care-manager follow-up + brief therapy (CBT); review in 4 weeks."
     if worst >= 5:
-        return "Step 1: Guided self-help / digital CBT programme; rescreen in 4–6 weeks."
+        return "Step 1: Guided self-help / digital CBT programme; rescreen in 4-6 weeks."
     return "Watchful waiting: rescreen at next routine visit."
 
 
@@ -1323,7 +1321,7 @@ def page_mental_health():
         "concerns immediately, and routes each person to the right level of support.",
         "Specialists see the people who need them most; others start effective lighter-touch help (like digital CBT) right away.",
     )
-    learn, tryit, dl = st.tabs(["1️⃣ Learn the concept", "2️⃣ Try it", "3️⃣ Download results"])
+    learn, tryit, dl = st.tabs(["1. Learn the concept", "2. Try it", "3. Download results"])
 
     with learn:
         explain(
@@ -1341,8 +1339,8 @@ def page_mental_health():
                     "and whether it's going down with treatment.",
         )
         glossary({
-            "PHQ-9": "Patient Health Questionnaire, 9 items. A free, validated screen for depression (score 0–27).",
-            "GAD-7": "Generalised Anxiety Disorder scale, 7 items. A free, validated screen for anxiety (score 0–21).",
+            "PHQ-9": "Patient Health Questionnaire, 9 items. A free, validated screen for depression (score 0-27).",
+            "GAD-7": "Generalised Anxiety Disorder scale, 7 items. A free, validated screen for anxiety (score 0-21).",
             "Stepped care": "Start with the least intensive effective help, and step up only if needed.",
             "CBT": "Cognitive Behavioural Therapy, a practical talking therapy that can also be delivered digitally.",
             "988": "The US Suicide & Crisis Lifeline. Call or text 988, any time.",
@@ -1350,19 +1348,19 @@ def page_mental_health():
         concept_diagram(MH_DOT, "The safety check runs on every screening, whatever the total score.")
         formulas([
             ("PHQ-9 score", r"\text{PHQ9} = \sum_{i=1}^{9} q_i, \quad q_i \in \{0,1,2,3\}",
-             "Add the nine answers. 0–4 minimal, 5–9 mild, 10–14 moderate, 15–19 moderately severe, 20–27 severe."),
+             "Add the nine answers. 0-4 minimal, 5-9 mild, 10-14 moderate, 15-19 moderately severe, 20-27 severe."),
             ("GAD-7 score", r"\text{GAD7} = \sum_{j=1}^{7} g_j",
-             "Add the seven answers. 0–4 minimal, 5–9 mild, 10–14 moderate, 15–21 severe."),
+             "Add the seven answers. 0-4 minimal, 5-9 mild, 10-14 moderate, 15-21 severe."),
             ("Putting both on the same scale", r"\text{Worst} = \max\!\left(\text{PHQ9},\ \text{GAD7} \times \tfrac{27}{21}\right)",
              "GAD-7 tops out at 21 and PHQ-9 at 27, so GAD-7 is stretched to match. Then we take whichever is worse."),
             ("Step of care",
              r"\text{Step} = \begin{cases} 3 & \text{Worst} \ge 15 \\ 2 & 10 \le \text{Worst} < 15 \\ 1 & 5 \le \text{Worst} < 10 \\ 0 & \text{Worst} < 5 \end{cases}",
-             "Higher score → more intensive help. Separately, any answer above 0 on question 9 triggers a same-day safety follow-up."),
+             "Higher score means more intensive help. Separately, any answer above 0 on question 9 triggers a same-day safety follow-up."),
         ])
 
     with tryit:
-        st.subheader("🅰️ One person: take the screening")
-        st.markdown("_Over the **last 2 weeks**, how often have you been bothered by…_")
+        st.subheader("One person: take the screening")
+        st.markdown("_Over the **last 2 weeks**, how often have you been bothered by..._")
         c1, c2 = st.columns(2)
         with c1:
             st.markdown("**PHQ-9 (mood)**")
@@ -1381,10 +1379,10 @@ def page_mental_health():
         st.info(f"**Suggested pathway:** {single_path}")
 
         st.divider()
-        st.subheader("🅱️ Many people: batch scoring & progress tracking")
+        st.subheader("Many people: batch scoring & progress tracking")
         raw, source_label = data_source(
             "mh", MH_TEMPLATE, ["patient_id", *[f"phq{i}" for i in range(1, 10)], *[f"gad{i}" for i in range(1, 8)]],
-            "**Your CSV needs** `patient_id`, `phq1`…`phq9` and `gad1`…`gad7` (each 0–3). Optional: `date`. "
+            "**Your CSV needs** `patient_id`, `phq1`...`phq9` and `gad1`...`gad7` (each 0-3). Optional: `date`. "
             "One row per screening; repeat a patient on different dates to track progress.",
             demo_screenings, "screenings",
         )
@@ -1392,7 +1390,7 @@ def page_mental_health():
         flagged = int((batch.safety_flag != "").sum())
         c1, c2, c3 = st.columns(3)
         c1.metric("Screenings scored", len(batch))
-        c2.metric("Moderate or worse (PHQ-9 ≥ 10)", int((batch.phq9 >= 10).sum()))
+        c2.metric("Moderate or worse (PHQ-9 >= 10)", int((batch.phq9 >= 10).sum()))
         c3.metric("Safety flags", flagged)
         if flagged:
             st.error(f"{flagged} screening(s) need same-day clinician follow-up (question 9 > 0).")
@@ -1425,7 +1423,7 @@ def page_mental_health():
 
 
 # ============================================================================
-# USE CASE 5 — INTEROPERABLE RECORDS & CARE COORDINATION
+# USE CASE 5 - INTEROPERABLE RECORDS & CARE COORDINATION
 # ============================================================================
 SOURCES = {
     "St. Mary's Hospital (EHR A)": {
@@ -1451,7 +1449,7 @@ SOURCES = {
 }
 INTERACTIONS = [
     ({"warfarin", "aspirin"}, "High", "Increased bleeding risk"),
-    ({"warfarin", "clarithromycin"}, "High", "Clarithromycin raises warfarin effect (INR ↑)"),
+    ({"warfarin", "clarithromycin"}, "High", "Clarithromycin raises warfarin effect (raises INR)"),
     ({"simvastatin", "clarithromycin"}, "High", "Contraindicated: risk of severe muscle damage (rhabdomyolysis)"),
     ({"lisinopril", "spironolactone"}, "Medium", "High potassium risk: monitor potassium"),
     ({"atorvastatin", "simvastatin"}, "Medium", "Therapeutic duplication: two statins"),
@@ -1471,11 +1469,11 @@ digraph {
   c [label="Family clinic EHR", fillcolor="#fff4d6"];
   p [label="Pharmacy records", fillcolor="#fff4d6"];
   id [label="Match identity\\n(same person?\\nname + date of birth)"];
-  m [label="Merge into one list\\nmeds • labs • allergies"];
+  m [label="Merge into one list\\nmeds, labs, allergies"];
   chk [label="Safety checks", shape=component];
   k1 [label="Drug interactions"];
   k2 [label="Dose mismatches"];
-  k3 [label="Duplicate tests\\n(≤30 days apart)"];
+  k3 [label="Duplicate tests\\n(<=30 days apart)"];
   u [label="One unified record\\n+ FHIR export", fillcolor="#dff3e4"];
   doc [label="Care team fixes\\nthe issues", fillcolor="#fde2e1"];
   h -> id; c -> id; p -> id; id -> m -> chk; chk -> k1; chk -> k2; chk -> k3;
@@ -1513,7 +1511,7 @@ def find_issues(meds: pd.DataFrame, labs: pd.DataFrame) -> pd.DataFrame:
                 gap = (d[i] - d[i - 1]).days
                 if gap <= DUP_WINDOW_DAYS and s[i] != s[i - 1]:
                     issues.append(dict(type="Duplicate test", severity="Low",
-                                       detail=f"{test} repeated after {gap} days ({s[i - 1]} → {s[i]})"))
+                                       detail=f"{test} repeated after {gap} days ({s[i - 1]} to {s[i]})"))
     return pd.DataFrame(issues, columns=["type", "severity", "detail"])
 
 
@@ -1542,7 +1540,7 @@ def page_coordination():
         "tests, and exports a single record in the FHIR standard format.",
         "Fewer medication errors, fewer wasted tests, and every clinician seeing the same complete picture.",
     )
-    learn, tryit, dl = st.tabs(["1️⃣ Learn the concept", "2️⃣ Try it", "3️⃣ Download results"])
+    learn, tryit, dl = st.tabs(["1. Learn the concept", "2. Try it", "3. Download results"])
 
     with learn:
         explain(
@@ -1570,7 +1568,7 @@ def page_coordination():
             ("Drug-interaction check",
              r"\text{flag if } \{a, b\} \subseteq \text{AllDrugs} \text{ for a known risky pair } (a,b)",
              "If both medicines of a known dangerous pair appear anywhere in the combined list (even from different "
-             "prescribers), raise an alert. ⊆ means 'is contained in'."),
+             "prescribers), raise an alert."),
             ("Dose-mismatch check",
              r"\text{flag if } \left|\{\text{doses of drug } d \text{ across sources}\}\right| > 1",
              "If different sources list different doses of the same drug, someone needs to confirm the right one."),
@@ -1583,13 +1581,13 @@ def page_coordination():
         ])
 
     with tryit:
-        st.subheader("📂 Step 1: Medication lists")
+        st.subheader("Step 1: Medication lists")
         meds_raw, meds_label = data_source(
             "meds", MEDS_TEMPLATE, ["source", "drug", "dose"],
             "**Your CSV needs** `source` (where the record came from), `drug`, `dose`. One row per medicine per source.",
             demo_meds, "medication lists",
         )
-        st.subheader("📂 Step 2: Lab tests (optional)")
+        st.subheader("Step 2: Lab tests (optional)")
         labs_raw, labs_label = data_source(
             "labs", LABS_TEMPLATE, ["source", "test", "date"],
             "**Your CSV needs** `source`, `test`, `date` (YYYY-MM-DD). Optional: `result`.",
@@ -1605,7 +1603,7 @@ def page_coordination():
         using_demo = meds_label.startswith("synthetic")
 
         if using_demo:
-            st.markdown("**🪪 Identity match:** same date of birth, three name spellings → treated as one person")
+            st.markdown("**Identity match:** same date of birth, three name spellings, treated as one person")
             st.dataframe(pd.DataFrame([{"source": s, **SOURCES[s]["patient"]} for s in SOURCES]), hide_index=True)
             allergies = sorted({a for r in SOURCES.values() for a in r["allergies"]})
             patient = SOURCES[next(iter(SOURCES))]["patient"]
@@ -1615,27 +1613,27 @@ def page_coordination():
         issues = find_issues(meds, labs)
         n_dup = int((issues.type == "Duplicate test").sum())
 
-        st.subheader("📊 Step 3: Results")
+        st.subheader("Step 3: Results")
         c1, c2, c3, c4 = st.columns(4)
         c1.metric("Sources combined", meds.source.nunique())
         c2.metric("Unique medicines", meds.drug.nunique())
         c3.metric("High-severity issues", int((issues.severity == "High").sum()))
         cost = c4.number_input("Cost per test ($)", 0, 5000, 120, key="coord_cost")
-        st.metric("Duplicate tests found → money saved", f"{n_dup} → ${n_dup * cost:,}")
+        st.metric("Duplicate tests found / money saved", f"{n_dup} tests, ${n_dup * cost:,}")
 
-        st.markdown("**⚠️ Safety & reconciliation issues**")
+        st.markdown("**Safety & reconciliation issues**")
         if issues.empty:
             st.success("No issues found.")
         else:
             order = {"High": 0, "Medium": 1, "Low": 2}
             issues = issues.sort_values("severity", key=lambda s: s.map(order))
             st.dataframe(issues, hide_index=True, width="stretch")
-        t1, t2, t3 = st.tabs(["💊 Unified medication list", "🧪 Lab timeline", "🚫 Allergies"])
+        t1, t2, t3 = st.tabs(["Unified medication list", "Lab timeline", "Allergies"])
         t1.dataframe(meds.sort_values("drug"), hide_index=True, width="stretch")
         t2.dataframe(labs.sort_values("date").assign(date=lambda d: d.date.dt.date), hide_index=True, width="stretch")
         t3.write(", ".join(allergies) or "None recorded / not provided")
         bundle = to_fhir_bundle(meds, labs, allergies, patient)
-        st.download_button("⬇️ Export unified record (FHIR R4 Bundle, JSON)", json.dumps(bundle, indent=2),
+        st.download_button("Export unified record (FHIR R4 Bundle, JSON)", json.dumps(bundle, indent=2),
                            "unified_record_fhir.json", mime="application/json")
 
     with dl:
@@ -1659,21 +1657,21 @@ def page_coordination():
 # ROUTER
 # ============================================================================
 PAGES = {
-    "🏠 Overview & impact": page_home,
-    "1 · 📝 AI documentation & admin": page_documentation,
-    "2 · 📈 Remote patient monitoring": page_rpm,
-    "3 · 💻 Telehealth & virtual care": page_telehealth,
-    "4 · 🧠 Mental health support": page_mental_health,
-    "5 · 🔗 Records & care coordination": page_coordination,
+    "Overview & impact": page_home,
+    "1. AI documentation & admin": page_documentation,
+    "2. Remote patient monitoring": page_rpm,
+    "3. Telehealth & virtual care": page_telehealth,
+    "4. Mental health support": page_mental_health,
+    "5. Records & care coordination": page_coordination,
 }
 
 with st.sidebar:
-    st.markdown(f"<div style='font-size:1.6rem;font-weight:800;color:#0b5ed7;'>🩺 {APP_NAME}</div>"
+    st.markdown(f"<div style='font-size:1.6rem;font-weight:800;color:#0b5ed7;'>{APP_NAME}</div>"
                 f"<div style='font-weight:700;color:#0b5ed7;'>{DEVELOPER}</div>", unsafe_allow_html=True)
     st.caption("Pick a use case:")
     page = st.radio("Module", list(PAGES), label_visibility="collapsed")
     st.divider()
-    st.markdown("**Each page has 3 tabs:**\n\n1️⃣ Learn · 2️⃣ Try it · 3️⃣ Download")
+    st.markdown("**Each page has 3 tabs:**\n\n1. Learn, 2. Try it, 3. Download")
     st.divider()
     st.caption(DISCLAIMER)
 
